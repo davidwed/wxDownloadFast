@@ -1036,7 +1036,8 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         _("(Default)"),
         _("English"),
         _("Portuguese(Brazil)"),
-        _("Italian")
+        _("Italian"),
+        _("Spanish")
     };
 
     int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"), 
@@ -1050,6 +1051,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
             case 1 : langvalue = wxLANGUAGE_ENGLISH; break;
             case 2 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
             case 3 : langvalue = wxLANGUAGE_ITALIAN; break;
+            case 4 : langvalue = wxLANGUAGE_SPANISH; break;
         }
         wxGetApp().Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
         wxMessageBox(_("You need restart the program to use the new language!"),
