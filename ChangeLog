@@ -1,0 +1,33 @@
+0.2.1
+===================================================
+- Added graph of the transferency rate
+
+0.2.0
+===================================================
+- The download rotine was remade, and the option of
+  split the download in several pieces was added.
+- Added the "Options"box
+- Added options that allow the computer be
+  turned off, or the connection be closed when all
+  downloads was finished.
+- Made several improvements.
+- Fixed several bugs
+
+0.1.1
+===================================================
+- Fixed problems of segmentation fault on Linux
+- Fixed problems when change the language
+- Added makefile.vc file for the people who use the
+  MSVC to build the program
+- Added italian language
+- Changed the interface of old downloads
+- Several bugs were fixed
+- Added a menu that allow the user to move old files
+- Added a menu that allow the user to reverify the MD5
+  of old files
+- Added option of export/import the configurations of
+  the program
+
+0.1.0
+===================================================
+1º Version

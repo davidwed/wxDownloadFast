@@ -1,0 +1,33 @@
+0.2.1
+===================================================
+- Adicionado gráfico da taxa de transferência
+
+0.2.0
+===================================================
+- Toda a rotinha de download foi reimplementada, sendo
+  adicionada a opção de dividir o arquivo em vários partes.
+- Adicionada caixa "Opções"
+- Adicionada opções que permitem que o computador seja
+  desligado, ou a conexão seja terminada, quando todos
+  os downloads forem concluídos
+- Fetios varios melhoramentos em geral.
+- Corrigidos vários bugs
+
+0.1.1
+===================================================
+- Corrigido problemas de "segmentation fault" no Linux
+- Corrigido problemas quando se tentava alternar o idioma
+- Adicionado arquivo makefile.vc para que quem utiliza o MSVC
+  possa compilar o programa sem problemas
+- Adicionado idioma italiano
+- Alterada a interface relacionada a downloads antigos
+- Vários bugs foram corrigidos
+- Adicionado menu que permite mover arquivos já baixados
+- Adicionado menu que permite verificar o MD5 de um arquivo
+  já baixado e comparar com o calculado previamente
+- Adicionado opções de exportar/importar as configurações
+  do programa
+
+0.1.0
+===================================================
+1º Versão

@@ -1,0 +1,79 @@
+wxDownload Fast
+=====================================================================
+
+Introduction
+----------
+This program was created with intention to substitute the existing
+commercial downloads managers.  In this way I intend to add
+the maximum of options in order to let the program the most complete
+possible.
+
+Characteristics of the Program 
+------------------------------
+* Allows to carry through download of some archives simultaneously,
+  and allow to split the downloads in some lowered parts.
+* Allows to organize the archive already downloaded
+* Allows to continue one download interrupted of the point where had stopped
+* The messages sended/received for the program when connecting to servers HTTP/FTP
+* It can be translated with easiness for any language.  Being avaliable initially
+in Portuguese[Brasil] and English
+* Allows to connect in servers ftp which need password
+* Generate the MD5 of the downloaded archives, facilitating the verification
+
+Installation
+------------
+
+Win32
+-----
+
+- Installing from binary
+
+Is available in the page of the program contends this program.  This archive is in
+the form of a installation program.
+To intall the program follow the wizard.
+Then to change the Language from Portuguese to English to this:
+1) Star the program
+2) Go to menu "Ver->Idiomas"
+3) Select "Inglês"
+4) Press "OK"
+5) Press "OK" again
+6) Close the program
+7) Restart the program and the interface will be in english
+
+- Compiling code source
+
+To build the program in the Windows it is necessary the MinGW and the
+MSys[www.mingw.org ] that they are the compiler GCC for windows and an environment
+unix respectively.  Moreover is necessary the library wxWidgets[www.wxwidgets.org ],
+builded with the option: --enable-xrc.
+Of ownership of the requisite ones above it is enough to enter where the code source
+was unpacked and type:
+# make BUILD=win32
+
+With this, the executable will be generated, being enough after that to copy the
+executable archive for a desired place, and to use it.
+
+Linux
+-----
+
+- Compiling code source
+
+To build the program in the Linux it is necessary the GCC and the program make.
+Moreover is necessary the library wxWidgets[www.wxwidgets.org ],builded with
+the option: --enable-xrc.  Of ownership of the requisite ones above it is enough
+to enter where the code source was unpacked and type:
+# make
+
+With this, the executable will be generated, being enough after that to copy
+the executable archive for a desired place, and to use it.  For this it types:
+# su
+# make install
+
+MacOS
+-----
+
+- Compiling code source
+
+As I never had access to a system running the MacOS, I never build the program
+in this system, however I believe that the steps used in the Linux should work for
+the MacOS
