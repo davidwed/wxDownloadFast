@@ -117,7 +117,7 @@ ifeq ($(XRC), 1)
 	$(INSTALL_FILE) $(RESOURCE_DIR)*.xrc /usr/local/$(BIN)/$(RESOURCE_DIR)
 endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo /usr/share/locale/pt_BR/LC_MESSAGES
-	$(INSTALL_FILE) $(LANGUAGE_DIR)it_IT/wxDFast.mo /usr/share/locale/it/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo /usr/share/locale/es/LC_MESSAGES
 
 uninstall:
 ifeq ($(BUILD), win32)
@@ -132,7 +132,7 @@ endif
 	rm -f /usr/local/$(BIN)/wxdfast.ico
 	rm -f /usr/local/$(BIN)/$(RESOURCE_DIR)*.xrc
 	rm -f /usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
-	rm -f /usr/share/locale/it/LC_MESSAGES/wxDFast.mo
+	rm -f /usr/share/locale/es/LC_MESSAGES/wxDFast.mo
 	rmdir /usr/local/$(BIN)
 
 source:
