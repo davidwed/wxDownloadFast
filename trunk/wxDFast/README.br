@@ -1,0 +1,90 @@
+wxDownload Fast
+=====================================================================
+
+Introdução
+==========
+Este programa foi criado com o intuito de substituir os gerenciadores
+de downloads comerciais existentes hoje em dia.
+Deste modo pretendo adicionar o máximo de opções possíveis de modo a
+deixar o programa o mais completo possível.
+
+Características do Programa
+===========================
+* Permite realizar o download de vários arquivos simultaneamente,
+  e ainda dividi-lo em várias partes
+* Permite organizar os arquivo já baixados
+* Permite continuar um download interrompido do ponto onde parou
+* Mosta as mensagens enviadas/recebidas pelo programa quando conectando
+  aos servidores HTTP/FTP
+* Pode ser traduzido com facilidade para qualquer idioma. Estando diponíveis 
+  inicialmente os idiomas Portguês[Brasil] e Inglês
+* Permite conectar em servidores FTP que necessitam de senha
+* Gera o MD5 dos arquivos baixados facilitando assim a verificação dos mesmos
+
+Instalação
+==========
+
+Win32
++++++
+
+- Compilando código fonte
+===============================
+
+* Utilizando o make+gcc
+-----------------------
+
+Para compilar o programa no Windows é necessário o MinGW e o MSys[www.mingw.org]
+que são o compilador GCC para windows e um ambiente unix respectivamente.
+Além disso é necessário a biblioteca wxWidgets[www.wxwidgets.org], compilada
+com a opção --enable-xrc.
+De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
+descompactado e digitar:
+# make BUILD=win32
+
+Com isso o executável será gerado, bastando em seguida copiar o arquivo executável
+para um local desejado, e utilizá-lo.
+
+* Utilizando o nmake+MSVC
+-------------------------
+Para compilar o programa no Windows é necessário o Microsoft Visual C++[versão
+comercial] ou ainda o Microsoft Visual C++ Toolkit 2003 [versão freeware] + o 
+Microsoft Platform SDK.
+Além disso é necessário a biblioteca wxWidgets[www.wxwidgets.org], compilada
+com a opção --enable-xrc.
+De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
+descompactado e digitar:
+# nmake -f Makefile.vc
+
+OBS: Não esqueça de carregar as varáveis de ambiente referen-
+tes ao VC. Normalmente existe um atalho na pasta do VC no menu iniciar que faz
+isso automaticamente.
+
+- Instalando apartir do binário
+===============================
+Está disponível na página do programa um arquivo binário contendo este programa.
+Este arquivo está na forma de uma programa de instalação.
+
+Linux
++++++
+
+- Compilando código fonte
+=========================
+Para compilar o programa no Linux é necessário o gcc e o programa make.
+Além disso é necessário a biblioteca wxWidgets[www.wxwindows.org].
+De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
+descompactado e digitar:
+# make
+
+Com isso o executável será gerado, bastando em seguida copiar o arquivo executável
+para um local desejado, e utilizá-lo. Para isso digite:
+# su
+# make install
+
+MacOS
++++++
+
+- Compilando código fonte
+=========================
+Como não tenho acesso a um sistema rodando o MacOS nunca compilei o programa neste
+sistema, porém acredito que os passos utilizados no Linux devem servir para o MacOS.
+
