@@ -102,38 +102,68 @@ $(BUILD_DIR)wxMD5.o: src/wxMD5/wxMD5.cpp
 	$(CPP) -c src/wxMD5/wxMD5.cpp -o $(BUILD_DIR)wxMD5.o $(CXXFLAGS)
 
 install:
-	$(INSTALL_DIR) /usr/local/$(BIN)
+	$(INSTALL_DIR) $(DESTDIR)/usr/lib/$(BIN)
 ifeq ($(BUILD), win32)
-	$(INSTALL_FILE) --mode=755 $(BIN).exe /usr/local/$(BIN)
+	$(INSTALL_FILE) --mode=755 $(BIN).exe $(DESTDIR)/usr/lib/$(BIN)
+	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe $(DESTDIR)/usr/bin/$(BIN).exe
 else
-	$(INSTALL_FILE) --mode=755 $(BIN) /usr/local/$(BIN)
+	$(INSTALL_FILE) --mode=755 $(BIN) $(DESTDIR)/usr/lib/$(BIN)
+	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN) $(DESTDIR)/usr/bin/$(BIN)
 endif
-	$(INSTALL_FILE) Readme.* /usr/local/$(BIN)
-	$(INSTALL_FILE) Changes.* /usr/local/$(BIN)
-	$(INSTALL_FILE) gpl.txt /usr/local/$(BIN)
-	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm /usr/local/$(BIN)
-	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.ico /usr/local/$(BIN)
+	$(INSTALL_FILE) Readme.* $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_FILE) Changes.* $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_FILE) gpl.txt $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/pixmaps
+	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm $(DESTDIR)/usr/share/pixmaps
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)
+	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.ico $(DESTDIR)/usr/share/$(BIN)
 ifeq ($(XRC), 1)
-	$(INSTALL_FILE) $(RESOURCE_DIR)*.xrc /usr/local/$(BIN)/$(RESOURCE_DIR)
+	$(INSTALL_FILE) $(RESOURCE_DIR)*.xrc $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)
 endif
-	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo /usr/share/locale/pt_BR/LC_MESSAGES
-	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo /usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/lib/menu
+	echo "?package(wxdfast): \ " > $(DESTDIR)/usr/lib/menu/wxdfast
+	echo "      needs="X11" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
+	echo "      section="Apps/Net" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
+	echo "      title="wxDFast" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
+	echo "      command="/usr/bin/wxdfast" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
+	echo "      icon="/usr/share/pixmaps/wxdfast.xpm"" >> $(DESTDIR)/usr/lib/menu/wxdfast
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
+	echo "[Desktop Entry]" > $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Version=1.0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Encoding=UTF-8" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Name=wxDFast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "GenericName=wxDFast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Comment=Multi-thread Download Manager" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Exec=wxdfast %u" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "TryExec=wxdfast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Icon=wxdfast.xpm" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Terminal=0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Type=Application" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	echo "Categories=Application;GTK;GNOME;Network;FileTransfer;" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
 
 uninstall:
 ifeq ($(BUILD), win32)
-	rm -f /usr/local/$(BIN)/$(BIN).exe
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe
+	rm -f $(DESTDIR)/usr/bin/$(BIN).exe
 else
-	rm -f /usr/local/$(BIN)/$(BIN)
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN)
+	rm -f $(DESTDIR)/usr/bin/$(BIN)
 endif
-	rm -f /usr/local/$(BIN)/Readme.*
-	rm -f /usr/local/$(BIN)/Changes.*
-	rm -f /usr/local/$(BIN)/gpl.txt
-	rm -f /usr/local/$(BIN)/wxdfast.xpm
-	rm -f /usr/local/$(BIN)/wxdfast.ico
-	rm -f /usr/local/$(BIN)/$(RESOURCE_DIR)*.xrc
-	rm -f /usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
-	rm -f /usr/share/locale/es/LC_MESSAGES/wxDFast.mo
-	rmdir /usr/local/$(BIN)
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/Readme.*
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/Changes.*
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/gpl.txt
+	rm -f $(DESTDIR)/usr/share/pixmaps/wxdfast.xpm
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/wxdfast.ico
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)*.xrc
+	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/lib/menu/wxdfast
+	rm -f $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	rmdir $(DESTDIR)/usr/lib/$(BIN)
 
 source:
 	rm -f $(BIN)-$(VERSION)-src.tar.gz
