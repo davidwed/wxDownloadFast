@@ -447,7 +447,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
                 restart = YES;
             if (line.Mid(0,8).Lower() == wxT("location"))
             {
-                currenturl = line.Mid(10).Lower();
+                currenturl = line.Mid(10);
                 redirecting = TRUE;
             }
 
@@ -464,6 +464,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
         else if (message.GetChar(9) == '3')
         {
             PrintMessage( _("Redirecting to ") + currenturl + wxT("\n\n"),HTMLSERVER);
+            wxGetApp().ChangeName(downloadfile, currenturl.Mid(currenturl.Find('/',true)+1),0);
             client->Close(); delete client;
             return NULL;
         }
