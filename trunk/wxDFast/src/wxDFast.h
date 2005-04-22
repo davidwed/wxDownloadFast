@@ -191,7 +191,7 @@
         int index;
         int status;
         int restart;
-        wxString name;
+        wxString name;            //DON'T CHANGE THIS VAR DIRECTLY - USE THE ChangeName() function
         wxString destination;
         wxString comments;
         wxString user;
