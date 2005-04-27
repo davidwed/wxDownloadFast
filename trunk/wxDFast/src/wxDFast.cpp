@@ -271,7 +271,7 @@ mMainFrame::mMainFrame()
 	programoptions.graphscale = wxGetApp().Configurations(READ,OPT_GRAPH_SCALE_REG, 40);
 	programoptions.graphtextarea = wxGetApp().Configurations(READ,OPT_GRAPH_TEXTAREA_REG, 80);
 	programoptions.graphspeedfontsize = wxGetApp().Configurations(READ,OPT_GRAPH_SPEEDFONTSIZE_REG, 18);
-	programoptions.graphlinewidth = wxGetApp().Configurations(READ,OPT_GRAPH_LINEWIDTH_REG, 5);
+	programoptions.graphlinewidth = wxGetApp().Configurations(READ,OPT_GRAPH_LINEWIDTH_REG, 3);
 	{
 		wxString colour;
 		long red,green,blue;
@@ -440,8 +440,11 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 	        list02->SetItem(i, FINISHED_SIZE, ByteString(current->totalsize));
 	        list02->SetItem(i, FINISHED_END, current->end.Format());
 	        list02->SetItemData(i,current->end.GetTicks());
+            node = node->GetPrevious();  //GO TO THE PREVIOUS NODE BEFORE DELETE THE CURRENT ONE
 			list01->RemoveItemListandFile(current->index);
 			somedownloadfinishednow = TRUE;
+            if (current->index == 0)  //IF THIS IS THE FIRST NODE, WE CAN GO TO THE PREVIOUS ONE
+               break;
 		}
 		else
 		{		
@@ -526,6 +529,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 	        }
 		}
     }
+
     if (timerinterval >= (programoptions.graphrefreshtime))
     {
     	float *value = new float();

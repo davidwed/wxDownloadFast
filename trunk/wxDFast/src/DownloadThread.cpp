@@ -427,18 +427,20 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     {
     	wxString line;
     	wxString message;
-    	char buf;
-    	long sizetmp;
-    	do
+        char buf[1024];
+        long sizetmp;
+        unsigned int count = 0;
+        client->Read(buf,1024);
+        do
     	{
     		line.Clear();
-    		buf = '\0';
-    		while (buf != '\n')
+    		while (buf[count] != '\n')
     		{
-	    		client->Read(&buf,1);
-	    		if ((buf != '\n') && (buf != '\r'))
-		    		line.Append(buf,1);
+	    		if ((buf[count] != '\n') && (buf[count] != '\r'))
+		    		line.Append(buf[count],1);
+                count++;
     		}
+            count++;
     		PrintMessage( line + wxT("\n"),HTMLSERVER);
     		message += line + wxT("\n");
             if (line.Mid(0,14).Lower() == wxT("content-length"))
@@ -453,8 +455,16 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
 
 			if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    	}
-    	while (line != wxEmptyString);
+    	}while (line != wxEmptyString);
+
+        {//PUT IN THE QUEUE THE DATA THAT ISN'T PART OF THE MESSAGE
+            unsigned int i,lastcount;
+            lastcount = client->LastCount();
+            char unreadbuf[1024];
+            for (i = 0 ; i < lastcount-count;i++)
+                unreadbuf[i] = buf[i+count];
+            client->Unread(unreadbuf,i);
+        }
     	
         if ((message.GetChar(9) == '4') && (message.GetChar(10) == '1') && (message.GetChar(11) == '6'))
         {	// HTTP/1.1 416 Requested Range Not Satisfiable
