@@ -78,7 +78,7 @@ mApplication::mApplication(): m_condAllDone(m_mutexAllDone)
 
 mApplication::~mApplication()
 {
-    m_mutexAllDone.Unlock(); // the mutex must be unlocked before being destroyed
+
 }
 
 bool mApplication::OnInit()
@@ -148,6 +148,8 @@ bool mApplication::OnInit()
 
 int mApplication::OnExit()
 {
+     // the mutex must be unlocked before being destroyed
+    m_mutexAllDone.Unlock();    
     delete m_server;
 //    delete m_checker;
     return 0;
@@ -819,7 +821,8 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
 
 void mMainFrame::OnNew(wxCommandEvent& event)
 {
-	NewDownload(wxEmptyString,programoptions.destination,1,wxEmptyString,wxEmptyString,wxEmptyString,FALSE,TRUE);
+	//NewDownload(wxEmptyString,programoptions.destination,1,wxEmptyString,wxEmptyString,wxEmptyString,FALSE,TRUE);
+	OnPasteURL(event);
 }
 
 void mMainFrame::OnRemove(wxCommandEvent& event)
@@ -924,7 +927,7 @@ void mMainFrame::OnStop(wxCommandEvent& event)
 void mMainFrame::OnPasteURL(wxCommandEvent& event)
 {
     wxString urltmp,destinationtmp;
-    int now = FALSE;
+    int now = TRUE;
     if (wxTheClipboard->Open())
     {
         if (wxTheClipboard->IsSupported( wxDF_TEXT ))
@@ -933,11 +936,11 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
             wxTheClipboard->GetData( data );
             urltmp = data.GetText().Strip(wxString::both);
             destinationtmp = programoptions.destination;
-            NewDownload(urltmp,destinationtmp,1,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
+            NewDownload(urltmp,destinationtmp,5,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
             
         }
         else
-            wxMessageBox(_("The clipboard is empty!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+            NewDownload(wxEmptyString,destinationtmp,5,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
         wxTheClipboard->Close();
     }
     else
@@ -1669,13 +1672,35 @@ BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)
     EVT_MENU(HIDE,  mTaskBarIcon::OnHide)
     EVT_MENU(NEW,  mTaskBarIcon::OnNew)
     EVT_MENU(CLOSE,  mTaskBarIcon::OnClose)
-    EVT_TASKBAR_LEFT_DCLICK  (mTaskBarIcon::OnLButtonDClick)
+    EVT_TASKBAR_LEFT_DOWN(mTaskBarIcon::OnLButtonClick)
+    EVT_TASKBAR_MOVE(mTaskBarIcon::OnMouseMove)
 END_EVENT_TABLE()
 
-void mTaskBarIcon::OnLButtonDClick(wxTaskBarIconEvent&)
+void mTaskBarIcon::OnLButtonClick(wxTaskBarIconEvent&)
 {
     wxCommandEvent event;
     OnHide(event);
+}
+
+void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
+{
+	wxString taskTip,temp;
+    if(!wxGetApp().downloadlist.IsEmpty())
+	{for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+	{
+		mDownloadFile *current = node->GetData();
+		temp.Printf(_("%s  Completed: %d%%  Speed: %.2f Kb/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);
+		taskTip+=temp;
+	}
+	taskTip.RemoveLast();
+      #ifdef __WXMSW__
+	SetIcon(wxICON(wxdfast_ico),taskTip);
+	#else
+	SetIcon(wxICON(wxdfast),taskTip);
+	#endif
+	}
+    else
+	SetIcon(wxICON(wxdfast),wxT("wxDfast"));
 }
 
 wxMenu *mTaskBarIcon::CreatePopupMenu()

@@ -359,7 +359,8 @@
     {
     public:
        mTaskBarIcon(){};
-       void OnLButtonDClick(wxTaskBarIconEvent&);
+       void OnLButtonClick(wxTaskBarIconEvent&);
+       void OnMouseMove(wxTaskBarIconEvent&);
        void OnClose(wxCommandEvent& event);
        void OnHide(wxCommandEvent& event);
        void OnNew(wxCommandEvent& event);
