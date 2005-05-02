@@ -835,7 +835,7 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
 		{
 			wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before remove..."));
 	    	OnStop(event);
-	    	while (currentfile->free == FALSE)
+	    	while ((currentfile->free == FALSE) || (currentfile->status == STATUS_ACTIVE))
 	    		wxYield();
 			waitbox->Update(100);
 			delete waitbox;
@@ -919,7 +919,7 @@ void mMainFrame::OnStop(wxCommandEvent& event)
 	if ((currentselection = list->GetCurrentSelection()) >= 0)
 	{
 		mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
-		if ((file->status =! STATUS_FINISHED) && (file->status != STATUS_ERROR))
+		if ((file->status != STATUS_FINISHED) && (file->status != STATUS_ERROR))
 			file->status = STATUS_STOPED;
 	}
 }
