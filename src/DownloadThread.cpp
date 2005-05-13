@@ -1,4 +1,5 @@
 #include "wxDFast.h"
+#include <iostream>
 
 int mDownloadThread::GetType()
 {
@@ -338,15 +339,60 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, long start,long en
 	return resp;
 }
 
-wxSocketClient *mDownloadThread::ConnectHTTP(long start)
+wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server,wxString port)
 {
 	wxSocketClient *client = new wxSocketClient();
     wxIPV4address address;
+	
+	address.Service(port);
+	client->Notify(FALSE);
+	
+		
+    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+
+	if (address.Hostname(server)==FALSE)
+    {
+        PrintMessage( _("\nProxy server not found.\n"),HTMLERROR);
+        client->Close();
+        delete client;
+        return NULL;
+    }
+    else
+        PrintMessage( _(" OK\n"),HTMLSERVER);
+	 
+	
+	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+	
+	PrintMessage( _("Trying to connect in '") + server + _("' ...\n"));
+    client->Connect(address,TRUE);
+	
+    if (client->IsConnected() == FALSE )
+    {
+        PrintMessage( _("Connection denied.\n"),HTMLERROR);
+        client->Close();
+        delete client;
+        return NULL;
+    }
+	else
+		PrintMessage( _("Connection proxy server success.\n"),HTMLSERVER);
+	    
+	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+
+	
+		
+	return client;
+
+
+}
+
+wxSocketClient *mDownloadThread::ConnectHTTP(long start)
+{
+	wxSocketClient *client=NULL;
     mUrlName url;
     wxFileName destination;
     wxString buffer = wxEmptyString;
-    address.Service(80);
-    client->Notify(FALSE);
+    
+    
 	
 	url.Assign(currenturl);
 	destination.Assign(downloadfile->destination);
@@ -356,14 +402,26 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
 
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 	
+	if(downloadfile->server!=wxEmptyString)
+	{	
+		
+		client = ConnectPROXY(downloadfile->proxytype,downloadfile->server,downloadfile->port);
+	
+	}
+	else
+	{
+		wxIPV4address address;
+		address.Service(80);
+		client = new wxSocketClient();
+		client->Notify(FALSE);
     PrintMessage( _("Resolving host '") + url.GetHost() + _("' ..."));
     if (address.Hostname(url.GetHost())==FALSE)
-    {
-        PrintMessage( _("\nHost not found.\n"),HTMLERROR);
-        client->Close();
-        delete client;
-        return NULL;
-    }
+		{
+			PrintMessage( _("\nHost not found.\n"),HTMLERROR);
+			client->Close();
+			delete client;
+			return NULL;
+		}
     else
         PrintMessage( _(" OK\n"),HTMLSERVER);
 
@@ -372,25 +430,28 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     PrintMessage( _("Trying to connect in '") + url.GetHost() + _("' ...\n"));
     client->Connect(address,TRUE);
     if (client->IsConnected() == FALSE )
+		{
+			PrintMessage( _("Connection denied.\n"),HTMLERROR);
+			client->Close();
+			delete client;
+			return NULL;
+		}
+	}
+    if (client)
     {
-        PrintMessage( _("Connection denied.\n"),HTMLERROR);
-        client->Close();
-        delete client;
-        return NULL;
-    }
-    
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
     
-    PrintMessage( _("Accessing server...\n\n"));
-    {
-        wxString msgserver;
-        char *dados;
-        msgserver << wxT("GET ") << url.GetDir() << url.GetFullName() << wxT(" HTTP/1.1\r\n");
-        PrintMessage( msgserver,HTMLSERVER);
-        dados = wxstr2str(msgserver);
-        client->Write(dados, strlen(dados));
-        delete dados;
-    }
+		client->Notify(FALSE);
+		PrintMessage( _("Accessing server...\n\n"));
+		{
+			wxString msgserver;
+			char *dados;
+			msgserver << downloadfile->proxyaction<<wxT(" http://") <<url.GetHost()<< url.GetDir() << url.GetFullName() << wxT(" HTTP/1.1\r\n");
+			PrintMessage( msgserver,HTMLSERVER);
+			dados = wxstr2str(msgserver);
+			client->Write(dados, strlen(dados));
+			delete dados;
+		}
     
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
     
@@ -414,7 +475,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
         wxString msgserver;
         msgserver << wxT("Pragma: no-cache\r\n");
         msgserver << wxT("Connection: close\r\n\r\n");
-        PrintMessage( msgserver,HTMLSERVER);
+		PrintMessage( msgserver,HTMLSERVER);
         dados = wxstr2str(msgserver);
         client->Write(dados, strlen(dados));
         delete dados;
@@ -445,7 +506,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     		message += line + wxT("\n");
             if (line.Mid(0,14).Lower() == wxT("content-length"))
                 line.Mid(16).ToLong(&sizetmp);
-            if (line.Mid(0,13).Lower() == wxT("accept-ranges"))
+            if (line.Mid(0,13).Lower() == wxT("accept-ranges")||line.Mid(0,13).Lower() == wxT("content-range"))
                 restart = YES;
             if (line.Mid(0,8).Lower() == wxT("location"))
             {
@@ -523,7 +584,13 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
         client->Close(); delete client;
         return NULL;
     }
-    
+  }
+  else
+  {
+	delete client;
+      return NULL;
+  }
+	    
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     return client;
@@ -654,6 +721,8 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
 
 	return client;
 }
+
+
 
 void mDownloadThread::PrintMessage(wxString str,wxString color)
 {
