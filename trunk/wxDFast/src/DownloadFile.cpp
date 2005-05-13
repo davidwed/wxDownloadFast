@@ -18,7 +18,7 @@ int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
     return 0;
 }
 
-int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments)
+int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port)
 {
 	mDownloadFile *file = new mDownloadFile();
 	file->index =  downloadlist.GetCount();
@@ -61,6 +61,23 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
 	file->free = TRUE;
 	file->criticalerror = FALSE;
 	file->split = WAIT;
+	switch(proxytype)
+	{
+	case 0:
+		file->proxytype=wxT("NOPROXY");
+		break;
+	case 1:
+		file->proxytype=wxT("HTTP");
+		break;
+	//case 2:
+	//	file->proxytype=wxT("SOCKSV4");
+	//	break;
+	default:
+		break;
+	}
+	file->proxyaction = proxyaction.Upper();
+	file->server = server;
+	file->port = port;
 	downloadlist.Append(file);    
     RegisterListItemOnDisk(file);
     return (file->index);
@@ -128,6 +145,11 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
 
     config->Write(USER_REG,file->user);
     config->Write(PASSWORD_REG,file->password);
+	
+	config->Write(PROXYTYPE_REG,file->proxytype);
+	config->Write(PROXYACTION_REG,file->proxyaction);
+	config->Write(SERVER_REG,file->server);
+	config->Write(PORT_REG,file->port);
 
     delete config;
 }
@@ -213,6 +235,11 @@ void mApplication::LoadDownloadListFromDisk()
 
         config->Read(USER_REG,&(file->user));
         config->Read(PASSWORD_REG,&(file->password));
+		config->Read(PROXYTYPE_REG,&(file->proxytype));
+		config->Read(PROXYACTION_REG,&(file->proxyaction));
+		config->Read(SERVER_REG,&(file->server));
+		config->Read(PORT_REG,&(file->port));
+		
 
         config->SetPath(BACK_DIR_REG);
     }

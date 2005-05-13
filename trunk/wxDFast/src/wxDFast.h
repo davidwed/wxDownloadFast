@@ -91,6 +91,10 @@
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
+	const wxString PROXYTYPE_REG = wxT("proxytype");
+	const wxString PROXYACTION_REG = wxT("proxyaction");
+	const wxString SERVER_REG = wxT("server");
+	const wxString PORT_REG = wxT("port");
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -218,6 +222,10 @@
         long sizecompleted[MAX_NUM_PARTS];        
         long delta_size[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
+	  wxString proxytype;
+	  wxString proxyaction;
+	  wxString server;
+	  wxString port;
     };  
     
     class mOptions
@@ -274,7 +282,7 @@
 		bool NewInstance();
 	    mDownloadList downloadlist;
 	    mDownloadThreadArray *downloadthreads;
-    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments);
+    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port);
         void RegisterListItemOnDisk(mDownloadFile *file);
         void RecreateIndex();
 		void LoadDownloadListFromDisk();
@@ -503,6 +511,7 @@
         virtual void OnExit();
         int GetType();
         long CurrentSize(wxString filepath,wxString filename);
+		wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port);
 		wxSocketClient *ConnectHTTP(long start);
 		wxSocketClient *ConnectFTP(long start);
 		int  DownloadPart(wxSocketClient *connection,long start,long end);
