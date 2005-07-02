@@ -91,10 +91,10 @@
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
-	const wxString PROXYTYPE_REG = wxT("proxytype");
-	const wxString PROXYACTION_REG = wxT("proxyaction");
-	const wxString SERVER_REG = wxT("server");
-	const wxString PORT_REG = wxT("port");
+	const wxString PROXYTYPE_REG = wxT("proxytype"); //ADDED BY GXL117
+	const wxString PROXYACTION_REG = wxT("proxyaction"); //ADDED BY GXL117
+	const wxString SERVER_REG = wxT("server"); //ADDED BY GXL117
+	const wxString PORT_REG = wxT("port"); //ADDED BY GXL117
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -214,7 +214,6 @@
         int totalspeed;
         bool criticalerror;
         int split;
-
 		bool speedpoint;
         bool finished[MAX_NUM_PARTS];
         long startpoint[MAX_NUM_PARTS];
@@ -222,10 +221,10 @@
         long sizecompleted[MAX_NUM_PARTS];        
         long delta_size[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
-	  wxString proxytype;
-	  wxString proxyaction;
-	  wxString server;
-	  wxString port;
+        wxString proxytype; //ADDED BY GXL117
+        wxString proxyaction; //ADDED BY GXL117
+        wxString server; //ADDED BY GXL117
+        wxString port; //ADDED BY GXL117
     };  
     
     class mOptions
@@ -282,7 +281,7 @@
 		bool NewInstance();
 	    mDownloadList downloadlist;
 	    mDownloadThreadArray *downloadthreads;
-    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port);
+    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port);  //CHANGED BY GXL117
         void RegisterListItemOnDisk(mDownloadFile *file);
         void RecreateIndex();
 		void LoadDownloadListFromDisk();
@@ -511,7 +510,7 @@
         virtual void OnExit();
         int GetType();
         long CurrentSize(wxString filepath,wxString filename);
-		wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port);
+		wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port); //ADDED BY GXL117
 		wxSocketClient *ConnectHTTP(long start);
 		wxSocketClient *ConnectFTP(long start);
 		int  DownloadPart(wxSocketClient *connection,long start,long end);

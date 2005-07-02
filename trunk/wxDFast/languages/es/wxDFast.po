@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2005-05-01 17:32-0300\n"
+"PO-Revision-Date: 2005-07-01 21:57-0300\n"
 "Last-Translator: Max Velasques\n"
 "Language-Team: Max Velasques, Carlos Garces <max_mv@yahoo.com.br>\n"
 "MIME-Version: 1.0\n"
@@ -28,24 +28,24 @@ msgstr ""
 #: /home/max/workspace/wxDFast/src/BoxNew.cpp:29
 #: /home/max/workspace/wxDFast/src/BoxNew.cpp:39
 #: /home/max/workspace/wxDFast/src/BoxNew.cpp:44
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:812
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:947
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:989
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1225
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1282
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1287
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1314
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1342
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:831
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:966
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1008
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1279
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1336
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1341
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1368
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1396
 msgid "Error..."
 msgstr "Error..."
 
 #: /home/max/workspace/wxDFast/src/BoxFind.cpp:95
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1287
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1341
 msgid "File not found."
 msgstr "Archivo no encontrado"
 
 #: /home/max/workspace/wxDFast/src/BoxFind.cpp:95
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1065
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1086
 msgid "Information..."
 msgstr "Información"
 
@@ -63,73 +63,68 @@ msgstr "No puedo dividir el fichero en tantas partes!"
 
 #: /home/max/workspace/wxDFast/src/BoxNew.cpp:58
 #: /home/max/workspace/wxDFast/src/BoxOptions.cpp:31
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1188
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1295
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1242
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1349
 msgid "Select the directory:"
 msgstr "Selecione un directorio"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:79
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:80
 msgid "This protocol isn't supported.\n"
 msgstr "Este protocolo no esta soportado.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:123
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:124
 msgid "New attempt in "
 msgstr "Nueva tentativa en"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:123
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:124
 msgid " seconds\n"
 msgstr " segundos\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:137
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:138
 msgid "Attempt "
 msgstr "Tentativa "
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:137
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:138
 msgid " of "
 msgstr " de "
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:137
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:604
-msgid " ...\n"
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:154
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:155
 msgid "Canceled.\n"
 msgstr "Cancelado.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:176
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:177
 msgid "Critical error!! The start point is bigger that the end point!!\n"
 msgstr "Erro crítico!! El punto de inicio es mayor que el punto de fin!!\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:198
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:199
 msgid "Error establishing input stream.\n"
 msgstr "Error estableciendo  canal de entrada.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:215
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:216
 msgid "Copying file...\n"
 msgstr "Copiando archivo...\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:247
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:248
 msgid "Error copying file.\n"
 msgstr "Error copiando archivo.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:257
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:258
 msgid "Error writing file.\n"
 msgstr "Error escribiendo archivo.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:299
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:300
 msgid "Finished this piece\n"
 msgstr "Parte concluida\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:306
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:307
 msgid "Waiting for the others pieces...\n"
 msgstr "Esperando a las otras partes...\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:314
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:315
 msgid "Putting all the pieces together...\n"
 msgstr "Colocando todas las partes juntas...\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:318
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:319
 msgid ""
 "Error joining the pieces.\n"
 "Try restart the download.\n"
@@ -137,31 +132,50 @@ msgstr ""
 "Error juntando las partes.\n"
 "Intente reiniciar la descarga.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:324
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:325
 msgid "Verifying MD5 of the file...\n"
 msgstr "Verificando el codigo MD5 del archivo...\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:328
-msgid "MD5 = "
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:330
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:331
 msgid "Finished\n"
 msgstr "Concluído\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:359
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:551
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:354
+msgid ""
+"\n"
+"Proxy server not found.\n"
+msgstr ""
+
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:360
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:414
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:615
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:629
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:651
+msgid " OK\n"
+msgstr ""
+
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:364
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:418
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:619
+msgid "Trying to connect in '"
+msgstr "Intentando conectarse a '"
+
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:369
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:422
+msgid "Connection denied.\n"
+msgstr "Conexion denegada.\n"
+
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:375
+msgid "Connection proxy server success.\n"
+msgstr ""
+
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:405
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:606
 msgid "Resolving host '"
 msgstr "Resolviendo el servidor '"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:359
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:551
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:564
-msgid "' ..."
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:362
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:554
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:408
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:609
 msgid ""
 "\n"
 "Host not found.\n"
@@ -169,27 +183,7 @@ msgstr ""
 "\n"
 "Servidor no encontrado.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:368
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:560
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:574
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:596
-msgid " OK\n"
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:372
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:564
-msgid "Trying to connect in '"
-msgstr "Intentando conectarse a '"
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:372
-msgid "' ...\n"
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:376
-msgid "Connection denied.\n"
-msgstr "Conexion denegada.\n"
-
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:384
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:433
 msgid ""
 "Accessing server...\n"
 "\n"
@@ -197,27 +191,27 @@ msgstr ""
 "Accediendo a servidor...\n"
 "\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:472
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:521
 msgid "The file already was downloaded.\n"
 msgstr "El archivo ya a sido descargado.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:476
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:525
 msgid "Redirecting to "
 msgstr "Redirecionando a"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:483
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:532
 msgid "Error requesting file.\n"
 msgstr "Error pidiendo el archivo.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:512
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:561
 msgid "This server don't support restart.\n"
 msgstr "Este servidor no soporta el reinicio.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:522
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:571
 msgid "The Server stayed a lot of time without answering.\n"
 msgstr "El servidor estuvo mucho tiempo sin responder.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:568
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:623
 msgid ""
 "\n"
 "Connection denied.\n"
@@ -225,15 +219,15 @@ msgstr ""
 "\n"
 "Conexion denegada.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:578
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:633
 msgid "Waiting for welcome message.\n"
 msgstr "Esperando mensaje de bienvenida.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:583
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:638
 msgid "Verifying if the server supports restarts..."
 msgstr "Comprobando si el servidor soporta reinicio..."
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:589
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:644
 msgid ""
 "\n"
 "This server don't support restart.\n"
@@ -241,35 +235,35 @@ msgstr ""
 "\n"
 "Este servidor no soporta reinicios.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:604
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:659
 msgid "Changing to directory "
 msgstr "Cambiando de directorio "
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:607
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:662
 msgid "Invalid directory.\n"
 msgstr "Diretório no válido.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:616
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:671
 msgid "Changing to binary mode...\n"
 msgstr "Cambiando a modo binario...\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:619
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:674
 msgid "Impossible to change to binary mode.\n"
 msgstr "Imposible cambiar a modo binario.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:628
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:683
 msgid "Verifying the size of the "
 msgstr "Verificando el tamaño de"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:631
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:686
 msgid "Impossible to return the file size.\n"
 msgstr "Imposible recuperar el tamaño del archivo.\n"
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:638
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:693
 msgid "File size: "
 msgstr "Tamaño del archivo: "
 
-#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:644
+#: /home/max/workspace/wxDFast/src/DownloadThread.cpp:699
 msgid "Requesting file...\n"
 msgstr "Pidiendo archivo...\n"
 
@@ -282,43 +276,43 @@ msgid "   [ No  ]"
 msgstr "   [ No ]"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:325
-#: /tmp/dummy:12
-#: /tmp/dummy:52
+#: /tmp/dummy:19
+#: /tmp/dummy:60
 msgid "Start Download"
 msgstr "Iniciar Descarga"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:326
-#: /tmp/dummy:53
+#: /tmp/dummy:61
 msgid "Stop Download"
 msgstr "Parar Descarga"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:327
-#: /tmp/dummy:51
+#: /tmp/dummy:59
 msgid "Remove Download"
 msgstr "Remover Descarga"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:328
-#: /tmp/dummy:63
+#: /tmp/dummy:71
 msgid "Properties of Download"
 msgstr "Propriedades de la Descarga"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:329
-#: /tmp/dummy:66
+#: /tmp/dummy:74
 msgid "Download File Again"
 msgstr "Bajar nuevamente el archivo"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:330
-#: /tmp/dummy:64
+#: /tmp/dummy:72
 msgid "Move File"
 msgstr "Mover Archivo"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:331
-#: /tmp/dummy:65
+#: /tmp/dummy:73
 msgid "Check Integrity"
 msgstr "Verificar Integridad"
 
 #: /home/max/workspace/wxDFast/src/wxDFast.cpp:332
-#: /tmp/dummy:57
+#: /tmp/dummy:65
 msgid "Copy URL"
 msgstr "Copiar URL"
 
@@ -326,212 +320,216 @@ msgstr "Copiar URL"
 msgid "Piece "
 msgstr "Parte"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:583
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:591
 msgid "Shutdown the computer..."
 msgstr "Apagar el ordenador..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:583
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:591
 msgid "The computer will be shutdown in seconds..."
 msgstr "Su ordenador será apagado en segundos..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:594
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:602
 msgid "Disconnecting from the internet..."
 msgstr "Desconectando de internet.."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:594
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:602
 msgid "The internet connection will be closed in seconds..."
 msgstr "La conexión a internet sera cerrada en segundos..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:617
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:625
 msgid "Restart"
 msgstr "Reiniciar"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:620
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:698
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:628
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:706
 msgid "Filename"
 msgstr "Nombre de archivo"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:623
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:700
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:713
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:631
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:708
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:721
 msgid "Size"
 msgstr "Tamaño"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:626
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:634
 msgid "Completed"
 msgstr "Concluído"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:629
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:637
 msgid "Percentual"
 msgstr "Porcentual"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:632
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:640
 msgid "Time Passed"
 msgstr "Tiempo trascurrido"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:635
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:643
 msgid "Remaining"
 msgstr "Restante"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:638
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:714
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:646
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:722
 msgid "Speed"
 msgstr "Velocidad"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:641
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:649
 msgid "Attempts"
 msgstr "Tentativas"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:644
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:652
 msgid "URL"
 msgstr "URL"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:702
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:718
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:710
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:726
 msgid "Finished"
 msgstr "Terminado"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:712
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:720
 msgid "Name"
 msgstr "Nombre"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:715
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:723
 msgid "Time"
 msgstr "Tiempo"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:716
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:724
 msgid "Destination"
 msgstr "Destino"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:717
-#: /tmp/dummy:78
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:725
+#: /tmp/dummy:86
 msgid "Start"
 msgstr "Iniciar"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:719
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:727
 msgid "MD5"
 msgstr "MD5"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:720
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:728
 msgid "URLs"
 msgstr "URLs"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:721
-#: /tmp/dummy:11
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:729
+#: /tmp/dummy:23
 msgid "Comments"
 msgstr "Comentários"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:812
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:831
 msgid "This file already is being downloaded!"
 msgstr "El archivo ya esta siendo bajado"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:836
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:855
 msgid "Stopping the download..."
 msgstr "Parando la descarga..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:836
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:855
 msgid "Stopping the current download before remove..."
 msgstr "Parando la descarga actual antes de eliminarla..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:845
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:864
 msgid "Do you want remove the item from the list and the file from the disk?"
 msgstr "Desea eliminar el elemento de la lista y del disco duro?"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:845
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:864
 msgid "Remove..."
 msgstr "Remover..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:896
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:915
 msgid "Error creating thread!"
 msgstr "Error creando thread!"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:904
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:923
 msgid "Error starting thread!"
 msgstr "Error iniciando thread!"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:947
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:989
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:966
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1008
 msgid "It was impossible to open the clipboard!"
 msgstr "Es imposible abrir el portapapeles!"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:996
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1015
 msgid "Find file..."
 msgstr "Localizar archivo..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1043
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1062
 msgid "(Default)"
 msgstr "(Por Defecto)"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1044
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1063
 msgid "English"
 msgstr "Inglés"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1045
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1064
 msgid "Portuguese(Brazil)"
 msgstr "Portugués(Brasil)"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1046
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1065
 msgid "Italian"
 msgstr "Italiano"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1047
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1066
 msgid "Spanish"
 msgstr "Español"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1050
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1067
+msgid "Chinese"
+msgstr ""
+
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1070
 msgid "Please select the language:"
 msgstr "Por favor selecione un idioma:"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1050
-#: /tmp/dummy:61
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1070
+#: /tmp/dummy:69
 msgid "Language"
 msgstr "Idioma"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1064
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1085
 msgid "You need restart the program to use the new language!"
 msgstr "Necesita reiniciar el programa para usar un nuevo idioma!"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1080
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1101
 msgid "Download Properties"
 msgstr "Propiedades de la descarga"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1216
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1270
 msgid "Moving..."
 msgstr "Moviendo..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1216
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1270
 msgid "Moving file..."
 msgstr "Moviendo archivo..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1225
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1279
 msgid "Error moving file."
 msgstr "Error moviendo archivo."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1230
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1284
 msgid ""
 "The file isn't in the path that it was saved initially.\n"
 "Do you want to change only the old path for the current one?"
 msgstr ""
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1231
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1285
 msgid "Continue..."
 msgstr "Continuar..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1275
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1329
 msgid "The file was verified successfully."
 msgstr "Archivo verificado correctamente"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1275
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1312
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1337
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1329
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1366
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1391
 msgid "Success..."
 msgstr "Correcto..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1279
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1333
 msgid "The MD5 calculated previously is different of the current one."
 msgstr "El MD5 calculado anteriormente és diferente del actual."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1280
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1334
 msgid ""
 "\n"
 "Old MD5 =\t\t"
@@ -539,7 +537,7 @@ msgstr ""
 "\n"
 "MD5 anterior =\t\t"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1281
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1335
 msgid ""
 "\n"
 "Current MD5 =\t"
@@ -547,19 +545,19 @@ msgstr ""
 "\n"
 "MD5 actual =\t"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1312
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1366
 msgid "The configurations were exported successfully."
 msgstr "Las configuraciones fueron exportadas con exito."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1314
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1368
 msgid "Error exporting configurations."
 msgstr "Error exportando configuraciones"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1321
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1375
 msgid "Select the file..."
 msgstr "Selecione un archivo"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1337
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1391
 msgid ""
 "The configurations were imported successfully.\n"
 "The program will be restated now to the alterations have effect."
@@ -567,71 +565,68 @@ msgstr ""
 "La configuración ha sido importada con exito.\n"
 "El programa debe ser reiniciado para que las modificaciones tengan efecto."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1342
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1396
 msgid "Error importing configurations."
 msgstr "Error importando configuraciones."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1351
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1362
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1405
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1416
 msgid "Command :\t"
 msgstr "Comando :\t"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1351
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1405
 msgid "Shutdown Command..."
 msgstr "Comando para apagar..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1362
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1416
 msgid "Disconnect Command..."
 msgstr "Comando para desconectar"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1469
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1523
 msgid ""
 "\n"
 "\n"
-"Created by Max Velasques"
+"Created by Max Velasques\n"
+"Revised by Gxl117"
 msgstr ""
 "\n"
 "\n"
-"Creado por Max Velasques"
+"Creado por Max Velasques\n"
+"Revisado por Gxl117"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1471
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1525
 msgid "About..."
 msgstr "Acerca de..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1485
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1539
 msgid "Do you want to close the program?"
 msgstr "Desea cerrar el programa?"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1485
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1539
 msgid "Close..."
 msgstr "Cerrar..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1515
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1569
 msgid "Stopping the downloads..."
 msgstr "Parando las descargas..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1515
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1569
 msgid "Stopping the downloads before exit..."
 msgstr "Parando las descargas antes de salir..."
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1692
-#, c-format
-msgid "%s  Completed: %d%%  Speed: %.2f Kb/s\n"
-msgstr ""
-
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1711
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1765
 msgid "Hide the main window"
 msgstr "Esconder la ventana proncipal"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1713
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1767
 msgid "Show the main window"
 msgstr "Mostar la ventana principal"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1714
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1768
 msgid "New download"
 msgstr "Nueva descarga"
 
-#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1715
+#: /home/max/workspace/wxDFast/src/wxDFast.cpp:1769
 msgid "Close the program"
 msgstr "Cerrar el programa"
 
@@ -645,11 +640,11 @@ msgstr "Direccion:"
 
 #: /tmp/dummy:3
 #: /tmp/dummy:5
-#: /tmp/dummy:30
-#: /tmp/dummy:40
-#: /tmp/dummy:42
-#: /tmp/dummy:44
-#: /tmp/dummy:46
+#: /tmp/dummy:38
+#: /tmp/dummy:48
+#: /tmp/dummy:50
+#: /tmp/dummy:52
+#: /tmp/dummy:54
 msgid "..."
 msgstr ""
 
@@ -677,226 +672,258 @@ msgstr "Partir archivo"
 msgid "Split file in how many pieces?"
 msgstr "¿Separar en cuantas partes?"
 
+#: /tmp/dummy:11
+msgid "Set proxy"
+msgstr ""
+
+#: /tmp/dummy:12
+msgid "NOPROXY"
+msgstr ""
+
 #: /tmp/dummy:13
+msgid "HTTP"
+msgstr ""
+
+#: /tmp/dummy:14
+msgid "Http action"
+msgstr ""
+
+#: /tmp/dummy:15
+msgid "GET"
+msgstr ""
+
+#: /tmp/dummy:16
+msgid "CONNECT"
+msgstr ""
+
+#: /tmp/dummy:17
+msgid "Server: "
+msgstr ""
+
+#: /tmp/dummy:18
+msgid "Port: "
+msgstr ""
+
+#: /tmp/dummy:20
 msgid "Manual"
 msgstr "Manual"
 
-#: /tmp/dummy:14
+#: /tmp/dummy:21
 msgid "Now"
 msgstr "Ahora"
 
-#: /tmp/dummy:15
+#: /tmp/dummy:22
 msgid "Schedule"
 msgstr "Programar"
 
-#: /tmp/dummy:16
+#: /tmp/dummy:24
 msgid "&Ok"
 msgstr "&Si"
 
-#: /tmp/dummy:17
-#: /tmp/dummy:48
+#: /tmp/dummy:25
+#: /tmp/dummy:56
 msgid "&Cancel"
 msgstr "&Cancelar"
 
-#: /tmp/dummy:18
-#: /tmp/dummy:73
+#: /tmp/dummy:26
+#: /tmp/dummy:81
 msgid "Options"
 msgstr "Opciones"
 
-#: /tmp/dummy:19
+#: /tmp/dummy:27
 msgid "General"
 msgstr "General"
 
-#: /tmp/dummy:20
+#: /tmp/dummy:28
 msgid "Number of attempts:"
 msgstr "Número de tentativas:"
 
-#: /tmp/dummy:21
+#: /tmp/dummy:29
 msgid "Number of attempts"
 msgstr "Número de tentativas"
 
-#: /tmp/dummy:22
+#: /tmp/dummy:30
 msgid "Time between the attempts in seconds:"
 msgstr "Tiempo entre las tentativas, en segundos"
 
-#: /tmp/dummy:23
+#: /tmp/dummy:31
 msgid "Number of simultaneous downloads:"
 msgstr "Número de descarga simultáneas:"
 
-#: /tmp/dummy:24
+#: /tmp/dummy:32
 msgid "Always shutdown when finish all downloads"
 msgstr "Apagar cuando se terminen las descargas"
 
-#: /tmp/dummy:25
+#: /tmp/dummy:33
 msgid "Shutdown command"
 msgstr "Comando para apagar"
 
-#: /tmp/dummy:26
+#: /tmp/dummy:34
 msgid "Always disconnect when finish all downloads"
 msgstr "Desconectar cuando se terminen todas las descargas"
 
-#: /tmp/dummy:27
+#: /tmp/dummy:35
 msgid "Disconnect command"
 msgstr "Comando para desconectar"
 
-#: /tmp/dummy:28
+#: /tmp/dummy:36
 msgid "Show dialog box when close program"
 msgstr "Mostar un cuadro de dialogo cuando se cierre el programa"
 
-#: /tmp/dummy:29
+#: /tmp/dummy:37
 msgid "Default destination:"
 msgstr "Destino por defecto"
 
-#: /tmp/dummy:31
+#: /tmp/dummy:39
 msgid "Refresh rate of the download list (millisecs):"
 msgstr "Tasa de actualizacion de la lista de descargas (miliseg):"
 
-#: /tmp/dummy:32
+#: /tmp/dummy:40
 msgid "Graph"
 msgstr "Gráfico"
 
-#: /tmp/dummy:33
+#: /tmp/dummy:41
 msgid "Save how many points to graph?"
 msgstr "¿Cuantos puntos quiere guardar del gráfico?"
 
-#: /tmp/dummy:34
+#: /tmp/dummy:42
 msgid "Graph refresh rate (millisecs):"
 msgstr "Tasa de actualizacion del grafico (miliseg):"
 
-#: /tmp/dummy:35
+#: /tmp/dummy:43
 msgid "Graph maximum value (kb/s):"
 msgstr "Valor mínimo del gráfico (kb/s):"
 
-#: /tmp/dummy:36
+#: /tmp/dummy:44
 msgid "The text area Width (pixels):"
 msgstr "Ancho del área de texto (pixels)"
 
-#: /tmp/dummy:37
+#: /tmp/dummy:45
 msgid "Text font size (points):"
 msgstr "Tamaño de la fuente de texto:"
 
-#: /tmp/dummy:38
+#: /tmp/dummy:46
 msgid "Main line width:"
 msgstr "Ancho de la linea principal:"
 
-#: /tmp/dummy:39
+#: /tmp/dummy:47
 msgid "Background colour:"
 msgstr "Color de fonto:"
 
-#: /tmp/dummy:41
+#: /tmp/dummy:49
 msgid "Graph grid colour:"
 msgstr "Color del grid del gráfico:"
 
-#: /tmp/dummy:43
+#: /tmp/dummy:51
 msgid "Main line colour:"
 msgstr "Color de la línea principal:"
 
-#: /tmp/dummy:45
+#: /tmp/dummy:53
 msgid "Speed font colour:"
 msgstr "Color del indicador de velocidad:"
 
-#: /tmp/dummy:47
+#: /tmp/dummy:55
 msgid "&Save"
 msgstr "&Guardar"
 
-#: /tmp/dummy:49
+#: /tmp/dummy:57
 msgid "&File"
 msgstr "&Archivo"
 
-#: /tmp/dummy:50
+#: /tmp/dummy:58
 msgid "New Download"
 msgstr "Nueva Descarga"
 
-#: /tmp/dummy:54
+#: /tmp/dummy:62
 msgid "Exit"
 msgstr "Salir"
 
-#: /tmp/dummy:55
+#: /tmp/dummy:63
 msgid "&Edit"
 msgstr "&Editar"
 
-#: /tmp/dummy:56
+#: /tmp/dummy:64
 msgid "Paste URL"
 msgstr "Pegar URL"
 
-#: /tmp/dummy:58
+#: /tmp/dummy:66
 msgid "Find Download"
 msgstr "Localizar Decarga"
 
-#: /tmp/dummy:59
+#: /tmp/dummy:67
 msgid "&View"
 msgstr "&Ver"
 
-#: /tmp/dummy:60
+#: /tmp/dummy:68
 msgid "Show/Hide Details"
 msgstr "Mostrar/Esconder Detalles"
 
-#: /tmp/dummy:62
+#: /tmp/dummy:70
 msgid "&Tools"
 msgstr "&Herramentas"
 
-#: /tmp/dummy:67
+#: /tmp/dummy:75
 msgid "Export Configurations"
 msgstr "Exportar Configuraciones"
 
-#: /tmp/dummy:68
+#: /tmp/dummy:76
 msgid "Import Configurations"
 msgstr "Importar Configuraciones"
 
-#: /tmp/dummy:69
+#: /tmp/dummy:77
 msgid "Shutdown when finished"
 msgstr "Apagar cuando termine"
 
-#: /tmp/dummy:70
-#: /tmp/dummy:72
+#: /tmp/dummy:78
+#: /tmp/dummy:80
 msgid "This option is only valid in this session of the program"
 msgstr "Esta opcion es solo válida en esta sesion del programa"
 
-#: /tmp/dummy:71
+#: /tmp/dummy:79
 msgid "Disconnect when finished"
 msgstr "Desconectar cuando termine"
 
-#: /tmp/dummy:74
+#: /tmp/dummy:82
 msgid "&Help"
 msgstr "A&yuda"
 
-#: /tmp/dummy:75
+#: /tmp/dummy:83
 msgid "About"
 msgstr "Acerca de"
 
-#: /tmp/dummy:76
+#: /tmp/dummy:84
 msgid "New"
 msgstr "Nuevo"
 
-#: /tmp/dummy:77
+#: /tmp/dummy:85
 msgid "Remove"
 msgstr "Eliminar"
 
-#: /tmp/dummy:79
+#: /tmp/dummy:87
 msgid "Stop"
 msgstr "Parar"
 
-#: /tmp/dummy:80
+#: /tmp/dummy:88
 msgid "Up"
 msgstr "Arriba"
 
-#: /tmp/dummy:81
+#: /tmp/dummy:89
 msgid "Down"
 msgstr "Abajo"
 
-#: /tmp/dummy:82
+#: /tmp/dummy:90
 msgid "Properties"
 msgstr "Propriedades"
 
-#: /tmp/dummy:83
+#: /tmp/dummy:91
 msgid "Close"
 msgstr "Cerrar"
 
-#: /tmp/dummy:84
+#: /tmp/dummy:92
 msgid "Downloads in Progress"
 msgstr "Descarga en curso"
 
-#: /tmp/dummy:85
+#: /tmp/dummy:93
 msgid "Finished Downloads"
 msgstr "Descargas Terminadas"
 

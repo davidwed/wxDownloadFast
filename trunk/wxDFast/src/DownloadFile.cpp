@@ -18,7 +18,7 @@ int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
     return 0;
 }
 
-int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port)
+int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port) //CHANGED BY GXL117
 {
 	mDownloadFile *file = new mDownloadFile();
 	file->index =  downloadlist.GetCount();
@@ -61,7 +61,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
 	file->free = TRUE;
 	file->criticalerror = FALSE;
 	file->split = WAIT;
-	switch(proxytype)
+	switch(proxytype) //ADDED BY GXL117 - FROM HERE
 	{
 	case 0:
 		file->proxytype=wxT("NOPROXY");
@@ -77,7 +77,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
 	}
 	file->proxyaction = proxyaction.Upper();
 	file->server = server;
-	file->port = port;
+	file->port = port; //ADDED BY GXL117 - UNTIL HERE
 	downloadlist.Append(file);    
     RegisterListItemOnDisk(file);
     return (file->index);
@@ -146,10 +146,10 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
     config->Write(USER_REG,file->user);
     config->Write(PASSWORD_REG,file->password);
 	
-	config->Write(PROXYTYPE_REG,file->proxytype);
-	config->Write(PROXYACTION_REG,file->proxyaction);
-	config->Write(SERVER_REG,file->server);
-	config->Write(PORT_REG,file->port);
+	config->Write(PROXYTYPE_REG,file->proxytype); //ADDED BY GXL117
+	config->Write(PROXYACTION_REG,file->proxyaction); //ADDED BY GXL117
+	config->Write(SERVER_REG,file->server); //ADDED BY GXL117
+	config->Write(PORT_REG,file->port); //ADDED BY GXL117
 
     delete config;
 }
@@ -235,11 +235,10 @@ void mApplication::LoadDownloadListFromDisk()
 
         config->Read(USER_REG,&(file->user));
         config->Read(PASSWORD_REG,&(file->password));
-		config->Read(PROXYTYPE_REG,&(file->proxytype));
-		config->Read(PROXYACTION_REG,&(file->proxyaction));
-		config->Read(SERVER_REG,&(file->server));
-		config->Read(PORT_REG,&(file->port));
-		
+		config->Read(PROXYTYPE_REG,&(file->proxytype)); //ADDED BY GXL117
+		config->Read(PROXYACTION_REG,&(file->proxyaction)); //ADDED BY GXL117
+		config->Read(SERVER_REG,&(file->server)); //ADDED BY GXL117
+		config->Read(PORT_REG,&(file->port)); //ADDED BY GXL117
 
         config->SetPath(BACK_DIR_REG);
     }

@@ -518,13 +518,13 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 		        	XRCCTRL(*(this), "messages",wxHtmlWindow)->SetPage(wxEmptyString);
 		        	XRCCTRL(*(this), "messages",wxHtmlWindow)->AppendToPage(current->messages[treeindex]);
 				
-				{
-				int x,y,xx,yy;	
-				XRCCTRL(*(this), "messages",wxHtmlWindow)->GetScrollPixelsPerUnit(&x,&y);
-				XRCCTRL(*(this), "messages",wxHtmlWindow)->GetVirtualSize(&xx,&yy);
-				xx/=x; yy/=y;
-				XRCCTRL(*(this), "messages",wxHtmlWindow)->Scroll(-1,yy);
-				}
+    				{//ADDED BY GXL117
+			    	    int x,y,xx,yy;	
+			        	XRCCTRL(*(this), "messages",wxHtmlWindow)->GetScrollPixelsPerUnit(&x,&y);
+			        	XRCCTRL(*(this), "messages",wxHtmlWindow)->GetVirtualSize(&xx,&yy);
+			        	xx/=x; yy/=y;
+			        	XRCCTRL(*(this), "messages",wxHtmlWindow)->Scroll(-1,yy);
+			    	}
 	        	}
 
 	        	#else
@@ -769,11 +769,11 @@ void mMainFrame::GenerateFinishedList()
 bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show)
 {
     mBoxNew dlg;
-    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments,*edproxyserver,*edproxyport;
+    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments,*edproxyserver,*edproxyport; //CHANGED BY GXL117
     wxSpinCtrl *spinsplit;
     wxRadioButton *optnow;
-	wxRadioBox *edproxyaction;
-	wxChoice *edproxytype;
+	wxRadioBox *edproxyaction; //ADDED BY GXL117
+	wxChoice *edproxytype; //ADDED BY GXL117
     int RETURN;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
 
@@ -784,15 +784,15 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     edtcomments = XRCCTRL(dlg, "edtcomments",wxTextCtrl);
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
-	edproxyserver = XRCCTRL(dlg,"server",wxTextCtrl);
-	edproxyport = XRCCTRL(dlg,"port",wxTextCtrl);
-	edproxyaction = XRCCTRL(dlg,"httpaction",wxRadioBox);
-	edproxytype = XRCCTRL(dlg,"proxytype",wxChoice);
+	edproxyserver = XRCCTRL(dlg,"server",wxTextCtrl); //ADDED BY GXL117
+	edproxyport = XRCCTRL(dlg,"port",wxTextCtrl); //ADDED BY GXL117
+	edproxyaction = XRCCTRL(dlg,"httpaction",wxRadioBox); //ADDED BY GXL117
+	edproxytype = XRCCTRL(dlg,"proxytype",wxChoice); //ADDED BY GXL117
 
-	edproxytype->Select(0);
-	edproxyaction->SetSelection(0);
-	edproxyserver->SetValue(wxEmptyString);
-	edproxyport->SetValue(wxEmptyString);
+	edproxytype->Select(0); //ADDED BY GXL117
+	edproxyaction->SetSelection(0); //ADDED BY GXL117
+	edproxyserver->SetValue(wxEmptyString); //ADDED BY GXL117
+	edproxyport->SetValue(wxEmptyString); //ADDED BY GXL117
 	
     edturl->SetValue(url);
     edtdestination->SetValue(destination);
@@ -823,7 +823,7 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     	destinationtmp.Assign(edtdestination->GetValue());
     	if (!wxGetApp().FindDownloadFile(urltmp.GetFullName()))
     	{
-	    	index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(), edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),edproxytype->GetSelection(),edproxyaction->GetStringSelection(),edproxyserver->GetValue().Trim(),edproxyport->GetValue().Trim());
+	    	index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(), edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),edproxytype->GetSelection(),edproxyaction->GetStringSelection(),edproxyserver->GetValue().Trim(),edproxyport->GetValue().Trim());  //CHANGED BY GXL117
 	    	XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(wxGetApp().downloadlist.Item(index)->GetData(),-1);
     	}
     	else
@@ -1064,7 +1064,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         _("Portuguese(Brazil)"),
         _("Italian"),
         _("Spanish"),
-	_("Chinese")
+        _("Chinese")  //ADDED BY GXL117
     };
 
     int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"), 
@@ -1079,7 +1079,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
             case 2 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
             case 3 : langvalue = wxLANGUAGE_ITALIAN; break;
             case 4 : langvalue = wxLANGUAGE_SPANISH; break;
-	      case 5 : langvalue = wxLANGUAGE_CHINESE_SIMPLIFIED; break;
+            case 5 : langvalue = wxLANGUAGE_CHINESE_SIMPLIFIED; break;  //ADDED BY GXL117
         }
         wxGetApp().Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
         wxMessageBox(_("You need restart the program to use the new language!"),
@@ -1117,7 +1117,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 		XRCCTRL(dlg, "optmanual",wxRadioButton)->Enable(FALSE);
 		XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
 		XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
-		XRCCTRL(dlg, "server",wxTextCtrl)->SetValue(currentfile->server);
+		XRCCTRL(dlg, "server",wxTextCtrl)->SetValue(currentfile->server);  //ADDED BY GXL117 - FROM HERE
 		XRCCTRL(dlg, "port",wxTextCtrl)->SetValue(currentfile->port);
 		
 		if(currentfile->proxytype == wxT("NOPROXY"))
@@ -1133,7 +1133,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 			//	XRCCTRL(dlg, "proxytype",wxChoice)->Select(2);
 		
 		if(currentfile->proxytype == wxT("HTTP")&&currentfile->proxyaction!=wxT("GET"))
-			XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(1);
+			XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(1);       //ADDED BY GXL117 - UNTIL HERE
 			
 		mUrlName urltmp(currentfile->urllist);		
 		oldname = urltmp.GetFullName();
@@ -1144,11 +1144,11 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 			XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetEditable(FALSE);
 			XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetEditable(FALSE);
 			XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetEditable(FALSE);
-			XRCCTRL(dlg, "proxytype",wxChoice)->Enable(FALSE);
-			XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(0,FALSE);
-			XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(1,FALSE);
-			XRCCTRL(dlg, "server",wxTextCtrl)->SetEditable(FALSE);
-			XRCCTRL(dlg, "port",wxTextCtrl)->SetEditable(FALSE);
+			XRCCTRL(dlg, "proxytype",wxChoice)->Enable(FALSE); //ADDED BY GXL117
+			XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(0,FALSE); //ADDED BY GXL117
+			XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(1,FALSE); //ADDED BY GXL117
+			XRCCTRL(dlg, "server",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
+			XRCCTRL(dlg, "port",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
 		}
 		XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 			
@@ -1208,15 +1208,15 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
 
         password = wxEmptyString;
         config->Read(PASSWORD_REG,&password);
-		wxString proxytype= wxEmptyString;
-		wxString proxyaction= wxEmptyString;
-		wxString server= wxEmptyString;
-		wxString port= wxEmptyString;
-	config->Read(PROXYTYPE_REG,proxytype);
-	config->Read(PROXYACTION_REG,proxyaction);
-	config->Read(SERVER_REG,server);
-	config->Read(PORT_REG,port);
-		
+
+		wxString proxytype = wxEmptyString; //ADDED BY GXL117
+		wxString proxyaction = wxEmptyString; //ADDED BY GXL117
+		wxString server = wxEmptyString; //ADDED BY GXL117
+		wxString port = wxEmptyString; //ADDED BY GXL117
+        config->Read(PROXYTYPE_REG,proxytype); //ADDED BY GXL117
+        config->Read(PROXYACTION_REG,proxyaction); //ADDED BY GXL117
+        config->Read(SERVER_REG,server); //ADDED BY GXL117
+        config->Read(PORT_REG,port); //ADDED BY GXL117
 
         comments = wxEmptyString;
         config->Read(COMMENTS_REG,&comments);
@@ -1520,7 +1520,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxString message;
-    message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + _("\n\nCreated by Max Velasques\nRevised by Gxl117"));
+    message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + _("\n\nCreated by Max Velasques\nRevised by Gxl117")); //CHANGED BY GXL117
 
     wxMessageBox(message, _("About..."), wxOK | wxICON_INFORMATION, this);
 }
@@ -1743,7 +1743,7 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
 	{for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
 		{
 		mDownloadFile *current = node->GetData();
-		temp.Printf(wxT("%s  complete:%d%%  Speed:%.2fK/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);
+		temp.Printf(wxT("%s  complete:%d%%  Speed:%.2fK/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);  //CHANGED BY GXL117
 		taskTip+=temp;
 		}
 	taskTip.RemoveLast();
@@ -1754,7 +1754,7 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
 	#endif
 	}
     else
-	SetIcon(wxICON(wxdfast),PROGRAM_NAME);
+	SetIcon(wxICON(wxdfast),PROGRAM_NAME); //ADDED BY GXL117
 }
 
 wxMenu *mTaskBarIcon::CreatePopupMenu()
