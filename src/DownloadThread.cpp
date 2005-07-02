@@ -1,5 +1,5 @@
 #include "wxDFast.h"
-#include <iostream>
+#include <iostream> //ADDED BY GXL117
 
 int mDownloadThread::GetType()
 {
@@ -135,7 +135,7 @@ void *mDownloadThread::Entry()
 			}
 			waittime.Pause();
 			if ((downloadfile->status == STATUS_ACTIVE) && (downloadpartindex == 0))
-				PrintMessage( _("Attempt ") + int2wxstr(downloadfile->currentattempt) + _(" of ") + int2wxstr(wxGetApp().mainframe->programoptions.attempts) + _(" ...\n"));
+				PrintMessage( _("Attempt ") + int2wxstr(downloadfile->currentattempt) + _(" of ") + int2wxstr(wxGetApp().mainframe->programoptions.attempts) + wxT(" ...\n"));
 		}
 	}
 	while ((downloadfile->currentattempt <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror));
@@ -326,7 +326,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, long start,long en
 				    destination.SetFullName(downloadfile->name);
 				    wxFileName filemd5 = wxFileName(destination.GetFullPath());
 				    wxMD5 md5(filemd5);
-				    PrintMessage( _("MD5 = ") + md5.GetDigest() + wxT("\n"));
+				    PrintMessage( wxT("MD5 = ") + md5.GetDigest() + wxT("\n"));
 				    downloadfile->MD5 = md5.GetDigest();
 				    PrintMessage( _("Finished\n"));
 				}
@@ -339,14 +339,13 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, long start,long en
 	return resp;
 }
 
-wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server,wxString port)
+wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server,wxString port) //FUNCTION ADDED BY GXL117
 {
 	wxSocketClient *client = new wxSocketClient();
     wxIPV4address address;
 	
 	address.Service(port);
 	client->Notify(FALSE);
-	
 		
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
@@ -359,11 +358,10 @@ wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server
     }
     else
         PrintMessage( _(" OK\n"),HTMLSERVER);
-	 
 	
 	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 	
-	PrintMessage( _("Trying to connect in '") + server + _("' ...\n"));
+	PrintMessage( _("Trying to connect in '") + server + wxT("' ...\n"));
     client->Connect(address,TRUE);
 	
     if (client->IsConnected() == FALSE )
@@ -378,11 +376,7 @@ wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server
 	    
 	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-	
-		
 	return client;
-
-
 }
 
 wxSocketClient *mDownloadThread::ConnectHTTP(long start)
@@ -391,8 +385,6 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     mUrlName url;
     wxFileName destination;
     wxString buffer = wxEmptyString;
-    
-    
 	
 	url.Assign(currenturl);
 	destination.Assign(downloadfile->destination);
@@ -402,44 +394,40 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
 
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 	
-	if(downloadfile->server!=wxEmptyString)
-	{	
-		
+	if(downloadfile->server!=wxEmptyString) //IF-BLOCK ADDED BY GXL117
 		client = ConnectPROXY(downloadfile->proxytype,downloadfile->server,downloadfile->port);
-	
-	}
 	else
 	{
 		wxIPV4address address;
 		address.Service(80);
 		client = new wxSocketClient();
 		client->Notify(FALSE);
-    PrintMessage( _("Resolving host '") + url.GetHost() + _("' ..."));
-    if (address.Hostname(url.GetHost())==FALSE)
-		{
+        PrintMessage( _("Resolving host '") + url.GetHost() + wxT("' ..."));
+        if (address.Hostname(url.GetHost())==FALSE)
+	   	{
 			PrintMessage( _("\nHost not found.\n"),HTMLERROR);
 			client->Close();
 			delete client;
 			return NULL;
 		}
-    else
-        PrintMessage( _(" OK\n"),HTMLSERVER);
+        else
+            PrintMessage( _(" OK\n"),HTMLSERVER);
 
-	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+	    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    PrintMessage( _("Trying to connect in '") + url.GetHost() + _("' ...\n"));
-    client->Connect(address,TRUE);
-    if (client->IsConnected() == FALSE )
+        PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT("' ...\n"));
+        client->Connect(address,TRUE);
+        if (client->IsConnected() == FALSE )
 		{
-			PrintMessage( _("Connection denied.\n"),HTMLERROR);
-			client->Close();
-			delete client;
-			return NULL;
+		    PrintMessage( _("Connection denied.\n"),HTMLERROR);
+            client->Close();
+            delete client;
+            return NULL;
 		}
 	}
     if (client)
     {
-    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+        if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
     
 		client->Notify(FALSE);
 		PrintMessage( _("Accessing server...\n\n"));
@@ -615,7 +603,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
 
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 	
-    PrintMessage( _("Resolving host '") + url.GetHost() + _("' ..."));
+    PrintMessage( _("Resolving host '") + url.GetHost() + wxT("' ..."));
     if (address.Hostname(url.GetHost())==FALSE)
     {
         PrintMessage( _("\nHost not found.\n"),HTMLERROR);
@@ -628,7 +616,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
 
 	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    PrintMessage( _("Trying to connect in '") + url.GetHost() + _("' ..."));
+    PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT("' ..."));
     client->Connect(address,TRUE);
     if (client->IsConnected() == FALSE )
     {
@@ -668,7 +656,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     
 	if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
     
-    PrintMessage( _("Changing to directory ") + url.GetDir() + _(" ...\n"));
+    PrintMessage( _("Changing to directory ") + url.GetDir() + wxT(" ...\n"));
     if (!client->ChDir(url.GetDir()))
     {
         PrintMessage( _("Invalid directory.\n"),HTMLERROR);
