@@ -189,7 +189,11 @@ source:
 	rm -f $(BIN)-$(VERSION)-src.tar.gz
 	rm -rf $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)
-	cp -r languages $(BIN)-$(VERSION)
+	mkdir $(BIN)-$(VERSION)/languages
+	mkdir $(BIN)-$(VERSION)/languages/es
+	cp languages/es/wxDFast.* $(BIN)-$(VERSION)/languages/es
+	mkdir $(BIN)-$(VERSION)/languages/pt_BR
+	cp languages/pt_BR/wxDFast.* $(BIN)-$(VERSION)/languages/pt_BR
 	mkdir $(BIN)-$(VERSION)/resources
 	cp resources/*.xpm $(BIN)-$(VERSION)/resources
 	cp resources/*.ico $(BIN)-$(VERSION)/resources
