@@ -12,6 +12,7 @@ Characteristics of the Program
 ------------------------------
 * Allows to carry through download of some archives simultaneously,
   and allow to split the downloads in some lowered parts.
+* Allows to schedule a download
 * Allows to organize the archive already downloaded
 * Allows to continue one download interrupted of the point where had stopped
 * The messages sended/received for the program when connecting to servers HTTP/FTP

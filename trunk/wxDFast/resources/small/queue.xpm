@@ -1,0 +1,23 @@
+/* XPM */
+static char * queue_xpm[] = {
+"16 16 4 1",
+" 	c none",
+".	c #009900",
+"X	c #008000",
+"a	c Red",
+"       aaa      ",
+"     aaa        ",
+" X. aaa         ",
+" X..aaa         ",
+" X..aaa.        ",
+" X..aaa..       ",
+" X..aaa...      ",
+" X..aaa....     ",
+" X..aaa...X     ",
+" X..aaa..X      ",
+" X..aaa.X       ",
+" X..aaaX        ",
+" X..aaa         ",
+" XX aaa         ",
+"   aaa          ",
+" aaa            "};
