@@ -18,11 +18,12 @@ int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
     return 0;
 }
 
-int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port) //CHANGED BY GXL117
+int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled) //CHANGED BY GXL117
 {
 	mDownloadFile *file = new mDownloadFile();
 	file->index =  downloadlist.GetCount();
-	file->status = STATUS_STOPED;
+	file->scheduled = scheduled;
+    file->status = STATUS_STOPED;
 	file->restart = -1;
 	file->parts = parts;
 	file->name = url.GetFullName();
@@ -35,7 +36,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
 	file->timeremaining = 0l;
 	file->totalspeed = 0;
 	file->urllist = url.GetFullPath();
-	file->MD5 = wxEmptyString; 
+	file->MD5 = wxEmptyString;
 	file->start = wxDateTime::Now();
 	file->end = wxDateTime::Now();
 	file->currentattempt = 0;
@@ -78,7 +79,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
 	file->proxyaction = proxyaction.Upper();
 	file->server = server;
 	file->port = port; //ADDED BY GXL117 - UNTIL HERE
-	downloadlist.Append(file);    
+	downloadlist.Append(file);
     RegisterListItemOnDisk(file);
     return (file->index);
 }
@@ -95,7 +96,7 @@ void mApplication::RemoveListItemFromDisk(mDownloadFile *file)
         config->SetPath(BACK_DIR_REG);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(FINISHED_REG);
-        
+
     }
     else
     {
@@ -118,7 +119,7 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
         config->SetPath(BACK_DIR_REG);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(FINISHED_REG);
-        
+
     }
     else
     {
@@ -129,6 +130,7 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
     config->Write(NAME_REG,file->name);
     config->Write(INDEX_REG,file->index);
     config->Write(STATUS_REG,file->status);
+    config->Write(SCHEDULED_REG,file->scheduled);
     config->Write(RESTART_REG,file->restart);
     config->Write(PARTS_REG,file->parts);
     config->Write(DESTINATION_REG,file->destination);
@@ -145,7 +147,7 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
 
     config->Write(USER_REG,file->user);
     config->Write(PASSWORD_REG,file->password);
-	
+
 	config->Write(PROXYTYPE_REG,file->proxytype); //ADDED BY GXL117
 	config->Write(PROXYACTION_REG,file->proxyaction); //ADDED BY GXL117
 	config->Write(SERVER_REG,file->server); //ADDED BY GXL117
@@ -177,7 +179,7 @@ void mApplication::LoadDownloadListFromDisk()
     config->SetPath(INPROGRESS_REG);
     if (config->GetFirstGroup(name, index))
     {
-        
+
         do
         {
         	mDownloadFile *file = new mDownloadFile();
@@ -192,6 +194,7 @@ void mApplication::LoadDownloadListFromDisk()
         config->SetPath(file->name);
         config->Read(INDEX_REG,&(file->index));
         config->Read(STATUS_REG,&(file->status));
+        config->Read(SCHEDULED_REG,&(file->scheduled));
         config->Read(RESTART_REG,&(file->restart));
         config->Read(PARTS_REG,&(file->parts));
         config->Read(DESTINATION_REG,&(file->destination));
@@ -211,6 +214,10 @@ void mApplication::LoadDownloadListFromDisk()
             file->end.Set(value);
         }
         config->Read(URL1_REG,&(file->urllist));
+        if (file->status == STATUS_ACTIVE)
+            file->status = STATUS_QUEUE;
+        if (file->scheduled)
+            file->status = STATUS_SCHEDULE;
         if (file->percentual > 100)
             file->percentual = 0;
         file->timeremaining = 0;
@@ -221,10 +228,10 @@ void mApplication::LoadDownloadListFromDisk()
         file->split = WAIT;
         if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
         	file->parts = 1;
-        
+
 		for (int i =0;i<MAX_NUM_PARTS;i++)
 		{
-			
+
 			file->messages[i].Clear();
 			file->delta_size[i] = 0;
 			file->sizecompleted[i] = 0;
@@ -262,24 +269,25 @@ void mApplication::ChangeName(mDownloadFile *currentfile, wxString name, int val
         ChangeName(currentfile,name,value+1);
     }
     else
-    {    
+    {
         currentfile->name = strname;
         RegisterListItemOnDisk(currentfile);
     }
 }
 
 mDownloadFile *mApplication::FindDownloadFile(wxString str)
-{   
+{
 	for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
         if (node->GetData()->name.Lower() == str.Lower())
-        	return (node->GetData());   
+        	return (node->GetData());
     return (NULL);
 }
 
-wxString int2wxstr(long value)
+wxString int2wxstr(long value,int format)
 {
-    wxString temp;
-    temp << value;
+    wxString temp,string;
+    string << wxT("%0") << format << wxT("ld");
+    temp = temp.Format(string,value);
     return temp;
 }
 
@@ -328,7 +336,7 @@ char *wxstr2str(wxString wxstr)
     data[i] = '\0';
     return data;
 }
-    
+
 wxString str2wxstr(char *str)
 {
     wxString retorno;

@@ -19,6 +19,11 @@
                    <bitmap>small/remove.xpm</bitmap>
                 </object>
                 <object class="separator" />
+                <object class="wxMenuItem" name="menuschedule">
+                   <label>Schedule Download</label>
+                   <accel>CTRL-H</accel>
+                   <bitmap>small/schedule.xpm</bitmap>
+                </object>
                 <object class="wxMenuItem" name="menustart">
                    <label>Start Download</label>
                    <accel>CTRL-S</accel>
@@ -128,6 +133,10 @@
                 <bitmap>big/remove.xpm</bitmap>
             </object>
              <object class="separator"/>
+            <object class="tool"  name="toolschedule">
+                <label>Stop</label>
+                <bitmap>big/schedule.xpm</bitmap>
+            </object>
             <object class="tool"  name="toolstart">
                 <label>Start</label>
                 <bitmap>big/start.xpm</bitmap>
@@ -165,7 +174,7 @@
                     <style>wxNB_BOTTOM</style>
                     <usenotebooksizer>1</usenotebooksizer>
                     <object class="notebookpage">
-                    <label>Downloads in Progress</label>                 
+                    <label>Downloads in Progress</label>
                     <object class="wxPanel" name="notebookpanel01">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxBoxSizer">

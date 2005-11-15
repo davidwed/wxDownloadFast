@@ -16,6 +16,7 @@ IMPLEMENT_APP(mApplication)
 #include "../resources/small/start.xpm"
 #include "../resources/small/ok.xpm"
 #include "../resources/small/error.xpm"
+#include "../resources/small/queue.xpm"
 #include "../resources/small/schedule.xpm"
 
 wxConnectionBase *mServer::OnAcceptConnection(const wxString& topic)
@@ -104,7 +105,8 @@ bool mApplication::OnInit()
 
     wxSocketBase *dummy;
     dummy = new wxSocketBase(); //Para o socket funcionar dentro de threads*/
-    
+    dummy->SetTimeout(0);
+
     wxImage::AddHandler(new wxXPMHandler);
     wxXmlResource::Get()->InitAllHandlers();
     #ifdef RESOURCES_CPP
@@ -149,7 +151,7 @@ bool mApplication::OnInit()
 int mApplication::OnExit()
 {
      // the mutex must be unlocked before being destroyed
-    m_mutexAllDone.Unlock();    
+    m_mutexAllDone.Unlock();
     delete m_server;
 //    delete m_checker;
     return 0;
@@ -181,9 +183,26 @@ int mApplication::Configurations(int operation, wxString option,int value)
     return tmpvalue;
 }
 
+long mApplication::Configurations(int operation, wxString option,long value)
+{
+	wxString tmpvalue;
+	long returnvalue;
+	tmpvalue << value;
+    wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    config->SetPath(CONFIG_REG);
+    if (operation == WRITE)
+        config->Write(option,tmpvalue);
+    else
+        config->Read(option,&tmpvalue);
+    delete config;
+    tmpvalue.ToLong(&returnvalue);
+    return returnvalue;
+}
+
 BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menunew"),  mMainFrame::OnNew)
     EVT_MENU(XRCID("menuremove"),  mMainFrame::OnRemove)
+    EVT_MENU(XRCID("menuschedule"),  mMainFrame::OnSchedule)
     EVT_MENU(XRCID("menustart"),  mMainFrame::OnStart)
     EVT_MENU(XRCID("menustop"),  mMainFrame::OnStop)
     EVT_MENU(XRCID("menuexit"),  mMainFrame::OnExit)
@@ -230,14 +249,15 @@ void mNotebook::OnChangePage(wxNotebookEvent& event)
 mMainFrame::mMainFrame()
 {
     imageslist = new wxImageList(16, 16, TRUE);
-    wxBitmap image[5];
+    wxBitmap image[6];
     int i;
     image[0] = wxXPM(stop_xpm);
     image[1] = wxXPM(start_xpm);
     image[2] = wxXPM(ok_xpm);
     image[3] = wxXPM(error_xpm);
-    image[4] = wxXPM(schedule_xpm);
-    for (i=0;i<=4;i++)
+    image[4] = wxXPM(queue_xpm);
+    image[5] = wxXPM(schedule_xpm);
+    for (i=0;i<=5;i++)
        imageslist->Add(image[i]);
 	wxXmlResource::Get()->LoadFrame(this,NULL, wxT("mainframe"));
     SetSize(-1,-1,600,400);
@@ -312,7 +332,21 @@ mMainFrame::mMainFrame()
 	}
 	XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
 	XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
-	
+	programoptions.activatescheduling = wxGetApp().Configurations(READ,OPT_SCHED_ACTIVATESCHEDULING_REG,0);
+	programoptions.startdatetime.Set((time_t)wxGetApp().Configurations(READ,OPT_SCHED_STARTDATETIME_REG,0l));
+	programoptions.finishdatetime.Set((time_t)wxGetApp().Configurations(READ,OPT_SCHED_FINISHDATETIME_REG,0l));
+	programoptions.scheduleexceptionschanged = FALSE;
+	for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
+	{
+        programoptions.scheduleexceptions[i].isactive = wxGetApp().Configurations(READ,OPT_SCHED_SCHEDULEEXCEPTION_ISACTIVE_REG+int2wxstr(i),0);
+        programoptions.scheduleexceptions[i].start = wxGetApp().Configurations(READ,OPT_SCHED_SCHEDULEEXCEPTION_START_REG+int2wxstr(i),wxT("00:00"));
+        programoptions.scheduleexceptions[i].finish = wxGetApp().Configurations(READ,OPT_SCHED_SCHEDULEEXCEPTION_FINISH_REG+int2wxstr(i),wxT("00:00"));
+        programoptions.scheduleexceptions[i].day = wxGetApp().Configurations(READ,OPT_SCHED_SCHEDULEEXCEPTION_DAY_REG+int2wxstr(i),0);
+        programoptions.scheduleexceptions[i].newday = 0;
+        programoptions.scheduleexceptions[i].newstart = wxEmptyString;
+        programoptions.scheduleexceptions[i].newfinish = wxEmptyString;
+	}
+
 	menubar->GetMenu(3)->Check(XRCID("menushutdown"),programoptions.shutdown);
 	menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
 
@@ -322,6 +356,7 @@ mMainFrame::mMainFrame()
 
 	//CREATE THE POPUPMENU FOR THE LISTS
     menupopup = new wxMenu;
+    wxMenuItem *schedule = new wxMenuItem(menupopup,XRCID("menuschedule"), _("Schedule Download"));
     wxMenuItem *start = new wxMenuItem(menupopup,XRCID("menustart"), _("Start Download"));
     wxMenuItem *stop = new wxMenuItem(menupopup,XRCID("menustop"), _("Stop Download"));
     wxMenuItem *remove = new wxMenuItem(menupopup,XRCID("menuremove"), _("Remove Download"));
@@ -333,7 +368,9 @@ mMainFrame::mMainFrame()
 
     start->SetBitmap(image[1]);
     stop->SetBitmap(image[0]);
+    schedule->SetBitmap(image[5]);
     remove->SetBitmap(image[3]);
+    menupopup->Append(schedule);
     menupopup->Append(start);
     menupopup->Append(stop);
     menupopup->Append(remove);
@@ -426,7 +463,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 		XRCCTRL(*(this), "messages",wxHtmlWindow)->SetPage(wxEmptyString);
 	#else
 	if ((selection < 0) && (XRCCTRL(*(this), "messages",wxTextCtrl)->GetValue() != wxEmptyString))
-		XRCCTRL(*(this), "messages",wxTextCtrl)->Clear();	
+		XRCCTRL(*(this), "messages",wxTextCtrl)->Clear();
 	#endif
 	if ((selection < 0) &&  (((int)XRCCTRL(*(this), "treemessages",wxTreeCtrl)->GetCount()) > 0))
 		XRCCTRL(*(this), "treemessages",wxTreeCtrl)->DeleteAllItems();
@@ -445,11 +482,11 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             node = node->GetPrevious();  //GO TO THE PREVIOUS NODE BEFORE DELETE THE CURRENT ONE
 			list01->RemoveItemListandFile(current->index);
 			somedownloadfinishednow = TRUE;
-            if (current->index == 0)  //IF THIS IS THE FIRST NODE, WE CAN GO TO THE PREVIOUS ONE
+            if (current->index == 0)  //IF THIS IS THE FIRST NODE, WE CANN'T GO TO THE PREVIOUS ONE
                break;
 		}
 		else
-		{		
+		{
 			int parts;
 			if (current->split == YES)
 				parts = current->parts;
@@ -459,13 +496,15 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 			{
 				if ((current->free) && (current->status == STATUS_ACTIVE))
 					current->status = STATUS_STOPED;
+                if ((current->free) && (current->scheduled) && (current->status == STATUS_STOPED))
+                    current->status = STATUS_SCHEDULE;
 				if (current->status == STATUS_ACTIVE)
 					simultaneous--;
 				if (current->split != WAIT)
 				{
 					int i;
 					current->totalsizecompleted = 0;
-					
+
 					for (i=0; i < parts; i++)
 						current->totalsizecompleted += current->sizecompleted[i];
 					if (current->totalspeed > 0)
@@ -485,7 +524,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 	           	list01->GetItem(listitem);
 	           	if (current->status != listitem.GetImage())
 		           	list01->Insert(current,current->index);
-				
+
 			}
 	        if (selection == current->index)
 	        {
@@ -517,9 +556,9 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 	        	{
 		        	XRCCTRL(*(this), "messages",wxHtmlWindow)->SetPage(wxEmptyString);
 		        	XRCCTRL(*(this), "messages",wxHtmlWindow)->AppendToPage(current->messages[treeindex]);
-				
+
     				{//ADDED BY GXL117
-			    	    int x,y,xx,yy;	
+			    	    int x,y,xx,yy;
 			        	XRCCTRL(*(this), "messages",wxHtmlWindow)->GetScrollPixelsPerUnit(&x,&y);
 			        	XRCCTRL(*(this), "messages",wxHtmlWindow)->GetVirtualSize(&xx,&yy);
 			        	xx/=x; yy/=y;
@@ -545,7 +584,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     	float *value = new float();
 	    *value = ((float)currentspeed) / 1024.0;
     	graph.Insert(value);
-    		
+
     	if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
     	{
     		float *lastvalue = graph.GetLast()->GetData();
@@ -557,12 +596,96 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 		    XRCCTRL(*this, "graphpanel",mGraph )->Refresh();
     }
     timerinterval += mtimer->GetInterval();
+	if (programoptions.scheduleexceptionschanged)
+	{
+	    programoptions.scheduleexceptionschanged = FALSE;
+        for (int i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
+        {
+            if (programoptions.scheduleexceptions[i].newstart != wxEmptyString)
+            {
+                programoptions.scheduleexceptions[i].start = programoptions.scheduleexceptions[i].newstart;
+                programoptions.scheduleexceptions[i].finish = programoptions.scheduleexceptions[i].newfinish;
+                programoptions.scheduleexceptions[i].day = programoptions.scheduleexceptions[i].newday;
+                programoptions.scheduleexceptions[i].isactive = TRUE;
+            }
+            else
+                programoptions.scheduleexceptions[i].isactive = FALSE;
+        }
+	}
+
+	if (programoptions.activatescheduling)
+	{
+	    wxDateTime now = wxDateTime::Now();
+	    wxDateTime exceptionstart,exceptionfinish;
+	    long hour,minute;
+	    bool stopscheduled = FALSE;
+	    bool exceptionhappened = FALSE;
+
+        if ((now > programoptions.startdatetime) && (now < programoptions.finishdatetime))
+        {
+            for (int i = 0;i < MAX_SCHEDULE_EXCEPTIONS;i++)
+            {
+                if ((programoptions.scheduleexceptions[i].day == now.GetWeekDay()) && (programoptions.scheduleexceptions[i].isactive))
+                {
+                    programoptions.scheduleexceptions[i].start.Mid(0,2).ToLong(&hour);
+                    programoptions.scheduleexceptions[i].start.Mid(3,2).ToLong(&minute);
+                    exceptionstart.Set(hour,minute);
+                    programoptions.scheduleexceptions[i].finish.Mid(0,2).ToLong(&hour);
+                    programoptions.scheduleexceptions[i].finish.Mid(3,2).ToLong(&minute);
+                    exceptionfinish.Set(hour,minute);
+                    if ((now > exceptionstart) && (now < exceptionfinish))
+                    {
+                        stopscheduled = TRUE;
+                        exceptionhappened = TRUE;
+                        break;
+                    }
+                }
+            }
+
+            if ((simultaneous > 0) && (!stopscheduled))
+            {
+                for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+                {
+                    mDownloadFile *current = node->GetData();
+                    if (current->status == STATUS_SCHEDULE)
+                    {
+                        if (StartDownload(current))
+                        {
+                            simultaneous--;
+                            if (simultaneous <= 0)
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+            stopscheduled = TRUE;
+        if (stopscheduled)
+        {
+            mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
+            if (now > programoptions.finishdatetime)
+                programoptions.activatescheduling = FALSE;
+            for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+            {
+                mDownloadFile *current = node->GetData();
+                if ((current->status == STATUS_ACTIVE) && (current->scheduled))
+                {
+                    list->SetCurrentSelection(current->index);
+                    StopDownload(current);
+                    current->scheduled = TRUE;
+                    if (!exceptionhappened)
+                        somedownloadfinishednow = TRUE;
+                }
+            }
+        }
+	}
     if (simultaneous > 0)
     {
 	    for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
 	    {
 			mDownloadFile *current = node->GetData();
-			if (current->status == STATUS_QUEUE)
+			if ((current->status == STATUS_QUEUE) && (!current->scheduled))
 			{
 				if (StartDownload(current))
 				{
@@ -579,7 +702,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 	    for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
 	    {
 			mDownloadFile *current = node->GetData();
-			if ((current->status != STATUS_STOPED) && (current->status != STATUS_ERROR) && (current->status != STATUS_FINISHED))
+			if ((current->status == STATUS_ACTIVE) || ((current->status == STATUS_SCHEDULE) && (programoptions.activatescheduling)))
 				somedownloadactive = TRUE;
 	    }
 	    if (!somedownloadactive)
@@ -592,7 +715,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 				while ((waittime.Time() < 30000) && (waitbox->Update(waittime.Time())))
 					wxMilliSleep(200);
 				delete waitbox;
-				if (waittime.Time() >= 30000)			
+				if (waittime.Time() >= 30000)
 					::wxExecute(programoptions.shutdowncmd);
 			}
 	    	else if (programoptions.disconnect)
@@ -603,11 +726,12 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 				while ((waittime.Time() < 30000) && (waitbox->Update(waittime.Time())))
 					wxMilliSleep(200);
 				delete waitbox;
-				if (waittime.Time() >= 30000)			
+				if (waittime.Time() >= 30000)
 					::wxExecute(programoptions.disconnectcmd);
 			}
 	    }
 	}
+
 }
 
 void mMainFrame::GenerateInProgressList()
@@ -624,31 +748,31 @@ void mMainFrame::GenerateInProgressList()
 
     itemCol.m_text = _("Restart");
     list01->InsertColumn(INPROGRESS_ICON02, itemCol);
-    
+
     itemCol.m_text = _("Filename");
     list01->InsertColumn(INPROGRESS_NAME, itemCol);
-    
+
     itemCol.m_text = _("Size");
     list01->InsertColumn(INPROGRESS_SIZE, itemCol);
 
-    itemCol.m_text = _("Completed");    
+    itemCol.m_text = _("Completed");
     list01->InsertColumn(INPROGRESS_COMPLETED, itemCol);
-    
+
     itemCol.m_text = _("Percentual");
     list01->InsertColumn(INPROGRESS_PERCENTUAL, itemCol);
-    
+
     itemCol.m_text = _("Time Passed");
     list01->InsertColumn(INPROGRESS_TIMEPASSED, itemCol);
-    
+
     itemCol.m_text = _("Remaining");
     list01->InsertColumn(INPROGRESS_TIMEREMAINING, itemCol);
-    
+
     itemCol.m_text = _("Speed");
     list01->InsertColumn(INPROGRESS_SPEED, itemCol);
-    
+
     itemCol.m_text = _("Attempts");
     list01->InsertColumn(INPROGRESS_ATTEMPTS, itemCol);
-    
+
     itemCol.m_text = _("URL");
     list01->InsertColumn(INPROGRESS_URL, itemCol);
 
@@ -680,7 +804,7 @@ void mMainFrame::GenerateInProgressList()
         list01->Insert(current,-1);
         i++;
     }
-    
+
     list01->SelectUnselect(FALSE,-1,this);
     list01->Show();
 }
@@ -771,7 +895,7 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments,*edproxyserver,*edproxyport; //CHANGED BY GXL117
     wxSpinCtrl *spinsplit;
-    wxRadioButton *optnow;
+    wxRadioButton *optnow,*optschedule;
 	wxRadioBox *edproxyaction; //ADDED BY GXL117
 	wxChoice *edproxytype; //ADDED BY GXL117
     int RETURN;
@@ -783,6 +907,7 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     edtpassword = XRCCTRL(dlg, "edtpassword",wxTextCtrl);
     edtcomments = XRCCTRL(dlg, "edtcomments",wxTextCtrl);
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
+    optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
 	edproxyserver = XRCCTRL(dlg,"server",wxTextCtrl); //ADDED BY GXL117
 	edproxyport = XRCCTRL(dlg,"port",wxTextCtrl); //ADDED BY GXL117
@@ -793,7 +918,7 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
 	edproxyaction->SetSelection(0); //ADDED BY GXL117
 	edproxyserver->SetValue(wxEmptyString); //ADDED BY GXL117
 	edproxyport->SetValue(wxEmptyString); //ADDED BY GXL117
-	
+
     edturl->SetValue(url);
     edtdestination->SetValue(destination);
     if (user == ANONYMOUS_USER)
@@ -819,11 +944,17 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     	mUrlName urltmp;
     	wxFileName destinationtmp;
     	int index;
+    	int scheduled = FALSE;
+    	if (optschedule->GetValue())
+            scheduled = TRUE;
     	urltmp.Assign(edturl->GetValue());
     	destinationtmp.Assign(edtdestination->GetValue());
     	if (!wxGetApp().FindDownloadFile(urltmp.GetFullName()))
     	{
-	    	index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(), edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),edproxytype->GetSelection(),edproxyaction->GetStringSelection(),edproxyserver->GetValue().Trim(),edproxyport->GetValue().Trim());  //CHANGED BY GXL117
+	    	index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(),
+                    edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),
+                    edproxytype->GetSelection(),edproxyaction->GetStringSelection(),
+                    edproxyserver->GetValue().Trim(),edproxyport->GetValue().Trim(),scheduled);  //CHANGED BY GXL117
 	    	XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(wxGetApp().downloadlist.Item(index)->GetData(),-1);
     	}
     	else
@@ -834,6 +965,8 @@ bool mMainFrame::NewDownload(wxString url, wxString destination,int parts,wxStri
     	XRCCTRL(*this, "inprogresslist",mInProgressList )->SetCurrentSelection(index);
     	if (optnow->GetValue())
 			wxGetApp().downloadlist.Item(index)->GetData()->status = STATUS_QUEUE;
+    	if (optschedule->GetValue())
+			wxGetApp().downloadlist.Item(index)->GetData()->status = STATUS_SCHEDULE;
     }
     return TRUE;
 }
@@ -853,7 +986,7 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
 		mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
 		{
 			wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before remove..."));
-	    	OnStop(event);
+	    	StopDownload(currentfile);
 	    	while ((currentfile->free == FALSE) || (currentfile->status == STATUS_ACTIVE))
 	    		wxYield();
 			waitbox->Update(100);
@@ -889,6 +1022,22 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
 	}
 }
 
+void mMainFrame::OnSchedule(wxCommandEvent& event)
+{
+	int currentselection;
+	mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
+	if ((currentselection = list->GetCurrentSelection()) >= 0)
+	{
+		mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
+		if (((file->status == STATUS_STOPED) || (file->status == STATUS_QUEUE) || (file->status == STATUS_ERROR)) && (file->free))
+		{
+		    file->scheduled = TRUE;
+			file->status = STATUS_SCHEDULE;
+			wxGetApp().RegisterListItemOnDisk(file);
+		}
+	}
+}
+
 void mMainFrame::OnStart(wxCommandEvent& event)
 {
 	int currentselection;
@@ -897,9 +1046,13 @@ void mMainFrame::OnStart(wxCommandEvent& event)
 	{
 		mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
 		if (((file->status == STATUS_STOPED) || (file->status == STATUS_ERROR)) && (file->free))
+		{
+		    file->scheduled = FALSE;
 			file->status = STATUS_QUEUE;
+			wxGetApp().RegisterListItemOnDisk(file);
+		}
 	}
-}	
+}
 
 bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
 {
@@ -938,8 +1091,17 @@ void mMainFrame::OnStop(wxCommandEvent& event)
 	if ((currentselection = list->GetCurrentSelection()) >= 0)
 	{
 		mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
-		if ((file->status != STATUS_FINISHED) && (file->status != STATUS_ERROR))
-			file->status = STATUS_STOPED;
+		StopDownload(file);
+		wxGetApp().RegisterListItemOnDisk(file);
+	}
+}
+
+void mMainFrame::StopDownload(mDownloadFile *downloadfile)
+{
+	if ((downloadfile->status != STATUS_FINISHED) && (downloadfile->status != STATUS_ERROR))
+	{
+	    downloadfile->scheduled = FALSE;
+		downloadfile->status = STATUS_STOPED;
 	}
 }
 
@@ -956,7 +1118,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
             urltmp = data.GetText().Strip(wxString::both);
             destinationtmp = programoptions.destination;
             NewDownload(urltmp,destinationtmp,5,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
-            
+
         }
         else
             NewDownload(wxEmptyString,destinationtmp,5,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
@@ -971,7 +1133,7 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
     wxString urltmp,destinationtmp;
     if (wxTheClipboard->Open())
     {
-    	
+
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
             wxString str;
             wxTextDataObject data;
@@ -990,9 +1152,9 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
 				config->SetPath(FINISHED_REG);
 				column = FINISHED_NAME;
 			    list = (wxListCtrl*)list02;
-		    }		    
+		    }
 		    else
-		       return;            
+		       return;
             wxListItem item;
             item.SetId(currentselection);
   	        item.SetColumn(column);
@@ -1027,7 +1189,7 @@ void mMainFrame::OnDetails(wxCommandEvent& event)
 		splitter->SplitHorizontally(XRCCTRL(*this, "inprogresslist",mInProgressList ),XRCCTRL(*this, "panelmessages01",wxPanel));
 		XRCCTRL(*this, "panelmessages01",wxPanel)->Show();
 	}
-	
+
 }
 
 void mMainFrame::OnUpDown(bool up)
@@ -1048,7 +1210,7 @@ void mMainFrame::OnUpDown(bool up)
 		wxGetApp().downloadlist.Sort(ListCompareByIndex);
 		wxGetApp().RegisterListItemOnDisk(currentfile);
 		wxGetApp().RegisterListItemOnDisk(newfile);
-	
+
 	    list->Insert(currentfile,newselection);
 	    list->Insert(newfile,currentselection);
 		list->SetCurrentSelection(newselection);
@@ -1067,7 +1229,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         _("Chinese")  //ADDED BY GXL117
     };
 
-    int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"), 
+    int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"),
                                    WXSIZEOF(langs), langs);
     if (lng >= 0)
     {
@@ -1101,7 +1263,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 		dlg.SetTitle(_("Download Properties"));
 		XRCCTRL(dlg, "edturl",wxTextCtrl)->SetValue(currentfile->urllist);
 		XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(currentfile->destination);
-		
+
 		if (currentfile->user == ANONYMOUS_USER)
     	{
 		    XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetValue(wxEmptyString);
@@ -1119,7 +1281,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 		XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
 		XRCCTRL(dlg, "server",wxTextCtrl)->SetValue(currentfile->server);  //ADDED BY GXL117 - FROM HERE
 		XRCCTRL(dlg, "port",wxTextCtrl)->SetValue(currentfile->port);
-		
+
 		if(currentfile->proxytype == wxT("NOPROXY"))
 		{	XRCCTRL(dlg, "proxytype",wxChoice)->Select(0);
 			XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(0);
@@ -1131,11 +1293,11 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 				XRCCTRL(dlg, "proxytype",wxChoice)->Select(1);
 			//else
 			//	XRCCTRL(dlg, "proxytype",wxChoice)->Select(2);
-		
+
 		if(currentfile->proxytype == wxT("HTTP")&&currentfile->proxyaction!=wxT("GET"))
 			XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(1);       //ADDED BY GXL117 - UNTIL HERE
-			
-		mUrlName urltmp(currentfile->urllist);		
+
+		mUrlName urltmp(currentfile->urllist);
 		oldname = urltmp.GetFullName();
 		if ((currentfile->status != STATUS_STOPED) && (currentfile->status != STATUS_FINISHED) && (currentfile->status != STATUS_ERROR))
 		{
@@ -1151,7 +1313,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 			XRCCTRL(dlg, "port",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
 		}
 		XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
-			
+
 		if (dlg.ShowModal() == XRCID("btnok"))
 		{
             mUrlName urltmp;
@@ -1190,13 +1352,13 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         item.SetColumn(FINISHED_NAME);
         item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
         list->GetItem(item);
-        
+
         config->SetPath(FINISHED_REG);
         config->SetPath(item.GetText());
 
         url = wxEmptyString;
         config->Read(URL1_REG,&url);
-        
+
         destination = wxEmptyString;
         config->Read(DESTINATION_REG,&destination);
 
@@ -1221,7 +1383,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         comments = wxEmptyString;
         config->Read(COMMENTS_REG,&comments);
         config->SetPath(BACK_DIR_REG);
-        
+
         if (NewDownload(url, destination, parts, user, password, comments, TRUE, FALSE))
         {
 	        config->DeleteGroup(item.GetText());
@@ -1251,13 +1413,13 @@ void mMainFrame::OnMove(wxCommandEvent& event)
 		    item.SetColumn(FINISHED_NAME);
 		    item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
 		    list->GetItem(item);
-		    
+
 		    config->SetPath(FINISHED_REG);
 		    config->SetPath(item.GetText());
-		
+
 		    name = wxEmptyString;
 		    config->Read(NAME_REG,&name);
-		    
+
 		    destination = wxEmptyString;
 		    config->Read(DESTINATION_REG,&destination);
             if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
@@ -1305,7 +1467,7 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
 	    item.SetColumn(FINISHED_NAME);
 	    item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
 	    list->GetItem(item);
-	    
+
 	    config->SetPath(FINISHED_REG);
 	    config->SetPath(item.GetText());
 
@@ -1421,10 +1583,11 @@ void mMainFrame::OnDisconnect(wxCommandEvent& event)
 
 void mMainFrame::OnOptions(wxCommandEvent& event)
 {
-	
+
 	mBoxOptions dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxoptions"));
-	
+    int i,j;
+
 	XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->SetValue(programoptions.attempts);
 	XRCCTRL(dlg, "spinattemptstime", wxSpinCtrl)->SetValue(programoptions.attemptstime);
 	XRCCTRL(dlg, "spinsimultaneous", wxSpinCtrl)->SetValue(programoptions.simultaneous);
@@ -1445,9 +1608,31 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 	XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour = programoptions.graphgridcolor;
 	XRCCTRL(dlg, "graphpanelline", mBoxOptionsColorPanel)->colour = programoptions.graphlinecolor;
 	XRCCTRL(dlg, "graphpanelfont", mBoxOptionsColorPanel)->colour = programoptions.graphfontcolor;
-	
+	XRCCTRL(dlg, "chkactivatescheduling",wxCheckBox)->SetValue(programoptions.activatescheduling);
+    XRCCTRL(dlg, "edtstartdate",wxTextCtrl)->SetValue(programoptions.startdatetime.Format(wxT("%Y/%m/%d")));
+    XRCCTRL(dlg, "edtfinishdate",wxTextCtrl)->SetValue(programoptions.finishdatetime.Format(wxT("%Y/%m/%d")));
+    XRCCTRL(dlg, "spinstarthour",wxSpinCtrl)->SetValue(programoptions.startdatetime.GetHour());
+    XRCCTRL(dlg, "spinstartminute",wxSpinCtrl)->SetValue(programoptions.startdatetime.GetMinute());
+    XRCCTRL(dlg, "spinfinishhour",wxSpinCtrl)->SetValue(programoptions.finishdatetime.GetHour());
+    XRCCTRL(dlg, "spinfinishminute",wxSpinCtrl)->SetValue(programoptions.finishdatetime.GetMinute());
+    for (i=0; i<7;i++)
+        XRCCTRL(dlg, "comboweekdays",wxComboBox)->Append(days[i]);
+    for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
+    {
+        if (programoptions.scheduleexceptions[i].isactive)
+        {
+            wxString temp = programoptions.scheduleexceptions[i].start + wxT(" | ") +
+                            programoptions.scheduleexceptions[i].finish + wxT(" | ") +
+                            XRCCTRL(dlg, "comboweekdays",wxComboBox)->GetString(programoptions.scheduleexceptions[i].day);
+            XRCCTRL(dlg, "lstexceptionlist",wxListBox)->InsertItems(1,&temp,-1);
+        }
+    }
+
 	if (dlg.ShowModal() == XRCID("btnoptionsave"))
 	{
+		wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configurations..."),_("Updating and saving the configurations..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
+        waitbox->Update(0);
+
 		programoptions.attempts = XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->GetValue();
 		programoptions.attemptstime = XRCCTRL(dlg, "spinattemptstime", wxSpinCtrl)->GetValue();
 		programoptions.simultaneous = XRCCTRL(dlg, "spinsimultaneous", wxSpinCtrl)->GetValue();
@@ -1468,7 +1653,45 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 		programoptions.graphgridcolor = XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour;
 		programoptions.graphlinecolor = XRCCTRL(dlg, "graphpanelline", mBoxOptionsColorPanel)->colour;
 		programoptions.graphfontcolor = XRCCTRL(dlg, "graphpanelfont", mBoxOptionsColorPanel)->colour;
-	
+        programoptions.activatescheduling = FALSE;
+        programoptions.startdatetime.ParseDate(XRCCTRL(dlg, "edtstartdate",wxTextCtrl)->GetValue());
+        programoptions.startdatetime.SetHour(XRCCTRL(dlg, "spinstarthour",wxSpinCtrl)->GetValue());
+        programoptions.startdatetime.SetMinute(XRCCTRL(dlg, "spinstartminute",wxSpinCtrl)->GetValue());
+        programoptions.finishdatetime.ParseDate(XRCCTRL(dlg, "edtfinishdate",wxTextCtrl)->GetValue());
+        programoptions.finishdatetime.SetHour(XRCCTRL(dlg, "spinfinishhour",wxSpinCtrl)->GetValue());
+        programoptions.finishdatetime.SetMinute(XRCCTRL(dlg, "spinfinishminute",wxSpinCtrl)->GetValue());
+        waitbox->Update(20);
+        for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
+        {
+            if (i < XRCCTRL(dlg, "lstexceptionlist",wxListBox)->GetCount())
+            {
+                wxString temp = XRCCTRL(dlg, "lstexceptionlist",wxListBox)->GetString(i);
+                programoptions.scheduleexceptions[i].newstart = temp.Mid(0,5);
+                programoptions.scheduleexceptions[i].newfinish = temp.Mid(8,5);
+                for (j = 0;j <7;j++)
+                    if (temp.Mid(16) == days[j])
+                    {
+                        programoptions.scheduleexceptions[i].newday = j;
+                        break;
+                    }
+            }
+            else
+            {
+                programoptions.scheduleexceptions[i].newstart = wxEmptyString;
+                programoptions.scheduleexceptions[i].newfinish = wxEmptyString;
+                programoptions.scheduleexceptions[i].newday = 0;
+            }
+            wxGetApp().Configurations(WRITE,OPT_SCHED_SCHEDULEEXCEPTION_ISACTIVE_REG+int2wxstr(i), programoptions.scheduleexceptions[i].isactive);
+            wxGetApp().Configurations(WRITE,OPT_SCHED_SCHEDULEEXCEPTION_START_REG+int2wxstr(i), programoptions.scheduleexceptions[i].start);
+            wxGetApp().Configurations(WRITE,OPT_SCHED_SCHEDULEEXCEPTION_FINISH_REG+int2wxstr(i), programoptions.scheduleexceptions[i].finish);
+            wxGetApp().Configurations(WRITE,OPT_SCHED_SCHEDULEEXCEPTION_DAY_REG+int2wxstr(i), programoptions.scheduleexceptions[i].day);
+        }
+        programoptions.scheduleexceptionschanged = TRUE;
+        if ((XRCCTRL(dlg, "chkactivatescheduling",wxCheckBox)->GetValue()) && (programoptions.startdatetime < programoptions.finishdatetime))
+            programoptions.activatescheduling = TRUE;
+        else
+            programoptions.activatescheduling = FALSE;
+        waitbox->Update(50);
 		wxGetApp().Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
 		wxGetApp().Configurations(WRITE,OPT_DESTINATION_REG,programoptions.destination);
 		wxGetApp().Configurations(WRITE,OPT_ATTEMPTS_REG,programoptions.attempts);
@@ -1485,6 +1708,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 		wxGetApp().Configurations(WRITE,OPT_GRAPH_TEXTAREA_REG, programoptions.graphtextarea);
 		wxGetApp().Configurations(WRITE,OPT_GRAPH_SPEEDFONTSIZE_REG, programoptions.graphspeedfontsize);
 		wxGetApp().Configurations(WRITE,OPT_GRAPH_LINEWIDTH_REG, programoptions.graphlinewidth);
+		waitbox->Update(70);
 		{
 			wxString red,green,blue;
 			red.Printf(wxT("%.3d"), programoptions.graphbackcolor.Red());
@@ -1513,8 +1737,15 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 			blue.Printf(wxT("%.3d"), programoptions.graphfontcolor.Blue());
 			wxGetApp().Configurations(WRITE,OPT_GRAPH_COLORFONT_REG, red + wxT("-") + green + wxT("-") + blue);
 		}
+		waitbox->Update(90);
+        wxGetApp().Configurations(WRITE,OPT_SCHED_ACTIVATESCHEDULING_REG, programoptions.activatescheduling);
+        wxGetApp().Configurations(WRITE,OPT_SCHED_STARTDATETIME_REG, (long)programoptions.startdatetime.GetTicks());
+        wxGetApp().Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
+
 		XRCCTRL(*(this), "graphpanel",mGraph )->Refresh();
-	}	
+		waitbox->Update(100);
+		delete waitbox;
+	}
 }
 
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -1563,7 +1794,6 @@ void mMainFrame::OnClose(wxCloseEvent& event)
         event.Skip();
     mtimer->Stop();
 	{
-		wxCommandEvent dummieevent;
 		mDownloadFile *currentfile;
 		mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
 		wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the downloads..."),_("Stopping the downloads before exit..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
@@ -1571,7 +1801,7 @@ void mMainFrame::OnClose(wxCloseEvent& event)
 		for (int i=0 ; i < total;i++)
 		{
 			list->SetCurrentSelection(i);
-			OnStop(dummieevent);
+			StopDownload(wxGetApp().downloadlist.Item(i)->GetData());
 		}
 		for (int i=0 ; i < total;i++)
 		{
@@ -1601,7 +1831,12 @@ void mMainFrame::OnToolLeftClick(wxCommandEvent& event)
     {
         OnRemove(event);
     }
-    
+
+    if (event.GetId() == XRCID("toolschedule"))
+    {
+        OnSchedule(event);
+    }
+
     if (event.GetId() == XRCID("toolstart"))
     {
         OnStart(event);
@@ -1621,7 +1856,7 @@ void mMainFrame::OnToolLeftClick(wxCommandEvent& event)
     {
         OnUpDown(FALSE);
     }
-    
+
     if (event.GetId() == XRCID("toolproperties"))
     {
         OnProperties(event);
@@ -1651,7 +1886,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
 	wxFont smallfont,bigfont;
     bigfont.SetPointSize(programoptions->graphspeedfontsize);
     smallfont.SetPointSize(10);
-    
+
 	//SET THE BACKGROUND COLOR
     wxBrush b(programoptions->graphbackcolor, wxSOLID);
     dc.SetBackground(b);
@@ -1661,7 +1896,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     this->GetSize(&x,&y);
     dx = 3.0;
     dy = ((float) y)/((float) scale);
-    
+
     //DRAW A GRID FOR THE GRAPH
     wxPen gridpen(programoptions->graphgridcolor);
     dc.SetPen(gridpen);
@@ -1679,12 +1914,12 @@ void mGraph::OnPaint(wxPaintEvent &event)
     count = 1;
     wxPen linepen(programoptions->graphlinecolor);
     linepen.SetWidth(programoptions->graphlinewidth);
-    dc.SetPen(linepen);    
+    dc.SetPen(linepen);
     mGraphPoints::Node *node = graph->GetFirst();
     if (node)
     {
     	float *current = node->GetData();
-    	
+
     	//WRITE THE CURRENT SPEED
     	wxString temp;
     	temp.Printf(wxT("%0.1f"), *current);
@@ -1694,7 +1929,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     	dc.DrawText(temp,5,5);
     	dc.SetFont(smallfont);
     	dc.DrawText(wxT("kb/s"),5,programoptions->graphspeedfontsize + 10);
-    	
+
 	    lastx = x-((int)dx);
 	    lasty = y-((int)(dy*(*current)));
 	    for ( node = node->GetNext(); node; node = node->GetNext() )
@@ -1705,7 +1940,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
 	        dc.DrawLine(lastx,lasty ,x-((int)dx)*count,y-((int)(dy*(*current))));
 		    lastx = x-((int)dx*count);
 		    lasty = y-((int)(dy*(*current)));
-		    
+
 		    //DON'T DRAW THE GRAPH INSIDE THE TEXT AREA
 		    if ((lastx <= textarea+3) || (programoptions->graphhowmanyvalues <= count+1))
 		        break;
@@ -1743,7 +1978,7 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
 	{for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
 		{
 		mDownloadFile *current = node->GetData();
-		temp.Printf(wxT("%s  complete:%d%%  Speed:%.2fK/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);  //CHANGED BY GXL117
+		temp.Printf(wxT("%s  Complete: %d%%  Speed: %.2fK/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);  //CHANGED BY GXL117
 		taskTip+=temp;
 		}
 	taskTip.RemoveLast();

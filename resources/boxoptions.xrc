@@ -429,6 +429,321 @@
                         </object>
                     </object>
                     </object>
+                    <object class="notebookpage">
+                    <label>Scheduling</label>
+                    <object class="wxPanel" name="paneloption03">
+                        <style>wxTAB_TRAVERSAL</style>
+                        <object class="wxFlexGridSizer">
+                            <hgap>0</hgap>
+                            <rows>8</rows>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <growablecols>1</growablecols>
+                            <object class="sizeritem">
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxCheckBox" name="chkactivatescheduling">
+                                    <label>Activate scheduling</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>100</hgap>
+                                    <rows>1</rows>
+                                    <cols>2</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_12">
+                                            <label>Start Date:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_13">
+                                            <label>Start Time:</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>5</hgap>
+                                    <rows>1</rows>
+                                    <cols>7</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxTextCtrl" name="edtstartdate">
+                                            <style>wxTE_READONLY</style>
+                                            <size>100,25</size>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxButton" name="btnstartdate">
+                                            <size>20, 25</size>
+                                            <label>...</label>
+                                        </object>
+                                    </object>
+                                    <object class="spacer">
+                                        <size>40, 5</size>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinstarthour">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>23</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_14">
+                                            <label>hours</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinstartminute">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>59</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_15">
+                                            <label>minutes</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>100</hgap>
+                                    <rows>1</rows>
+                                    <cols>2</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_16">
+                                            <label>Finish Date:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_17">
+                                            <label>Finish Time:</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>5</hgap>
+                                    <rows>1</rows>
+                                    <cols>7</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxTextCtrl" name="edtfinishdate">
+                                            <style>wxTE_READONLY</style>
+                                            <size>100,25</size>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxButton" name="btnfinishdate">
+                                            <size>20, 25</size>
+                                            <label>...</label>
+                                        </object>
+                                    </object>
+                                    <object class="spacer">
+                                        <size>40, 5</size>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinfinishhour">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>23</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_18">
+                                            <label>hours</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinfinishminute">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>59</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_19">
+                                            <label>minutes</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="spacer">
+                                <size>5, 10</size>
+                                <flag>wxFIXED_MINSIZE</flag>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticText" name="label_20">
+                                    <label>Disactivate the downloads in:</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>0</hgap>
+                                    <rows>1</rows>
+                                    <cols>10</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxComboBox" name="comboweekdays">
+                                            <style>wxCB_READONLY|wxCB_DROPDOWN</style>
+
+                                        </object>
+                                    </object>
+                                    <object class="spacer">
+                                        <size>20, 5</size>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_21">
+                                            <label>Between</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinexceptionstarthour">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>23</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_22">
+                                            <label>:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinexceptionstartminute">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>59</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_23">
+                                            <label>and</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinexceptionfinishhour">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>23</max>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxStaticText" name="label_24">
+                                            <label>:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxSpinCtrl" name="spinexceptionfinishminute">
+                                            <size>45, 25</size>
+                                            <min>0</min>
+                                            <max>59</max>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxFIXED_MINSIZE | wxALIGN_RIGHT</flag>
+                                <object class="wxButton" name="btnexceptionadd">
+                                    <label>Add</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticText" name="label_25">
+                                    <label>Exceptions List:</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxALIGN_LEFT</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>5</hgap>
+                                    <rows>1</rows>
+                                    <cols>2</cols>
+                                    <vgap>0</vgap>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxListBox" name="lstexceptionlist">
+                                            <style>wxLB_SINGLE</style>
+                                            <size>300,100</size>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxFIXED_MINSIZE | wxALIGN_RIGHT</flag>
+                                        <object class="wxButton" name="btnexceptionremove">
+                                            <label>Remove</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    </object>
                 </object>
             </object>
             <object class="sizeritem">

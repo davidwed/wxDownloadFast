@@ -18,10 +18,10 @@ OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUI
 endif
 
 LINKOBJ  = $(OBJ)
-LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5 `wx-config --libs` -Wl
-INCS =  -I"/usr/include" -I"/usr/local/include" `wx-config --cxxflags`
+LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5  -Wl `wx-config --libs`
+INCS =  -I"/usr/include" `wx-config --cxxflags`
 RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
-CXXINCS =  `wx-config --cxxflags`
+#CXXINCS =  `wx-config --cxxflags`
 
 ifeq ($(XRC), 1)
 CXXFLAGS = $(INCS) -Wall -O2 -MMD
@@ -33,7 +33,7 @@ WXMD5 = libwxmd5.a
 CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.2.1
+VERSION = 0.3.0
 
 ifeq ($(BUILD), win32)
 all: criardir $(BIN).exe
@@ -101,14 +101,14 @@ $(BUILD_DIR)md5.o: src/wxMD5/md5.c
 $(BUILD_DIR)wxMD5.o: src/wxMD5/wxMD5.cpp
 	$(CPP) -c src/wxMD5/wxMD5.cpp -o $(BUILD_DIR)wxMD5.o $(CXXFLAGS)
 
-install:
+install: all
 	$(INSTALL_DIR) $(DESTDIR)/usr/lib/$(BIN)
 ifeq ($(BUILD), win32)
-	$(INSTALL_FILE) --mode=755 $(BIN).exe $(DESTDIR)/usr/lib/$(BIN)
-	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe $(DESTDIR)/usr/bin/$(BIN).exe
+	$(INSTALL_FILE) --mode=755 $(BIN).exe $(DESTDIR)/usr/bin/$(BIN)
+#	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe $(DESTDIR)/usr/bin/$(BIN).exe
 else
-	$(INSTALL_FILE) --mode=755 $(BIN) $(DESTDIR)/usr/lib/$(BIN)
-	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN) $(DESTDIR)/usr/bin/$(BIN)
+	$(INSTALL_FILE) --mode=755 $(BIN) $(DESTDIR)/usr/bin/$(BIN)
+#	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN) $(DESTDIR)/usr/bin/$(BIN)
 endif
 	$(INSTALL_FILE) Readme.* $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_FILE) Changes.* $(DESTDIR)/usr/lib/$(BIN)
@@ -124,13 +124,13 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
-	$(INSTALL_DIR) $(DESTDIR)/usr/lib/menu
-	echo "?package(wxdfast): \ " > $(DESTDIR)/usr/lib/menu/wxdfast
-	echo "      needs="X11" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
-	echo "      section="Apps/Net" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
-	echo "      title="wxDFast" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
-	echo "      command="/usr/bin/wxdfast" \ " >> $(DESTDIR)/usr/lib/menu/wxdfast
-	echo "      icon="/usr/share/pixmaps/wxdfast.xpm"" >> $(DESTDIR)/usr/lib/menu/wxdfast
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/menu
+	echo "?package(wxdfast): \ " > $(DESTDIR)/usr/share/menu/wxdfast
+	echo "      needs="X11" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
+	echo "      section="Apps/Net" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
+	echo "      title="wxDFast" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
+	echo "      command="/usr/bin/wxdfast" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
+	echo "      icon="/usr/share/pixmaps/wxdfast.xpm"" >> $(DESTDIR)/usr/share/menu/wxdfast
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
 	echo "[Desktop Entry]" > $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	echo "Version=1.0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
@@ -147,10 +147,10 @@ endif
 
 uninstall:
 ifeq ($(BUILD), win32)
-	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe
+#	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe
 	rm -f $(DESTDIR)/usr/bin/$(BIN).exe
 else
-	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN)
+#	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN)
 	rm -f $(DESTDIR)/usr/bin/$(BIN)
 endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/Readme.*
@@ -161,43 +161,60 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)*.xrc
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
-	rm -f $(DESTDIR)/usr/lib/menu/wxdfast
+	rm -f $(DESTDIR)/usr/share/menu/wxdfast
 	rm -f $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	rmdir $(DESTDIR)/usr/lib/$(BIN)
 
+dist: source
+	tar -cf $(BIN)-$(VERSION)-src.tar $(BIN)-$(VERSION)
+	gzip $(BIN)-$(VERSION)-src.tar
+	rm -r $(BIN)-$(VERSION)
+
+deb: source
+	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
+	echo "?package(wxdfast): \ " > $(BIN)-$(VERSION)/debian/menu
+	echo "      needs=\"X11\" \ " >> $(BIN)-$(VERSION)/debian/menu
+	echo "      section=\"Apps/Net\" \ " >> $(BIN)-$(VERSION)/debian/menu
+	echo "      title=\"wxDFast\" \ " >> $(BIN)-$(VERSION)/debian/menu
+	echo "      command=\"/usr/bin/wxdfast\" \ " >> $(BIN)-$(VERSION)/debian/menu
+	echo "      icon=\"/usr/share/pixmaps/wxdfast.xpm\"" >> $(BIN)-$(VERSION)/debian/menu
+	rm -f $(BIN)-$(VERSION)/debian/README.Debian
+	sed '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
+	rm -f wxdfast-$(VERSION)/debian/control
+	mv wxdfast-$(VERSION)/debian/control.new wxdfast-$(VERSION)/debian/control
+	(cd $(BIN)-$(VERSION);dpkg-buildpackage -rfakeroot)
+	rm -r $(BIN)-$(VERSION)
+
 source:
 	rm -f $(BIN)-$(VERSION)-src.tar.gz
-	rm -rf $(BIN)-$(VERSION)-src
-	mkdir $(BIN)-$(VERSION)-src
-	cp -r languages $(BIN)-$(VERSION)-src
-	mkdir $(BIN)-$(VERSION)-src/resources
-	cp resources/*.xpm $(BIN)-$(VERSION)-src/resources
-	cp resources/*.ico $(BIN)-$(VERSION)-src/resources
-	cp resources/*.xrc $(BIN)-$(VERSION)-src/resources
-	mkdir $(BIN)-$(VERSION)-src/resources/small
-	cp resources/small/*.xpm $(BIN)-$(VERSION)-src/resources/small
-	mkdir $(BIN)-$(VERSION)-src/resources/big
-	cp resources/big/*.xpm $(BIN)-$(VERSION)-src/resources/big
-	mkdir $(BIN)-$(VERSION)-src/src
-	mkdir $(BIN)-$(VERSION)-src/src/wxMD5
-	cp gpl.txt $(BIN)-$(VERSION)-src
-	cp Readme.* $(BIN)-$(VERSION)-src
-	cp Changes.* $(BIN)-$(VERSION)-src
-	cp ToDo.* $(BIN)-$(VERSION)-src
-	cp src/*.cpp $(BIN)-$(VERSION)-src/src
-	cp src/*.h $(BIN)-$(VERSION)-src/src
-	cp src/*.rc $(BIN)-$(VERSION)-src/src
-	cp src/wxMD5/*.c $(BIN)-$(VERSION)-src/src/wxMD5
-	cp src/wxMD5/*.cpp $(BIN)-$(VERSION)-src/src/wxMD5
-	cp src/wxMD5/*.h $(BIN)-$(VERSION)-src/src/wxMD5
-	cp Makefile $(BIN)-$(VERSION)-src
-	cp makefile.vc $(BIN)-$(VERSION)-src
-	tar -cf $(BIN)-$(VERSION)-src.tar $(BIN)-$(VERSION)-src
-	gzip $(BIN)-$(VERSION)-src.tar
-	rm -r $(BIN)-$(VERSION)-src
+	rm -rf $(BIN)-$(VERSION)
+	mkdir $(BIN)-$(VERSION)
+	cp -r languages $(BIN)-$(VERSION)
+	mkdir $(BIN)-$(VERSION)/resources
+	cp resources/*.xpm $(BIN)-$(VERSION)/resources
+	cp resources/*.ico $(BIN)-$(VERSION)/resources
+	cp resources/*.xrc $(BIN)-$(VERSION)/resources
+	mkdir $(BIN)-$(VERSION)/resources/small
+	cp resources/small/*.xpm $(BIN)-$(VERSION)/resources/small
+	mkdir $(BIN)-$(VERSION)/resources/big
+	cp resources/big/*.xpm $(BIN)-$(VERSION)/resources/big
+	mkdir $(BIN)-$(VERSION)/src
+	mkdir $(BIN)-$(VERSION)/src/wxMD5
+	cp gpl.txt $(BIN)-$(VERSION)
+	cp Readme.* $(BIN)-$(VERSION)
+	cp Changes.* $(BIN)-$(VERSION)
+	cp ToDo.* $(BIN)-$(VERSION)
+	cp src/*.cpp $(BIN)-$(VERSION)/src
+	cp src/*.h $(BIN)-$(VERSION)/src
+	cp src/*.rc $(BIN)-$(VERSION)/src
+	cp src/wxMD5/*.c $(BIN)-$(VERSION)/src/wxMD5
+	cp src/wxMD5/*.cpp $(BIN)-$(VERSION)/src/wxMD5
+	cp src/wxMD5/*.h $(BIN)-$(VERSION)/src/wxMD5
+	cp Makefile $(BIN)-$(VERSION)
+	cp makefile.vc $(BIN)-$(VERSION)
 
 clean:
-	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION)-src
+	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) $(BIN)_$(VERSION).orig.tar.gz $(BIN)_$(VERSION)*.diff.gz $(BIN)_$(VERSION)*.dsc $(BIN)_$(VERSION)*.asc $(BIN)_$(VERSION)*.changes
 
 cleanall:
-	rm -fr $(BIN) $(BIN).exe $(BUILD_DIR) $(BIN)-$(VERSION)-src $(BIN)-$(VERSION)-src.tar.gz
+	rm -fr $(BIN) $(BIN).exe $(BUILD_DIR) $(BIN)-$(VERSION) $(BIN)-$(VERSION)-src.tar.gz $(BIN)_$(VERSION)*.deb $(BIN)_$(VERSION).orig.tar.gz $(BIN)_$(VERSION)*.diff.gz $(BIN)_$(VERSION)*.dsc $(BIN)_$(VERSION)*.asc $(BIN)_$(VERSION)*.changes
