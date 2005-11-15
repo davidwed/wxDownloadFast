@@ -33,11 +33,11 @@
     #include "wx/image.h"
     #include "wx/snglinst.h"
     #include "wx/pen.h"
-
+    #include "wx/calctrl.h"
     #ifdef RESOURCES_CPP
-    extern void InitXmlResource(); 
+    extern void InitXmlResource();
     #endif
-    
+
     const wxCmdLineEntryDesc cmdlinedesc[] =
     {
         { wxCMD_LINE_SWITCH, wxT("hide"), wxT("hide"), wxT("Start with the the main frame hide.")},
@@ -45,7 +45,7 @@
         { wxCMD_LINE_PARAM, NULL, NULL,  wxT("URL of the file to be downloaded"),wxCMD_LINE_VAL_STRING,wxCMD_LINE_PARAM_OPTIONAL},
         { wxCMD_LINE_NONE }
     };
-    
+
     #ifdef __WXMSW__
         #define wxXPM(x)  (wxBitmap((const char **)x))
     #else
@@ -53,18 +53,19 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.2.1");
+    const wxString VERSION = wxT("0.3.0");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
     #else
        const wxString SEPARATOR_DIR = wxT("/");
 	#endif
-	#define READ_BUFFER			1024
-	#define MAX_NUM_PARTS 		9
-	#define MIN_SIZE_TO_SPLIT	500000l
-	#define USE_HTML_MESSAGES	1 //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
-	
+	#define READ_BUFFER			    1024
+	#define MAX_NUM_PARTS 		    9
+	#define MIN_SIZE_TO_SPLIT	    500000l
+	#define USE_HTML_MESSAGES	    1 //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
+	#define MAX_SCHEDULE_EXCEPTIONS 9
+
     #define IPC_SERVICE wxT("24242")
     #define IPC_TOPIC wxT("IPC_WXDOWNLAD_FAST_")
 
@@ -76,6 +77,7 @@
     const wxString NAME_REG = wxT("name");
     const wxString INDEX_REG = wxT("index");
     const wxString STATUS_REG = wxT("status");
+    const wxString SCHEDULED_REG = wxT("scheduled");
     const wxString RESTART_REG = wxT("restart");
     const wxString PARTS_REG = wxT("parts");
     const wxString DESTINATION_REG = wxT("destination");
@@ -127,7 +129,15 @@
     const wxString OPT_GRAPH_COLORGRID_REG = wxT("graphcolorgrid");
     const wxString OPT_GRAPH_COLORLINE_REG = wxT("graphcolorline");
     const wxString OPT_GRAPH_COLORFONT_REG = wxT("graphcolorfont");
-        
+    const wxString OPT_SCHED_ACTIVATESCHEDULING_REG = wxT("activatescheduling");
+    const wxString OPT_SCHED_STARTDATETIME_REG = wxT("schedstartdatetime");
+    const wxString OPT_SCHED_FINISHDATETIME_REG = wxT("schedfinishdatetime");
+    const wxString OPT_SCHED_SCHEDULEEXCEPTION_START_REG = wxT("scheduleexceptionstart");
+    const wxString OPT_SCHED_SCHEDULEEXCEPTION_FINISH_REG = wxT("scheduleexceptionfinish");
+    const wxString OPT_SCHED_SCHEDULEEXCEPTION_DAY_REG = wxT("scheduleexceptionday");
+    const wxString OPT_SCHED_SCHEDULEEXCEPTION_ISACTIVE_REG = wxT("scheduleexceptionisactive");
+
+
     const wxString EXT = wxT(".dfast");
     #ifdef __WXMSW__
     const wxString PREFIX = wxT("");
@@ -138,17 +148,21 @@
     const wxString CRLF = wxT("\r\n");
     const wxString ANONYMOUS_USER = wxT("anonymous");
     const wxString ANONYMOUS_PASS = wxT("anonymous@anonymous.com");
-   
+
     const wxColor RED = wxColor(255,0,30);
     const wxColor BLUE = wxColor(0,47,94);
     const wxColor GREEN = wxColor(0,98,65);
     const wxColor YELLOW = wxColor(170,170,0);
-    
+
     const wxString HTMLERROR = wxT("#FF0030"); 		//RED
     const wxString HTMLSERVER = wxT("#009865");		//GREEN
     const wxString HTMLNORMAL = wxT("#002f5e");		//BLUE
     const wxString HTMLBLACK = wxT("#000000");		//BLACK
-    
+
+    const wxString days[7] = {_("Sunday"),_("Mondays"),_("Tuesdays"),
+                              _("Wednesdays"),_("Thursdays"),_("Fridays"),
+                              _("Saturdays")};
+
     const int INPROGRESS_ICON01 = 0;
     const int INPROGRESS_ICON02 = 1;
     const int INPROGRESS_NAME = 2;
@@ -167,27 +181,29 @@
     const int FINISHED_END = 3;
 
     #define HTTP              	1
-    #define FTP               	2 
+    #define FTP               	2
     #define READ				3
     #define WRITE				4
-    
+
     #define HIDE				1000
     #define NEW					1001
     #define CLOSE				1002
     #define TIMER_ID			1003
-    
+
     //mDownloadFile STATUS
     #define STATUS_STOPED 		0
     #define STATUS_ACTIVE		1
     #define STATUS_FINISHED 	2
     #define STATUS_ERROR		3
     #define STATUS_QUEUE		4
+    #define STATUS_SCHEDULE		5
+
 
     //mDownloadFile RESTART, SPLIT
     #define WAIT		-1
     #define YES			0
     #define NO			1
-    
+
     class mDownloadFile
     {
     public:
@@ -195,6 +211,7 @@
         int index;
         int status;
         int restart;
+        int scheduled;
         wxString name;            //DON'T CHANGE THIS VAR DIRECTLY - USE THE ChangeName() function
         wxString destination;
         wxString comments;
@@ -218,15 +235,25 @@
         bool finished[MAX_NUM_PARTS];
         long startpoint[MAX_NUM_PARTS];
         long size[MAX_NUM_PARTS];
-        long sizecompleted[MAX_NUM_PARTS];        
+        long sizecompleted[MAX_NUM_PARTS];
         long delta_size[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
         wxString proxytype; //ADDED BY GXL117
         wxString proxyaction; //ADDED BY GXL117
         wxString server; //ADDED BY GXL117
         wxString port; //ADDED BY GXL117
-    };  
-    
+    };
+
+    class mScheduleException
+	{
+	public:
+        wxString start,finish;
+        wxString newstart,newfinish;
+        int day;    //0 - Sunday
+        int newday; //1 - Monday ...
+        int isactive;
+	};
+
     class mOptions
 	{
 	public:
@@ -252,6 +279,11 @@
 		wxString shutdowncmd;
 		wxString disconnectcmd;
 		wxString destination;
+		int activatescheduling;
+		wxDateTime startdatetime;
+		wxDateTime finishdatetime;
+		mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
+        int scheduleexceptionschanged;
 	};
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadList);
@@ -268,7 +300,7 @@
     class mClient;
     class mServer;
     class mDownloadThread;
-    
+
 	WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
 
 	class mApplication : public wxApp
@@ -281,7 +313,7 @@
 		bool NewInstance();
 	    mDownloadList downloadlist;
 	    mDownloadThreadArray *downloadthreads;
-    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port);  //CHANGED BY GXL117
+    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled);  //CHANGED BY GXL117
         void RegisterListItemOnDisk(mDownloadFile *file);
         void RecreateIndex();
 		void LoadDownloadListFromDisk();
@@ -290,6 +322,7 @@
 		void ChangeName(mDownloadFile *currentfile, wxString name, int value = 0);
 		wxString Configurations(int operation, wxString option, wxString value);
 		int Configurations(int operation, wxString option, int value);
+		long Configurations(int operation, wxString option,long value);
 		mMainFrame *mainframe;
 		wxLocale *m_locale;
 		wxCmdLineParser *parameters;
@@ -301,7 +334,7 @@
         wxCondition m_condAllDone;
         bool m_waitingUntilAllDone;
 	};
-	
+
 	DECLARE_APP(mApplication)
 
 	class mMainFrame : public wxFrame
@@ -312,8 +345,10 @@
         void OnTimer(wxTimerEvent& event);
         bool NewDownload(wxString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show);
         bool StartDownload(mDownloadFile *downloadfile);
+        void StopDownload(mDownloadFile *downloadfile);
         void OnNew(wxCommandEvent& event);
         void OnRemove(wxCommandEvent& event);
+        void OnSchedule(wxCommandEvent& event);
         void OnStart(wxCommandEvent& event);
         void OnStop(wxCommandEvent& event);
         void OnPasteURL(wxCommandEvent& event);
@@ -376,7 +411,7 @@
     private:
        DECLARE_EVENT_TABLE()
     };
-	
+
     class mBoxNew: public wxDialog
     {
     public:
@@ -386,7 +421,7 @@
 	private:
 	    DECLARE_EVENT_TABLE()
 	};
-	
+
     class mBoxOptions: public wxDialog
     {
     public:
@@ -397,10 +432,47 @@
 	    void OnGraphGridColour(wxCommandEvent& event);
 	    void OnGraphLineColour(wxCommandEvent& event);
 	    void OnGraphFontColour(wxCommandEvent& event);
+	    void OnButtonStartDate(wxCommandEvent& event);
+	    void OnButtonFinishDate(wxCommandEvent& event);
+	    void OnAdd(wxCommandEvent& event);
+	    void OnRemove(wxCommandEvent& event);
 	private:
 	    DECLARE_EVENT_TABLE()
 	};
-	
+
+    class wxDatePicker: public wxDialog
+    {
+    public:
+        wxDatePicker::wxDatePicker(wxWindow* parent, wxWindowID id, const wxString& title, wxString date):
+                wxDialog(parent, id, title)
+        {
+            int wdate,hdate,wbtn,hbtn;
+            wxDateTime tmpdate;
+            tmpdate.ParseDate(date);
+            m_datepicker = new wxCalendarCtrl(this,0,tmpdate,wxPoint(0,0),wxDefaultSize);
+            m_datepicker->GetClientSize(&wdate,&hdate);
+            m_btnok = new wxButton(this,wxID_OK,_("Ok"));
+            m_btnok->GetClientSize(&wbtn,&hbtn);
+            m_btnok->SetSize(wdate-wbtn,hdate,-1,-1);
+            this->SetSize(-1,-1,wdate,hdate+hbtn);
+            this->CentreOnParent();
+        };
+        void wxDatePicker::OnOk(wxCommandEvent& event)
+        {
+            m_selecteddate = m_datepicker->GetDate().Format(wxT("%Y/%m/%d"));
+            EndModal(wxID_OK);
+        };
+        wxString wxDatePicker::GetSelectedDate()
+        {
+            return m_selecteddate;
+        };
+	private:
+        wxCalendarCtrl *m_datepicker;
+        wxButton *m_btnok;
+	    wxString m_selecteddate;
+	    DECLARE_EVENT_TABLE()
+	};
+
 	class mBoxOptionsColorPanel: public wxPanel
 	{
 	public:
@@ -410,18 +482,18 @@
 	private:
 	    DECLARE_EVENT_TABLE()
 	};
-	
+
     class mBoxFind: public wxFindReplaceDialog {
     public:
         mBoxFind(wxWindow * parent, wxFindReplaceData* data, const wxString& title, int style = 0):
         wxFindReplaceDialog(parent, data, title, style){}
-        
+
         void OnFind(wxFindDialogEvent& event);
         void OnClose(wxFindDialogEvent& event);
     private:
         DECLARE_EVENT_TABLE()
     };
-	
+
 	class mInProgressList : public wxListCtrl
 	{
 	public:
@@ -437,7 +509,7 @@
 	private:
 	    DECLARE_EVENT_TABLE()
 	};
-	
+
 	class mFinishedList : public wxListCtrl
 	{
 	public:
@@ -452,7 +524,7 @@
 	private:
 	    DECLARE_EVENT_TABLE()
 	};
-	
+
 	class mNotebook : public wxNotebook
 	{
 	public:
@@ -478,14 +550,14 @@
     private:
        wxString m_url;
 
-    }; 
-    
+    };
+
     class mConnection: public wxConnection
     {
     public:
         bool OnExecute(const wxString& topic, wxChar* data, int size, wxIPCFormat format);
     };
-    
+
     class mClient: public wxClient
     {
     public:
@@ -504,7 +576,7 @@
     	mDownloadThread(mDownloadFile *file, int index);
         // thread execution starts here
         virtual void *Entry();
-    
+
         // called when the thread exits - whether it terminates normally or is
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
@@ -525,7 +597,7 @@
         bool restart;
     };
 
-	wxString int2wxstr(long value);
+	wxString int2wxstr(long value,int format = 0);
 	wxString TimeString(long value);
 	wxString GetLine(wxString text, int line);
     char *wxstr2str(wxString wxstr);

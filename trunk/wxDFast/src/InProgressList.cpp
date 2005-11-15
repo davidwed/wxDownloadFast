@@ -7,9 +7,10 @@ BEGIN_EVENT_TABLE(mInProgressList, wxListCtrl)
 END_EVENT_TABLE()
 
 void mInProgressList::OnRClick(wxListEvent& event)
-{	
+{
 	if (GetCurrentSelection() >= 0)
 	{
+	    wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),TRUE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
@@ -66,6 +67,7 @@ void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mai
 	if (!selected)
 		SetCurrentSelection(selection);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
+    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
    	mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
@@ -74,6 +76,7 @@ void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mai
 	mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
 	mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
     mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
+    mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolstart"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolstop"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolup"),selected);
@@ -84,14 +87,19 @@ void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mai
 int mInProgressList::Insert(mDownloadFile *current, int item)
 {
     long tmp;
+    int currentstatus;
     if (current != NULL)
     {
+        if ((*current).scheduled)
+            currentstatus = STATUS_SCHEDULE;
+        else
+            currentstatus = (*current).status;
         if (item == -1)
         {
            item = (*current).index;
-           tmp = this->InsertItem(item, wxEmptyString,(*current).status);
+           tmp = this->InsertItem(item, wxEmptyString,currentstatus);
            this->SetItemData(tmp, item);
-           this->SetItem(item, INPROGRESS_ICON01, wxEmptyString,(*current).status);
+           this->SetItem(item, INPROGRESS_ICON01, wxEmptyString,currentstatus);
         }
         else
         {
@@ -100,7 +108,7 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
            listitem.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
            listitem.SetColumn(INPROGRESS_ICON01);
            this->GetItem(listitem);
-           listitem.SetImage((*current).status);
+           listitem.SetImage(currentstatus);
            this->SetItem(listitem);
         }
         if ((*current).restart == YES)

@@ -7,9 +7,10 @@ BEGIN_EVENT_TABLE(mFinishedList, wxListCtrl)
 END_EVENT_TABLE()
 
 void mFinishedList::OnRClick(wxListEvent& event)
-{	
+{
 	if (GetCurrentSelection() >= 0)
 	{
+	    wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),FALSE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),FALSE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),FALSE);
 		wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),FALSE);
@@ -66,6 +67,7 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 {
 	wxListCtrl* infolist = XRCCTRL(*(wxGetApp().mainframe), "infolist",wxListCtrl );
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),FALSE);
+    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
    	mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
@@ -85,25 +87,25 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 	    item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
 	    this->GetItem(item);
 	    config->SetPath(item.GetText());
-		
+
 		infolist->SetItem(0,1,item.GetText());
-	
+
 	    value = 0;
 	    config->Read(SIZE_REG,&value);
 	    infolist->SetItem(1,1,ByteString(value));
-	
+
 	    value = 0;
 	    config->Read(SPEED_REG,&value);
 	    infolist->SetItem(2,1,ByteString(value)+wxT("/s"));
-	
+
 	    value = 0;
 	    config->Read(TIMEPASSED_REG,&value);
 	    infolist->SetItem(3,1,TimeString(value));
-	
+
 	    str = wxEmptyString;
 	    config->Read(DESTINATION_REG,&str);
 	    infolist->SetItem(4,1,str);
-	
+
 	    {
 	        wxDateTime date;
 	        value = 0;
@@ -111,7 +113,7 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 	        date.Set(value);
 	        infolist->SetItem(5,1,date.Format());
 	    }
-	
+
 	    {
 	        wxDateTime date;
 	        value = 0;
@@ -119,19 +121,19 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 	        date.Set(value);
 	        infolist->SetItem(6,1,date.Format());
 	    }
-	
+
 	    str = wxEmptyString;
 	    config->Read(MD5_REG,&str);
 	    infolist->SetItem(7,1,str);
-	    
+
 	    str = wxEmptyString;
 	    config->Read(URL1_REG,&str);
 	    infolist->SetItem(8,1,str);
-	    
+
 	    str = wxEmptyString;
 	    config->Read(COMMENTS_REG,&str);
 	    infolist->SetItem(9,1,str);
-	
+
 	    delete config;
 	}
 	else
@@ -146,6 +148,6 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 	    infolist->SetItem(6, 1, wxEmptyString);
 		infolist->SetItem(7, 1, wxEmptyString);
 		infolist->SetItem(8, 1, wxEmptyString);
-		infolist->SetItem(9, 1, wxEmptyString);		
+		infolist->SetItem(9, 1, wxEmptyString);
 	}
 }
