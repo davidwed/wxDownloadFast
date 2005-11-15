@@ -12,6 +12,7 @@ Características do Programa
 ===========================
 * Permite realizar o download de vários arquivos simultaneamente,
   e ainda dividi-lo em várias partes
+* Permite agendar dowloads
 * Permite organizar os arquivo já baixados
 * Permite continuar um download interrompido do ponto onde parou
 * Mostra as mensagens enviadas/recebidas pelo programa quando conectando

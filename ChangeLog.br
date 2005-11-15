@@ -1,3 +1,13 @@
+0.3.0
+===================================================
+- Adicionada opções de agendamento
+- Agora o status do download é gravado antes de
+  fechar o programa. Deste modo se um download
+  esta ativo e o programa é fechado, quando for
+  reaberto o download será iniciado automatica-
+  mente.
+- Corrigidos vários bugs.
+
 0.2.2
 ===================================================
 - Adicionado idioma espanhol
@@ -10,12 +20,12 @@
 ===================================================
 - Toda a rotinha de download foi reimplementada, sendo
   adicionada a opção de dividir o arquivo em vários partes.
-- Adicionada caixa "Opções"
+- Adicionada caixa "Opções".
 - Adicionada opções que permitem que o computador seja
   desligado, ou a conexão seja terminada, quando todos
-  os downloads forem concluídos
-- Fetios varios melhoramentos em geral.
-- Corrigidos vários bugs
+  os downloads forem concluídos.
+- Feitos varios melhoramentos em geral.
+- Corrigidos vários bugs.
 
 0.1.1
 ===================================================
