@@ -4,8 +4,8 @@
 - Now the status of download is recorded before
   closing the program. In this way if exist some
   active download and the program is closed, then
-  when the user reopen the download it will be
-  initiated automatica-.  
+  when the user reopen the program the download
+  will be initiated automaticaly.  
 - Fixed several bugs.
 
 

@@ -58,7 +58,11 @@ void *mDownloadThread::Entry()
 	else
 	{
 		while (downloadfile->split == WAIT)
+		{
+            if (downloadfile->status == STATUS_STOPED)
+                return NULL;
 			Sleep(10);
+		}
 		if (downloadfile->split == NO)
 			return NULL;
 	}
@@ -139,6 +143,7 @@ void *mDownloadThread::Entry()
 		}
 	}
 	while ((downloadfile->currentattempt <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror));
+
 	if ((resp == -1) || (downloadfile->criticalerror))
 	//WILL BE TRUE IF A ERROR HAPPEN IN THIS THREAD(RESP == -1)
 	//OR IN THE OTHERS(downloadfile->error == TRUE)

@@ -3,7 +3,7 @@
 - Adicionada opções de agendamento
 - Agora o status do download é gravado antes de
   fechar o programa. Deste modo se um download
-  esta ativo e o programa é fechado, quando for
+  está ativo e o programa é fechado, quando for
   reaberto o download será iniciado automatica-
   mente.
 - Corrigidos vários bugs.
