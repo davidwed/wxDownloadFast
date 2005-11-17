@@ -90,10 +90,7 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
     int currentstatus;
     if (current != NULL)
     {
-        if ((*current).scheduled)
-            currentstatus = STATUS_SCHEDULE;
-        else
-            currentstatus = (*current).status;
+        currentstatus = (*current).status;
         if (item == -1)
         {
            item = (*current).index;

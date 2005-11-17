@@ -17,8 +17,8 @@ Characteristics of the Program
 * Allows to continue one download interrupted of the point where had stopped
 * The messages sended/received for the program when connecting to servers HTTP/FTP
 * It can be translated with easiness for any language.  Being avaliable initially
-in Portuguese[Brasil] and English
-* Allows to connect in servers ftp which need password
+  in Portuguese[Brazil], Spanish and English
+* Allows to connect in FTP servers(only FTP) which need password
 * Generate the MD5 of the downloaded archives, facilitating the verification
 
 Installation
@@ -77,4 +77,4 @@ MacOS
 
 As I never had access to a system running the MacOS, I never build the program
 in this system, however I believe that the steps used in the Linux should work for
-the MacOS
+the MacOS.
