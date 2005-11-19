@@ -34,6 +34,7 @@ CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
 VERSION = 0.3.0
+DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
 all: criardir $(BIN).exe
@@ -144,6 +145,7 @@ endif
 	echo "Terminal=0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	echo "Type=Application" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	echo "Categories=Application;GTK;GNOME;Network;FileTransfer;" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+#	if [ -x /usr/bin/update-menus ] ; then update-menus ; fi
 
 uninstall:
 ifeq ($(BUILD), win32)
@@ -164,6 +166,7 @@ endif
 	rm -f $(DESTDIR)/usr/share/menu/wxdfast
 	rm -f $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	rmdir $(DESTDIR)/usr/lib/$(BIN)
+	if [ -x /usr/bin/update-menus ] ; then update-menus ; fi
 
 dist: source
 	tar -cf $(BIN)-$(VERSION)-src.tar $(BIN)-$(VERSION)
@@ -172,16 +175,22 @@ dist: source
 
 deb: source
 	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
-	echo "?package(wxdfast): \ " > $(BIN)-$(VERSION)/debian/menu
-	echo "      needs=\"X11\" \ " >> $(BIN)-$(VERSION)/debian/menu
-	echo "      section=\"Apps/Net\" \ " >> $(BIN)-$(VERSION)/debian/menu
-	echo "      title=\"wxDFast\" \ " >> $(BIN)-$(VERSION)/debian/menu
-	echo "      command=\"/usr/bin/wxdfast\" \ " >> $(BIN)-$(VERSION)/debian/menu
+	echo "?package(wxdfast): \\" > $(BIN)-$(VERSION)/debian/menu
+	echo "      needs=\"X11\" \\" >> $(BIN)-$(VERSION)/debian/menu
+	echo "      section=\"Apps/Net\" \\" >> $(BIN)-$(VERSION)/debian/menu
+	echo "      title=\"wxDFast\" \\" >> $(BIN)-$(VERSION)/debian/menu
+	echo "      command=\"/usr/bin/wxdfast\" \\" >> $(BIN)-$(VERSION)/debian/menu
 	echo "      icon=\"/usr/share/pixmaps/wxdfast.xpm\"" >> $(BIN)-$(VERSION)/debian/menu
 	rm -f $(BIN)-$(VERSION)/debian/README.Debian
-	sed '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
-	rm -f wxdfast-$(VERSION)/debian/control
-	mv wxdfast-$(VERSION)/debian/control.new wxdfast-$(VERSION)/debian/control
+	sed -e 's/Section: unknown/Section: net/g' -e '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
+	sed -e 's/#\tdh_installmenu/\tdh_installmenu/g' wxdfast-$(VERSION)/debian/rules > wxdfast-$(VERSION)/debian/rules.new
+	sed -e 's/<fill in ftp site>/dfast.sf.net/g' -e 's/<put author(s) name and email here>/Max Magalhães Velasques <maxvelasques at gmail com>/g' wxdfast-$(VERSION)/debian/copyright > wxdfast-$(VERSION)/debian/copyright.new
+	sed -e '1i wxdfast ($(VERSION)-$(DEBIANPACK)) unstable; urgency=low' -e '1d' -e '3i \  * Initial release.' -e '3d' wxdfast-$(VERSION)/debian/changelog > wxdfast-$(VERSION)/debian/changelog.new
+	cat wxdfast-$(VERSION)/debian/control.new > wxdfast-$(VERSION)/debian/control
+	cat wxdfast-$(VERSION)/debian/rules.new > wxdfast-$(VERSION)/debian/rules
+	cat wxdfast-$(VERSION)/debian/copyright.new > wxdfast-$(VERSION)/debian/copyright
+	cat wxdfast-$(VERSION)/debian/changelog.new > wxdfast-$(VERSION)/debian/changelog
+	rm -f wxdfast-$(VERSION)/debian/*.ex wxdfast-$(VERSION)/debian/*.EX wxdfast-$(VERSION)/debian/*.new
 	(cd $(BIN)-$(VERSION);dpkg-buildpackage -rfakeroot)
 	rm -r $(BIN)-$(VERSION)
 
