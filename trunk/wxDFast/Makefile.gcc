@@ -90,8 +90,8 @@ $(BUILD_DIR)urlname.o: src/urlname.cpp
 $(BUILD_DIR)wxDFast.o: src/wxDFast.cpp
 	$(CPP) -c src/wxDFast.cpp -o $(BUILD_DIR)wxDFast.o $(CXXFLAGS)
 
-$(RES): src/DFast.rc 
-	$(WINDRES) -i src/DFast.rc -I rc -o $(BUILD_DIR)$(RES) -O coff $(RESINCS)
+$(RES): src/wxDFast.rc 
+	$(WINDRES) -i src/wxDFast.rc -J rc -o $(BUILD_DIR)$(RES) -O coff $(RESINCS)
 
 $(WXMD5): $(BUILD_DIR)md5.o $(BUILD_DIR)wxMD5.o
 	ar cur $(BUILD_DIR)$(WXMD5) $(BUILD_DIR)wxMD5.o $(BUILD_DIR)md5.o
