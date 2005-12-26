@@ -1,0 +1,12 @@
+Source: wxdfast
+Section: net
+Priority: optional
+Maintainer: Max Magalhães Velasques <maxvelasques@gmail.com>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.2
+
+Package: wxdfast
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Multithread download manager
+ Multithread download manager created using the wxWidgets library.
