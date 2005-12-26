@@ -1,3 +1,13 @@
+0.3.1
+===================================================
+- Agora é possível passar urls do tipo file://path
+  para downloads de arquivos locais
+- Agora é possível passar várias urls pela linha
+  de comando
+- Adicionados parâmetros --list, --destination e
+  --comments. Para mais informaçoes leia o arquivo
+  Readme.
+
 0.3.0
 ===================================================
 - Adicionada opções de agendamento

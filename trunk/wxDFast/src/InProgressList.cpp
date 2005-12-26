@@ -8,73 +8,75 @@ END_EVENT_TABLE()
 
 void mInProgressList::OnRClick(wxListEvent& event)
 {
-	if (GetCurrentSelection() >= 0)
-	{
-	    wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menumove"),FALSE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menumd5"),FALSE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menuproperties"),TRUE);
-		wxGetApp().mainframe->menupopup->Enable(XRCID("menuagain"),FALSE);
-		wxGetApp().mainframe->PopupMenu(wxGetApp().mainframe->menupopup,event.GetPoint());
-	}
+    if (GetCurrentSelection() >= 0)
+    {
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menumove"),FALSE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menumd5"),FALSE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menuproperties"),TRUE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menuagain"),FALSE);
+        wxGetApp().mainframe->PopupMenu(wxGetApp().mainframe->menupopup,event.GetPoint());
+    }
 }
 
 int mInProgressList::GetCurrentSelection()
 {
     wxNotebook *notebook = XRCCTRL(*(wxGetApp().mainframe), "notebook01",wxNotebook );
     int selection = -1;
-	if (notebook->GetSelection() == 0)
+    if (notebook->GetSelection() == 0)
     {
-    	int j;
-    	for (j = 0 ; j < this->GetItemCount();j++)
-    		if (this->GetItemState(j,wxLIST_STATE_SELECTED)&wxLIST_STATE_SELECTED )
-    		{
-    			selection = j;
-    		    break;
-    		}
+        int j;
+        for (j = 0 ; j < this->GetItemCount();j++)
+            if (this->GetItemState(j,wxLIST_STATE_SELECTED)&wxLIST_STATE_SELECTED )
+            {
+                selection = j;
+                break;
+            }
     }
-	return selection;
+    return selection;
 }
 
 void mInProgressList::SetCurrentSelection(int selection)
 {
-	int i;
-	if (selection < 0)
-	{
-		for (i=0;i<GetItemCount();i++)
-			SetItemState(i,0,wxLIST_STATE_SELECTED);
-	}
-	else
-		SetItemState(selection,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+    int i;
+    if (selection < 0)
+    {
+        for (i=0;i<GetItemCount();i++)
+            this->SetItemState(i,0,wxLIST_STATE_SELECTED);
+    }
+    else
+    {
+        this->SetItemState(selection,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+    }
 }
 
 void mInProgressList::OnSelected(wxListEvent& event)
 {
-	SelectUnselect(TRUE,event.GetIndex(),wxGetApp().mainframe);
+    SelectUnselect(TRUE,event.GetIndex(),wxGetApp().mainframe);
 }
 
 void mInProgressList::OnDeselected(wxListEvent& event)
 {
-	SelectUnselect(FALSE,-1,wxGetApp().mainframe);
+    SelectUnselect(FALSE,-1,wxGetApp().mainframe);
 }
 
 void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mainframe)
 {
-	if (!selected)
-		SetCurrentSelection(selection);
+    if (!selected)
+        SetCurrentSelection(selection);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
-   	mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+       mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
-	mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
-	mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
-	mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
+    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
+    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
+    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
     mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolstart"),selected);
@@ -129,22 +131,22 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
 
 void mInProgressList::RemoveItemListandFile(int item)
 {
-	if ((item >=0) && (item < GetItemCount()))
-	{
-		mDownloadFile *currentfile = wxGetApp().downloadlist.Item(item)->GetData();
-		if ((item + 1) < GetItemCount())
-		{
-			int count = item;
-			for ( mDownloadList::Node *node = wxGetApp().downloadlist.Item(item+1); node; node = node->GetNext() )
-		    {
-		    	node->GetData()->index = count;
-		    	wxGetApp().RegisterListItemOnDisk(node->GetData());
-		    	Insert(node->GetData(),count);
-		    	count++;
-			}
-		}
-		wxGetApp().downloadlist.DeleteObject(currentfile);
-		DeleteItem(GetItemCount()-1);
-		SelectUnselect(FALSE,-1,wxGetApp().mainframe);
-	}
+    if ((item >=0) && (item < GetItemCount()))
+    {
+        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(item)->GetData();
+        if ((item + 1) < GetItemCount())
+        {
+            int count = item;
+            for ( mDownloadList::Node *node = wxGetApp().downloadlist.Item(item+1); node; node = node->GetNext() )
+            {
+                node->GetData()->index = count;
+                wxGetApp().RegisterListItemOnDisk(node->GetData());
+                Insert(node->GetData(),count);
+                count++;
+            }
+        }
+        wxGetApp().downloadlist.DeleteObject(currentfile);
+        DeleteItem(GetItemCount()-1);
+        SelectUnselect(FALSE,-1,wxGetApp().mainframe);
+    }
 }

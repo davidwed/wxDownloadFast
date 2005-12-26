@@ -16,11 +16,44 @@ Características do Programa
 * Permite organizar os arquivo já baixados
 * Permite continuar um download interrompido do ponto onde parou
 * Mostra as mensagens enviadas/recebidas pelo programa quando conectando
-  aos servidores HTTP/FTP
+  aos servidores HTTP/FTP ou ainda para downloads locais(file://)
 * Pode ser traduzido com facilidade para qualquer idioma. Estando diponíveis 
-  inicialmente os idiomas Portguês[Brasil], Espanhol e Inglês
+  inicialmente os idiomas Português[Brasil], Espanhol e Inglês
 * Permite conectar à servidores FTP(apenas FTP e não HTTP) que necessitam de senha
 * Gera o MD5 dos arquivos baixados facilitando assim a verificação dos mesmos
+
+Parametros da linha de comado
+-----------------------------
+[URLS],
+Urls separadas por espaço de arquivos a serem baixados
+
+--hide,
+Iniciar com a janela principal escondida
+
+--notray,
+Não mostar o icone do programa na bandeja do sistema
+
+-list TEXTFILE, --list=TEXTFILE,
+Passa um arquivo de texto com a lista de arquivos a serem baixados
+sendo cada linha uma url
+
+-destination DIR, --destination=DIR,
+Diretório de destino
+
+-comments COMMENTS, --comments=COMMENTS,
+Adiciona comentários ao download
+
+Integração com o Firefox
+------------------------
+Para ativar a integração com o Firefox faça o seguinte:
+1) Instale a extenção FlashGot para o Firefox(www.flashgot.org/getit)
+2) Após reiniciar o Firefox vá em Ferramentas -> FlashGot -> Mais opções
+3) Agora clique em adicionar novo gerenciador
+4) Em nome insira: wxDownload Fast
+5) No caminho do gerenciador insira o caminho de onde o programa
+   foi instalado. No Linux fica normalmente em /usr/bin/wxdfast
+   No Windows fica em c:\Arquivos de Programas\wxDownload Fast\wxdfast.exe
+6) Nos parametros para o programa insira: --list=[UFILE]
 
 Instalação
 ----------

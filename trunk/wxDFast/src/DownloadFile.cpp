@@ -2,10 +2,10 @@
 
 int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2)
 {
-	if ((*arg1)->index > (*arg2)->index)
-	   return 1;
-	else
-	   return -1;
+    if ((*arg1)->index > (*arg2)->index)
+       return 1;
+    else
+       return -1;
 }
 
 int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
@@ -20,66 +20,66 @@ int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
 
 int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled) //CHANGED BY GXL117
 {
-	mDownloadFile *file = new mDownloadFile();
-	file->index =  downloadlist.GetCount();
-	file->scheduled = scheduled;
+    mDownloadFile *file = new mDownloadFile();
+    file->index =  downloadlist.GetCount();
+    file->scheduled = scheduled;
     file->status = STATUS_STOPED;
-	file->restart = -1;
-	file->parts = parts;
-	file->name = url.GetFullName();
-	file->destination = destination.GetFullPath();
-	file->totalsize = 0;
-	file->totalsizecompleted = 0;
-	file->comments = comments;
-	file->percentual = 0;
-	file->timepassed = 0l;
-	file->timeremaining = 0l;
-	file->totalspeed = 0;
-	file->urllist = url.GetFullPath();
-	file->MD5 = wxEmptyString;
-	file->start = wxDateTime::Now();
-	file->end = wxDateTime::Now();
-	file->currentattempt = 0;
-	for (int i =0;i<MAX_NUM_PARTS;i++)
-	{
-		file->messages[i].Clear();
-		file->delta_size[i] = 0;
-		file->sizecompleted[i] = 0;
-		file->startpoint[i] = 0;
-		file->size[i] = 0;
-		file->finished[i] = FALSE;
-	}
-	if (user == wxEmptyString)
-	{
-		file->user = ANONYMOUS_USER;
-		file->password = ANONYMOUS_PASS;
-	}
-	else
-	{
-		file->user = user;
-		file->password = password;
-	}
-	file->free = TRUE;
-	file->criticalerror = FALSE;
-	file->split = WAIT;
-	switch(proxytype) //ADDED BY GXL117 - FROM HERE
-	{
-	case 0:
-		file->proxytype=wxT("NOPROXY");
-		break;
-	case 1:
-		file->proxytype=wxT("HTTP");
-		break;
-	//case 2:
-	//	file->proxytype=wxT("SOCKSV4");
-	//	break;
-	default:
-		break;
-	}
-	file->proxyaction = proxyaction.Upper();
-	file->server = server;
-	file->port = port; //ADDED BY GXL117 - UNTIL HERE
-	downloadlist.Append(file);
+    file->restart = -1;
+    file->parts = parts;
+    file->name = url.GetFullName();
+    file->destination = destination.GetFullPath();
+    file->totalsize = 0;
+    file->totalsizecompleted = 0;
+    file->comments = comments;
+    file->percentual = 0;
+    file->timepassed = 0l;
+    file->timeremaining = 0l;
+    file->totalspeed = 0;
+    file->urllist = url.GetFullPath();
+    file->MD5 = wxEmptyString;
+    file->start = wxDateTime::Now();
+    file->end = wxDateTime::Now();
+    file->currentattempt = 0;
+    for (int i =0;i<MAX_NUM_PARTS;i++)
+    {
+        file->messages[i].Clear();
+        file->delta_size[i] = 0;
+        file->sizecompleted[i] = 0;
+        file->startpoint[i] = 0;
+        file->size[i] = 0;
+        file->finished[i] = FALSE;
+    }
+    if (user == wxEmptyString)
+    {
+        file->user = ANONYMOUS_USER;
+        file->password = ANONYMOUS_PASS;
+    }
+    else
+    {
+        file->user = user;
+        file->password = password;
+    }
+    file->free = TRUE;
+    file->criticalerror = FALSE;
+    file->split = WAIT;
+    switch(proxytype) //ADDED BY GXL117 - FROM HERE
+    {
+    case 0:
+        file->proxytype=wxT("NOPROXY");
+        break;
+    case 1:
+        file->proxytype=wxT("HTTP");
+        break;
+    //case 2:
+    //    file->proxytype=wxT("SOCKSV4");
+    //    break;
+    default:
+        break;
+    }
+    file->proxyaction = proxyaction.Upper();
+    file->server = server;
+    file->port = port; //ADDED BY GXL117 - UNTIL HERE
+    downloadlist.Append(file);
     RegisterListItemOnDisk(file);
     return (file->index);
 }
@@ -148,10 +148,10 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
     config->Write(USER_REG,file->user);
     config->Write(PASSWORD_REG,file->password);
 
-	config->Write(PROXYTYPE_REG,file->proxytype); //ADDED BY GXL117
-	config->Write(PROXYACTION_REG,file->proxyaction); //ADDED BY GXL117
-	config->Write(SERVER_REG,file->server); //ADDED BY GXL117
-	config->Write(PORT_REG,file->port); //ADDED BY GXL117
+    config->Write(PROXYTYPE_REG,file->proxytype); //ADDED BY GXL117
+    config->Write(PROXYACTION_REG,file->proxyaction); //ADDED BY GXL117
+    config->Write(SERVER_REG,file->server); //ADDED BY GXL117
+    config->Write(PORT_REG,file->port); //ADDED BY GXL117
 
     delete config;
 }
@@ -159,13 +159,13 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
 void mApplication::RecreateIndex()
 {
     int i=0;
-	for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
-	{
+    for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
+    {
         mDownloadFile *current = node->GetData();
         if (current->index != i)
         {
-	        current->index = i;
-    	    RegisterListItemOnDisk(current);
+            current->index = i;
+            RegisterListItemOnDisk(current);
         }
         i++;
     }
@@ -182,14 +182,14 @@ void mApplication::LoadDownloadListFromDisk()
 
         do
         {
-        	mDownloadFile *file = new mDownloadFile();
+            mDownloadFile *file = new mDownloadFile();
             file->name = name;
             downloadlist.Append(file);
         }
         while(config->GetNextGroup(name, index));
     }
     for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
-	{
+    {
         mDownloadFile *file = node->GetData();
         config->SetPath(file->name);
         config->Read(INDEX_REG,&(file->index));
@@ -227,25 +227,25 @@ void mApplication::LoadDownloadListFromDisk()
         file->criticalerror = FALSE;
         file->split = WAIT;
         if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
-        	file->parts = 1;
+            file->parts = 1;
 
-		for (int i =0;i<MAX_NUM_PARTS;i++)
-		{
+        for (int i =0;i<MAX_NUM_PARTS;i++)
+        {
 
-			file->messages[i].Clear();
-			file->delta_size[i] = 0;
-			file->sizecompleted[i] = 0;
-			file->startpoint[i] = 0;
-			file->size[i] = 0;
-			file->finished[i] = FALSE;
-		}
+            file->messages[i].Clear();
+            file->delta_size[i] = 0;
+            file->sizecompleted[i] = 0;
+            file->startpoint[i] = 0;
+            file->size[i] = 0;
+            file->finished[i] = FALSE;
+        }
 
         config->Read(USER_REG,&(file->user));
         config->Read(PASSWORD_REG,&(file->password));
-		config->Read(PROXYTYPE_REG,&(file->proxytype)); //ADDED BY GXL117
-		config->Read(PROXYACTION_REG,&(file->proxyaction)); //ADDED BY GXL117
-		config->Read(SERVER_REG,&(file->server)); //ADDED BY GXL117
-		config->Read(PORT_REG,&(file->port)); //ADDED BY GXL117
+        config->Read(PROXYTYPE_REG,&(file->proxytype)); //ADDED BY GXL117
+        config->Read(PROXYACTION_REG,&(file->proxyaction)); //ADDED BY GXL117
+        config->Read(SERVER_REG,&(file->server)); //ADDED BY GXL117
+        config->Read(PORT_REG,&(file->port)); //ADDED BY GXL117
 
         config->SetPath(BACK_DIR_REG);
     }
@@ -277,9 +277,9 @@ void mApplication::ChangeName(mDownloadFile *currentfile, wxString name, int val
 
 mDownloadFile *mApplication::FindDownloadFile(wxString str)
 {
-	for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+    for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
         if (node->GetData()->name.Lower() == str.Lower())
-        	return (node->GetData());
+            return (node->GetData());
     return (NULL);
 }
 

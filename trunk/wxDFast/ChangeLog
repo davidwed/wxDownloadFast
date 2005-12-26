@@ -1,3 +1,13 @@
+0.3.1
+===================================================
+- Now it is possible to parse urls of the type 
+  file://path to download local files
+- Now it is possible to parse several urls for the
+  command line
+- Added parameters --list, --destination and
+  --comments. For more informations see the Readme
+  file
+
 0.3.0
 ===================================================
 - Added a schedule option

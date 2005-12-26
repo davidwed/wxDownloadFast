@@ -15,11 +15,44 @@ Characteristics of the Program
 * Allows to schedule a download
 * Allows to organize the archive already downloaded
 * Allows to continue one download interrupted of the point where had stopped
-* The messages sended/received for the program when connecting to servers HTTP/FTP
-* It can be translated with easiness for any language.  Being avaliable initially
+* The messages sent/received for the program when connecting to servers HTTP/FTP
+  or for local downloads(file://)
+* It can be translated with easiness for any language.  Being available initially
   in Portuguese[Brazil], Spanish and English
 * Allows to connect in FTP servers(only FTP) which need password
 * Generate the MD5 of the downloaded archives, facilitating the verification
+
+Command line Parameters
+-----------------------------
+[URLS],
+Urls space separeted of the files to be downloaded
+
+--hide,
+Start with the the main frame hide
+
+--notray,
+Don't show the icon on system tray
+
+-list TEXTFILE, --list=TEXTFILE,
+Parse a text file with the list of files to download
+
+-destination DIR, --destination=DIR,
+Destination directory
+
+-comments COMMENTS, --comments=COMMENTS,
+Add comments for the download
+
+Firefox Integration
+------------------------
+To activate the Firefox integration, do the follow:
+
+1) Install the FlashGot extension to the Firefox(www.flashgot.org/getit)
+2) After restart the Firefox, go to Tools -> FlashGot -> More Options
+3) Now click in Add new download manager
+4) In name, insert: wxDownload Fast
+5) In path, insert the place where the program was installed. In general it stay in
+   /usr/bin/wxdfast
+6) In parameters of program insert: --list=[UFILE]
 
 Installation
 ------------
@@ -31,7 +64,7 @@ Win32
 
 Is available in the page of the program contends this program.  This archive is in
 the form of a installation program.
-To intall the program follow the wizard.
+To install the program follow the wizard.
 Then to change the Language from Portuguese to English to this:
 1) Start the program
 2) Go to menu "Ver->Idiomas"
