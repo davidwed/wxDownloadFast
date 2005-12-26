@@ -8,18 +8,18 @@ PRODUCTVERSION 0,2,1,1463
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
-	 {
-		 BLOCK "041604E4"
-		 {
-			 VALUE "CompanyName", "Max Velasques"
-			 VALUE "FileVersion", "0.2.1"
-			 VALUE "FileDescription", "Developed using Eclipse"
-			 VALUE "InternalName", "wxDFast"
-			 VALUE "LegalCopyright", "Max Velasques"
-			 VALUE "LegalTrademarks", "Max Velasques"
-			 VALUE "OriginalFilename", "wxdfast.exe"
-			 VALUE "ProductName", "wxDownload Fast"
-			 VALUE "ProductVersion", "0.2.1"
-		 }
-	 }
+     {
+         BLOCK "041604E4"
+         {
+             VALUE "CompanyName", "Max Velasques"
+             VALUE "FileVersion", "0.2.1"
+             VALUE "FileDescription", "Developed using Eclipse"
+             VALUE "InternalName", "wxDFast"
+             VALUE "LegalCopyright", "Max Velasques"
+             VALUE "LegalTrademarks", "Max Velasques"
+             VALUE "OriginalFilename", "wxdfast.exe"
+             VALUE "ProductName", "wxDownload Fast"
+             VALUE "ProductVersion", "0.2.1"
+         }
+     }
 }

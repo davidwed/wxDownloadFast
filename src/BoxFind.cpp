@@ -15,25 +15,25 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
     mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
     mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);    
     wxNotebook *notebook = XRCCTRL(*(wxGetApp().mainframe), "notebook01",wxNotebook );
-	if (notebook->GetSelection() == 0) //DOWNLOADS IN PROGRESS
+    if (notebook->GetSelection() == 0) //DOWNLOADS IN PROGRESS
 
     {
-    	index = list01->GetCurrentSelection();
-	    column = INPROGRESS_NAME;
-	    list = (wxListCtrl*)list01;
+        index = list01->GetCurrentSelection();
+        column = INPROGRESS_NAME;
+        list = (wxListCtrl*)list01;
     }
-	else if (notebook->GetSelection() == 1) //FINISHEDS DOWNLOADS
-	{
-		index = list02->GetCurrentSelection();
-		column = FINISHED_NAME;
-	    list = (wxListCtrl*)list02;
+    else if (notebook->GetSelection() == 1) //FINISHEDS DOWNLOADS
+    {
+        index = list02->GetCurrentSelection();
+        column = FINISHED_NAME;
+        list = (wxListCtrl*)list02;
     }
-	else
-	{
-		wxMessageBox(_("Impossible to search in this page.\nChange to another page and try again"),_("Error..."),wxOK | wxICON_ERROR, this);
-		return ; 
-	}
-        
+    else
+    {
+        wxMessageBox(_("Impossible to search in this page.\nChange to another page and try again"),_("Error..."),wxOK | wxICON_ERROR, this);
+        return ; 
+    }
+
     flags = event.GetFlags();
     if (flags & wxFR_DOWN)
     {
@@ -91,7 +91,7 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
         else
             i--;
     }
-    if (!found)    
+    if (!found)
         wxMessageBox(_("File not found."), _("Information..."),wxOK | wxICON_INFORMATION, this);
 
     return ;

@@ -2,6 +2,7 @@
 RESOURCE_DIR = resources/
 SOURCE_DIR = src/
 LANGUAGE_DIR = languages/
+MANPAGE_DIR = man/
 BUILD_DIR = build-gcc/
 CPP  = g++
 CC   = gcc
@@ -33,7 +34,7 @@ WXMD5 = libwxmd5.a
 CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.3.0
+VERSION = 0.3.1
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -125,26 +126,16 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
+	$(INSTALL_FILE) $(MANPAGE_DIR)man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/man1
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt_BR/man1
+	$(INSTALL_FILE) $(MANPAGE_DIR)pt_BR/man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/pt_BR/man1
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt/man1
+	$(INSTALL_FILE) $(MANPAGE_DIR)pt_BR/man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/pt/man1
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/menu
-	echo "?package(wxdfast): \ " > $(DESTDIR)/usr/share/menu/wxdfast
-	echo "      needs="X11" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
-	echo "      section="Apps/Net" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
-	echo "      title="wxDFast" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
-	echo "      command="/usr/bin/wxdfast" \ " >> $(DESTDIR)/usr/share/menu/wxdfast
-	echo "      icon="/usr/share/pixmaps/wxdfast.xpm"" >> $(DESTDIR)/usr/share/menu/wxdfast
+	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast $(DESTDIR)/usr/share/menu
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
-	echo "[Desktop Entry]" > $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Version=1.0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Encoding=UTF-8" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Name=wxDFast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "GenericName=wxDFast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Comment=Multi-thread Download Manager" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Exec=wxdfast %u" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "TryExec=wxdfast" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Icon=wxdfast.xpm" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Terminal=0" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Type=Application" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
-	echo "Categories=Application;GTK;GNOME;Network;FileTransfer;" >> $(DESTDIR)/usr/share/applications/wxdfast.desktop
+	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.desktop $(DESTDIR)/usr/share/applications
 #	if [ -x /usr/bin/update-menus ] ; then update-menus ; fi
 
 uninstall:
@@ -163,6 +154,9 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)*.xrc
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
+	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
+	rm -f $(DESTDIR)/usr/share/man/pt_BR/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/menu/wxdfast
 	rm -f $(DESTDIR)/usr/share/applications/wxdfast.desktop
 	rmdir $(DESTDIR)/usr/lib/$(BIN)
@@ -173,61 +167,72 @@ dist: source
 	gzip $(BIN)-$(VERSION)-src.tar
 	rm -r $(BIN)-$(VERSION)
 
-deb: source
-	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
-	echo "?package(wxdfast): \\" > $(BIN)-$(VERSION)/debian/menu
-	echo "      needs=\"X11\" \\" >> $(BIN)-$(VERSION)/debian/menu
-	echo "      section=\"Apps/Net\" \\" >> $(BIN)-$(VERSION)/debian/menu
-	echo "      title=\"wxDFast\" \\" >> $(BIN)-$(VERSION)/debian/menu
-	echo "      command=\"/usr/bin/wxdfast\" \\" >> $(BIN)-$(VERSION)/debian/menu
-	echo "      icon=\"/usr/share/pixmaps/wxdfast.xpm\"" >> $(BIN)-$(VERSION)/debian/menu
-	rm -f $(BIN)-$(VERSION)/debian/README.Debian
-	sed -e 's/Section: unknown/Section: net/g' -e '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
-	sed -e 's/#\tdh_installmenu/\tdh_installmenu/g' wxdfast-$(VERSION)/debian/rules > wxdfast-$(VERSION)/debian/rules.new
-	sed -e 's/<fill in ftp site>/dfast.sf.net/g' -e 's/<put author(s) name and email here>/Max Magalhães Velasques <maxvelasques at gmail com>/g' wxdfast-$(VERSION)/debian/copyright > wxdfast-$(VERSION)/debian/copyright.new
-	sed -e '1i wxdfast ($(VERSION)-$(DEBIANPACK)) unstable; urgency=low' -e '1d' -e '3i \  * Initial release.' -e '3d' wxdfast-$(VERSION)/debian/changelog > wxdfast-$(VERSION)/debian/changelog.new
-	cat wxdfast-$(VERSION)/debian/control.new > wxdfast-$(VERSION)/debian/control
-	cat wxdfast-$(VERSION)/debian/rules.new > wxdfast-$(VERSION)/debian/rules
-	cat wxdfast-$(VERSION)/debian/copyright.new > wxdfast-$(VERSION)/debian/copyright
-	cat wxdfast-$(VERSION)/debian/changelog.new > wxdfast-$(VERSION)/debian/changelog
-	rm -f wxdfast-$(VERSION)/debian/*.ex wxdfast-$(VERSION)/debian/*.EX wxdfast-$(VERSION)/debian/*.new
-	(cd $(BIN)-$(VERSION);dpkg-buildpackage -rfakeroot)
-	rm -r $(BIN)-$(VERSION)
+deb: clean source
+	dpkg-buildpackage -rfakeroot
+#	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
+#	echo "?package(wxdfast): \\" > $(BIN)-$(VERSION)/debian/menu
+#	echo "      needs=\"X11\" \\" >> $(BIN)-$(VERSION)/debian/menu
+#	echo "      section=\"Apps/Net\" \\" >> $(BIN)-$(VERSION)/debian/menu
+#	echo "      title=\"wxDFast\" \\" >> $(BIN)-$(VERSION)/debian/menu
+#	echo "      command=\"/usr/bin/wxdfast\" \\" >> $(BIN)-$(VERSION)/debian/menu
+#	echo "      icon=\"/usr/share/pixmaps/wxdfast.xpm\"" >> $(BIN)-$(VERSION)/debian/menu
+#	rm -f $(BIN)-$(VERSION)/debian/README.Debian
+#	sed -e 's/Section: unknown/Section: net/g' -e '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
+#	sed -e 's/#\tdh_installmenu/\tdh_installmenu/g' wxdfast-$(VERSION)/debian/rules > wxdfast-$(VERSION)/debian/rules.new
+#	sed -e 's/<fill in ftp site>/dfast.sf.net/g' -e 's/<put author(s) name and email here>/Max Magalhães Velasques <maxvelasques at gmail com>/g' wxdfast-$(VERSION)/debian/copyright > wxdfast-$(VERSION)/debian/copyright.new
+#	sed -e '1i wxdfast ($(VERSION)-$(DEBIANPACK)) unstable; urgency=low' -e '1d' -e '3i \  * Initial release.' -e '3d' wxdfast-$(VERSION)/debian/changelog > wxdfast-$(VERSION)/debian/changelog.new
+#	cat wxdfast-$(VERSION)/debian/control.new > wxdfast-$(VERSION)/debian/control
+#	cat wxdfast-$(VERSION)/debian/rules.new > wxdfast-$(VERSION)/debian/rules
+#	cat wxdfast-$(VERSION)/debian/copyright.new > wxdfast-$(VERSION)/debian/copyright
+#	cat wxdfast-$(VERSION)/debian/changelog.new > wxdfast-$(VERSION)/debian/changelog
+#	rm -f wxdfast-$(VERSION)/debian/*.ex wxdfast-$(VERSION)/debian/*.EX wxdfast-$(VERSION)/debian/*.new
+#	(cd $(BIN)-$(VERSION);dpkg-buildpackage -rfakeroot)
+#	rm -r $(BIN)-$(VERSION)
 
 source:
 	rm -f $(BIN)-$(VERSION)-src.tar.gz
 	rm -rf $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)
-	mkdir $(BIN)-$(VERSION)/languages
-	mkdir $(BIN)-$(VERSION)/languages/es
-	cp languages/es/wxDFast.* $(BIN)-$(VERSION)/languages/es
-	mkdir $(BIN)-$(VERSION)/languages/pt_BR
-	cp languages/pt_BR/wxDFast.* $(BIN)-$(VERSION)/languages/pt_BR
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	cp $(LANGUAGE_DIR)es/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
+	cp $(LANGUAGE_DIR)pt_BR/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
+	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
+	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
+	cp $(MANPAGE_DIR)man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
+	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR
+	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
+	cp $(MANPAGE_DIR)pt_BR/man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
 	mkdir $(BIN)-$(VERSION)/resources
-	cp resources/*.xpm $(BIN)-$(VERSION)/resources
-	cp resources/*.ico $(BIN)-$(VERSION)/resources
-	cp resources/*.xrc $(BIN)-$(VERSION)/resources
-	mkdir $(BIN)-$(VERSION)/resources/small
-	cp resources/small/*.xpm $(BIN)-$(VERSION)/resources/small
-	mkdir $(BIN)-$(VERSION)/resources/big
-	cp resources/big/*.xpm $(BIN)-$(VERSION)/resources/big
-	mkdir $(BIN)-$(VERSION)/src
+	cp $(RESOURCE_DIR)*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)*.xrc $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)wxdfast.desktop $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)wxdfast $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
+	cp $(RESOURCE_DIR)small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
+	cp $(RESOURCE_DIR)big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
+	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
 	cp gpl.txt $(BIN)-$(VERSION)
 	cp Readme.* $(BIN)-$(VERSION)
 	cp Changes.* $(BIN)-$(VERSION)
 	cp ToDo.* $(BIN)-$(VERSION)
-	cp src/*.cpp $(BIN)-$(VERSION)/src
-	cp src/*.h $(BIN)-$(VERSION)/src
-	cp src/*.rc $(BIN)-$(VERSION)/src
-	cp src/wxMD5/*.c $(BIN)-$(VERSION)/src/wxMD5
-	cp src/wxMD5/*.cpp $(BIN)-$(VERSION)/src/wxMD5
-	cp src/wxMD5/*.h $(BIN)-$(VERSION)/src/wxMD5
+	cp $(SOURCE_DIR)*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)
+	cp $(SOURCE_DIR)*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)
+	cp $(SOURCE_DIR)*.rc $(BIN)-$(VERSION)/$(SOURCE_DIR)
+	cp $(SOURCE_DIR)wxMD5/*.c $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
+	cp $(SOURCE_DIR)wxMD5/*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
+	cp $(SOURCE_DIR)wxMD5/*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
+	mkdir $(BIN)-$(VERSION)/debian
+	cp debian/* $(BIN)-$(VERSION)/debian
 	cp Makefile $(BIN)-$(VERSION)
 	cp makefile.vc $(BIN)-$(VERSION)
 
 clean:
-	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) $(BIN)_$(VERSION).orig.tar.gz $(BIN)_$(VERSION)*.diff.gz $(BIN)_$(VERSION)*.dsc $(BIN)_$(VERSION)*.asc $(BIN)_$(VERSION)*.changes
+	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) debian/wxdfast.postinst.debhelper debian/wxdfast.postrm.debhelper debian/wxdfast.substvars debian/$(BIN) configure-stamp build-stamp
 
-cleanall:
-	rm -fr $(BIN) $(BIN).exe $(BUILD_DIR) $(BIN)-$(VERSION) $(BIN)-$(VERSION)-src.tar.gz $(BIN)_$(VERSION)*.deb $(BIN)_$(VERSION).orig.tar.gz $(BIN)_$(VERSION)*.diff.gz $(BIN)_$(VERSION)*.dsc $(BIN)_$(VERSION)*.asc $(BIN)_$(VERSION)*.changes
+cleanall: clean
+	rm -fr $(BIN) $(BIN).exe $(BIN)-$(VERSION)-src.tar.gz 

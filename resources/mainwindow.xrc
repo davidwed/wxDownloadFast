@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-
 <resource version="2.3.0.1">
     <object class="wxFrame" name="mainframe">
         <style>wxDEFAULT_FRAME_STYLE</style>

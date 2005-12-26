@@ -7,10 +7,10 @@
     #include "wx/listctrl.h"
     #include "wx/treectrl.h"
     #include "wx/html/htmlwin.h"
-	#include "wx/frame.h"
+    #include "wx/frame.h"
     #include "wx/fileconf.h"
     #include "wx/splitter.h"
-	#include "wxMD5/wxMD5.h"
+    #include "wxMD5/wxMD5.h"
     #include "wx/imaglist.h"
     #include "wx/protocol/ftp.h"
     #include "wx/file.h"
@@ -34,6 +34,8 @@
     #include "wx/snglinst.h"
     #include "wx/pen.h"
     #include "wx/calctrl.h"
+    #include "wx/tokenzr.h"
+    #include "wx/wfstream.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
@@ -42,7 +44,10 @@
     {
         { wxCMD_LINE_SWITCH, wxT("hide"), wxT("hide"), wxT("Start with the the main frame hide.")},
         { wxCMD_LINE_SWITCH, wxT("notray"), wxT("notray"),  wxT("Don't show the icon on system tray")},
-        { wxCMD_LINE_PARAM, NULL, NULL,  wxT("URL of the file to be downloaded"),wxCMD_LINE_VAL_STRING,wxCMD_LINE_PARAM_OPTIONAL},
+        { wxCMD_LINE_OPTION, wxT("list"), wxT("list"),  wxT("Parse a text file with the list of files to download")},
+        { wxCMD_LINE_OPTION, wxT("destination"), wxT("destination"),  wxT("Destination directory")},
+        { wxCMD_LINE_OPTION, wxT("comments"), wxT("comments"),  wxT("Add comments to download")},
+        { wxCMD_LINE_PARAM, NULL, NULL,  wxT("URL of the file(s) to be downloaded"),wxCMD_LINE_VAL_STRING,wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE},
         { wxCMD_LINE_NONE }
     };
 
@@ -59,15 +64,16 @@
        const wxString SEPARATOR_DIR = wxT("\\");
     #else
        const wxString SEPARATOR_DIR = wxT("/");
-	#endif
-	#define READ_BUFFER			    1024
-	#define MAX_NUM_PARTS 		    9
-	#define MIN_SIZE_TO_SPLIT	    500000l
-	#define USE_HTML_MESSAGES	    1 //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
-	#define MAX_SCHEDULE_EXCEPTIONS 9
+    #endif
+    #define MAX_NUM_PARTS              9
+    #define DEFAULT_NUM_PARTS          1
+    #define MIN_SIZE_TO_SPLIT          500000l
+    #define USE_HTML_MESSAGES          1 //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
+    #define MAX_SCHEDULE_EXCEPTIONS    9
 
-    #define IPC_SERVICE wxT("24242")
-    #define IPC_TOPIC wxT("IPC_WXDOWNLAD_FAST_")
+    #define IPC_SERVICE                wxT("24242")
+    #define IPC_TOPIC                  wxT("IPC_WXDOWNLAD_FAST_")
+    #define IPC_END_CONNECTION         wxT("IPC_WXDOWNLAD_FAST_END_CONECTION")
 
     const wxString DFAST_REG = wxT("wxDownloadFast");
     const wxString FILES_REG = wxT("files");
@@ -93,10 +99,10 @@
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
-	const wxString PROXYTYPE_REG = wxT("proxytype"); //ADDED BY GXL117
-	const wxString PROXYACTION_REG = wxT("proxyaction"); //ADDED BY GXL117
-	const wxString SERVER_REG = wxT("server"); //ADDED BY GXL117
-	const wxString PORT_REG = wxT("port"); //ADDED BY GXL117
+    const wxString PROXYTYPE_REG = wxT("proxytype"); //ADDED BY GXL117
+    const wxString PROXYACTION_REG = wxT("proxyaction"); //ADDED BY GXL117
+    const wxString SERVER_REG = wxT("server"); //ADDED BY GXL117
+    const wxString PORT_REG = wxT("port"); //ADDED BY GXL117
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -111,14 +117,15 @@
 
     const wxString OPT_DIALOG_CLOSE_REG = wxT("closewindow");
     const wxString OPT_ATTEMPTS_REG = wxT("attempts");
-	const wxString OPT_ATTEMPTS_TIME_REG = wxT("attemptstime");
+    const wxString OPT_ATTEMPTS_TIME_REG = wxT("attemptstime");
     const wxString OPT_SIMULTANEOUS_REG = wxT("simultaneous");
     const wxString OPT_DESTINATION_REG = wxT("dirdestination");
     const wxString OPT_SHUTDOWN_REG = wxT("shutdown");
     const wxString OPT_SHUTDOWN_CMD_REG = wxT("shutdowncmd");
     const wxString OPT_DISCONNECT_REG = wxT("disconnect");
     const wxString OPT_DISCONNECT_CMD_REG = wxT("disconnectcmd");
-	const wxString OPT_TIMERINTERVAL_REG = wxT("timerinterval");
+    const wxString OPT_TIMERINTERVAL_REG = wxT("timerinterval");
+    const wxString OPT_READBUFFERSIZE_REG = wxT("readbuffersize");
     const wxString OPT_GRAPH_HOWMANYVALUES_REG = wxT("graphhowmanyvalues");
     const wxString OPT_GRAPH_REFRESHTIME_REG = wxT("graphrefreshtime");
     const wxString OPT_GRAPH_SCALE_REG = wxT("graphscale");
@@ -154,10 +161,10 @@
     const wxColor GREEN = wxColor(0,98,65);
     const wxColor YELLOW = wxColor(170,170,0);
 
-    const wxString HTMLERROR = wxT("#FF0030"); 		//RED
-    const wxString HTMLSERVER = wxT("#009865");		//GREEN
-    const wxString HTMLNORMAL = wxT("#002f5e");		//BLUE
-    const wxString HTMLBLACK = wxT("#000000");		//BLACK
+    const wxString HTMLERROR = wxT("#FF0030");         //RED
+    const wxString HTMLSERVER = wxT("#009865");        //GREEN
+    const wxString HTMLNORMAL = wxT("#002f5e");        //BLUE
+    const wxString HTMLBLACK = wxT("#000000");        //BLACK
 
     const wxString days[7] = {_("Sunday"),_("Mondays"),_("Tuesdays"),
                               _("Wednesdays"),_("Thursdays"),_("Fridays"),
@@ -180,34 +187,35 @@
     const int FINISHED_SIZE = 2;
     const int FINISHED_END = 3;
 
-    #define HTTP              	1
-    #define FTP               	2
-    #define READ				3
-    #define WRITE				4
+    #define HTTP                1
+    #define FTP                 2
+    #define LOCAL_FILE          3
+    #define READ                4
+    #define WRITE               5
 
-    #define HIDE				1000
-    #define NEW					1001
-    #define CLOSE				1002
-    #define TIMER_ID			1003
+    #define HIDE                1000
+    #define NEW                 1001
+    #define CLOSE               1002
+    #define TIMER_ID            1003
 
     //mDownloadFile STATUS
-    #define STATUS_STOPED 		0
-    #define STATUS_ACTIVE		1
-    #define STATUS_FINISHED 	2
-    #define STATUS_ERROR		3
-    #define STATUS_QUEUE		4
-    #define STATUS_SCHEDULE		5
+    #define STATUS_STOPED       0
+    #define STATUS_ACTIVE       1
+    #define STATUS_FINISHED     2
+    #define STATUS_ERROR        3
+    #define STATUS_QUEUE        4
+    #define STATUS_SCHEDULE     5
 
 
     //mDownloadFile RESTART, SPLIT
-    #define WAIT		-1
-    #define YES			0
-    #define NO			1
+    #define WAIT               -1
+    #define YES                 0
+    #define NO                  1
 
     class mDownloadFile
     {
     public:
-    	bool free;
+        bool free;
         int index;
         int status;
         int restart;
@@ -223,7 +231,7 @@
         wxString MD5;
         wxDateTime start;
         wxDateTime end;
-		wxString urllist;
+        wxString urllist;
         int parts;
         int currentattempt;
         long totalsize;
@@ -231,7 +239,7 @@
         int totalspeed;
         bool criticalerror;
         int split;
-		bool speedpoint;
+        bool speedpoint;
         bool finished[MAX_NUM_PARTS];
         long startpoint[MAX_NUM_PARTS];
         long size[MAX_NUM_PARTS];
@@ -245,46 +253,47 @@
     };
 
     class mScheduleException
-	{
-	public:
+    {
+    public:
         wxString start,finish;
         wxString newstart,newfinish;
         int day;    //0 - Sunday
         int newday; //1 - Monday ...
         int isactive;
-	};
+    };
 
     class mOptions
-	{
-	public:
-		int attempts;		     //number of attempts
-		int closedialog;	     //show the close dialog
-		int simultaneous;	     //number of simultaneous downloads
-		int attemptstime;	     //time between the attempts in seconds
-		int shutdown;
-		int disconnect;
-		int alwaysshutdown;
-		int alwaysdisconnect;
-		int timerupdateinterval; //time between the timer refreshs in milliseconds
-		int graphhowmanyvalues;
-		int graphrefreshtime;    //time between the graph refreshs in milliseconds
-		int graphscale;          //max value showed in the graph
-		int graphtextarea;       //size the area reserved for the speed value
-		int graphspeedfontsize;
-		wxColour graphbackcolor;
-		wxColour graphgridcolor;
-		wxColour graphlinecolor;
-		int graphlinewidth;
-		wxColour graphfontcolor;
-		wxString shutdowncmd;
-		wxString disconnectcmd;
-		wxString destination;
-		int activatescheduling;
-		wxDateTime startdatetime;
-		wxDateTime finishdatetime;
-		mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
+    {
+    public:
+        int attempts;             //number of attempts
+        int closedialog;         //show the close dialog
+        int simultaneous;         //number of simultaneous downloads
+        int attemptstime;         //time between the attempts in seconds
+        int shutdown;
+        int disconnect;
+        int alwaysshutdown;
+        int alwaysdisconnect;
+        int timerupdateinterval; //time between the timer refreshs in milliseconds
+        long readbuffersize;
+        int graphhowmanyvalues;
+        int graphrefreshtime;    //time between the graph refreshs in milliseconds
+        int graphscale;          //max value showed in the graph
+        int graphtextarea;       //size the area reserved for the speed value
+        int graphspeedfontsize;
+        wxColour graphbackcolor;
+        wxColour graphgridcolor;
+        wxColour graphlinecolor;
+        int graphlinewidth;
+        wxColour graphfontcolor;
+        wxString shutdowncmd;
+        wxString disconnectcmd;
+        wxString destination;
+        int activatescheduling;
+        wxDateTime startdatetime;
+        wxDateTime finishdatetime;
+        mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
         int scheduleexceptionschanged;
-	};
+    };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadList);
     WX_DECLARE_LIST(float, mGraphPoints);
@@ -301,31 +310,31 @@
     class mServer;
     class mDownloadThread;
 
-	WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
+    WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
 
-	class mApplication : public wxApp
-	{
-	public:
+    class mApplication : public wxApp
+    {
+    public:
         mApplication();
         virtual ~mApplication();
-	    virtual bool OnInit();
-		virtual int OnExit();
-		bool NewInstance();
-	    mDownloadList downloadlist;
-	    mDownloadThreadArray *downloadthreads;
-    	int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled);  //CHANGED BY GXL117
+        virtual bool OnInit();
+        virtual int OnExit();
+        bool NewInstance();
+        mDownloadList downloadlist;
+        mDownloadThreadArray *downloadthreads;
+        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled);  //CHANGED BY GXL117
         void RegisterListItemOnDisk(mDownloadFile *file);
         void RecreateIndex();
-		void LoadDownloadListFromDisk();
-		void RemoveListItemFromDisk(mDownloadFile *file);
-		mDownloadFile *FindDownloadFile(wxString str);
-		void ChangeName(mDownloadFile *currentfile, wxString name, int value = 0);
-		wxString Configurations(int operation, wxString option, wxString value);
-		int Configurations(int operation, wxString option, int value);
-		long Configurations(int operation, wxString option,long value);
-		mMainFrame *mainframe;
-		wxLocale *m_locale;
-		wxCmdLineParser *parameters;
+        void LoadDownloadListFromDisk();
+        void RemoveListItemFromDisk(mDownloadFile *file);
+        mDownloadFile *FindDownloadFile(wxString str);
+        void ChangeName(mDownloadFile *currentfile, wxString name, int value = 0);
+        wxString Configurations(int operation, wxString option, wxString value);
+        int Configurations(int operation, wxString option, int value);
+        long Configurations(int operation, wxString option,long value);
+        mMainFrame *mainframe;
+        wxLocale *m_locale;
+        wxCmdLineParser *parameters;
         mServer *m_server;
         mConnection *connection;
         wxSingleInstanceChecker *m_checker;
@@ -333,17 +342,17 @@
         wxMutex m_mutexAllDone;
         wxCondition m_condAllDone;
         bool m_waitingUntilAllDone;
-	};
+    };
 
-	DECLARE_APP(mApplication)
+    DECLARE_APP(mApplication)
 
-	class mMainFrame : public wxFrame
-	{
-	public:
+    class mMainFrame : public wxFrame
+    {
+    public:
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show);
+        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile);
         void OnNew(wxCommandEvent& event);
@@ -356,46 +365,46 @@
         void OnFind(wxCommandEvent& event);
         void OnDetails(wxCommandEvent& event);
         void OnLanguages(wxCommandEvent& event);
-		void OnProperties(wxCommandEvent& event);
-		void OnMove(wxCommandEvent& event);
-		void OnDownloadAgain(wxCommandEvent& event);
-		void OnCheckMD5(wxCommandEvent& event);
-		void OnExportConf(wxCommandEvent& event);
-		void OnImportConf(wxCommandEvent& event);
-		void OnShutdown(wxCommandEvent& event);
-		void OnDisconnect(wxCommandEvent& event);
-		void OnOptions(wxCommandEvent& event);
-		void OnIconize(wxIconizeEvent& event);
+        void OnProperties(wxCommandEvent& event);
+        void OnMove(wxCommandEvent& event);
+        void OnDownloadAgain(wxCommandEvent& event);
+        void OnCheckMD5(wxCommandEvent& event);
+        void OnExportConf(wxCommandEvent& event);
+        void OnImportConf(wxCommandEvent& event);
+        void OnShutdown(wxCommandEvent& event);
+        void OnDisconnect(wxCommandEvent& event);
+        void OnOptions(wxCommandEvent& event);
+        void OnIconize(wxIconizeEvent& event);
         void OnExit(wxCommandEvent& event);
-		void OnClose(wxCloseEvent& event);
+        void OnClose(wxCloseEvent& event);
         void OnAbout(wxCommandEvent& WXUNUSED(event));
         void GenerateInProgressList();
         void GenerateFinishedList();
-		void OnToolLeftClick(wxCommandEvent& event);
-		void OnUpDown(bool up);
-		mTaskBarIcon *taskbaricon;
-		wxMenuBar *menubar;
-		wxToolBar *toolbar;
-		wxMenu *menupopup;
-		mOptions programoptions;
-		mGraphPoints graph;
-		int timerinterval;
-	private:
-	    wxTimer *mtimer;
-		wxImageList *imageslist;
-	    DECLARE_EVENT_TABLE()
-	};
+        void OnToolLeftClick(wxCommandEvent& event);
+        void OnUpDown(bool up);
+        mTaskBarIcon *taskbaricon;
+        wxMenuBar *menubar;
+        wxToolBar *toolbar;
+        wxMenu *menupopup;
+        mOptions programoptions;
+        mGraphPoints graph;
+        int timerinterval;
+    private:
+        wxTimer *mtimer;
+        wxImageList *imageslist;
+        DECLARE_EVENT_TABLE()
+    };
 
-	class mGraph : public wxPanel
-	{
-	public:
-		void OnPaint(wxPaintEvent &event);
-		mOptions *programoptions;
-		mGraphPoints *graph;
-		DECLARE_DYNAMIC_CLASS(mGraph)
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+    class mGraph : public wxPanel
+    {
+    public:
+        void OnPaint(wxPaintEvent &event);
+        mOptions *programoptions;
+        mGraphPoints *graph;
+        DECLARE_DYNAMIC_CLASS(mGraph)
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
     class mTaskBarIcon: public wxTaskBarIcon
     {
@@ -418,9 +427,9 @@
         void OnOk(wxCommandEvent& event);
         void OnCancel(wxCommandEvent& event);
         void OnButtonDir(wxCommandEvent& event);
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
     class mBoxOptions: public wxDialog
     {
@@ -428,17 +437,17 @@
         void OnOk(wxCommandEvent& event);
         void OnCancel(wxCommandEvent& event);
         void OnButtonDir(wxCommandEvent& event);
-	    void OnGraphBackgroundColour(wxCommandEvent& event);
-	    void OnGraphGridColour(wxCommandEvent& event);
-	    void OnGraphLineColour(wxCommandEvent& event);
-	    void OnGraphFontColour(wxCommandEvent& event);
-	    void OnButtonStartDate(wxCommandEvent& event);
-	    void OnButtonFinishDate(wxCommandEvent& event);
-	    void OnAdd(wxCommandEvent& event);
-	    void OnRemove(wxCommandEvent& event);
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+        void OnGraphBackgroundColour(wxCommandEvent& event);
+        void OnGraphGridColour(wxCommandEvent& event);
+        void OnGraphLineColour(wxCommandEvent& event);
+        void OnGraphFontColour(wxCommandEvent& event);
+        void OnButtonStartDate(wxCommandEvent& event);
+        void OnButtonFinishDate(wxCommandEvent& event);
+        void OnAdd(wxCommandEvent& event);
+        void OnRemove(wxCommandEvent& event);
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
     class wxDatePicker: public wxDialog
     {
@@ -466,22 +475,22 @@
         {
             return m_selecteddate;
         };
-	private:
+    private:
         wxCalendarCtrl *m_datepicker;
         wxButton *m_btnok;
-	    wxString m_selecteddate;
-	    DECLARE_EVENT_TABLE()
-	};
+        wxString m_selecteddate;
+        DECLARE_EVENT_TABLE()
+    };
 
-	class mBoxOptionsColorPanel: public wxPanel
-	{
-	public:
-	    void OnPaint(wxPaintEvent &event);
-	    wxColor colour;
-	    DECLARE_DYNAMIC_CLASS(mBoxOptionsColorPanel)
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+    class mBoxOptionsColorPanel: public wxPanel
+    {
+    public:
+        void OnPaint(wxPaintEvent &event);
+        wxColor colour;
+        DECLARE_DYNAMIC_CLASS(mBoxOptionsColorPanel)
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
     class mBoxFind: public wxFindReplaceDialog {
     public:
@@ -494,45 +503,45 @@
         DECLARE_EVENT_TABLE()
     };
 
-	class mInProgressList : public wxListCtrl
-	{
-	public:
-		void OnRClick(wxListEvent& event);
-		void OnSelected(wxListEvent& event);
-		void OnDeselected(wxListEvent& event);
-		void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
-		int Insert(mDownloadFile *current, int item);
-		int GetCurrentSelection();
-		void SetCurrentSelection(int selection);
-		void RemoveItemListandFile(int item);
-		 DECLARE_DYNAMIC_CLASS(mInProgressList)
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+    class mInProgressList : public wxListCtrl
+    {
+    public:
+        void OnRClick(wxListEvent& event);
+        void OnSelected(wxListEvent& event);
+        void OnDeselected(wxListEvent& event);
+        void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
+        int Insert(mDownloadFile *current, int item);
+        int GetCurrentSelection();
+        void SetCurrentSelection(int selection);
+        void RemoveItemListandFile(int item);
+         DECLARE_DYNAMIC_CLASS(mInProgressList)
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
-	class mFinishedList : public wxListCtrl
-	{
-	public:
-		void OnRClick(wxListEvent& event);
-		void OnSelected(wxListEvent& event);
-		void OnDeselected(wxListEvent& event);
-		void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
-		int GetCurrentSelection();
-		void SetCurrentSelection(int selection);
+    class mFinishedList : public wxListCtrl
+    {
+    public:
+        void OnRClick(wxListEvent& event);
+        void OnSelected(wxListEvent& event);
+        void OnDeselected(wxListEvent& event);
+        void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
+        int GetCurrentSelection();
+        void SetCurrentSelection(int selection);
 
-		DECLARE_DYNAMIC_CLASS(mFinishedList)
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+        DECLARE_DYNAMIC_CLASS(mFinishedList)
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
-	class mNotebook : public wxNotebook
-	{
-	public:
-		void OnChangePage(wxNotebookEvent& event);
-		DECLARE_DYNAMIC_CLASS(mNotebook)
-	private:
-	    DECLARE_EVENT_TABLE()
-	};
+    class mNotebook : public wxNotebook
+    {
+    public:
+        void OnChangePage(wxNotebookEvent& event);
+        DECLARE_DYNAMIC_CLASS(mNotebook)
+    private:
+        DECLARE_EVENT_TABLE()
+    };
 
     class mUrlName
     {
@@ -545,7 +554,6 @@
        wxString GetDir();
        wxString GetFullName();
        wxString GetFullPath();
-       wxString SetFullPath(wxString url);
        int Type();
     private:
        wxString m_url;
@@ -573,7 +581,7 @@
     class mDownloadThread : public wxThread
     {
     public:
-    	mDownloadThread(mDownloadFile *file, int index);
+        mDownloadThread(mDownloadFile *file, int index);
         // thread execution starts here
         virtual void *Entry();
 
@@ -582,28 +590,31 @@
         virtual void OnExit();
         int GetType();
         long CurrentSize(wxString filepath,wxString filename);
-		wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port); //ADDED BY GXL117
-		wxSocketClient *ConnectHTTP(long start);
-		wxSocketClient *ConnectFTP(long start);
-		int  DownloadPart(wxSocketClient *connection,long start,long end);
-		void PrintMessage(wxString str,wxString color=HTMLNORMAL);
-		void WaitUntilAllFinished(bool canstop = TRUE);
-		bool JoinFiles();
-		void SpeedCalculation(long delta_t);
-		mDownloadFile *downloadfile;
-		int downloadpartindex;
-		wxString currenturl;
+        wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port); //ADDED BY GXL117
+        wxSocketClient *ConnectHTTP(long start);
+        wxSocketClient *ConnectFTP(long start);
+        wxInputStream *ConnectLOCAL_FILE(long start);
+        int  DownloadPart(wxSocketClient *connection, wxInputStream *filestream, long start, long end);
+                        //the parameter wxInputStream *filestream is used just for LOCAL_FILE
+        void PrintMessage(wxString str,wxString color=HTMLNORMAL);
+        void WaitUntilAllFinished(bool canstop = TRUE);
+        bool JoinFiles();
+        void SpeedCalculation(long delta_t);
+        mDownloadFile *downloadfile;
+        mOptions *programoptions;
+        int downloadpartindex;
+        wxString currenturl;
         bool redirecting;
         bool restart;
     };
 
-	wxString int2wxstr(long value,int format = 0);
-	wxString TimeString(long value);
-	wxString GetLine(wxString text, int line);
+    wxString int2wxstr(long value,int format = 0);
+    wxString TimeString(long value);
+    wxString GetLine(wxString text, int line);
     char *wxstr2str(wxString wxstr);
     wxString str2wxstr(char *str);
     wxString str2wxstr(char str);
     wxString ByteString(long size);
-	int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
-	int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
+    int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
+    int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
 #endif

@@ -3,6 +3,7 @@
     <object class="wxDialog" name="boxnew">
         <style>wxDEFAULT_DIALOG_STYLE</style>
         <title>Add new download</title>
+        <size>480, 405</size>
         <object class="wxBoxSizer">
             <orient>wxHORIZONTAL</orient>
             <object class="spacer">
@@ -13,7 +14,7 @@
                 <flag>wxEXPAND</flag>
                 <object class="wxFlexGridSizer">
                     <hgap>0</hgap>
-                    <rows>6</rows>
+                    <rows>7</rows>
                     <cols>1</cols>
                     <vgap>0</vgap>
                     <object class="spacer">
@@ -28,7 +29,7 @@
                             <vgap>5</vgap>
                             <object class="sizeritem">
                                 <object class="wxStaticText" name="lblurl">
-                                    <label>Adress:</label>
+                                    <label>Address:</label>
                                 </object>
                             </object>
                             <object class="sizeritem">
@@ -439,6 +440,31 @@
                                     <object class="spacer">
                                         <size>20, 10</size>
                                     </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <option>1</option>
+                        <flag>wxEXPAND|wxALIGN_RIGHT</flag>
+                        <object class="wxFlexGridSizer">
+                            <hgap>5</hgap>
+                            <rows>1</rows>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticText" name="label_25">
+                                    <label>Address List:</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxCheckListBox" name="lstdownloads">
+                                    <size>450,100</size>
+                                    <style>wxLB_SINGLE</style>
                                 </object>
                             </object>
                         </object>
