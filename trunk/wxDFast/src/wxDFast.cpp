@@ -964,7 +964,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
 {
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments,*edproxyserver,*edproxyport; //CHANGED BY GXL117
-    wxCheckListBox *lstdownloads;
+    wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit;
     wxRadioButton *optnow,*optschedule;
     wxRadioBox *edproxyaction; //ADDED BY GXL117
@@ -978,7 +978,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     edtuser = XRCCTRL(dlg, "edtuser",wxTextCtrl);
     edtpassword = XRCCTRL(dlg, "edtpassword",wxTextCtrl);
     edtcomments = XRCCTRL(dlg, "edtcomments",wxTextCtrl);
-    lstdownloads = XRCCTRL(dlg, "lstdownloads",wxCheckListBox);
+    lstaddresslist = XRCCTRL(dlg, "lstaddresslist",wxCheckListBox);
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
     optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
@@ -993,18 +993,27 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     edproxyport->SetValue(wxEmptyString); //ADDED BY GXL117
 
     if (url.GetCount() <= 0)
+    {
         edturl->SetValue(wxEmptyString);
+        dlg.SetSize(-1,-1,480,405);
+        lstaddresslist->Hide();
+        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
+    }
     else if (url.GetCount() == 1)
+    {
         edturl->SetValue(url.Item(0));
+        dlg.SetSize(-1,-1,480,405);
+        lstaddresslist->Hide();
+        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
+    }
     else
     {
         edturl->Enable(FALSE);
-        lstdownloads->Clear();
-        lstdownloads->InsertItems(url,0);
-        nparams = lstdownloads->GetCount();
+        lstaddresslist->Clear();
+        lstaddresslist->InsertItems(url,0);
+        nparams = lstaddresslist->GetCount();
         for (i = 0; i < nparams ;i++)
-            lstdownloads->Check(i);
-        dlg.SetSize(-1,-1,480,550);
+            lstaddresslist->Check(i);
     }
     edtdestination->SetValue(destination);
     if (user == ANONYMOUS_USER)
@@ -1031,10 +1040,10 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         {
             wxArrayString urltmp;
             urltmp.Add(edturl->GetValue());
-            lstdownloads->InsertItems(urltmp,0);
-            lstdownloads->Check(0);
+            lstaddresslist->InsertItems(urltmp,0);
+            lstaddresslist->Check(0);
         }
-        nparams = lstdownloads->GetCount();
+        nparams = lstaddresslist->GetCount();
         wxArrayString fileswitherror;
         wxFileName destinationtmp;
         int index;
@@ -1045,11 +1054,11 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
 
         for (i = 0; i < nparams; i++)
         {
-            if (!lstdownloads->IsChecked(i))
+            if (!lstaddresslist->IsChecked(i))
                 continue;
 
             mUrlName urltmp;
-            urltmp.Assign(lstdownloads->GetString(i));
+            urltmp.Assign(lstaddresslist->GetString(i));
             if (!wxGetApp().FindDownloadFile(urltmp.GetFullName()))
             {
                 index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(),
@@ -1061,7 +1070,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             }
             else
             {
-                fileswitherror.Add(lstdownloads->GetString(i));
+                fileswitherror.Add(lstaddresslist->GetString(i));
                 continue;
             }
 

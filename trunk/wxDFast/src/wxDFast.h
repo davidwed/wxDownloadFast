@@ -66,9 +66,10 @@
        const wxString SEPARATOR_DIR = wxT("/");
     #endif
     #define MAX_NUM_PARTS              9
-    #define DEFAULT_NUM_PARTS          1
+    #define DEFAULT_NUM_PARTS          5
     #define MIN_SIZE_TO_SPLIT          500000l
-    #define USE_HTML_MESSAGES          1 //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
+    #define USE_HTML_MESSAGES          1 
+                                        //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
     #define MAX_SCHEDULE_EXCEPTIONS    9
 
     #define IPC_SERVICE                wxT("24242")
@@ -551,13 +552,18 @@
        void Assign(const wxString& fullpath);
        bool UrlIsValid();
        wxString GetHost();
+       int GetPort();
        wxString GetDir();
        wxString GetFullName();
        wxString GetFullPath();
        int Type();
     private:
        wxString m_url;
-
+       wxString m_host;
+       wxString m_dir;
+       wxString m_name;
+       int m_port;
+       int m_type;
     };
 
     class mConnection: public wxConnection

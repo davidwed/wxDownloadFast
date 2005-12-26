@@ -25,7 +25,7 @@ END_EVENT_TABLE()
 
 void mBoxOptions::OnOk(wxCommandEvent& event)
 {
-	EndModal(XRCID("btnoptionsave"));
+   EndModal(XRCID("btnoptionsave"));
 }
 
 void mBoxOptions::OnCancel(wxCommandEvent& event)
@@ -43,53 +43,53 @@ void mBoxOptions::OnButtonDir(wxCommandEvent& event)
 
 void mBoxOptions::OnGraphBackgroundColour(wxCommandEvent& event)
 {
-	wxColour colour = wxGetColourFromUser(this);
-	if (colour.Ok())
-	{
-		XRCCTRL(*(this), "graphpanelback",mBoxOptionsColorPanel)->colour = colour;
-		XRCCTRL(*(this), "graphpanelback",mBoxOptionsColorPanel)->Refresh();
-	}
+    wxColour colour = wxGetColourFromUser(this);
+    if (colour.Ok())
+    {
+        XRCCTRL(*(this), "graphpanelback",mBoxOptionsColorPanel)->colour = colour;
+        XRCCTRL(*(this), "graphpanelback",mBoxOptionsColorPanel)->Refresh();
+    }
 }
 
 void mBoxOptions::OnGraphGridColour(wxCommandEvent& event)
 {
-	wxColour colour = wxGetColourFromUser(this);
-	if (colour.Ok())
-	{
-		XRCCTRL(*(this), "graphpanelgrid",mBoxOptionsColorPanel)->colour = colour;
-		XRCCTRL(*(this), "graphpanelgrid",mBoxOptionsColorPanel)->Refresh();
-	}
+    wxColour colour = wxGetColourFromUser(this);
+    if (colour.Ok())
+    {
+        XRCCTRL(*(this), "graphpanelgrid",mBoxOptionsColorPanel)->colour = colour;
+        XRCCTRL(*(this), "graphpanelgrid",mBoxOptionsColorPanel)->Refresh();
+    }
 }
 
 void mBoxOptions::OnGraphLineColour(wxCommandEvent& event)
 {
-	wxColour colour = wxGetColourFromUser(this);
-	if (colour.Ok())
-	{
-		XRCCTRL(*(this), "graphpanelline",mBoxOptionsColorPanel)->colour = colour;
-		XRCCTRL(*(this), "graphpanelline",mBoxOptionsColorPanel)->Refresh();
-	}
+    wxColour colour = wxGetColourFromUser(this);
+    if (colour.Ok())
+    {
+        XRCCTRL(*(this), "graphpanelline",mBoxOptionsColorPanel)->colour = colour;
+        XRCCTRL(*(this), "graphpanelline",mBoxOptionsColorPanel)->Refresh();
+    }
 }
 
 void mBoxOptions::OnGraphFontColour(wxCommandEvent& event)
 {
-	wxColour colour = wxGetColourFromUser(this);
-	if (colour.Ok())
-	{
-		XRCCTRL(*(this), "graphpanelfont",mBoxOptionsColorPanel)->colour = colour;
-		XRCCTRL(*(this), "graphpanelfont",mBoxOptionsColorPanel)->Refresh();
-	}
+    wxColour colour = wxGetColourFromUser(this);
+    if (colour.Ok())
+    {
+        XRCCTRL(*(this), "graphpanelfont",mBoxOptionsColorPanel)->colour = colour;
+        XRCCTRL(*(this), "graphpanelfont",mBoxOptionsColorPanel)->Refresh();
+    }
 }
 
 void mBoxOptionsColorPanel::OnPaint(wxPaintEvent &event)
 {
-	wxPaintDC dc(this);
-	if (colour.Ok())
-	{
-	    wxBrush b(colour, wxSOLID);
-	    dc.SetBackground(b);
-	    dc.Clear();
-	}
+    wxPaintDC dc(this);
+    if (colour.Ok())
+    {
+        wxBrush b(colour, wxSOLID);
+        dc.SetBackground(b);
+        dc.Clear();
+    }
 }
 
 void mBoxOptions::OnButtonStartDate(wxCommandEvent& event)

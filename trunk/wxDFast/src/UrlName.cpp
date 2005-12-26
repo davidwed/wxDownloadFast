@@ -7,24 +7,88 @@ mUrlName::mUrlName()
 
 mUrlName::mUrlName(const wxString& fullpath)
 {
-    m_url = fullpath;
-    if ((m_url.Mid(0,4).Lower()) == wxT("www."))
-        m_url = wxT("http://") + fullpath;
-    else if ((m_url.Mid(0,4).Lower()) == wxT("ftp."))
-        m_url = wxT("ftp://") + fullpath;
-    else if ((m_url.Mid(0,1).Lower()) == wxT("/"))
-        m_url = wxT("file://") + fullpath;
+    this->Assign(fullpath);
 }
 
 void mUrlName::Assign(const wxString& fullpath)
 {
+    bool hasport = FALSE;
+    int position = 0;
+    wxString name;
     m_url = fullpath;
+    m_host = wxEmptyString;
+    m_port = 0;
+    m_dir = wxEmptyString;
+    m_name = wxEmptyString;
+    //COMPLETE THE ADDRESS
     if ((m_url.Mid(0,4).Lower()) == wxT("www."))
         m_url = wxT("http://") + fullpath;
     else if ((m_url.Mid(0,4).Lower()) == wxT("ftp."))
         m_url = wxT("ftp://") + fullpath;
     else if ((m_url.Mid(0,1).Lower()) == wxT("/"))
         m_url = wxT("file://") + fullpath;
+    else if ((m_url.Mid(1,1).Lower()) == wxT(":"))
+        m_url = wxT("file://") + fullpath;
+
+    //VERIFY TYPE
+    if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
+    {
+        m_type = HTTP;
+        m_port = 80;
+    }
+    else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
+    {
+        m_type = FTP;
+        m_port = 21;
+    }
+    else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
+        m_type = LOCAL_FILE;
+    else
+        m_type = -1;
+
+    if ((m_type == HTTP) || (m_type == FTP))
+    {
+        if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
+            name = m_url.Mid(7);
+        else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
+            name = m_url.Mid(6);
+        else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
+            name = m_url.Mid(7);
+
+        position = name.Find(SEPARATOR_URL);
+        if (position > 0)
+            m_host = name.Mid(0,position);
+
+        position = m_host.Find(wxT(":"));
+        if (position > 0)
+        {
+            m_host.Mid(position+1).ToLong((long *)&m_port);
+            hasport = TRUE;
+        }
+        m_host = m_host.Mid(0,position);
+    }
+
+    //GET THE FILE NAME
+    if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
+        name = m_url.Mid(7);
+    else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
+        name = m_url.Mid(6);
+    else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
+        name = m_url.Mid(7);
+    else
+        name = m_url;
+    position = name.Find('/',TRUE);
+    m_name = name.Mid(position+1);
+
+    //GET THE DIRECTORY
+    if ((m_type == HTTP) || (m_type == FTP))
+    {
+        if (hasport)
+            name = name.Mid(m_host.Length() + int2wxstr(m_port).Length() + 1);
+        else
+            name = name.Mid(m_host.Length());
+    }
+    m_dir = name.Mid(0,name.Length()-m_name.Length());
 }
 
 bool mUrlName::UrlIsValid()
@@ -43,7 +107,8 @@ bool mUrlName::UrlIsValid()
             return FALSE;
         return TRUE;
     }
-    else if ((m_url.Mid(0,8).Lower()) == wxT("file:///"))
+    else if (((m_url.Mid(0,7).Lower()) == wxT("file://")) && 
+            (((m_url.Mid(7,1).Lower()) == wxT("/")) || ((m_url.Mid(8,2).Lower()) == wxT(":/"))))
     {
         int i;
         for (i=7; i < (int)(m_url.Length() - 1); i++)
@@ -63,65 +128,27 @@ bool mUrlName::UrlIsValid()
 
 wxString mUrlName::GetHost()
 { 
-    int count = 0;
-    wxString nome;
-    if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
-        nome = m_url.Mid(7);
-    else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
-        nome = m_url.Mid(6);
-    else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
-        nome = m_url.Mid(7);
+    return m_host;
+}
 
-    count = nome.Find(SEPARATOR_URL);
-    if (count > 0)
-        return(nome.Mid(0,count--));
-    else
-        return wxEmptyString;
+int mUrlName::GetPort()
+{ 
+    return m_port;
 }
 
 int mUrlName::Type()
 {
-    if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
-        return HTTP;
-    else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
-        return FTP;
-    else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
-        return LOCAL_FILE;
-    else
-        return -1;
+    return m_type;
 }
 
 wxString mUrlName::GetDir()
 { 
-    wxString nome;
-    if ((m_url.Mid(0,7).Lower()) == wxT("http://"))
-        nome = m_url.Mid(7);
-    else if ((m_url.Mid(0,6).Lower()) == wxT("ftp://"))
-        nome = m_url.Mid(6);
-    else if ((m_url.Mid(0,7).Lower()) == wxT("file://"))
-        nome = m_url.Mid(7);
-    else
-        return(m_url);
-    wxString tmp01 = this->GetHost();
-    wxString tmp02 = GetFullName();
-    nome = nome.Mid(tmp01.Length());
-    nome = nome.Mid(0,nome.Length()-tmp02.Length());
-    return(nome);
+    return m_dir;
 }
 
 wxString mUrlName::GetFullName()
 {
-    unsigned int pos, count;
-    pos = count = 0;
-    wxString nome = m_url;
-    while (count < nome.Length())
-    {
-        count++;
-        if (nome.Mid(count,1) == SEPARATOR_URL)
-           pos = count;
-    }
-    nome = nome.Mid(pos+1);
-    return(nome);
+    return m_name;
 }
 
 wxString mUrlName::GetFullPath()
