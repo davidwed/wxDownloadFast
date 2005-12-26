@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=wxDownload Fast
+GenericName=wxDFast
+Comment=Multi-thread Download Manager
+Exec=wxdfast %u
+TryExec=wxdfast
+Icon=wxdfast.xpm
+Terminal=0
+Type=Application
+Categories=Application;GTK;GNOME;Network;FileTransfer;
