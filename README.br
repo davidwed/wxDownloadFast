@@ -25,7 +25,8 @@ Características do Programa
 Parametros da linha de comado
 -----------------------------
 [URLS],
-Urls separadas por espaço de arquivos a serem baixados
+Urls, separadas por espaço, dos arquivos a serem baixados
+Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
 
 --hide,
 Iniciar com a janela principal escondida

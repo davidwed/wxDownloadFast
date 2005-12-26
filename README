@@ -26,6 +26,7 @@ Command line Parameters
 -----------------------------
 [URLS],
 Urls space separeted of the files to be downloaded
+Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
 
 --hide,
 Start with the the main frame hide

@@ -415,7 +415,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     else
     {
         wxIPV4address address;
-        address.Service(80);
+        address.Service(url.GetPort());
         client = new wxSocketClient();
         client->Notify(FALSE);
         client ->SetFlags(wxSOCKET_NOWAIT);
@@ -432,7 +432,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
 
         if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-        PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT("' ...\n"));
+        PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT(" ") + int2wxstr(url.GetPort()) + wxT("' ...\n"));
         client->Connect(address,TRUE);
         if (client->IsConnected() == FALSE )
         {
@@ -609,10 +609,10 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     wxFileName destination;
     wxString buffer = wxEmptyString;
     long sizetmp;
-    address.Service(21);
     client->Notify(FALSE);
 
     url.Assign(currenturl);
+    address.Service(url.GetPort());
     destination.Assign(downloadfile->destination);
     destination.SetFullName(PREFIX + downloadfile->name + EXT + int2wxstr(downloadpartindex));
     redirecting = FALSE;

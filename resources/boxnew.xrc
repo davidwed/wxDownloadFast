@@ -3,7 +3,6 @@
     <object class="wxDialog" name="boxnew">
         <style>wxDEFAULT_DIALOG_STYLE</style>
         <title>Add new download</title>
-        <size>480, 405</size>
         <object class="wxBoxSizer">
             <orient>wxHORIZONTAL</orient>
             <object class="spacer">
@@ -36,6 +35,7 @@
                                 <object class="wxTextCtrl" name="edturl">
                                     <focused>1</focused>
                                     <size>345, 23</size>
+                                    <tooltip>URL to download\nExample: http://www.foo.com/foo.exe\nExample: http://www.foo.com:80/foo.exe\nExample: ftp://ftp.foo.com:21/foo.exe</tooltip>
                                 </object>
                             </object>
                             <object class="sizeritem">
@@ -455,14 +455,14 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_25">
+                                <object class="wxStaticText" name="lbladdresslist">
                                     <label>Address List:</label>
                                 </object>
                             </object>
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxCheckListBox" name="lstdownloads">
+                                <object class="wxCheckListBox" name="lstaddresslist">
                                     <size>450,100</size>
                                     <style>wxLB_SINGLE</style>
                                 </object>
