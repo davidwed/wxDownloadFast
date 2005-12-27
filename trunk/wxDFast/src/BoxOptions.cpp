@@ -95,6 +95,7 @@ void mBoxOptionsColorPanel::OnPaint(wxPaintEvent &event)
 void mBoxOptions::OnButtonStartDate(wxCommandEvent& event)
 {
     wxDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtstartdate",wxTextCtrl)->GetValue());
+    datepicker.SetBestFittingSize();
     if (datepicker.ShowModal() == wxID_OK)
         XRCCTRL(*this, "edtstartdate",wxTextCtrl)->SetValue(datepicker.GetSelectedDate());
 }
@@ -102,6 +103,7 @@ void mBoxOptions::OnButtonStartDate(wxCommandEvent& event)
 void mBoxOptions::OnButtonFinishDate(wxCommandEvent& event)
 {
     wxDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtfinishdate",wxTextCtrl)->GetValue());
+    datepicker.SetBestFittingSize();
     if (datepicker.ShowModal() == wxID_OK)
         XRCCTRL(*this, "edtfinishdate",wxTextCtrl)->SetValue(datepicker.GetSelectedDate());
 }
@@ -114,7 +116,7 @@ void mBoxOptions::OnAdd(wxCommandEvent& event)
         start = int2wxstr(XRCCTRL(*this, "spinexceptionstarthour",wxSpinCtrl)->GetValue(),2) + wxT(":") + int2wxstr(XRCCTRL(*this, "spinexceptionstartminute",wxSpinCtrl)->GetValue(),2);
         finish = int2wxstr(XRCCTRL(*this, "spinexceptionfinishhour",wxSpinCtrl)->GetValue(),2) + wxT(":") + int2wxstr(XRCCTRL(*this, "spinexceptionfinishminute",wxSpinCtrl)->GetValue(),2);
         string = start + wxT(" | ") + finish + wxT(" | ") + XRCCTRL(*this, "comboweekdays",wxComboBox)->GetValue();
-        XRCCTRL(*this, "lstexceptionlist",wxListBox)->InsertItems(1,&string,-1);
+        XRCCTRL(*this, "lstexceptionlist",wxListBox)->InsertItems(1,&string,0);
     }
     else
         wxMessageBox(_("Remove some item before add a new one."));

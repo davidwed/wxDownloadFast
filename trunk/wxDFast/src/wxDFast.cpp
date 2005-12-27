@@ -166,6 +166,7 @@ bool mApplication::OnInit()
     m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
     m_locale->AddCatalog(wxT("wxDFast"));
     LoadDownloadListFromDisk();
+    mainframe = NULL;
     mainframe = new mMainFrame();
     {
         int x,y,width,height,maximized,separatorposition01,separatorposition02,details;
@@ -995,14 +996,12 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     if (url.GetCount() <= 0)
     {
         edturl->SetValue(wxEmptyString);
-        dlg.SetSize(-1,-1,480,405);
         lstaddresslist->Hide();
         XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
     }
     else if (url.GetCount() == 1)
     {
         edturl->SetValue(url.Item(0));
-        dlg.SetSize(-1,-1,480,405);
         lstaddresslist->Hide();
         XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
     }
@@ -1015,6 +1014,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         for (i = 0; i < nparams ;i++)
             lstaddresslist->Check(i);
     }
+    dlg.SetBestFittingSize();
     edtdestination->SetValue(destination);
     if (user == ANONYMOUS_USER)
     {
@@ -1237,13 +1237,11 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
             wxTheClipboard->GetData( data );
             if (data.GetText().Strip(wxString::both) != wxEmptyString)
                 urltmp.Add(data.GetText().Strip(wxString::both));
-            destinationtmp = programoptions.destination;
         }
-        NewDownload(urltmp,destinationtmp,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
         wxTheClipboard->Close();
     }
-    else
-        wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+    destinationtmp = programoptions.destination;
+    NewDownload(urltmp,destinationtmp,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1431,6 +1429,10 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg, "port",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
+
+        XRCCTRL(dlg,"lstaddresslist",wxCheckListBox)->Hide();
+        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
+        dlg.SetBestFittingSize();
 
         if (dlg.ShowModal() == XRCID("btnok"))
         {
@@ -1739,6 +1741,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "spinfinishminute",wxSpinCtrl)->SetValue(programoptions.finishdatetime.GetMinute());
     for (i=0; i<7;i++)
         XRCCTRL(dlg, "comboweekdays",wxComboBox)->Append(days[i]);
+    XRCCTRL(dlg, "comboweekdays",wxComboBox)->SetValue(days[0]);
     for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
     {
         if (programoptions.scheduleexceptions[i].isactive)
@@ -1746,7 +1749,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
             wxString temp = programoptions.scheduleexceptions[i].start + wxT(" | ") +
                             programoptions.scheduleexceptions[i].finish + wxT(" | ") +
                             XRCCTRL(dlg, "comboweekdays",wxComboBox)->GetString(programoptions.scheduleexceptions[i].day);
-            XRCCTRL(dlg, "lstexceptionlist",wxListBox)->InsertItems(1,&temp,-1);
+            XRCCTRL(dlg, "lstexceptionlist",wxListBox)->InsertItems(1,&temp,0);
         }
     }
 
@@ -2122,43 +2125,51 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
 {
     wxMenu *traymenu = new wxMenu;
     wxMenuItem *mnuhide;
-    if (wxGetApp().mainframe->IsShown())
-        mnuhide = new wxMenuItem(traymenu,HIDE, _("Hide the main window"));
-    else
-        mnuhide = new wxMenuItem(traymenu,HIDE, _("Show the main window"));
-    wxMenuItem *mnunew = new wxMenuItem(traymenu,NEW, _("New download"));
-    wxMenuItem *mnuclose = new wxMenuItem(traymenu,CLOSE, _("Close the program"));
-    traymenu->Append(mnuhide);
-    traymenu->AppendSeparator();
-    traymenu->Append(mnunew);
-    traymenu->AppendSeparator();
-    traymenu->Append(mnuclose);
+    if (wxGetApp().mainframe)
+    {
+        if (wxGetApp().mainframe->IsShown())
+            mnuhide = new wxMenuItem(traymenu,HIDE, _("Hide the main window"));
+        else
+            mnuhide = new wxMenuItem(traymenu,HIDE, _("Show the main window"));
+        wxMenuItem *mnunew = new wxMenuItem(traymenu,NEW, _("New download"));
+        wxMenuItem *mnuclose = new wxMenuItem(traymenu,CLOSE, _("Close the program"));
+        traymenu->Append(mnuhide);
+        traymenu->AppendSeparator();
+        traymenu->Append(mnunew);
+        traymenu->AppendSeparator();
+        traymenu->Append(mnuclose);
+    }
     return traymenu;
 }
 
 void mTaskBarIcon::OnClose(wxCommandEvent& event)
 {
-    wxGetApp().mainframe->Close();
+    if (wxGetApp().mainframe)
+        wxGetApp().mainframe->Close();
 }
 
 void mTaskBarIcon::OnNew(wxCommandEvent& event)
 {
-    wxGetApp().mainframe->OnNew(event);
+    if (wxGetApp().mainframe)
+        wxGetApp().mainframe->OnNew(event);
 }
 
 void mTaskBarIcon::OnHide(wxCommandEvent& event)
 {
-   if (wxGetApp().mainframe->IsShown())
-   {
-          restoring = TRUE;
-       wxGetApp().mainframe->Hide();
-   }
-   else
-   {
-           restoring = TRUE;
-              if (wxGetApp().mainframe->IsIconized())
-                  wxGetApp().mainframe->Iconize(FALSE);
-           wxGetApp().mainframe->Show();
-           restoring = FALSE;
-   }
+    if (wxGetApp().mainframe)
+    {
+        if (wxGetApp().mainframe->IsShown())
+        {
+                restoring = TRUE;
+            wxGetApp().mainframe->Hide();
+        }
+        else
+        {
+                restoring = TRUE;
+                    if (wxGetApp().mainframe->IsIconized())
+                        wxGetApp().mainframe->Iconize(FALSE);
+                wxGetApp().mainframe->Show();
+                restoring = FALSE;
+        }
+    }
 }
