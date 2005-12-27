@@ -36,13 +36,13 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     else
     {
         bool atleastoneitemischecked = FALSE;
-        for (j = 0; j < XRCCTRL(*this, "lstdownloads",wxCheckListBox)->GetCount(); j++)
+        for (j = 0; j < XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->GetCount(); j++)
         {
-            if (!XRCCTRL(*this, "lstdownloads",wxCheckListBox)->IsChecked(j))
+            if (!XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->IsChecked(j))
                 continue;
             atleastoneitemischecked = TRUE;
             wxString url;
-            url = XRCCTRL(*this, "lstdownloads",wxCheckListBox)->GetString(j);
+            url = XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->GetString(j);
             mUrlName *urltmp;
             int i = 0, count = 0;
             for (i=0; i < (int)(url.Length()-1);i++)

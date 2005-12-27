@@ -4,10 +4,13 @@ SOURCE_DIR = src/
 LANGUAGE_DIR = languages/
 MANPAGE_DIR = man/
 BUILD_DIR = build-gcc/
-CPP  = g++
-CC   = gcc
-WINDRES = windres
-STRIP = strip
+CPP  = $(CROSS_PREFIX)g++
+CC   = $(CROSS_PREFIX)gcc
+AR   = $(CROSS_PREFIX)ar
+WINDRES = $(CROSS_PREFIX)windres
+STRIP = $(CROSS_PREFIX)strip
+WXCONFIG = wx-config
+WXRC = wxrc
 INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
@@ -19,10 +22,13 @@ OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUI
 endif
 
 LINKOBJ  = $(OBJ)
-LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5  -Wl `wx-config --libs`
-INCS =  -I"/usr/include" `wx-config --cxxflags`
+LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
+INCS =  `$(WXCONFIG) --cxxflags`
 RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
-#CXXINCS =  `wx-config --cxxflags`
+#LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
+#INCS =  -I"/usr/include" `$(WXCONFIG) --cxxflags`
+#RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
+#CXXINCS =  `$(WXCONFIG) --cxxflags`
 
 ifeq ($(XRC), 1)
 CXXFLAGS = $(INCS) -Wall -O2 -MMD
@@ -55,7 +61,7 @@ $(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.x
 ifeq ($(XRC), 1)
 	
 else
-	wxrc -c -o $(BUILD_DIR)Resources.cpp resources/*.xrc
+	$(WXRC) -c -o $(BUILD_DIR)Resources.cpp resources/*.xrc
 endif
 
 criardir:
@@ -95,7 +101,7 @@ $(RES): src/wxDFast.rc
 	$(WINDRES) -i src/wxDFast.rc -J rc -o $(BUILD_DIR)$(RES) -O coff $(RESINCS)
 
 $(WXMD5): $(BUILD_DIR)md5.o $(BUILD_DIR)wxMD5.o
-	ar cur $(BUILD_DIR)$(WXMD5) $(BUILD_DIR)wxMD5.o $(BUILD_DIR)md5.o
+	$(AR) cur $(BUILD_DIR)$(WXMD5) $(BUILD_DIR)wxMD5.o $(BUILD_DIR)md5.o
 
 $(BUILD_DIR)md5.o: src/wxMD5/md5.c
 	$(CPP) -c src/wxMD5/md5.c -o $(BUILD_DIR)md5.o $(CXXFLAGS)
@@ -167,7 +173,7 @@ dist: source
 	gzip $(BIN)-$(VERSION)-src.tar
 	rm -r $(BIN)-$(VERSION)
 
-deb: clean source
+deb: clean
 	dpkg-buildpackage -rfakeroot
 #	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
 #	echo "?package(wxdfast): \\" > $(BIN)-$(VERSION)/debian/menu
@@ -227,7 +233,8 @@ source:
 	cp $(SOURCE_DIR)wxMD5/*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	cp $(SOURCE_DIR)wxMD5/*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	mkdir $(BIN)-$(VERSION)/debian
-	cp debian/* $(BIN)-$(VERSION)/debian
+	cp -r debian/* $(BIN)-$(VERSION)/debian
+	rm -Rf $(BIN)-$(VERSION)/debian/CVS
 	cp Makefile $(BIN)-$(VERSION)
 	cp makefile.vc $(BIN)-$(VERSION)
 
