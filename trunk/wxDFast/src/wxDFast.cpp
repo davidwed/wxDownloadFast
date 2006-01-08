@@ -38,17 +38,11 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
     wxTextFile file;
 
     tkz01 = new wxStringTokenizer(urlsparameter, wxT("$"));
-    wxMessageBox(urlsparameter);
     textfile = tkz01->GetNextToken();
-    wxMessageBox(textfile);
     destination = tkz01->GetNextToken();
-    wxMessageBox(destination);
     comments = tkz01->GetNextToken();
-    wxMessageBox(comments);
     strurls = tkz01->GetNextToken();
-    wxMessageBox(strurls);
     tkz02 = new wxStringTokenizer(strurls, wxT("#"));
-
     while (tkz02->HasMoreTokens())
     {
         strtemp = tkz02->GetNextToken();
@@ -68,7 +62,6 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         destination = wxGetApp().mainframe->programoptions.destination;
     if (comments == wxT("NONE"))
         comments = wxEmptyString;
-
 
     if (urls.GetCount() > 0)
         wxGetApp().mainframe->NewDownload(urls,destination, DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,comments,TRUE,TRUE);
@@ -189,6 +182,38 @@ bool mApplication::OnInit()
         splitter02->SetSashPosition(separatorposition02);
     }
 
+    //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE 
+    wxString listtextfile,comments,destination;
+    wxArrayString url; 
+    if (parameters->GetParamCount() > 0)
+    {
+        int i, nparams = parameters->GetParamCount();
+        for (i = 0;i<nparams; i++)
+            if (parameters->GetParam(i) != wxEmptyString)
+                url.Add(parameters->GetParam(i));
+    }
+    if (parameters->Found(wxT("list"),&listtextfile))
+    {
+        wxLogNull nolog;
+        wxTextFile file(listtextfile);
+        if (file.Open())
+        {
+            wxString str;
+            for ( str = file.GetFirstLine(); !file.Eof(); str = file.GetNextLine() )
+                if (str != wxEmptyString)
+                    url.Add(str);
+            if (str != wxEmptyString)
+                url.Add(str);
+        }
+    }
+    if (!parameters->Found(wxT("destination"),&destination))
+        destination = mainframe->programoptions.destination;
+    if (!parameters->Found(wxT("comments"),&comments))
+        comments = wxEmptyString;
+    if (url.GetCount() > 0)
+        mainframe->NewDownload(url,destination,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,comments,TRUE,TRUE);
+
+
     if (!parameters->Found(wxT("hide")))
         mainframe->Show(true);
     return true;
@@ -294,8 +319,6 @@ void mNotebook::OnChangePage(wxNotebookEvent& event)
 
 mMainFrame::mMainFrame()
 {
-    wxString listtextfile,comments,destination;
-    wxArrayString url;
     imageslist = new wxImageList(16, 16, TRUE);
     wxBitmap image[6];
     int i;
@@ -440,35 +463,6 @@ mMainFrame::mMainFrame()
         taskbaricon->SetIcon(wxICON(wxdfast),PROGRAM_NAME);
         #endif
     taskbaricon->restoring = FALSE;
-
-    //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE 
-    if (wxGetApp().parameters->GetParamCount() > 0)
-    {
-        int i, nparams = wxGetApp().parameters->GetParamCount();
-        for (i = 0;i<nparams; i++)
-            if (wxGetApp().parameters->GetParam(i) != wxEmptyString)
-                url.Add(wxGetApp().parameters->GetParam(i));
-    }
-    if (wxGetApp().parameters->Found(wxT("list"),&listtextfile))
-    {
-        wxLogNull nolog;
-        wxTextFile file(listtextfile);
-        if (file.Open())
-        {
-            wxString str;
-            for ( str = file.GetFirstLine(); !file.Eof(); str = file.GetNextLine() )
-                if (str != wxEmptyString)
-                    url.Add(str);
-            if (str != wxEmptyString)
-                url.Add(str);
-        }
-    }
-    if (!wxGetApp().parameters->Found(wxT("destination"),&destination))
-        destination = programoptions.destination;
-    if (!wxGetApp().parameters->Found(wxT("comments"),&comments))
-        comments = wxEmptyString;
-    if (url.GetCount() > 0)
-        NewDownload(url,destination,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,comments,TRUE,TRUE);
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
