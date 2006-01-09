@@ -54,7 +54,7 @@ Para ativar a integração com o Firefox faça o seguinte:
 5) No caminho do gerenciador insira o caminho de onde o programa
    foi instalado. No Linux fica normalmente em /usr/bin/wxdfast
    No Windows fica em c:\Arquivos de Programas\wxDownload Fast\wxdfast.exe
-6) Nos parametros para o programa insira: --list=[UFILE]
+6) Nos parametros para o programa insira: -list[UFILE]
 
 Instalação
 ----------
