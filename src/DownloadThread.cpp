@@ -262,6 +262,11 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     {
                         PrintMessage( _("Error copying file.\n"),HTMLERROR);
                         resp = -1;
+                        if (downloadpartindex == 0)
+                        {
+                            downloadfile->totalspeed = 0;
+                            downloadfile->speedpoint = FALSE;
+                        }
                         break;
                     }
             }
@@ -274,6 +279,11 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                 {
                     PrintMessage( _("Error writing file.\n"),HTMLERROR);
                     resp = -1;
+                    if (downloadpartindex == 0)
+                    {
+                        downloadfile->totalspeed = 0;
+                        downloadfile->speedpoint = FALSE;
+                    }
                     break;
                 }
                 else

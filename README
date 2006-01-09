@@ -53,7 +53,7 @@ To activate the Firefox integration, do the follow:
 4) In name, insert: wxDownload Fast
 5) In path, insert the place where the program was installed. In general it stay in
    /usr/bin/wxdfast
-6) In parameters of program insert: --list=[UFILE]
+6) In parameters of program insert: -list[UFILE]
 
 Installation
 ------------

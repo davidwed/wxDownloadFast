@@ -40,7 +40,7 @@ WXMD5 = libwxmd5.a
 CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.3.1
+VERSION = 0.3.2
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
