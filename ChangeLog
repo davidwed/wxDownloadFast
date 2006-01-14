@@ -1,3 +1,8 @@
+0.3.2
+===================================================
+- Removed some missed debug messages
+- Fixed some bugs
+
 0.3.1
 ===================================================
 - Now it is possible to parse urls of the type 

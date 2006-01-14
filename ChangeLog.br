@@ -1,3 +1,9 @@
+0.3.2
+===================================================
+- Removidas mensagens de debug esquecidas na última
+  versão
+- Corrigidos alguns bugs.
+
 0.3.1
 ===================================================
 - Agora é possível passar urls do tipo file://path
