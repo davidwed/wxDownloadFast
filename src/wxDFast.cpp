@@ -321,7 +321,7 @@ mMainFrame::mMainFrame()
 {
     imageslist = new wxImageList(16, 16, TRUE);
     wxBitmap image[6];
-    int i;
+    int i,timerupdateinterval;
     image[0] = wxXPM(stop_xpm);
     image[1] = wxXPM(start_xpm);
     image[2] = wxXPM(ok_xpm);
@@ -421,6 +421,7 @@ mMainFrame::mMainFrame()
 
     menubar->GetMenu(3)->Check(XRCID("menushutdown"),programoptions.shutdown);
     menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
+    timerupdateinterval = programoptions.timerupdateinterval;
 
     //GENERATE THE LISTS
     GenerateInProgressList();
@@ -454,6 +455,8 @@ mMainFrame::mMainFrame()
     menupopup->AppendSeparator();
     menupopup->Append(downloadagain);
 
+    mutex_programoptions = new wxMutex();
+
     //CREATE TASKBARICON
     taskbaricon = new mTaskBarIcon();
     if (!(wxGetApp().parameters->Found(wxT("notray"))))
@@ -466,7 +469,7 @@ mMainFrame::mMainFrame()
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
-    mtimer->Start(programoptions.timerupdateinterval);
+    mtimer->Start(timerupdateinterval);
 }
 
 void mMainFrame::OnIconize(wxIconizeEvent& event)
@@ -517,6 +520,8 @@ mMainFrame::~mMainFrame()
 
 void mMainFrame::OnTimer(wxTimerEvent& event)
 {
+    if (mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
+        return;
     mInProgressList* list01 = XRCCTRL(*this, "inprogresslist",mInProgressList );
     mFinishedList* list02 = XRCCTRL(*this, "finishedlist",mFinishedList );
     int selection = list01->GetCurrentSelection();
@@ -573,9 +578,9 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                     for (i=0; i < parts; i++)
                         current->totalsizecompleted += current->sizecompleted[i];
                     if (current->totalspeed > 0)
-                        current->timeremaining = 1000l*((current->totalsize - current->totalsizecompleted)/current->totalspeed);
+                        current->timeremaining = wxLongLong(0l,1000l)*(current->totalsize - current->totalsizecompleted)/wxLongLong(0l,current->totalspeed);
                     if (current->totalsize > 0)
-                        current->percentual = (int)(100*((double)current->totalsizecompleted) / ((double)current->totalsize));
+                        current->percentual = (int)(100*( wxlonglongtodouble(current->totalsizecompleted)) / ( wxlonglongtodouble(current->totalsize)));
                 }
                 list01->Insert(current,current->index);
                 currentspeed += current->totalspeed;
@@ -619,16 +624,14 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 #ifdef USE_HTML_MESSAGES
                 if  (*(XRCCTRL(*(this), "messages",wxHtmlWindow)->GetParser()->GetSource()) != current->messages[treeindex])
                 {
+                    int x,y,xx,yy;
                     XRCCTRL(*(this), "messages",wxHtmlWindow)->SetPage(wxEmptyString);
                     XRCCTRL(*(this), "messages",wxHtmlWindow)->AppendToPage(current->messages[treeindex]);
-
-                    {//ADDED BY GXL117
-                        int x,y,xx,yy;
-                        XRCCTRL(*(this), "messages",wxHtmlWindow)->GetScrollPixelsPerUnit(&x,&y);
-                        XRCCTRL(*(this), "messages",wxHtmlWindow)->GetVirtualSize(&xx,&yy);
-                        xx/=x; yy/=y;
-                        XRCCTRL(*(this), "messages",wxHtmlWindow)->Scroll(-1,yy);
-                    }
+                    XRCCTRL(*(this), "messages",wxHtmlWindow)->GetScrollPixelsPerUnit(&x,&y);
+                    XRCCTRL(*(this), "messages",wxHtmlWindow)->GetVirtualSize(&xx,&yy);
+                    xx /= x;
+                    yy /= y;
+                    XRCCTRL(*(this), "messages",wxHtmlWindow)->Scroll(-1,yy);
                 }
 
                 #else
@@ -644,23 +647,6 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         }
     }
 
-    if (timerinterval >= (programoptions.graphrefreshtime))
-    {
-        float *value = new float();
-        *value = ((float)currentspeed) / 1024.0;
-        graph.Insert(value);
-
-        if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
-        {
-            float *lastvalue = graph.GetLast()->GetData();
-            graph.DeleteNode(graph.GetLast());
-            delete lastvalue;
-        }
-        timerinterval = 0;
-        if (this->IsShown())
-            XRCCTRL(*this, "graphpanel",mGraph )->Refresh();
-    }
-    timerinterval += mtimer->GetInterval();
     if (programoptions.scheduleexceptionschanged)
     {
         programoptions.scheduleexceptionschanged = FALSE;
@@ -796,7 +782,27 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             }
         }
     }
+    if (timerinterval >= (programoptions.graphrefreshtime))
+    {
+        float *value = new float();
+        *value = ((float)currentspeed) / 1024.0;
+        graph.Insert(value);
 
+        if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
+        {
+            float *lastvalue = graph.GetLast()->GetData();
+            graph.DeleteNode(graph.GetLast());
+            delete lastvalue;
+        }
+        timerinterval = 0;
+        if (this->IsShown())
+        {
+            mutex_programoptions->Unlock();
+            XRCCTRL(*this, "graphpanel",mGraph )->Refresh();
+        }
+    }
+    timerinterval += mtimer->GetInterval();
+    mutex_programoptions->Unlock();
 }
 
 void mMainFrame::GenerateInProgressList()
@@ -958,12 +964,10 @@ void mMainFrame::GenerateFinishedList()
 bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show)
 {
     mBoxNew dlg;
-    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments,*edproxyserver,*edproxyport; //CHANGED BY GXL117
+    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments;
     wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit;
     wxRadioButton *optnow,*optschedule;
-    wxRadioBox *edproxyaction; //ADDED BY GXL117
-    wxChoice *edproxytype; //ADDED BY GXL117
     int RETURN;
     unsigned int i,nparams;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
@@ -977,15 +981,6 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
     optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
-    edproxyserver = XRCCTRL(dlg,"server",wxTextCtrl); //ADDED BY GXL117
-    edproxyport = XRCCTRL(dlg,"port",wxTextCtrl); //ADDED BY GXL117
-    edproxyaction = XRCCTRL(dlg,"httpaction",wxRadioBox); //ADDED BY GXL117
-    edproxytype = XRCCTRL(dlg,"proxytype",wxChoice); //ADDED BY GXL117
-
-    edproxytype->Select(0); //ADDED BY GXL117
-    edproxyaction->SetSelection(0); //ADDED BY GXL117
-    edproxyserver->SetValue(wxEmptyString); //ADDED BY GXL117
-    edproxyport->SetValue(wxEmptyString); //ADDED BY GXL117
 
     if (url.GetCount() <= 0)
     {
@@ -1056,9 +1051,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             if (!wxGetApp().FindDownloadFile(urltmp.GetFullName()))
             {
                 index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(),
-                        edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),
-                        edproxytype->GetSelection(),edproxyaction->GetStringSelection(),
-                        edproxyserver->GetValue().Trim(),edproxyport->GetValue().Trim(),scheduled);  //CHANGED BY GXL117
+                        edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),scheduled);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(wxGetApp().downloadlist.Item(index)->GetData(),-1);
                 //XRCCTRL(*this, "inprogresslist",mInProgressList )->SetCurrentSelection(index); //CAUSES SEGMENTATION FAULT
             }
@@ -1173,6 +1166,7 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
     {
         downloadfile->free = FALSE;
         downloadfile->split = WAIT;
+        downloadfile->speedpointowner = -1;
         for (int i=0; i < downloadfile->parts;i++)
         {
             mDownloadThread *thread = new mDownloadThread(downloadfile,i);
@@ -1336,7 +1330,6 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         _("Portuguese(Brazil)"),
         _("Italian"),
         _("Spanish"),
-        _("Chinese")  //ADDED BY GXL117
     };
 
     int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"),
@@ -1351,7 +1344,6 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
             case 2 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
             case 3 : langvalue = wxLANGUAGE_ITALIAN; break;
             case 4 : langvalue = wxLANGUAGE_SPANISH; break;
-            case 5 : langvalue = wxLANGUAGE_CHINESE_SIMPLIFIED; break;  //ADDED BY GXL117
         }
         wxGetApp().Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
         wxMessageBox(_("You need restart the program to use the new language!"),
@@ -1389,23 +1381,6 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         XRCCTRL(dlg, "optmanual",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
-        XRCCTRL(dlg, "server",wxTextCtrl)->SetValue(currentfile->server);  //ADDED BY GXL117 - FROM HERE
-        XRCCTRL(dlg, "port",wxTextCtrl)->SetValue(currentfile->port);
-
-        if(currentfile->proxytype == wxT("NOPROXY"))
-        {    XRCCTRL(dlg, "proxytype",wxChoice)->Select(0);
-            XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(0);
-            XRCCTRL(dlg,"httpaction",wxRadioBox)->Enable(0,FALSE);
-            XRCCTRL(dlg,"httpaction",wxRadioBox)->Enable(1,FALSE);
-        }
-        else
-            //if(currentfile->proxytype == wxT("HTTP"))
-                XRCCTRL(dlg, "proxytype",wxChoice)->Select(1);
-            //else
-            //    XRCCTRL(dlg, "proxytype",wxChoice)->Select(2);
-
-        if(currentfile->proxytype == wxT("HTTP")&&currentfile->proxyaction!=wxT("GET"))
-            XRCCTRL(dlg,"httpaction",wxRadioBox)->SetSelection(1);       //ADDED BY GXL117 - UNTIL HERE
 
         mUrlName urltmp(currentfile->urllist);
         oldname = urltmp.GetFullName();
@@ -1416,11 +1391,6 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetEditable(FALSE);
-            XRCCTRL(dlg, "proxytype",wxChoice)->Enable(FALSE); //ADDED BY GXL117
-            XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(0,FALSE); //ADDED BY GXL117
-            XRCCTRL(dlg, "httpaction",wxRadioBox)->Enable(1,FALSE); //ADDED BY GXL117
-            XRCCTRL(dlg, "server",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
-            XRCCTRL(dlg, "port",wxTextCtrl)->SetEditable(FALSE); //ADDED BY GXL117
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 
@@ -1487,15 +1457,6 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
 
         password = wxEmptyString;
         config->Read(PASSWORD_REG,&password);
-
-        wxString proxytype = wxEmptyString; //ADDED BY GXL117
-        wxString proxyaction = wxEmptyString; //ADDED BY GXL117
-        wxString server = wxEmptyString; //ADDED BY GXL117
-        wxString port = wxEmptyString; //ADDED BY GXL117
-        config->Read(PROXYTYPE_REG,proxytype); //ADDED BY GXL117
-        config->Read(PROXYACTION_REG,proxyaction); //ADDED BY GXL117
-        config->Read(SERVER_REG,server); //ADDED BY GXL117
-        config->Read(PORT_REG,port); //ADDED BY GXL117
 
         comments = wxEmptyString;
         config->Read(COMMENTS_REG,&comments);
@@ -1751,6 +1712,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     {
         wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configurations..."),_("Updating and saving the configurations..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
         waitbox->Update(0);
+        mutex_programoptions->Lock();
 
         programoptions.attempts = XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->GetValue();
         programoptions.attemptstime = XRCCTRL(dlg, "spinattemptstime", wxSpinCtrl)->GetValue();
@@ -1769,7 +1731,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         programoptions.graphtextarea = XRCCTRL(dlg, "spingraphtextarea",wxSpinCtrl)->GetValue();
         programoptions.graphspeedfontsize = XRCCTRL(dlg, "spingraphfontsize",wxSpinCtrl)->GetValue();
         programoptions.graphlinewidth = XRCCTRL(dlg, "spingraphlinewidth",wxSpinCtrl)->GetValue();
-         programoptions.graphbackcolor = XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour;
+        programoptions.graphbackcolor = XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour;
         programoptions.graphgridcolor = XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour;
         programoptions.graphlinecolor = XRCCTRL(dlg, "graphpanelline", mBoxOptionsColorPanel)->colour;
         programoptions.graphfontcolor = XRCCTRL(dlg, "graphpanelfont", mBoxOptionsColorPanel)->colour;
@@ -1866,13 +1828,14 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         XRCCTRL(*(this), "graphpanel",mGraph )->Refresh();
         waitbox->Update(100);
         delete waitbox;
+        mutex_programoptions->Unlock();
     }
 }
 
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxString message;
-    message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + _("\n\nCreated by Max Velasques\nRevised by Gxl117")); //CHANGED BY GXL117
+    message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + _("\n\nCreated by Max Velasques"));
 
     wxMessageBox(message, _("About..."), wxOK | wxICON_INFORMATION, this);
 }
@@ -1884,9 +1847,10 @@ void mMainFrame::OnExit(wxCommandEvent& event)
 
 void mMainFrame::OnClose(wxCloseEvent& event)
 {
+    int closedialog = programoptions.closedialog;
     if (event.CanVeto())
     {
-        if ((programoptions.closedialog) && (this->IsShown()))
+        if ((closedialog) && (this->IsShown()))
         {
             wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want to close the program?"),_("Close..."),
                         wxYES_NO | wxICON_QUESTION);
@@ -1996,6 +1960,8 @@ END_EVENT_TABLE()
 void mGraph::OnPaint(wxPaintEvent &event)
 {
     wxPaintDC dc(this);
+    if (wxGetApp().mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
+        return;
     if (!programoptions)
         return;
     int x, y, lastx, lasty, count;
@@ -2078,6 +2044,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.SetFont(smallfont);
         dc.DrawText(wxT("kb/s"),5,programoptions->graphspeedfontsize + 10);
     }
+    wxGetApp().mainframe->mutex_programoptions->Unlock();
 }
 
 BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)
@@ -2096,23 +2063,32 @@ void mTaskBarIcon::OnLButtonClick(wxTaskBarIconEvent&)
 
 void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
 {
-    wxString taskTip,temp;
+    wxString taskTip = PROGRAM_NAME;
+    int totalpercentual = 0,count = 0;
+    float totalspeed = 0.0;
     if(!wxGetApp().downloadlist.IsEmpty())
-    {for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+    {
+        for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
         {
-        mDownloadFile *current = node->GetData();
-        temp.Printf(wxT("%s  Complete: %d%%  Speed: %.2fK/s\n"),current->name.c_str(),current->percentual,float(current->totalspeed)/1000.0);  //CHANGED BY GXL117
-        taskTip+=temp;
+            mDownloadFile *current = node->GetData();
+            if  (current->status == STATUS_ACTIVE)
+            {
+                totalpercentual += current->percentual;
+                totalspeed += current->totalspeed;
+                count++;
+            }
         }
-    taskTip.RemoveLast();
-      #ifdef __WXMSW__
+        if (count > 0)
+        {
+            taskTip.Clear();
+            taskTip.Printf(_("Total Speed = %.2fKb/s\nTotal Complete = %d%%\nDownloads in progress = %d"), totalspeed/1024.0, totalpercentual/count,count);
+        }
+    }
+    #ifdef __WXMSW__
     SetIcon(wxICON(wxdfast_ico),taskTip);
     #else
     SetIcon(wxICON(wxdfast),taskTip);
     #endif
-    }
-    else
-    SetIcon(wxICON(wxdfast),PROGRAM_NAME); //ADDED BY GXL117
 }
 
 wxMenu *mTaskBarIcon::CreatePopupMenu()

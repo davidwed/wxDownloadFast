@@ -36,6 +36,7 @@
     #include "wx/calctrl.h"
     #include "wx/tokenzr.h"
     #include "wx/wfstream.h"
+    #include "wx/longlong.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
@@ -100,10 +101,6 @@
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
-    const wxString PROXYTYPE_REG = wxT("proxytype"); //ADDED BY GXL117
-    const wxString PROXYACTION_REG = wxT("proxyaction"); //ADDED BY GXL117
-    const wxString SERVER_REG = wxT("server"); //ADDED BY GXL117
-    const wxString PORT_REG = wxT("port"); //ADDED BY GXL117
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -227,30 +224,28 @@
         wxString user;
         wxString password;
         int percentual;
-        long timepassed;
-        long timeremaining;
+        wxLongLong timepassed;
+        wxLongLong timeremaining;
         wxString MD5;
         wxDateTime start;
         wxDateTime end;
         wxString urllist;
         int parts;
         int currentattempt;
-        long totalsize;
-        long totalsizecompleted;
+        wxLongLong totalsize;
+        wxLongLong totalsizecompleted;
         int totalspeed;
         bool criticalerror;
         int split;
         bool speedpoint;
+        int speedpointowner;
+        wxMutex *mutex_speedcalc;
         bool finished[MAX_NUM_PARTS];
-        long startpoint[MAX_NUM_PARTS];
-        long size[MAX_NUM_PARTS];
-        long sizecompleted[MAX_NUM_PARTS];
+        wxLongLong startpoint[MAX_NUM_PARTS];
+        wxLongLong size[MAX_NUM_PARTS];
+        wxLongLong sizecompleted[MAX_NUM_PARTS];
         long delta_size[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
-        wxString proxytype; //ADDED BY GXL117
-        wxString proxyaction; //ADDED BY GXL117
-        wxString server; //ADDED BY GXL117
-        wxString port; //ADDED BY GXL117
     };
 
     class mScheduleException
@@ -323,7 +318,7 @@
         bool NewInstance();
         mDownloadList downloadlist;
         mDownloadThreadArray *downloadthreads;
-        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled);  //CHANGED BY GXL117
+        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
         void RegisterListItemOnDisk(mDownloadFile *file);
         void RecreateIndex();
         void LoadDownloadListFromDisk();
@@ -388,6 +383,7 @@
         wxToolBar *toolbar;
         wxMenu *menupopup;
         mOptions programoptions;
+        wxMutex *mutex_programoptions;
         mGraphPoints graph;
         int timerinterval;
     private:
@@ -555,6 +551,7 @@
        int GetPort();
        wxString GetDir();
        wxString GetFullName();
+       wxString GetFullRealName();
        wxString GetFullPath();
        int Type();
     private:
@@ -564,6 +561,13 @@
        wxString m_name;
        int m_port;
        int m_type;
+    };
+    
+    class mFTP: public wxFTP
+    {
+    public:
+        wxLongLong GetFileSize(const wxString& fileName);
+        wxInputStream *GetInputStream(const wxString& path);
     };
 
     class mConnection: public wxConnection
@@ -595,12 +599,11 @@
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
         int GetType();
-        long CurrentSize(wxString filepath,wxString filename);
-        wxSocketClient *ConnectPROXY(wxString proxytype,wxString server,wxString port); //ADDED BY GXL117
-        wxSocketClient *ConnectHTTP(long start);
-        wxSocketClient *ConnectFTP(long start);
-        wxInputStream *ConnectLOCAL_FILE(long start);
-        int  DownloadPart(wxSocketClient *connection, wxInputStream *filestream, long start, long end);
+        wxLongLong CurrentSize(wxString filepath,wxString filename);
+        wxSocketClient *ConnectHTTP(wxLongLong start);
+        wxSocketClient *ConnectFTP(wxLongLong start);
+        wxInputStream *ConnectLOCAL_FILE(wxLongLong start);
+        int  DownloadPart(wxSocketClient *connection, wxInputStream *filestream, wxLongLong start, wxLongLong end);
                         //the parameter wxInputStream *filestream is used just for LOCAL_FILE
         void PrintMessage(wxString str,wxString color=HTMLNORMAL);
         void WaitUntilAllFinished(bool canstop = TRUE);
@@ -616,11 +619,15 @@
 
     wxString int2wxstr(long value,int format = 0);
     wxString TimeString(long value);
+    wxString TimeString(wxLongLong value);
     wxString GetLine(wxString text, int line);
     char *wxstr2str(wxString wxstr);
     wxString str2wxstr(char *str);
     wxString str2wxstr(char str);
     wxString ByteString(long size);
+    wxString ByteString(wxLongLong size);
     int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
+    wxLongLong wxstrtolonglong(wxString string);
+    double wxlonglongtodouble(wxLongLong value);
     int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
 #endif

@@ -98,9 +98,9 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
         config->Read(SPEED_REG,&value);
         infolist->SetItem(2,1,ByteString(value)+wxT("/s"));
 
-        value = 0;
-        config->Read(TIMEPASSED_REG,&value);
-        infolist->SetItem(3,1,TimeString(value));
+        str = wxEmptyString;
+        config->Read(TIMEPASSED_REG,&str);
+        infolist->SetItem(3,1,TimeString(wxstrtolonglong(str)));
 
         str = wxEmptyString;
         config->Read(DESTINATION_REG,&str);

@@ -78,9 +78,12 @@
                                 <flag>wxEXPAND</flag>
                                 <object class="wxFlexGridSizer">
                                     <hgap>0</hgap>
-                                    <rows>5</rows>
+                                    <rows>4</rows>
                                     <cols>1</cols>
                                     <vgap>0</vgap>
+                                    <object class="spacer">
+                                        <size>20, 15</size>
+                                    </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
@@ -153,7 +156,7 @@
                                         </object>
                                     </object>
                                     <object class="spacer">
-                                        <size>20, 5</size>
+                                        <size>20, 20</size>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
@@ -209,9 +212,19 @@
                                             </object>
                                         </object>
                                     </object>
-                                    <object class="spacer">
-                                        <size>20, 5</size>
-                                    </object>
+                                </object>
+                            </object>
+                            <object class="spacer">
+                                <size>5, 20</size>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxEXPAND</flag>
+                                <object class="wxFlexGridSizer">
+                                    <hgap>0</hgap>
+                                    <rows>3</rows>
+                                    <cols>1</cols>
+                                    <vgap>0</vgap>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
@@ -273,99 +286,6 @@
                                                     </object>
                                                     <object class="spacer">
                                                         <size>20, 5</size>
-                                                    </object>
-                                                </object>
-                                            </object>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="spacer">
-                                <size>5, 20</size>
-                            </object>
-                            <object class="sizeritem">
-                                <option>1</option>
-                                <flag>wxEXPAND</flag>
-                                <object class="wxFlexGridSizer">
-                                    <hgap>0</hgap>
-                                    <rows>3</rows>
-                                    <cols>1</cols>
-                                    <vgap>0</vgap>
-                                    <object class="sizeritem">
-                                        <object class="wxStaticBoxSizer">
-                                            <label>Set proxy</label>
-                                            <orient>wxVERTICAL</orient>
-                                            <object class="spacer">
-                                                <size>10,10</size>
-                                            </object>
-                                            <object class="sizeritem">
-                                                <object class="wxFlexGridSizer">
-                                                    <cols>1</cols>
-                                                    <rows>2</rows>
-                                                    <object class="sizeritem">
-                                                        <object class="wxChoice" name="proxytype">
-                                                            <content>
-                                                                <item>NOPROXY</item>
-                                                                <item>HTTP</item>
-                                                            </content>
-                                                            <selection>0</selection>
-                                                            <size>210,30</size>
-                                                            <style></style>
-                                                        </object>
-                                                    </object>
-                                                    <object class="spacer">
-                                                        <size>0,10</size>
-                                                    </object>
-                                                    <object class="sizeritem">
-                                                        <object class="wxRadioBox" name="httpaction">
-                                                            <style>wxRA_VERTICAL</style>
-                                                            <label>Http action</label>
-                                                            <content>
-                                                                <item>GET</item>
-                                                                <item>CONNECT</item>
-                                                            </content>
-                                                            <selection>0</selection>
-                                                            <size>210,50</size>
-                                                        </object>
-                                                    </object>
-                                                    <object class="spacer">
-                                                        <size>0,20</size>
-                                                    </object>
-                                                    <object class="sizeritem">
-                                                        <object class="wxFlexGridSizer">
-                                                            <cols>2</cols>
-                                                            <rows>3</rows>
-                                                            <object class="sizeritem">
-                                                                <object class="wxStaticText">
-                                                                    <label>Server: </label>
-                                                                    <size>60,30</size>
-                                                                    <style>wxALIGN_CENTRE|wxST_NO_AUTORESIZE</style>
-                                                                </object>
-                                                            </object>
-                                                            <object class="sizeritem">
-                                                                <object class="wxTextCtrl" name="server">
-                                                                    <size>150,25</size>
-                                                                </object>
-                                                            </object>
-                                                            <object class="spacer">
-                                                                <size>0,10</size>
-                                                            </object>
-                                                            <object class="spacer">
-                                                                <size>0,0</size>
-                                                            </object>
-                                                            <object class="sizeritem">
-                                                                <object class="wxStaticText">
-                                                                    <label>Port: </label>
-                                                                    <size>60,30</size>
-                                                                    <style>wxALIGN_CENTRE|wxST_NO_AUTORESIZE</style>
-                                                                </object>
-                                                            </object>
-                                                            <object class="sizeritem">
-                                                                <object class="wxTextCtrl" name="port">
-                                                                    <size>150,25</size>
-                                                                </object>
-                                                            </object>
-                                                        </object>
                                                     </object>
                                                 </object>
                                             </object>

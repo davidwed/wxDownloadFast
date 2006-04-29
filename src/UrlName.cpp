@@ -93,6 +93,8 @@ void mUrlName::Assign(const wxString& fullpath)
 
 bool mUrlName::UrlIsValid()
 {
+    if (m_url.Length() <=7 )
+        return FALSE;
     if (((m_url.Mid(0,7).Lower()) == wxT("http://")) || ((m_url.Mid(0,6).Lower()) == wxT("ftp://")))
     {
         int i;
@@ -147,6 +149,32 @@ wxString mUrlName::GetDir()
 }
 
 wxString mUrlName::GetFullName()
+{
+    wxString tmpstr = wxEmptyString,str;
+    //SEARCH FOR THE %20 CARACTER AND CHANGE FOR SPACE
+    wxStringTokenizer tkz(m_name, wxT("0"));
+    while ( tkz.HasMoreTokens() )
+    {
+        str = tkz.GetNextToken();
+        if  (str.Mid(str.Length()-2,2) == wxT("%2"))
+        {
+            str = str.Mid(0,str.Length()-2);
+            tmpstr += str + wxT(" ");
+        }
+        else
+        {
+            tmpstr += str + wxT("0");
+        }
+    }
+    tmpstr.RemoveLast();
+
+    //GET THE PART OF THE FILENAME WHICH REALLY MATTERS
+    tmpstr = tmpstr.AfterLast('=');
+
+    return tmpstr;
+}
+
+wxString mUrlName::GetFullRealName()
 {
     return m_name;
 }

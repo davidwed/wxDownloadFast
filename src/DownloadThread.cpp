@@ -1,5 +1,4 @@
 #include "wxDFast.h"
-#include <iostream> //ADDED BY GXL117
 
 int mDownloadThread::GetType()
 {
@@ -8,13 +7,13 @@ int mDownloadThread::GetType()
     return url.Type();
 }
 
-long mDownloadThread::CurrentSize(wxString filepath,wxString filename)
+wxLongLong mDownloadThread::CurrentSize(wxString filepath,wxString filename)
 {
     wxFile *outputfile;
     wxFileName file;
     file.Assign(filepath + wxT("/"));
-      file.SetFullName(filename);
-    long size = 0;
+    file.SetFullName(filename);
+    wxLongLong size = 0;
     if (!file.FileExists())
        return size;
     outputfile = new wxFile(file.GetFullPath(),wxFile::read);
@@ -30,7 +29,7 @@ mDownloadThread::mDownloadThread(mDownloadFile *file, int index)
 {
     downloadfile = file;
     downloadpartindex = index;
-    programoptions = &(wxGetApp().mainframe->programoptions);
+    programoptions = new mOptions(wxGetApp().mainframe->programoptions);
 }
 
 void mDownloadThread::OnExit()
@@ -38,20 +37,27 @@ void mDownloadThread::OnExit()
     wxGetApp().mainframe->SendSizeEvent();
     downloadfile->finished[downloadpartindex] = TRUE;
     if (downloadpartindex == 0)
+    {
+        delete downloadfile->mutex_speedcalc;
+        downloadfile->mutex_speedcalc = NULL;
         downloadfile->free = TRUE;
+    }
+    delete programoptions;
 }
 
 void *mDownloadThread::Entry()
 {
     wxSocketClient *connection = NULL;
     wxInputStream *filestream = NULL;
-    int resp = -1,start,end;
+    int resp = -1;
+    wxLongLong start,end;
     redirecting = FALSE;
     downloadfile->currentattempt = 1;
     downloadfile->messages[downloadpartindex].Clear();
     downloadfile->finished[downloadpartindex] = FALSE;
     if (downloadpartindex == 0)
     {
+        downloadfile->mutex_speedcalc = new wxMutex();
         downloadfile->criticalerror = FALSE;
         for (int i=0;i<downloadfile->parts;i++)
             downloadfile->startpoint[i] = 0;
@@ -97,15 +103,15 @@ void *mDownloadThread::Entry()
             {
                 if ((downloadfile->restart == YES) && (downloadfile->totalsize > MIN_SIZE_TO_SPLIT))
                 {
-                    long tempsize = (long) (downloadfile->totalsize / downloadfile->parts);
+                    wxLongLong tempsize = (downloadfile->totalsize / downloadfile->parts);
                     int i;
                     for (i=0; i < ((downloadfile->parts)-1); i++)
                     {
-                        downloadfile->startpoint[i] = i*tempsize;
+                        downloadfile->startpoint[i] = wxLongLong(0l,(long)i)*tempsize;
                         downloadfile->size[i] = tempsize;
                     }
-                    downloadfile->startpoint[(downloadfile->parts)-1] = ((downloadfile->parts)-1)*tempsize;
-                    downloadfile->size[(downloadfile->parts)-1] = downloadfile->totalsize - (((downloadfile->parts)-1)*tempsize);
+                    downloadfile->startpoint[(downloadfile->parts)-1] = wxLongLong(0l,(long)((downloadfile->parts)-1))*tempsize;
+                    downloadfile->size[(downloadfile->parts)-1] = downloadfile->totalsize - wxLongLong(0l,(long)(((downloadfile->parts)-1)))*tempsize;
                     downloadfile->split = YES;
                 }
                 else
@@ -142,7 +148,7 @@ void *mDownloadThread::Entry()
             }
             waittime.Pause();
             if ((downloadfile->status == STATUS_ACTIVE) && (downloadpartindex == 0))
-                PrintMessage( _("Attempt ") + int2wxstr(downloadfile->currentattempt) + _(" of ") + int2wxstr(wxGetApp().mainframe->programoptions.attempts) + wxT(" ...\n"));
+                PrintMessage( _("Attempt ") + int2wxstr(downloadfile->currentattempt) + _(" of ") + int2wxstr(programoptions->attempts) + wxT(" ...\n"));
         }
     }
     while ((downloadfile->currentattempt <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror));
@@ -175,7 +181,7 @@ void *mDownloadThread::Entry()
     return NULL;
 }
 
-int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *filestream, long start,long end)
+int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *filestream, wxLongLong start,wxLongLong end)
 {
     int resp = 0;
     wxInputStream *in = NULL;
@@ -202,9 +208,9 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             connection->SetFlags(wxSOCKET_WAITALL);*/
         if (type == FTP)
         {
-            wxFTP *tempconnection = (wxFTP*)connection;
+            mFTP *tempconnection = (mFTP*)connection;
             mUrlName url(currenturl);
-            in = tempconnection->GetInputStream(url.GetFullName());
+            in = tempconnection->GetInputStream(url.GetFullRealName());
             PrintMessage( tempconnection->GetLastResult() + wxT("\n"),HTMLSERVER);
         }
         else if (type == HTTP)
@@ -232,43 +238,48 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
 
         wxFile *outputfile = new wxFile(destination.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) + PREFIX + destination.GetFullName() + EXT + int2wxstr(downloadpartindex),wxFile::write_append);
         char *data = new char[readbuffersize];
-        wxStopWatch time;
-        int read_buffer;
-        long lasttime;
+        long read_buffer;
+        wxLongLong readbuffersizelonglong(0l,readbuffersize);
+        wxLongLong lasttime;
+        wxLongLong endminustart;
         int counttimes=0;
+        wxStopWatch time;
+        wxLongLong timepassed = downloadfile->timepassed;
+
         downloadfile->delta_size[downloadpartindex] = 0;
         downloadfile->speedpoint = FALSE;
         time.Pause();
-        if (downloadpartindex == 0)
-            time.Start(downloadfile->timepassed); //INICIAR APARTIR DO VALOR ATUAL
-        else
-            time.Start();
-        lasttime = time.Time();
+        time.Start();
+        lasttime = timepassed + time.Time();
+
         while (start < end)
         {
             read_buffer = readbuffersize;
-            if (readbuffersize > (end - start))
-                read_buffer = end - start;
+            endminustart = end - start;
+
+            if (readbuffersizelonglong > endminustart)
+                read_buffer = endminustart.ToLong();
 
             if (downloadfile->status == STATUS_STOPED){resp = 1; break;}
             this->Sleep(1);
             //this->Yield();
-
             in->Read(data, read_buffer);
             if (in->LastRead() == 0)
             {
-                    counttimes++;
-                    if (counttimes == 2000)
+                counttimes++;
+                if (counttimes == 2000)
+                {
+                    PrintMessage( _("Error copying file.\n"),HTMLERROR);
+                    this->Sleep(1);
+                    resp = -1;
+                    if (downloadpartindex == downloadfile->speedpointowner)
                     {
-                        PrintMessage( _("Error copying file.\n"),HTMLERROR);
-                        resp = -1;
-                        if (downloadpartindex == 0)
-                        {
-                            downloadfile->totalspeed = 0;
-                            downloadfile->speedpoint = FALSE;
-                        }
-                        break;
+                        downloadfile->speedpointowner = -1;
+                        downloadfile->speedpoint = FALSE;
                     }
+                    downloadfile->delta_size[downloadpartindex] = 0;
+                    break;
+                }
             }
             else
             {
@@ -279,16 +290,16 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                 {
                     PrintMessage( _("Error writing file.\n"),HTMLERROR);
                     resp = -1;
-                    if (downloadpartindex == 0)
+                    if (downloadpartindex == downloadfile->speedpointowner)
                     {
-                        downloadfile->totalspeed = 0;
+                        downloadfile->speedpointowner = -1;
                         downloadfile->speedpoint = FALSE;
                     }
+                    downloadfile->delta_size[downloadpartindex] = 0;
                     break;
                 }
                 else
                    start += in->LastRead();
-
                 if (downloadfile->status == STATUS_STOPED){resp = 1; break;}
             }
             downloadfile->delta_size[downloadpartindex] += in->LastRead();
@@ -296,23 +307,43 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
 
             if (!downloadfile->speedpoint)
                 downloadfile->delta_size[downloadpartindex] = 0;
-            if (downloadpartindex == 0)
+
+            //if (downloadpartindex == 0)
+            if (downloadfile->mutex_speedcalc->TryLock() == wxMUTEX_NO_ERROR)
             {
-                if (!downloadfile->speedpoint)
+                if (downloadfile->speedpointowner == -1)
+                    downloadfile->speedpointowner = downloadpartindex;
+                if (downloadfile->speedpointowner == downloadpartindex)
                 {
-                    lasttime = time.Time();
-                    downloadfile->speedpoint = TRUE;
+                    if (!downloadfile->speedpoint)
+                    {
+                        //lasttime = time.Time();
+                        lasttime = timepassed + time.Time();
+                        downloadfile->speedpoint = TRUE;
+                    }
+                    downloadfile->timepassed = timepassed + time.Time();
+                    if (downloadfile->delta_size[downloadpartindex] > 20*readbuffersize)
+                    {
+                        //if ((time.Time() - lasttime) > 0)
+                        //    SpeedCalculation(time.Time() - lasttime);
+//PrintMessage( (timepassed + time.Time() - lasttime).ToString() + wxT(" | ") + int2wxstr(downloadfile->delta_size[downloadpartindex]) + _("\n"));
+                        if ((timepassed + time.Time() - lasttime).ToLong() > 0)
+                            SpeedCalculation((timepassed + time.Time() - lasttime).ToLong());
+//PrintMessage( timepassed.ToString() + wxT(" | ") + lasttime.ToString() + wxT(" | ") + int2wxstr(time.Time()) + _("\n"));
+                        downloadfile->speedpoint = FALSE;
+                        if (time.Time() > 2000000000l) //I DID THIS BECAUSE Time() RETURN A LONG AND NOD LONGLONG;
+                        {
+                            timepassed += time.Time();
+                            time.Pause();
+                            time.Start();
+                        }
+                    }
                 }
-                downloadfile->timepassed = time.Time();
-                if (downloadfile->delta_size[downloadpartindex] > 20*readbuffersize)
-                {
-                    if ((time.Time() - lasttime) > 0)
-                        SpeedCalculation(time.Time() - lasttime);
-                    downloadfile->speedpoint = FALSE;
-                }
+                downloadfile->mutex_speedcalc->Unlock();
             }
 
             if (downloadfile->status == STATUS_STOPED){resp = 1; break;}
+
         }
         outputfile->Close();
         delete outputfile;
@@ -324,6 +355,8 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     }
     if (resp == 0)
         PrintMessage( _("Finished this piece\n"));
+    if (downloadpartindex == downloadfile->speedpointowner)
+        downloadfile->speedpointowner = -1;
     if (downloadpartindex == 0)
     {
         if (resp == 0)
@@ -365,47 +398,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     return resp;
 }
 
-wxSocketClient* mDownloadThread::ConnectPROXY(wxString proxytype,wxString server,wxString port) //FUNCTION ADDED BY GXL117
-{
-    wxSocketClient *client = new wxSocketClient();
-    wxIPV4address address;
-
-    address.Service(port);
-    client->Notify(FALSE);
-
-    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
-    if (address.Hostname(server)==FALSE)
-    {
-        PrintMessage( _("\nProxy server not found.\n"),HTMLERROR);
-        client->Close();
-        delete client;
-        return NULL;
-    }
-    else
-        PrintMessage( _(" OK\n"),HTMLSERVER);
-
-    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
-    PrintMessage( _("Trying to connect in '") + server + wxT("' ...\n"));
-    client->Connect(address,TRUE);
-
-    if (client->IsConnected() == FALSE )
-    {
-        PrintMessage( _("Connection denied.\n"),HTMLERROR);
-        client->Close();
-        delete client;
-        return NULL;
-    }
-    else
-        PrintMessage( _("Connection proxy server success.\n"),HTMLSERVER);
-
-    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
-    return client;
-}
-
-wxSocketClient *mDownloadThread::ConnectHTTP(long start)
+wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong start)
 {
     wxSocketClient *client=NULL;
     mUrlName url;
@@ -420,38 +413,35 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
 
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    if(downloadfile->server!=wxEmptyString) //IF-BLOCK ADDED BY GXL117
-        client = ConnectPROXY(downloadfile->proxytype,downloadfile->server,downloadfile->port);
-    else
-    {
-        wxIPV4address address;
-        address.Service(url.GetPort());
-        client = new wxSocketClient();
-        client->Notify(FALSE);
-        client ->SetFlags(wxSOCKET_NOWAIT);
-        PrintMessage( _("Resolving host '") + url.GetHost() + wxT("' ..."));
-        if (address.Hostname(url.GetHost())==FALSE)
-           {
-            PrintMessage( _("\nHost not found.\n"),HTMLERROR);
-            client->Close();
-            delete client;
-            return NULL;
-        }
-        else
-            PrintMessage( _(" OK\n"),HTMLSERVER);
-
-        if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
-        PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT(" ") + int2wxstr(url.GetPort()) + wxT("' ...\n"));
-        client->Connect(address,TRUE);
-        if (client->IsConnected() == FALSE )
+    wxIPV4address address;
+    address.Service(url.GetPort());
+    client = new wxSocketClient();
+    client->Notify(FALSE);
+    client ->SetFlags(wxSOCKET_NOWAIT);
+    PrintMessage( _("Resolving host '") + url.GetHost() + wxT("' ..."));
+    if (address.Hostname(url.GetHost())==FALSE)
         {
-            PrintMessage( _("Connection denied.\n"),HTMLERROR);
-            client->Close();
-            delete client;
-            return NULL;
-        }
+        PrintMessage( _("\nHost not found.\n"),HTMLERROR);
+        client->Close();
+        delete client;
+        return NULL;
     }
+    else
+        PrintMessage( _(" OK\n"),HTMLSERVER);
+
+    if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
+
+    PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT(" ") + int2wxstr(url.GetPort()) + wxT("' ...\n"));
+    this->Sleep(1);
+    client->Connect(address,TRUE);
+    if (client->IsConnected() == FALSE )
+    {
+        PrintMessage( _("Connection denied.\n"),HTMLERROR);
+        client->Close();
+        delete client;
+        return NULL;
+    }
+
     if (client)
     {
         if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
@@ -461,7 +451,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
         {
             wxString msgserver;
             char *dados;
-            msgserver << downloadfile->proxyaction<<wxT(" http://") <<url.GetHost()<< url.GetDir() << url.GetFullName() << wxT(" HTTP/1.1\r\n");
+            msgserver << wxT("GET ") /*<< wxT(" http://") <<url.GetHost()*/ << url.GetDir() << url.GetFullRealName() << wxT(" HTTP/1.1\r\n");
             PrintMessage( msgserver,HTMLSERVER);
             dados = wxstr2str(msgserver);
             client->Write(dados, strlen(dados));
@@ -504,7 +494,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
         wxString line;
         wxString message;
         char buf[1024];
-        long sizetmp;
+        wxLongLong sizetmp;
         unsigned int count = 0;
         client->Read(buf,1024);
         do
@@ -520,17 +510,23 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
             PrintMessage( line + wxT("\n"),HTMLSERVER);
             message += line + wxT("\n");
             if (line.Mid(0,14).Lower() == wxT("content-length"))
-                line.Mid(16).ToLong(&sizetmp);
+            {
+                sizetmp = wxstrtolonglong(line.Mid(16));
+                //this->Sleep(1);
+            }
             if (line.Mid(0,13).Lower() == wxT("accept-ranges")||line.Mid(0,13).Lower() == wxT("content-range"))
+            {
                 restart = YES;
+                //this->Sleep(1);
+            }
             if (line.Mid(0,8).Lower() == wxT("location"))
             {
                 currenturl = line.Mid(10);
                 redirecting = TRUE;
+                //this->Sleep(1);
             }
 
             if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
         }while (line != wxEmptyString);
 
         {//PUT IN THE QUEUE THE DATA THAT ISN'T PART OF THE MESSAGE
@@ -611,14 +607,14 @@ wxSocketClient *mDownloadThread::ConnectHTTP(long start)
     return client;
 }
 
-wxSocketClient *mDownloadThread::ConnectFTP(long start)
+wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong start)
 {
-    wxFTP *client = new wxFTP();
+    mFTP *client = new mFTP();
     wxIPV4address address;
     mUrlName url;
     wxFileName destination;
     wxString buffer = wxEmptyString;
-    long sizetmp;
+    wxLongLong sizetmp;
     client->Notify(FALSE);
 
     url.Assign(currenturl);
@@ -644,6 +640,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     PrintMessage( _("Trying to connect in '") + url.GetHost() + wxT("' ..."));
+    this->Sleep(1);
     client->Connect(address,TRUE);
     if (client->IsConnected() == FALSE )
     {
@@ -663,7 +660,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     PrintMessage( _("Verifying if the server supports restarts..."));
-    if (client->SendCommand(wxT("REST ") + int2wxstr(start))!= '3')
+    if (client->SendCommand(wxT("REST ") + start.ToString())!= '3')
     {
         restart = NO;
         if (downloadpartindex == 0)
@@ -708,7 +705,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     if (downloadfile->status == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     PrintMessage( _("Verifying the size of the ") + url.GetFullName() + wxT("...\n"));
-     if ((sizetmp = client->GetFileSize(url.GetFullName()))== -1)
+    if ((sizetmp = client->GetFileSize(url.GetFullName()))== -1) 
     {
         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
         client->Close();
@@ -717,7 +714,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     }
     else
     {
-        PrintMessage( _("File size: ") + int2wxstr(sizetmp) + wxT("\n"),HTMLSERVER);
+        PrintMessage( _("File size: ") + sizetmp.ToString() + wxT("\n"),HTMLSERVER);
            if (downloadpartindex == 0)
             downloadfile->totalsize =  sizetmp;
         downloadfile->sizecompleted[downloadpartindex] = start - downloadfile->startpoint[downloadpartindex];
@@ -737,17 +734,17 @@ wxSocketClient *mDownloadThread::ConnectFTP(long start)
     return client;
 }
 
-wxInputStream *mDownloadThread::ConnectLOCAL_FILE(long start)
+wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
 {
     wxFileInputStream *filestream;
     wxFile *file;
     wxFileName source, destination;
     mUrlName url;
     wxString buffer = wxEmptyString;
-    long sizetmp;
+    wxLongLong sizetmp;
 
     url.Assign(currenturl);
-    source.Assign(url.GetDir() + url.GetFullName());
+    source.Assign(url.GetDir() + url.GetFullRealName());
     destination.Assign(downloadfile->destination);
     destination.SetFullName(PREFIX + downloadfile->name + EXT + int2wxstr(downloadpartindex));
     redirecting = FALSE;
@@ -757,7 +754,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(long start)
 
     if (downloadfile->status == STATUS_STOPED){return NULL;}
 
-    PrintMessage( _("Looking for file ") + url.GetFullName() + wxT("...\n"));
+    PrintMessage( _("Looking for file ") + url.GetFullRealName() + wxT("...\n"));
     if (!source.FileExists())
     {
         PrintMessage( _("File not found.\n"),HTMLERROR);
@@ -765,7 +762,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(long start)
     }
 
     file = new wxFile(source.GetFullPath());
-    PrintMessage( _("Verifying the size of the ") + url.GetFullName() + wxT("...\n"));
+    PrintMessage( _("Verifying the size of the ") + url.GetFullRealName() + wxT("...\n"));
     if (!file)
     {
         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
@@ -774,7 +771,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(long start)
     else
     {
         sizetmp = file->Length();
-        PrintMessage( _("File size: ") + int2wxstr(sizetmp) + wxT("\n"),HTMLSERVER);
+        PrintMessage( _("File size: ") + sizetmp.ToString() + wxT("\n"),HTMLSERVER);
         if (downloadpartindex == 0)
             downloadfile->totalsize =  sizetmp;
         downloadfile->sizecompleted[downloadpartindex] = start - downloadfile->startpoint[downloadpartindex];
@@ -784,7 +781,8 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(long start)
 
     PrintMessage( _("Requesting file...\n"));
     filestream = new wxFileInputStream(source.GetFullPath());
-    filestream->SeekI(start);
+//    wxFileOffset startfileoffset = (wxLongLong) start;
+    filestream->SeekI(start.ToLong());
 
     return filestream;
 }
@@ -821,11 +819,11 @@ void mDownloadThread::SpeedCalculation(long delta_t)
 
 void mDownloadThread::WaitUntilAllFinished(bool canstop)
 {
-    wxStopWatch time;
-    time.Pause();
-    time.Start(downloadfile->timepassed);
-    long lasttime = time.Time();
-    downloadfile->speedpoint = FALSE;
+    //wxStopWatch time;
+    //time.Pause();
+    //time.Start(downloadfile->timepassed);
+    //long lasttime = time.Time();
+    //downloadfile->speedpoint = FALSE;
     if (downloadfile->parts > 1)
     {
         bool waitall = TRUE;
@@ -839,7 +837,7 @@ void mDownloadThread::WaitUntilAllFinished(bool canstop)
             if ((downloadfile->status == STATUS_STOPED) && (canstop))    {return ;}
             Sleep(500);
             if ((downloadfile->status == STATUS_STOPED) && (canstop))    {return ;}
-            if (downloadpartindex == 0)
+            /*if (downloadpartindex == 0)
             {
                 downloadfile->timepassed = time.Time();
                 if (!downloadfile->speedpoint)
@@ -853,7 +851,7 @@ void mDownloadThread::WaitUntilAllFinished(bool canstop)
                     SpeedCalculation(time.Time()-lasttime);
                     downloadfile->speedpoint = FALSE;
                 }
-            }
+            }*/
         }
     }
 }
