@@ -18,7 +18,7 @@ int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
     return 0;
 }
 
-int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int proxytype,wxString proxyaction,wxString server,wxString port,int scheduled) //CHANGED BY GXL117
+int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
 {
     mDownloadFile *file = new mDownloadFile();
     file->index =  downloadlist.GetCount();
@@ -32,8 +32,8 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
     file->totalsizecompleted = 0;
     file->comments = comments;
     file->percentual = 0;
-    file->timepassed = 0l;
-    file->timeremaining = 0l;
+    file->timepassed = 0;
+    file->timeremaining = 0;
     file->totalspeed = 0;
     file->urllist = url.GetFullPath();
     file->MD5 = wxEmptyString;
@@ -62,23 +62,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
     file->free = TRUE;
     file->criticalerror = FALSE;
     file->split = WAIT;
-    switch(proxytype) //ADDED BY GXL117 - FROM HERE
-    {
-    case 0:
-        file->proxytype=wxT("NOPROXY");
-        break;
-    case 1:
-        file->proxytype=wxT("HTTP");
-        break;
-    //case 2:
-    //    file->proxytype=wxT("SOCKSV4");
-    //    break;
-    default:
-        break;
-    }
-    file->proxyaction = proxyaction.Upper();
-    file->server = server;
-    file->port = port; //ADDED BY GXL117 - UNTIL HERE
+
     downloadlist.Append(file);
     RegisterListItemOnDisk(file);
     return (file->index);
@@ -134,9 +118,9 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
     config->Write(RESTART_REG,file->restart);
     config->Write(PARTS_REG,file->parts);
     config->Write(DESTINATION_REG,file->destination);
-    config->Write(SIZE_REG,file->totalsize);
-    config->Write(SIZECOMPLETED_REG,file->totalsizecompleted);
-    config->Write(TIMEPASSED_REG,file->timepassed);
+    config->Write(SIZE_REG,file->totalsize.ToString());
+    config->Write(SIZECOMPLETED_REG,file->totalsizecompleted.ToString());
+    config->Write(TIMEPASSED_REG,file->timepassed.ToString());
     config->Write(SPEED_REG,file->totalspeed);
     config->Write(PERCENTUAL_REG,file->percentual);
     config->Write(MD5_REG,file->MD5);
@@ -147,11 +131,6 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
 
     config->Write(USER_REG,file->user);
     config->Write(PASSWORD_REG,file->password);
-
-    config->Write(PROXYTYPE_REG,file->proxytype); //ADDED BY GXL117
-    config->Write(PROXYACTION_REG,file->proxyaction); //ADDED BY GXL117
-    config->Write(SERVER_REG,file->server); //ADDED BY GXL117
-    config->Write(PORT_REG,file->port); //ADDED BY GXL117
 
     delete config;
 }
@@ -175,6 +154,7 @@ void mApplication::LoadDownloadListFromDisk()
 {
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
     wxString name;
+    wxString tmp;
     long index;
     config->SetPath(INPROGRESS_REG);
     if (config->GetFirstGroup(name, index))
@@ -191,6 +171,7 @@ void mApplication::LoadDownloadListFromDisk()
     for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
     {
         mDownloadFile *file = node->GetData();
+        tmp = wxEmptyString;
         config->SetPath(file->name);
         config->Read(INDEX_REG,&(file->index));
         config->Read(STATUS_REG,&(file->status));
@@ -198,9 +179,16 @@ void mApplication::LoadDownloadListFromDisk()
         config->Read(RESTART_REG,&(file->restart));
         config->Read(PARTS_REG,&(file->parts));
         config->Read(DESTINATION_REG,&(file->destination));
-        config->Read(SIZE_REG,&(file->totalsize));
-        config->Read(SIZECOMPLETED_REG,&(file->totalsizecompleted));
-        config->Read(TIMEPASSED_REG,&(file->timepassed));
+
+        config->Read(SIZE_REG,&tmp);
+        file->totalsize = wxstrtolonglong(tmp);
+
+        config->Read(SIZECOMPLETED_REG,&tmp);
+        file->totalsizecompleted = wxstrtolonglong(tmp);
+
+        config->Read(TIMEPASSED_REG,&tmp);
+        file->timepassed = wxstrtolonglong(tmp);
+
         config->Read(SPEED_REG,&(file->totalspeed));
         config->Read(PERCENTUAL_REG,&(file->percentual));
         config->Read(MD5_REG,&(file->MD5));
@@ -242,10 +230,6 @@ void mApplication::LoadDownloadListFromDisk()
 
         config->Read(USER_REG,&(file->user));
         config->Read(PASSWORD_REG,&(file->password));
-        config->Read(PROXYTYPE_REG,&(file->proxytype)); //ADDED BY GXL117
-        config->Read(PROXYACTION_REG,&(file->proxyaction)); //ADDED BY GXL117
-        config->Read(SERVER_REG,&(file->server)); //ADDED BY GXL117
-        config->Read(PORT_REG,&(file->port)); //ADDED BY GXL117
 
         config->SetPath(BACK_DIR_REG);
     }
@@ -297,6 +281,23 @@ wxString TimeString(long value)
     int hour,min,sec;
     long time;
     time = (long) (value / 1000);
+    hour = (int) (time/3600);
+    time = time - (hour * 3600);
+    min = (int) (time/60);
+    sec = (time%60);
+    if (hour == 0)
+       tmp.Printf(wxT("%01dm %01ds"), min, sec);
+    else
+       tmp.Printf(wxT("%01dh %01dm %01ds"),hour, min, sec);
+    return(tmp);
+}
+
+wxString TimeString(wxLongLong value)
+{
+    wxString tmp;
+    int hour,min,sec;
+    long time;
+    time = (value / 1000).ToLong();
     hour = (int) (time/3600);
     time = time - (hour * 3600);
     min = (int) (time/60);
@@ -364,4 +365,44 @@ wxString ByteString(long size)
     if ( size >= 1048576)
         str.Printf(wxT("%0.1f MB"),((double) size)/((double)1048576));
     return(str);
+}
+
+wxString ByteString(wxLongLong size)
+{
+    wxString str;
+    if ( size < 1024)
+//        str.Printf(wxT("%0.1f Bytes"),(double) size);
+        str.Printf(wxT("0.0 KB"));
+    if (( size >= 1024) && (size < 1048576))
+        str.Printf(wxT("%0.1f KB"),( wxlonglongtodouble(size)) /((double)1024));
+    if ( size >= 1048576)
+        str.Printf(wxT("%0.1f MB"),( wxlonglongtodouble(size))/((double)1048576));
+    return(str);
+}
+
+wxLongLong wxstrtolonglong(wxString string)
+{
+    wxString tmp = string.Trim().Trim(FALSE);
+    char carac;
+    wxLongLong result = 0;
+    int sign=1;
+    if (tmp.GetChar(0) == '-')
+        sign = -1;
+    for (unsigned int i = 0; i < tmp.Length(); i++)
+    {
+        carac = tmp.GetChar(i);
+        if ((carac >= '0') && (carac <= '9'))
+            result = result * 10LL + carac-'0';
+        else
+            continue;
+    }
+    return result*sign;
+}
+
+double wxlonglongtodouble(wxLongLong value)
+{
+    double d = value.GetHi();
+    d *= 1.0 + (double)ULONG_MAX;
+    d += value.GetLo();
+    return d;
 }

@@ -14,10 +14,15 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         wxString url;
         url = XRCCTRL(*this, "edturl",wxTextCtrl)->GetValue();
         mUrlName *urltmp;
+        if (url.Length() < 3)
+        {
+            wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
+            return;
+        }
         int i = 0, count = 0;
         for (i=0; i < (int)(url.Length()-1);i++)
         {
-            if (url.Mid(i,1) == wxT("/"))
+            if (url.Mid(i,1) == SEPARATOR_URL)
                 count++;
         }
         if ((count < 1) || (url.Mid(url.Length()-1,1) == SEPARATOR_URL))
@@ -32,6 +37,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
             return;
         }
+        XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(url);
     }
     else
     {
@@ -44,10 +50,15 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             wxString url;
             url = XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->GetString(j);
             mUrlName *urltmp;
+            if (url.Length() < 3)
+            {
+                wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
+                return;
+            }
             int i = 0, count = 0;
             for (i=0; i < (int)(url.Length()-1);i++)
             {
-                if (url.Mid(i,1) == wxT("/"))
+                if (url.Mid(i,1) == SEPARATOR_URL)
                     count++;
             }
             if ((count < 1) || (url.Mid(url.Length()-1,1) == SEPARATOR_URL))
@@ -62,6 +73,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
                 wxMessageBox(_("The follow URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
                 return;
             }
+            XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->SetString(j,url);
         }
         if (!atleastoneitemischecked)
         {
