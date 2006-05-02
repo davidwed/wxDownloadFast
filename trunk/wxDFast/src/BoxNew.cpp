@@ -28,7 +28,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         if ((count < 1) || (url.Mid(url.Length()-1,1) == SEPARATOR_URL))
         {
             if (url.Mid(url.Length()-1,1) != SEPARATOR_URL)
-                url = url + SEPARATOR_DIR;
+                url = url + SEPARATOR_URL;
             url = url + wxT("index.html");
         }
         urltmp = new mUrlName(url);
@@ -64,7 +64,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             if ((count < 1) || (url.Mid(url.Length()-1,1) == SEPARATOR_URL))
             {
                 if (url.Mid(url.Length()-1,1) != SEPARATOR_URL)
-                    url = url + SEPARATOR_DIR;
+                    url = url + SEPARATOR_URL;
                 url = url + wxT("index.html");
             }
             urltmp = new mUrlName(url);
@@ -105,7 +105,7 @@ void mBoxNew::OnCancel(wxCommandEvent& event)
 void mBoxNew::OnButtonDir(wxCommandEvent& event)
 {
      wxString dir;
-     dir = wxDirSelector(_("Select the directory:"));
+     dir = wxDirSelector(_("Select the directory:"),wxGetApp().mainframe->programoptions.destination);
      if (dir != wxEmptyString)
          XRCCTRL(*this, "edtdestination",wxTextCtrl)->SetValue(dir);
 }

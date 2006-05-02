@@ -87,6 +87,19 @@
                                     <object class="sizeritem">
                                         <object class="wxFlexGridSizer">
                                             <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxCheckBox" name="chkrememberboxnewoptions">
+                                                    <label>Remember the last settings on the New Download box</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
                                             <rows>2</rows>
                                             <cols>1</cols>
                                             <vgap>10</vgap>
@@ -233,13 +246,23 @@
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
-                            <rows>11</rows>
+                            <rows>13</rows>
                             <cols>2</cols>
                             <vgap>5</vgap>
                             <growablecols>1</growablecols>
                             <object class="spacer">
                                 <size>1, 1</size>
                                 <flag>wxFIXED_MINSIZE</flag>
+                            </object>
+                            <object class="spacer">
+                                <size>1, 1</size>
+                                <flag>wxFIXED_MINSIZE</flag>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxCheckBox" name="chkgraphshow">
+                                    <label>Show Graph</label>
+                                </object>
                             </object>
                             <object class="spacer">
                                 <size>1, 1</size>
@@ -300,6 +323,19 @@
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
                                 <object class="wxStaticText" name="label_7">
+                                    <label>Graph height:</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                <object class="wxSpinCtrl" name="spingraphheight">
+                                    <min>40</min>
+                                    <max>200</max>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticText" name="label_8">
                                     <label>Text font size (points):</label>
                                 </object>
                             </object>
@@ -312,7 +348,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_8">
+                                <object class="wxStaticText" name="label_9">
                                     <label>Main line width:</label>
                                 </object>
                             </object>
@@ -325,7 +361,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_9">
+                                <object class="wxStaticText" name="label_10">
                                     <label>Background colour:</label>
                                 </object>
                             </object>
@@ -356,7 +392,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_10">
+                                <object class="wxStaticText" name="label_11">
                                     <label>Graph grid colour:</label>
                                 </object>
                             </object>
@@ -387,7 +423,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_111">
+                                <object class="wxStaticText" name="label_12">
                                     <label>Main line colour:</label>
                                 </object>
                             </object>
@@ -418,7 +454,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_12">
+                                <object class="wxStaticText" name="label_13">
                                     <label>Speed font colour:</label>
                                 </object>
                             </object>
@@ -477,14 +513,14 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_13">
+                                        <object class="wxStaticText" name="label_14">
                                             <label>Start Date:</label>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_14">
+                                        <object class="wxStaticText" name="label_15">
                                             <label>Start Time:</label>
                                         </object>
                                     </object>
@@ -527,7 +563,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_15">
+                                        <object class="wxStaticText" name="label_16">
                                             <label>hours</label>
                                         </object>
                                     </object>
@@ -542,7 +578,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_16">
+                                        <object class="wxStaticText" name="label_17">
                                             <label>minutes</label>
                                         </object>
                                     </object>
@@ -559,14 +595,14 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_17">
+                                        <object class="wxStaticText" name="label_18">
                                             <label>Finish Date:</label>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_18">
+                                        <object class="wxStaticText" name="label_19">
                                             <label>Finish Time:</label>
                                         </object>
                                     </object>
@@ -609,7 +645,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_19">
+                                        <object class="wxStaticText" name="label_20">
                                             <label>hours</label>
                                         </object>
                                     </object>
@@ -624,7 +660,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_20">
+                                        <object class="wxStaticText" name="label_21">
                                             <label>minutes</label>
                                         </object>
                                     </object>
@@ -637,7 +673,7 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_21">
+                                <object class="wxStaticText" name="label_22">
                                     <label>Disactivate the downloads in:</label>
                                 </object>
                             </object>
@@ -664,7 +700,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_22">
+                                        <object class="wxStaticText" name="label_23">
                                             <label>Between</label>
                                         </object>
                                     </object>
@@ -679,7 +715,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_23">
+                                        <object class="wxStaticText" name="label_24">
                                             <label>:</label>
                                         </object>
                                     </object>
@@ -694,7 +730,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_24">
+                                        <object class="wxStaticText" name="label_25">
                                             <label>and</label>
                                         </object>
                                     </object>
@@ -709,7 +745,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_25">
+                                        <object class="wxStaticText" name="label_26">
                                             <label>:</label>
                                         </object>
                                     </object>
@@ -733,7 +769,7 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_26">
+                                <object class="wxStaticText" name="label_27">
                                     <label>Exceptions List:</label>
                                 </object>
                             </object>
