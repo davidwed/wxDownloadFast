@@ -1,3 +1,18 @@
+0.4.0
+===================================================
+- Adicionado suporte para downloads HTTP e FTP para
+  arquivos maiores que 2GB
+- Corrigido bug no cálculo da velocidade para down-
+  loads por FTP
+- Melhorado o acesso a links dinâmicos
+- Adicionada opção para esconder o gráfico de ve-
+  locidade e para alterar a altura do gráfico
+- Agora as opções selecionadas na caixa de Novo
+  Download são lembradas para o próximo download
+- Corrigidos outros bugs
+
+
+
 0.3.2
 ===================================================
 - Removidas mensagens de debug esquecidas na última

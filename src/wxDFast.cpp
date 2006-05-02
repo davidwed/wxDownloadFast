@@ -34,6 +34,7 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
     wxString urlsparameter = data;
     wxArrayString urls;
     wxStringTokenizer *tkz01, *tkz02;
+    int numberofparts, startoption;
     wxString textfile,destination,comments,strurls,strtemp;
     wxTextFile file;
 
@@ -58,13 +59,25 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         if (strtemp != wxEmptyString)
             urls.Add(strtemp);
     }
-    if (destination == wxT("NONE"))
-        destination = wxGetApp().mainframe->programoptions.destination;
+    if (wxGetApp().mainframe->programoptions.rememberboxnewoptions)
+    {
+        startoption = wxGetApp().mainframe->programoptions.laststartoption;
+        numberofparts = wxGetApp().mainframe->programoptions.lastnumberofparts;
+        if (destination == wxT("NONE"))
+            destination = wxGetApp().mainframe->programoptions.lastdestination;
+    }
+    else
+    {
+        startoption = DEFAULT_START_OPTION;
+        numberofparts = DEFAULT_NUM_PARTS;
+        if (destination == wxT("NONE"))
+            destination = wxGetApp().mainframe->programoptions.destination;
+    }
     if (comments == wxT("NONE"))
         comments = wxEmptyString;
 
     if (urls.GetCount() > 0)
-        wxGetApp().mainframe->NewDownload(urls,destination, DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,comments,TRUE,TRUE);
+        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE);
     else if (!wxGetApp().mainframe->IsShown())
     {
         wxCommandEvent event;
@@ -183,6 +196,7 @@ bool mApplication::OnInit()
     }
 
     //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE 
+    int startoption, numberofparts;
     wxString listtextfile,comments,destination;
     wxArrayString url; 
     if (parameters->GetParamCount() > 0)
@@ -206,12 +220,24 @@ bool mApplication::OnInit()
                 url.Add(str);
         }
     }
-    if (!parameters->Found(wxT("destination"),&destination))
-        destination = mainframe->programoptions.destination;
+    if (mainframe->programoptions.rememberboxnewoptions)
+    {
+        numberofparts = mainframe->programoptions.lastnumberofparts;
+        startoption = mainframe->programoptions.laststartoption;
+        if (!parameters->Found(wxT("destination"),&destination))
+            destination = mainframe->programoptions.lastdestination;
+    }
+    else
+    {
+        numberofparts = DEFAULT_NUM_PARTS;
+        startoption = DEFAULT_START_OPTION;
+        if (!parameters->Found(wxT("destination"),&destination))
+            destination = mainframe->programoptions.destination;
+    }
     if (!parameters->Found(wxT("comments"),&comments))
         comments = wxEmptyString;
     if (url.GetCount() > 0)
-        mainframe->NewDownload(url,destination,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,comments,TRUE,TRUE);
+        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE);
 
 
     if (!parameters->Found(wxT("hide")))
@@ -343,6 +369,7 @@ mMainFrame::mMainFrame()
 
     //LOAD USER OPTIONS
     programoptions.closedialog = wxGetApp().Configurations(READ,OPT_DIALOG_CLOSE_REG,1);
+    programoptions.rememberboxnewoptions = wxGetApp().Configurations(READ,OPT_REMEMBER_BOXNEW_OPTIONS_REG,1);
     programoptions.destination = wxGetApp().Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
     programoptions.attempts = wxGetApp().Configurations(READ,OPT_ATTEMPTS_REG,999);
     programoptions.attemptstime = wxGetApp().Configurations(READ,OPT_ATTEMPTS_TIME_REG,5);
@@ -357,14 +384,16 @@ mMainFrame::mMainFrame()
     programoptions.shutdowncmd = wxGetApp().Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("c:\\windows\\system32\\shutdown.exe -s -t 0"));
     programoptions.disconnectcmd = wxGetApp().Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("c:\\windows\\system32\\rasdial.exe /disconnect"));
     #else
-    programoptions.shutdowncmd = wxGetApp().Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("/sbin/shutdown -h now"));
+    programoptions.shutdowncmd = wxGetApp().Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("sudo /sbin/shutdown -h now"));
     programoptions.disconnectcmd = wxGetApp().Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("/usr/bin/poff"));
     #endif
+    programoptions.graphshow = wxGetApp().Configurations(READ,OPT_GRAPH_SHOW_REG, 1);
     programoptions.graphhowmanyvalues = wxGetApp().Configurations(READ,OPT_GRAPH_HOWMANYVALUES_REG, 200);
     programoptions.graphrefreshtime = wxGetApp().Configurations(READ,OPT_GRAPH_REFRESHTIME_REG, 1000);
     programoptions.graphscale = wxGetApp().Configurations(READ,OPT_GRAPH_SCALE_REG, 40);
     programoptions.graphtextarea = wxGetApp().Configurations(READ,OPT_GRAPH_TEXTAREA_REG, 80);
     programoptions.graphspeedfontsize = wxGetApp().Configurations(READ,OPT_GRAPH_SPEEDFONTSIZE_REG, 18);
+    programoptions.graphheight = wxGetApp().Configurations(READ,OPT_GRAPH_HEIGHT_REG, 48);
     programoptions.graphlinewidth = wxGetApp().Configurations(READ,OPT_GRAPH_LINEWIDTH_REG, 3);
     {
         wxString colour;
@@ -402,8 +431,6 @@ mMainFrame::mMainFrame()
         if (!colour.Mid(7,3).ToLong(&blue))            blue = wxBLUE->Blue();
         programoptions.graphfontcolor.Set(red,green,blue);
     }
-    XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
-    XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
     programoptions.activatescheduling = wxGetApp().Configurations(READ,OPT_SCHED_ACTIVATESCHEDULING_REG,0);
     programoptions.startdatetime.Set((time_t)wxGetApp().Configurations(READ,OPT_SCHED_STARTDATETIME_REG,0l));
     programoptions.finishdatetime.Set((time_t)wxGetApp().Configurations(READ,OPT_SCHED_FINISHDATETIME_REG,0l));
@@ -418,10 +445,17 @@ mMainFrame::mMainFrame()
         programoptions.scheduleexceptions[i].newstart = wxEmptyString;
         programoptions.scheduleexceptions[i].newfinish = wxEmptyString;
     }
+    programoptions.lastdestination = wxGetApp().Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
+    programoptions.lastnumberofparts = wxGetApp().Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
+    programoptions.laststartoption = wxGetApp().Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
 
     menubar->GetMenu(3)->Check(XRCID("menushutdown"),programoptions.shutdown);
     menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
     timerupdateinterval = programoptions.timerupdateinterval;
+
+    XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
+    XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
+    XRCCTRL(*(this), "graphpanel",mGraph )->mainframe = this;
 
     //GENERATE THE LISTS
     GenerateInProgressList();
@@ -466,6 +500,12 @@ mMainFrame::mMainFrame()
         taskbaricon->SetIcon(wxICON(wxdfast),PROGRAM_NAME);
         #endif
     taskbaricon->restoring = FALSE;
+
+    //HIDE OR SHOW THE SPEED GRAPH
+    if (!programoptions.graphshow)
+        XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+    else
+        XRCCTRL(*(this), "graphpanel",mGraph )->Show();
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
@@ -961,7 +1001,7 @@ void mMainFrame::GenerateFinishedList()
     list02->Show();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show)
 {
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments;
@@ -1016,7 +1056,10 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         edtpassword->SetValue(password);
     }
     edtcomments->SetValue(comments);
-    optnow->SetValue(now);
+    if (startoption == NOW)
+        optnow->SetValue(TRUE);
+    else
+        optnow->SetValue(FALSE);
     spinsplit->SetValue(parts);
     if (show)
         RETURN = dlg.ShowModal();
@@ -1036,9 +1079,10 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         wxArrayString fileswitherror;
         wxFileName destinationtmp;
         int index;
-        int scheduled = FALSE;
-        if (optschedule->GetValue())
-            scheduled = TRUE;
+        int scheduled, now;
+        scheduled = optschedule->GetValue();
+        now = optnow->GetValue();
+
         destinationtmp.Assign(edtdestination->GetValue());
 
         for (i = 0; i < nparams; i++)
@@ -1046,8 +1090,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             if (!lstaddresslist->IsChecked(i))
                 continue;
 
-            mUrlName urltmp;
-            urltmp.Assign(lstaddresslist->GetString(i));
+            mUrlName urltmp(lstaddresslist->GetString(i));
             if (!wxGetApp().FindDownloadFile(urltmp.GetFullName()))
             {
                 index = wxGetApp().CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(),
@@ -1061,9 +1104,9 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
                 continue;
             }
 
-            if (optnow->GetValue())
+            if (now)
                 wxGetApp().downloadlist.Item(index)->GetData()->status = STATUS_QUEUE;
-            if (optschedule->GetValue())
+            if (scheduled)
                 wxGetApp().downloadlist.Item(index)->GetData()->status = STATUS_SCHEDULE;
         }
         if (fileswitherror.GetCount() > 0)
@@ -1074,6 +1117,18 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             wxMessageBox(message,_("Error...") ,wxOK | wxICON_ERROR,this);
             return FALSE;
         }
+        programoptions.lastnumberofparts = spinsplit->GetValue();
+        if (scheduled)
+            programoptions.laststartoption = SCHEDULE;
+        else if (now)
+            programoptions.laststartoption = NOW;
+        else
+            programoptions.laststartoption = MANUAL;
+        programoptions.lastdestination = edtdestination->GetValue();
+
+        wxGetApp().Configurations(WRITE,OPT_LAST_DESTINATION_REG, programoptions.lastdestination);
+        wxGetApp().Configurations(WRITE,OPT_LAST_NUMBER_OF_PARTS_REG, programoptions.lastnumberofparts);
+        wxGetApp().Configurations(WRITE,OPT_LAST_START_OPTION_REG, programoptions.laststartoption);
     }
     return TRUE;
 }
@@ -1214,9 +1269,9 @@ void mMainFrame::StopDownload(mDownloadFile *downloadfile)
 
 void mMainFrame::OnPasteURL(wxCommandEvent& event)
 {
+    int numberofparts, startoption;
     wxString destinationtmp = wxEmptyString;
     wxArrayString urltmp;
-    int now = TRUE;
     if (wxTheClipboard->Open())
     {
         if (wxTheClipboard->IsSupported( wxDF_TEXT ))
@@ -1228,8 +1283,20 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         }
         wxTheClipboard->Close();
     }
-    destinationtmp = programoptions.destination;
-    NewDownload(urltmp,destinationtmp,DEFAULT_NUM_PARTS,wxEmptyString,wxEmptyString,wxEmptyString,now,TRUE);
+
+    if (programoptions.rememberboxnewoptions)
+    {
+        numberofparts = programoptions.lastnumberofparts;
+        startoption = programoptions.laststartoption;
+        destinationtmp = programoptions.lastdestination;
+    }
+    else
+    {
+        numberofparts = DEFAULT_NUM_PARTS;
+        startoption = DEFAULT_START_OPTION;
+        destinationtmp = programoptions.destination;
+    }
+    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1400,13 +1467,12 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
 
         if (dlg.ShowModal() == XRCID("btnok"))
         {
-            mUrlName urltmp;
             currentfile->urllist = XRCCTRL(dlg, "edturl",wxTextCtrl)->GetValue();
             currentfile->destination = XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue();
             currentfile->user = XRCCTRL(dlg, "edtuser",wxTextCtrl)->GetValue();
             currentfile->password = XRCCTRL(dlg, "edtpassword",wxTextCtrl)->GetValue();
             currentfile->comments = XRCCTRL(dlg, "edtcomments",wxTextCtrl)->GetValue();
-            urltmp.Assign(currentfile->urllist);
+            mUrlName urltmp(currentfile->urllist);
             newname = urltmp.GetFullName();
             if (currentfile->destination.Mid(currentfile->destination.Length()-1,1) != SEPARATOR_DIR)
                 currentfile->destination = currentfile->destination + SEPARATOR_DIR;
@@ -1430,6 +1496,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
     {
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
         wxListItem item;
+        int startoption;
         wxString url,destination,user,password,comments;
         wxArrayString urlarray;
         int parts;
@@ -1461,8 +1528,13 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         comments = wxEmptyString;
         config->Read(COMMENTS_REG,&comments);
         config->SetPath(BACK_DIR_REG);
+        
+        if (programoptions.rememberboxnewoptions)
+            startoption = programoptions.laststartoption;
+        else
+            startoption = DEFAULT_START_OPTION;
 
-        if (NewDownload(urlarray, destination, parts, user, password, comments, TRUE, FALSE))
+        if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE))
         {
             config->DeleteGroup(item.GetText());
             list->DeleteItem(currentselection);
@@ -1665,6 +1737,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     mBoxOptions dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxoptions"));
     int i,j;
+    int oldgraphheight = programoptions.graphheight;
 
     XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->SetValue(programoptions.attempts);
     XRCCTRL(dlg, "spinattemptstime", wxSpinCtrl)->SetValue(programoptions.attemptstime);
@@ -1674,6 +1747,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "chkclosedialog",wxCheckBox)->SetValue(programoptions.closedialog);
     XRCCTRL(dlg, "chkshutdown",wxCheckBox)->SetValue(programoptions.alwaysshutdown);
     XRCCTRL(dlg, "chkdisconnect",wxCheckBox)->SetValue(programoptions.alwaysdisconnect);
+    XRCCTRL(dlg, "chkrememberboxnewoptions",wxCheckBox)->SetValue(programoptions.rememberboxnewoptions);
     XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(programoptions.destination);
     XRCCTRL(dlg, "spintimerinterval",wxSpinCtrl)->SetValue(programoptions.timerupdateinterval);
     XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->SetValue(programoptions.readbuffersize);
@@ -1681,8 +1755,10 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "spingraphrefreshrate",wxSpinCtrl)->SetValue(programoptions.graphrefreshtime);
     XRCCTRL(dlg, "spingraphmaxvalue",wxSpinCtrl)->SetValue(programoptions.graphscale);
     XRCCTRL(dlg, "spingraphtextarea",wxSpinCtrl)->SetValue(programoptions.graphtextarea);
+    XRCCTRL(dlg, "spingraphheight",wxSpinCtrl)->SetValue(programoptions.graphheight);
     XRCCTRL(dlg, "spingraphfontsize",wxSpinCtrl)->SetValue(programoptions.graphspeedfontsize);
     XRCCTRL(dlg, "spingraphlinewidth",wxSpinCtrl)->SetValue(programoptions.graphlinewidth);
+    XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->SetValue(programoptions.graphshow);
     XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour = programoptions.graphbackcolor;
     XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour = programoptions.graphgridcolor;
     XRCCTRL(dlg, "graphpanelline", mBoxOptionsColorPanel)->colour = programoptions.graphlinecolor;
@@ -1722,13 +1798,16 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         programoptions.closedialog = XRCCTRL(dlg, "chkclosedialog",wxCheckBox)->GetValue();
         programoptions.alwaysshutdown = XRCCTRL(dlg, "chkshutdown",wxCheckBox)->GetValue();
         programoptions.alwaysdisconnect = XRCCTRL(dlg, "chkdisconnect",wxCheckBox)->GetValue();
+        programoptions.rememberboxnewoptions = XRCCTRL(dlg, "chkrememberboxnewoptions",wxCheckBox)->GetValue();
         programoptions.destination = XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue();
         programoptions.timerupdateinterval = XRCCTRL(dlg, "spintimerinterval",wxSpinCtrl)->GetValue();
         programoptions.readbuffersize = XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->GetValue();
+        programoptions.graphshow = XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->GetValue();
         programoptions.graphhowmanyvalues = XRCCTRL(dlg, "spingraphpoints",wxSpinCtrl)->GetValue();
         programoptions.graphrefreshtime = XRCCTRL(dlg, "spingraphrefreshrate",wxSpinCtrl)->GetValue();
         programoptions.graphscale = XRCCTRL(dlg, "spingraphmaxvalue",wxSpinCtrl)->GetValue();
         programoptions.graphtextarea = XRCCTRL(dlg, "spingraphtextarea",wxSpinCtrl)->GetValue();
+        programoptions.graphheight = XRCCTRL(dlg, "spingraphheight",wxSpinCtrl)->GetValue();
         programoptions.graphspeedfontsize = XRCCTRL(dlg, "spingraphfontsize",wxSpinCtrl)->GetValue();
         programoptions.graphlinewidth = XRCCTRL(dlg, "spingraphlinewidth",wxSpinCtrl)->GetValue();
         programoptions.graphbackcolor = XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour;
@@ -1775,6 +1854,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
             programoptions.activatescheduling = FALSE;
         waitbox->Update(50);
         wxGetApp().Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
+        wxGetApp().Configurations(WRITE,OPT_REMEMBER_BOXNEW_OPTIONS_REG,programoptions.rememberboxnewoptions);
         wxGetApp().Configurations(WRITE,OPT_DESTINATION_REG,programoptions.destination);
         wxGetApp().Configurations(WRITE,OPT_ATTEMPTS_REG,programoptions.attempts);
         wxGetApp().Configurations(WRITE,OPT_ATTEMPTS_TIME_REG,programoptions.attemptstime);
@@ -1785,10 +1865,12 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         wxGetApp().Configurations(WRITE,OPT_DISCONNECT_CMD_REG,programoptions.disconnectcmd);
         wxGetApp().Configurations(WRITE,OPT_TIMERINTERVAL_REG,programoptions.timerupdateinterval);
         wxGetApp().Configurations(WRITE,OPT_READBUFFERSIZE_REG,programoptions.readbuffersize);
+        wxGetApp().Configurations(WRITE,OPT_GRAPH_SHOW_REG,programoptions.graphshow);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_HOWMANYVALUES_REG, programoptions.graphhowmanyvalues);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_REFRESHTIME_REG, programoptions.graphrefreshtime);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_SCALE_REG, programoptions.graphscale);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_TEXTAREA_REG, programoptions.graphtextarea);
+        wxGetApp().Configurations(WRITE,OPT_GRAPH_HEIGHT_REG, programoptions.graphheight);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_SPEEDFONTSIZE_REG, programoptions.graphspeedfontsize);
         wxGetApp().Configurations(WRITE,OPT_GRAPH_LINEWIDTH_REG, programoptions.graphlinewidth);
         waitbox->Update(70);
@@ -1825,7 +1907,22 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         wxGetApp().Configurations(WRITE,OPT_SCHED_STARTDATETIME_REG, (long)programoptions.startdatetime.GetTicks());
         wxGetApp().Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
 
-        XRCCTRL(*(this), "graphpanel",mGraph )->Refresh();
+        if (programoptions.graphheight != oldgraphheight) //SHOW/HIDE/CHANGE THE HEIGHT OF THE GRAPH
+        {
+            int currentgraphheight = programoptions.graphheight;
+            programoptions.graphheight = oldgraphheight;
+            XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+            programoptions.graphheight = currentgraphheight;
+            if (programoptions.graphshow)
+                XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+        }
+        else
+        {
+            if (!programoptions.graphshow)
+                XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+            else
+                XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+        }
         waitbox->Update(100);
         delete waitbox;
         mutex_programoptions->Unlock();
@@ -1963,6 +2060,8 @@ void mGraph::OnPaint(wxPaintEvent &event)
     if (wxGetApp().mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
     if (!programoptions)
+        return;
+    if (!programoptions->graphshow)
         return;
     int x, y, lastx, lasty, count;
     float dx, dy;

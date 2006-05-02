@@ -37,6 +37,7 @@
     #include "wx/tokenzr.h"
     #include "wx/wfstream.h"
     #include "wx/longlong.h"
+    #include "wx/uri.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
@@ -66,8 +67,15 @@
     #else
        const wxString SEPARATOR_DIR = wxT("/");
     #endif
+
+    #define MANUAL                      0
+    #define NOW                         1
+    #define SCHEDULE                    2
+
     #define MAX_NUM_PARTS              9
     #define DEFAULT_NUM_PARTS          5
+    #define DEFAULT_START_OPTION       NOW
+                                        //START THE DOWNLOAD IMMEDIATLY
     #define MIN_SIZE_TO_SPLIT          500000l
     #define USE_HTML_MESSAGES          1 
                                         //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
@@ -76,6 +84,7 @@
     #define IPC_SERVICE                wxT("24242")
     #define IPC_TOPIC                  wxT("IPC_WXDOWNLAD_FAST_")
     #define IPC_END_CONNECTION         wxT("IPC_WXDOWNLAD_FAST_END_CONECTION")
+
 
     const wxString DFAST_REG = wxT("wxDownloadFast");
     const wxString FILES_REG = wxT("files");
@@ -117,6 +126,7 @@
     const wxString OPT_ATTEMPTS_REG = wxT("attempts");
     const wxString OPT_ATTEMPTS_TIME_REG = wxT("attemptstime");
     const wxString OPT_SIMULTANEOUS_REG = wxT("simultaneous");
+    const wxString OPT_REMEMBER_BOXNEW_OPTIONS_REG = wxT("rememberboxnewoptions");
     const wxString OPT_DESTINATION_REG = wxT("dirdestination");
     const wxString OPT_SHUTDOWN_REG = wxT("shutdown");
     const wxString OPT_SHUTDOWN_CMD_REG = wxT("shutdowncmd");
@@ -124,10 +134,12 @@
     const wxString OPT_DISCONNECT_CMD_REG = wxT("disconnectcmd");
     const wxString OPT_TIMERINTERVAL_REG = wxT("timerinterval");
     const wxString OPT_READBUFFERSIZE_REG = wxT("readbuffersize");
+    const wxString OPT_GRAPH_SHOW_REG = wxT("graphshow");
     const wxString OPT_GRAPH_HOWMANYVALUES_REG = wxT("graphhowmanyvalues");
     const wxString OPT_GRAPH_REFRESHTIME_REG = wxT("graphrefreshtime");
     const wxString OPT_GRAPH_SCALE_REG = wxT("graphscale");
     const wxString OPT_GRAPH_TEXTAREA_REG = wxT("graphtextarea");
+    const wxString OPT_GRAPH_HEIGHT_REG = wxT("graphheight");
     const wxString OPT_GRAPH_SPEEDFONTSIZE_REG = wxT("graphspeedfontsize");
     const wxString OPT_GRAPH_LINEWIDTH_REG = wxT("graphlinewidth");
     const wxString OPT_GRAPH_COLORBACK_REG = wxT("graphcolorbackground");
@@ -141,6 +153,9 @@
     const wxString OPT_SCHED_SCHEDULEEXCEPTION_FINISH_REG = wxT("scheduleexceptionfinish");
     const wxString OPT_SCHED_SCHEDULEEXCEPTION_DAY_REG = wxT("scheduleexceptionday");
     const wxString OPT_SCHED_SCHEDULEEXCEPTION_ISACTIVE_REG = wxT("scheduleexceptionisactive");
+    const wxString OPT_LAST_DESTINATION_REG = wxT("lastdestination");
+    const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
+    const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
 
 
     const wxString EXT = wxT(".dfast");
@@ -271,10 +286,12 @@
         int alwaysdisconnect;
         int timerupdateinterval; //time between the timer refreshs in milliseconds
         long readbuffersize;
+        bool graphshow;
         int graphhowmanyvalues;
         int graphrefreshtime;    //time between the graph refreshs in milliseconds
         int graphscale;          //max value showed in the graph
         int graphtextarea;       //size the area reserved for the speed value
+        int graphheight;
         int graphspeedfontsize;
         wxColour graphbackcolor;
         wxColour graphgridcolor;
@@ -289,6 +306,10 @@
         wxDateTime finishdatetime;
         mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
         int scheduleexceptionschanged;
+        wxString lastdestination;
+        int lastnumberofparts;
+        int laststartoption;
+        bool rememberboxnewoptions;
     };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadList);
@@ -348,7 +369,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,bool now, bool show);
+        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile);
         void OnNew(wxCommandEvent& event);
@@ -395,9 +416,41 @@
     class mGraph : public wxPanel
     {
     public:
+        bool Hide()
+        {
+            return Show(false);
+        };
+        bool Show(bool show = TRUE)
+        {
+            wxSplitterWindow *splitter = XRCCTRL(*mainframe, "splitter01",wxSplitterWindow);
+            int x,y,width,height;
+            bool value = FALSE;
+            if (show)
+            {
+                this->SetBestFittingSize(wxSize(200,programoptions->graphheight));
+                splitter->GetPosition(&x,&y);
+                splitter->GetSize(&width,&height);
+                this->SetSize(wxSize(width,programoptions->graphheight));
+                if (!IsShown())
+                {
+                    splitter->SetSize(x,y+programoptions->graphheight+5,width,height-programoptions->graphheight-5);
+                    value = wxPanel::Show(TRUE);
+                }
+            }
+            else if (IsShown())
+            {
+                value = wxPanel::Show(FALSE);
+                this->SetBestFittingSize(wxSize(200,0));
+                splitter->GetPosition(&x,&y);
+                splitter->GetSize(&width,&height);
+                splitter->SetSize(x,y-programoptions->graphheight-5,width,height+programoptions->graphheight+5);
+            }
+            return value;
+        };
         void OnPaint(wxPaintEvent &event);
         mOptions *programoptions;
         mGraphPoints *graph;
+        mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mGraph)
     private:
         DECLARE_EVENT_TABLE()
@@ -540,29 +593,22 @@
         DECLARE_EVENT_TABLE()
     };
 
-    class mUrlName
+    class mUrlName : public wxURI
     {
     public:
-       mUrlName();
-       mUrlName(const wxString& fullpath);
-       void Assign(const wxString& fullpath);
-       bool UrlIsValid();
-       wxString GetHost();
-       int GetPort();
-       wxString GetDir();
-       wxString GetFullName();
-       wxString GetFullRealName();
-       wxString GetFullPath();
-       int Type();
-    private:
-       wxString m_url;
-       wxString m_host;
-       wxString m_dir;
-       wxString m_name;
-       int m_port;
-       int m_type;
+        mUrlName();
+        mUrlName(wxString uri);
+        ~mUrlName();
+        wxString GetHost();
+        wxString GetPort();
+        wxString GetDir();
+        wxString GetFullName();
+        wxString GetFullRealName();
+        wxString GetFullPath();
+        int Type();
+        bool UrlIsValid();
     };
-    
+
     class mFTP: public wxFTP
     {
     public:
