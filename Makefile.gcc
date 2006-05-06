@@ -30,7 +30,7 @@ endif
 LINKOBJ  = $(OBJ)
 LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
 INCS =  `$(WXCONFIG) --cxxflags`
-RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
+RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include/wx-2.6"
 #LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
 #INCS =  -I"/usr/include" `$(WXCONFIG) --cxxflags`
 #RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
@@ -54,14 +54,14 @@ WXMD5 = libwxmd5.a
 CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.3.2
+VERSION = 0.4.0
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
 all: criardir $(BIN).exe
 
 $(BIN).exe: $(LINKOBJ) $(WXMD5) $(RES)
-	$(CPP) $(LINKOBJ) -o $(BIN).exe $(LIBS) $(BUILD_DIR)$(RES) $(CXXFLAGS)
+	$(CPP) $(LINKOBJ) -o $(BIN).exe $(LIBS) $(BUILD_DIR)$(RES) $(CXXFLAGS) -lwxexpat-2.6
 #	$(STRIP) $(BIN).exe
 else
 all: criardir $(BIN)
@@ -253,7 +253,7 @@ source:
 	cp -r debian/* $(BIN)-$(VERSION)/debian
 	rm -Rf $(BIN)-$(VERSION)/debian/CVS
 	cp Makefile $(BIN)-$(VERSION)
-	cp makefile.vc $(BIN)-$(VERSION)
+#	cp makefile.vc $(BIN)-$(VERSION)
 
 clean:
 	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) debian/wxdfast.postinst.debhelper debian/wxdfast.postrm.debhelper debian/wxdfast.substvars debian/$(BIN) configure-stamp build-stamp

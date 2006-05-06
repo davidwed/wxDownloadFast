@@ -3,7 +3,7 @@
 - Added support for FTP and HTTP downloads bigger
   than 2GB
 - Fixed speed calculation bug with FTP downloads
-- Made better the access for dynamic links
+- Improved the access for dynamic links
 - Added option to hide the speed graph, and to
   change the graph height
 - Now the last selected options in the New Down-
