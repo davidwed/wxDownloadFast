@@ -823,8 +823,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
 
     PrintMessage( _("Requesting file...\n"));
     filestream = new wxFileInputStream(source.GetFullPath());
-//    wxFileOffset startfileoffset = (wxLongLong) start;
-    filestream->SeekI(start.ToLong());
+    filestream->SeekI(start.GetValue());
 
     return filestream;
 }
