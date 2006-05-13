@@ -126,42 +126,51 @@
             <object class="tool"  name="toolnew">
                 <label>New</label>
                 <bitmap>big/new.xpm</bitmap>
+                <tooltip>Add new download</tooltip>
             </object>
             <object class="tool"  name="toolremove">
                 <label>Remove</label>
                 <bitmap>big/remove.xpm</bitmap>
+                <tooltip>Remove the selected download</tooltip>
             </object>
              <object class="separator"/>
             <object class="tool"  name="toolschedule">
-                <label>Stop</label>
+                <label>Schedule</label>
                 <bitmap>big/schedule.xpm</bitmap>
+                <tooltip>Mark the selected download as scheduled</tooltip>
             </object>
             <object class="tool"  name="toolstart">
                 <label>Start</label>
                 <bitmap>big/start.xpm</bitmap>
+                <tooltip>Start the selected download</tooltip>
             </object>
             <object class="tool"  name="toolstop">
                 <label>Stop</label>
                 <bitmap>big/stop.xpm</bitmap>
+                <tooltip>Stop the selected download</tooltip>
             </object>
              <object class="separator"/>
             <object class="tool"  name="toolup">
                 <label>Up</label>
                 <bitmap>big/up.xpm</bitmap>
+                <tooltip>Raise in one level the selected download in the queue</tooltip>
             </object>
             <object class="tool"  name="tooldown">
                 <label>Down</label>
                 <bitmap>big/down.xpm</bitmap>
+                <tooltip>Lower in one level the selected download in the queue</tooltip>
             </object>
              <object class="separator"/>
             <object class="tool"  name="toolproperties">
                 <label>Properties</label>
                 <bitmap>big/properties.xpm</bitmap>
+                <tooltip>Show the properties of the selected download</tooltip>
             </object>
              <object class="separator"/>
             <object class="tool"  name="toolclose">
                 <label>Close</label>
                 <bitmap>big/close.xpm</bitmap>
+                <tooltip>Close the program</tooltip>
             </object>
         </object>
         <object class="wxBoxSizer">
