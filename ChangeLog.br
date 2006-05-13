@@ -1,62 +1,66 @@
+0.4.1
+===================================================
+- Adicionado idioma Alem√£o
+- Agora valores de velocidade maiores que a escala
+  do gr√°fico n√£o s√£o mostrados
+
 0.4.0
 ===================================================
 - Adicionado suporte para downloads HTTP e FTP para
   arquivos maiores que 2GB
-- Corrigido bug no c·lculo da velocidade para down-
+- Corrigido bug no c√°lculo da velocidade para down-
   loads por FTP
-- Melhorado o acesso a links din‚micos
-- Adicionada opÁ„o para esconder o gr·fico de ve-
-  locidade e para alterar a altura do gr·fico
-- Agora as opÁıes selecionadas na caixa de Novo
-  Download s„o lembradas para o prÛximo download
+- Melhorado o acesso a links din√¢micos
+- Adicionada op√ß√£o para esconder o gr√°fico de ve-
+  locidade e para alterar a altura do gr√°fico
+- Agora as op√ß√µes selecionadas na caixa de Novo
+  Download s√£o lembradas para o pr√≥ximo download
 - Corrigidos outros bugs
-
-
 
 0.3.2
 ===================================================
-- Removidas mensagens de debug esquecidas na ˙ltima
-  vers„o
+- Removidas mensagens de debug esquecidas na √∫ltima
+  vers√£o
 - Corrigidos alguns bugs.
 
 0.3.1
 ===================================================
-- Agora È possÌvel passar urls do tipo file://path
+- Agora √© poss√≠vel passar urls do tipo file://path
   para downloads de arquivos locais
-- Agora È possÌvel passar v·rias urls pela linha
+- Agora √© poss√≠vel passar v√°rias urls pela linha
   de comando
-- Adicionados par‚metros --list, --destination e
-  --comments. Para mais informaÁoes leia o arquivo
+- Adicionados par√¢metros --list, --destination e
+  --comments. Para mais informa√ßoes leia o arquivo
   Readme.
 
 0.3.0
 ===================================================
-- Adicionada opÁıes de agendamento
-- Agora o status do download È gravado antes de
+- Adicionada op√ß√µes de agendamento
+- Agora o status do download √© gravado antes de
   fechar o programa. Deste modo se um download
-  est· ativo e o programa È fechado, quando for
-  reaberto o download ser· iniciado automatica-
+  est√° ativo e o programa √© fechado, quando for
+  reaberto o download ser√° iniciado automatica-
   mente.
-- Corrigidos v·rios bugs.
+- Corrigidos v√°rios bugs.
 
 0.2.2
 ===================================================
-- Adicionado idioma espanhol
+- Adicionado idioma Espanhol
 
 0.2.1
 ===================================================
-- Adicionado gr·fico da taxa de transferÍncia
+- Adicionado gr√°fico da taxa de transfer√™ncia
 
 0.2.0
 ===================================================
 - Toda a rotinha de download foi reimplementada, sendo
-  adicionada a opÁ„o de dividir o arquivo em v·rios partes.
-- Adicionada caixa "OpÁıes".
-- Adicionada opÁıes que permitem que o computador seja
-  desligado, ou a conex„o seja terminada, quando todos
-  os downloads forem concluÌdos.
+  adicionada a op√ß√£o de dividir o arquivo em v√°rios partes.
+- Adicionada caixa "Op√ß√µes".
+- Adicionada op√ß√µes que permitem que o computador seja
+  desligado, ou a conex√£o seja terminada, quando todos
+  os downloads forem conclu√≠dos.
 - Feitos varios melhoramentos em geral.
-- Corrigidos v·rios bugs.
+- Corrigidos v√°rios bugs.
 
 0.1.1
 ===================================================
@@ -66,13 +70,13 @@
   possa compilar o programa sem problemas
 - Adicionado idioma italiano
 - Alterada a interface relacionada a downloads antigos
-- V·rios bugs foram corrigidos
-- Adicionado menu que permite mover arquivos j· baixados
+- V√°rios bugs foram corrigidos
+- Adicionado menu que permite mover arquivos j√° baixados
 - Adicionado menu que permite verificar o MD5 de um arquivo
-  j· baixado e comparar com o calculado previamente
-- Adicionado opÁıes de exportar/importar as configuraÁıes
+  j√° baixado e comparar com o calculado previamente
+- Adicionado op√ß√µes de exportar/importar as configura√ß√µes
   do programa
 
 0.1.0
 ===================================================
-1∫ Vers„o
+1¬∫ Vers√£o

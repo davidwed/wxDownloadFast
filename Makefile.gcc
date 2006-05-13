@@ -149,6 +149,8 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)de/wxDFast.mo $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_FILE) $(MANPAGE_DIR)man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt_BR/man1
@@ -177,6 +179,7 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)*.xrc
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt_BR/man1/wxdfast.1.gz
@@ -217,10 +220,12 @@ source:
 	rm -rf $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)
-	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
-	cp $(LANGUAGE_DIR)es/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
 	cp $(LANGUAGE_DIR)pt_BR/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	cp $(LANGUAGE_DIR)es/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
+	cp $(LANGUAGE_DIR)de/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
 	cp $(MANPAGE_DIR)man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1

@@ -52,6 +52,7 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\DownloadFile.obj \
 	build-vc\DownloadThread.obj \
 	build-vc\FinishedList.obj \
+	build-vc\ftp.obj \
 	build-vc\InProgressList.obj \
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
@@ -66,6 +67,7 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\DownloadFile.obj \
 	build-vc\DownloadThread.obj \
 	build-vc\FinishedList.obj \
+	build-vc\ftp.obj \
 	build-vc\InProgressList.obj \
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
@@ -98,10 +100,10 @@ clean:
 
 wxDFast.exe: $(DFAST_CXX_OBJECTS) build-vc\wxDFast.res
 	link /NOLOGO /OUT:$@ $(LDFLAGS) @<<
-	$(DFAST_CXX_OBJECTS) build-vc\wxDFast.res kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib oleacc.lib odbc32.lib wxmsw25u.lib wxexpat.lib wxjpeg.lib wxpng.lib wxregexu.lib wxtiff.lib wxzlib.lib
+	$(DFAST_CXX_OBJECTS) build-vc\wxDFast.res kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib oleacc.lib odbc32.lib wxmsw26u.lib wxexpat.lib wxjpeg.lib wxpng.lib wxregexu.lib wxtiff.lib wxzlib.lib
 <<
-# NON-MONOLITHIC - wxbase25.lib wxbase25_net.lib wxbase25_xml.lib wxexpat.lib wxjpeg.lib wxmsw25_adv.lib wxmsw25_core.lib wxmsw25_html.lib wxpng.lib wxregex.lib wxtiff.lib wxzlib.lib
-# MONOLITHIC     - wxmsw25.lib wxexpat.lib wxjpeg.lib wxpng.lib wxregex.lib wxtiff.lib wxzlib.lib
+# NON-MONOLITHIC - wxbase26.lib wxbase26_net.lib wxbase26_xml.lib wxexpat.lib wxjpeg.lib wxmsw26_adv.lib wxmsw26_core.lib wxmsw26_html.lib wxpng.lib wxregex.lib wxtiff.lib wxzlib.lib
+# MONOLITHIC     - wxmsw26.lib wxexpat.lib wxjpeg.lib wxpng.lib wxregex.lib wxtiff.lib wxzlib.lib
 
 build-vc\Resources.obj: .\src\Resources.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
@@ -122,6 +124,9 @@ build-vc\DownloadThread.obj: .\src\DownloadThread.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
 build-vc\FinishedList.obj: .\src\FinishedList.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
+
+build-vc\ftp.obj: .\src\ftp.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
 build-vc\InProgressList.obj: .\src\InProgressList.cpp
