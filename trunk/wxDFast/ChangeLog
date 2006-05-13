@@ -1,3 +1,9 @@
+0.4.1
+===================================================
+- Added German language
+- Now the speed values that are bigger them the
+  graph scale aren't showed
+
 0.4.0
 ===================================================
 - Added support for FTP and HTTP downloads bigger
@@ -38,7 +44,7 @@
 
 0.2.2
 ===================================================
-- Added spanish language
+- Added Spanish language
 
 0.2.1
 ===================================================
@@ -72,4 +78,4 @@
 
 0.1.0
 ===================================================
-1º Version
+1 Version

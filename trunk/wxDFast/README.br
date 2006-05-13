@@ -1,54 +1,54 @@
 wxDownload Fast
 =====================================================================
 
-IntroduÁ„o
+Introdu√ß√£o
 ----------
 Este programa foi criado com o intuito de substituir os gerenciadores
 de downloads comerciais existentes hoje em dia.
-Deste modo pretendo adicionar o m·ximo de opÁıes possÌveis de modo a
-deixar o programa o mais completo possÌvel.
+Deste modo pretendo adicionar o m√°ximo de op√ß√µes poss√≠veis de modo a
+deixar o programa o mais completo poss√≠vel.
 
-CaracterÌsticas do Programa
+Caracter√≠sticas do Programa
 ---------------------------
-* Permite realizar o download de v·rios arquivos simultaneamente,
-  e ainda dividi-lo em v·rias partes
+* Permite realizar o download de v√°rios arquivos simultaneamente,
+  e ainda dividi-lo em v√°rias partes
 * Permite agendar dowloads
-* Permite organizar os arquivo j· baixados
+* Permite organizar os arquivo j√° baixados
 * Permite continuar um download interrompido do ponto onde parou
 * Mostra as mensagens enviadas/recebidas pelo programa quando conectando
   aos servidores HTTP/FTP ou ainda para downloads locais(file://)
-* Pode ser traduzido com facilidade para qualquer idioma. Estando diponÌveis 
-  inicialmente os idiomas PortuguÍs[Brasil], Espanhol e InglÍs
-* Permite conectar ‡ servidores FTP(apenas FTP e n„o HTTP) que necessitam de senha
-* Gera o MD5 dos arquivos baixados facilitando assim a verificaÁ„o dos mesmos
+* Pode ser traduzido com facilidade para qualquer idioma. Estando dipon√≠veis 
+  os idiomas Portugu√™s[Brasil], Espanhol, Ingl√™s e Alem√£o
+* Permite conectar √† servidores FTP(apenas FTP e n√£o HTTP) que necessitam de senha
+* Gera o MD5 dos arquivos baixados facilitando assim a verifica√ß√£o dos mesmos
 
 Parametros da linha de comado
 -----------------------------
 [URLS],
-Urls, separadas por espaÁo, dos arquivos a serem baixados
+Urls, separadas por espa√ßo, dos arquivos a serem baixados
 Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
 
 --hide,
 Iniciar com a janela principal escondida
 
 --notray,
-N„o mostar o icone do programa na bandeja do sistema
+N√£o mostar o icone do programa na bandeja do sistema
 
 -list TEXTFILE, --list=TEXTFILE,
 Passa um arquivo de texto com a lista de arquivos a serem baixados
 sendo cada linha uma url
 
 -destination DIR, --destination=DIR,
-DiretÛrio de destino
+Diret√≥rio de destino
 
 -comments COMMENTS, --comments=COMMENTS,
-Adiciona coment·rios ao download
+Adiciona coment√°rios ao download
 
-IntegraÁ„o com o Firefox
+Integra√ß√£o com o Firefox
 ------------------------
-Para ativar a integraÁ„o com o Firefox faÁa o seguinte:
-1) Instale a extenÁ„o FlashGot para o Firefox(www.flashgot.org/getit)
-2) ApÛs reiniciar o Firefox v· em Ferramentas -> FlashGot -> Mais opÁıes
+Para ativar a integra√ß√£o com o Firefox fa√ßa o seguinte:
+1) Instale a exten√ß√£o FlashGot para o Firefox(www.flashgot.org/getit)
+2) Ap√≥s reiniciar o Firefox v√° em Ferramentas -> FlashGot -> Mais op√ß√µes
 3) Agora clique em adicionar novo gerenciador
 4) Em nome insira: wxDownload Fast
 5) No caminho do gerenciador insira o caminho de onde o programa
@@ -56,74 +56,74 @@ Para ativar a integraÁ„o com o Firefox faÁa o seguinte:
    No Windows fica em c:\Arquivos de Programas\wxDownload Fast\wxdfast.exe
 6) Nos parametros para o programa insira: -list[UFILE]
 
-InstalaÁ„o
+Instala√ß√£o
 ----------
 
 Win32
 -----
 
-- Instalando apartir do bin·rio
+- Instalando apartir do bin√°rio
 
-Est· disponÌvel na p·gina do programa um arquivo bin·rio contendo este programa.
-Este arquivo est· na forma de uma programa de instalaÁ„o.
+Est√° dispon√≠vel na p√°gina do programa um arquivo bin√°rio contendo este programa.
+Este arquivo est√° na forma de uma programa de instala√ß√£o.
 
-- Compilando cÛdigo fonte
+- Compilando c√≥digo fonte
 
 * Utilizando o make+gcc
 
-Para compilar o programa no Windows È necess·rio o MinGW e o MSys[www.mingw.org]
-que s„o o compilador GCC para windows e um ambiente unix respectivamente.
-AlÈm disso È necess·rio a biblioteca wxWidgets[www.wxwidgets.org], compilada
-com a opÁ„o --enable-xrc.
-De posse dos requisitos acima basta entrar na pasta onde o cÛdigo fonte foi 
+Para compilar o programa no Windows √© necess√°rio o MinGW e o MSys[www.mingw.org]
+que s√£o o compilador GCC para windows e um ambiente unix respectivamente.
+Al√©m disso √© necess√°rio a biblioteca wxWidgets[www.wxwidgets.org], compilada
+com a op√ß√£o --enable-xrc.
+De posse dos requisitos acima basta entrar na pasta onde o c√≥digo fonte foi 
 descompactado e digitar:
 # make BUILD=win32
 
-Com isso o execut·vel ser· gerado, bastando em seguida copiar o arquivo execut·vel
-para um local desejado, e utiliz·-lo.
+Com isso o execut√°vel ser√° gerado, bastando em seguida copiar o arquivo execut√°vel
+para um local desejado, e utiliz√°-lo.
 
 * Utilizando o nmake+MSVC
 
-Para compilar o programa no Windows È necess·rio o Microsoft Visual C++[vers„o
-comercial] ou ainda o Microsoft Visual C++ Toolkit 2003 [vers„o freeware] + o 
+Para compilar o programa no Windows √© necess√°rio o Microsoft Visual C++[vers√£o
+comercial] ou ainda o Microsoft Visual C++ Toolkit 2003 [vers√£o freeware] + o 
 Microsoft Platform SDK.
-AlÈm disso È necess·rio a biblioteca wxWidgets[www.wxwidgets.org], compilada
-com a opÁ„o --enable-xrc.
-De posse dos requisitos acima basta entrar na pasta onde o cÛdigo fonte foi 
+Al√©m disso √© necess√°rio a biblioteca wxWidgets[www.wxwidgets.org], compilada
+com a op√ß√£o --enable-xrc.
+De posse dos requisitos acima basta entrar na pasta onde o c√≥digo fonte foi 
 descompactado e digitar:
 # nmake -f Makefile.vc
 
-OBS: N„o esqueÁa de carregar as var·veis de ambiente referentes ao VC.
+OBS: N√£o esque√ßa de carregar as var√°veis de ambiente referentes ao VC.
      Normalmente existe um atalho na pasta do VC no menu iniciar que faz
      isso automaticamente.
 
 Linux
 -----
 
-- Compilando cÛdigo fonte
+- Compilando c√≥digo fonte
 
-Para compilar o programa no Linux È necess·rio o gcc e o programa make.
-AlÈm disso È necess·rio a biblioteca wxWidgets[www.wxwindows.org].
-De posse dos requisitos acima basta entrar na pasta onde o cÛdigo fonte foi 
+Para compilar o programa no Linux √© necess√°rio o gcc e o programa make.
+Al√©m disso √© necess√°rio a biblioteca wxWidgets[www.wxwindows.org].
+De posse dos requisitos acima basta entrar na pasta onde o c√≥digo fonte foi 
 descompactado e digitar:
 # make
 
-Com isso o execut·vel ser· gerado, bastando em seguida copiar o arquivo execut·vel
-para um local desejado, e utiliz·-lo. Para isso digite:
+Com isso o execut√°vel ser√° gerado, bastando em seguida copiar o arquivo execut√°vel
+para um local desejado, e utiliz√°-lo. Para isso digite:
 # su
 # make install
 
-- Instalando apartir do bin·rio
+- Instalando apartir do bin√°rio
 
-Est· disponÌvel na p·gina do programa um pacote .DEB contendo este programa.
-Este pacote È compatÌvel com as distribuiÁıes DEBIAN, UBUNTU, KURUMIN, entre
+Est√° dispon√≠vel na p√°gina do programa um pacote .DEB contendo este programa.
+Este pacote √© compat√≠vel com as distribui√ß√µes DEBIAN, UBUNTU, KURUMIN, entre
 outras.
 
 MacOS
 -----
 
-- Compilando cÛdigo fonte
+- Compilando c√≥digo fonte
 
-Como n„o tenho acesso a um sistema rodando o MacOS nunca compilei o programa neste
-sistema, porÈm acredito que os passos utilizados no Linux devem servir para o MacOS.
+Como n√£o tenho acesso a um sistema rodando o MacOS nunca compilei o programa neste
+sistema, por√©m acredito que os passos utilizados no Linux devem servir para o MacOS.
 
