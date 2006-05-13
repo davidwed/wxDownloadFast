@@ -1,7 +1,7 @@
 Source: wxdfast
 Section: net
 Priority: optional
-Maintainer: Max Magalh„es Velasques <maxvelasques@gmail.com>
+Maintainer: Max Magalh√£es Velasques <maxvelasques@gmail.com>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.2
 
