@@ -605,9 +605,15 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             if ((!current->free) || (current->status == STATUS_ACTIVE))
             {
                 if ((current->free) && (current->status == STATUS_ACTIVE))
+                {
                     current->status = STATUS_STOPED;
+                    wxGetApp().RegisterListItemOnDisk(current);
+                }
                 if ((current->free) && (current->scheduled) && (current->status == STATUS_STOPED))
+                {
                     current->status = STATUS_SCHEDULE;
+                    wxGetApp().RegisterListItemOnDisk(current);
+                }
                 if (current->status == STATUS_ACTIVE)
                     simultaneous--;
                 if (current->split != WAIT)
@@ -1395,7 +1401,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         _("(Default)"),
         _("English"),
         _("Portuguese(Brazil)"),
-        _("Italian"),
+        _("German"),
         _("Spanish"),
     };
 
@@ -1409,7 +1415,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
             case 0 : langvalue = wxLANGUAGE_DEFAULT; break;
             case 1 : langvalue = wxLANGUAGE_ENGLISH; break;
             case 2 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
-            case 3 : langvalue = wxLANGUAGE_ITALIAN; break;
+            case 3 : langvalue = wxLANGUAGE_GERMAN; break;
             case 4 : langvalue = wxLANGUAGE_SPANISH; break;
         }
         wxGetApp().Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
@@ -2105,8 +2111,14 @@ void mGraph::OnPaint(wxPaintEvent &event)
     if (node)
     {
         float *current = node->GetData();
+        float last = 0.0;
         if (*current < 0.0)
             *current = 0.0;
+
+        if (*current > ((double)programoptions->graphscale))
+            *current = last;
+        else
+            last = *current;
 
         //WRITE THE CURRENT SPEED
         wxString temp;
@@ -2123,6 +2135,10 @@ void mGraph::OnPaint(wxPaintEvent &event)
         for ( node = node->GetNext(); node; node = node->GetNext() )
         {
             float *current = node->GetData();
+            if (*current > ((double)programoptions->graphscale))
+                *current = last;
+            else
+                last = *current;
             count++;
             //                 X1        ,Y1,          X2     ,           Y2
             dc.DrawLine(lastx,lasty ,x-((int)dx)*count,y-((int)(dy*(*current))));

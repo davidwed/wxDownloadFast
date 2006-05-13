@@ -72,7 +72,7 @@ void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mai
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
-       mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
