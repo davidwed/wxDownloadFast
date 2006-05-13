@@ -22,7 +22,7 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
         column = INPROGRESS_NAME;
         list = (wxListCtrl*)list01;
     }
-    else if (notebook->GetSelection() == 1) //FINISHEDS DOWNLOADS
+    else if (notebook->GetSelection() == 1) //FINISHED DOWNLOADS
     {
         index = list02->GetCurrentSelection();
         column = FINISHED_NAME;

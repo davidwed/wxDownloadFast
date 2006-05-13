@@ -127,9 +127,11 @@ void mBoxOptions::OnRemove(wxCommandEvent& event)
     int i;
     wxListBox *listbox = XRCCTRL(*this, "lstexceptionlist",wxListBox);
     for (i = 0;i < MAX_SCHEDULE_EXCEPTIONS;i++)
+    {
         if (listbox->IsSelected(i))
         {
             listbox->Delete(i);
             break;
         }
+    }
 }

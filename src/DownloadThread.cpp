@@ -174,8 +174,8 @@ void *mDownloadThread::Entry()
     }
     if (downloadpartindex == 0)
     {
-        if (downloadfile->status == STATUS_STOPED)
-            downloadfile->status = STATUS_ACTIVE; //THIS IS FOR THE LIST BE UPDATED FOR THA LAST TIME
+        if (downloadfile->status == STATUS_STOPED) //IMPROVE THIS
+            downloadfile->status = STATUS_ACTIVE;  //THIS IS FOR THE LIST BE UPDATED FOR THA LAST TIME
         else
             wxGetApp().RegisterListItemOnDisk(downloadfile);
     }
@@ -285,6 +285,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     resp = -1;
                     if (downloadpartindex == downloadfile->speedpointowner)
                     {
+                        downloadfile->totalspeed = 0;
                         downloadfile->speedpointowner = -1;
                         downloadfile->speedpoint = FALSE;
                     }
@@ -303,6 +304,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     resp = -1;
                     if (downloadpartindex == downloadfile->speedpointowner)
                     {
+                        downloadfile->totalspeed = 0;
                         downloadfile->speedpointowner = -1;
                         downloadfile->speedpoint = FALSE;
                     }
