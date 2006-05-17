@@ -1,3 +1,15 @@
+//
+// C++ Implementation: BoxNew
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 BEGIN_EVENT_TABLE(mBoxNew, wxDialog)

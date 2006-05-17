@@ -1,3 +1,15 @@
+//
+// C++ Implementation: DownloadFile
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2)
@@ -36,6 +48,7 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
     file->timeremaining = 0;
     file->totalspeed = 0;
     file->urllist = url.GetFullPath();
+    file->contenttype = wxEmptyString;
     file->MD5 = wxEmptyString;
     file->start = wxDateTime::Now();
     file->end = wxDateTime::Now();
@@ -127,6 +140,7 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
     config->Write(START_REG,file->start.GetTicks());
     config->Write(END_REG,file->end.GetTicks());
     config->Write(COMMENTS_REG,file->comments);
+    config->Write(CONTENTTYPE_REG,file->contenttype);
     config->Write(URL1_REG,file->urllist);
 
     config->Write(USER_REG,file->user);
@@ -193,6 +207,7 @@ void mApplication::LoadDownloadListFromDisk()
         config->Read(PERCENTUAL_REG,&(file->percentual));
         config->Read(MD5_REG,&(file->MD5));
         config->Read(COMMENTS_REG,&(file->comments));
+        config->Read(CONTENTTYPE_REG,&(file->contenttype));
         {
             time_t value = 0;
             config->Read(START_REG,&(value));

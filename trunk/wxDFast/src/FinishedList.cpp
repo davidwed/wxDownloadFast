@@ -1,3 +1,15 @@
+//
+// C++ Implementation: FinishedList
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 BEGIN_EVENT_TABLE(mFinishedList, wxListCtrl)
@@ -13,7 +25,7 @@ void mFinishedList::OnRClick(wxListEvent& event)
         wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),FALSE);
         wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),FALSE);
         wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),FALSE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),FALSE);
+        wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
         wxGetApp().mainframe->menupopup->Enable(XRCID("menumove"),TRUE);
         wxGetApp().mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
         wxGetApp().mainframe->menupopup->Enable(XRCID("menumd5"),TRUE);
@@ -66,15 +78,16 @@ void mFinishedList::OnDeselected(wxListEvent& event)
 void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainframe)
 {
     wxListCtrl* infolist = XRCCTRL(*(wxGetApp().mainframe), "infolist",wxListCtrl );
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),FALSE);
+    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),TRUE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
-       mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),selected);
+    mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
     if (selected)
     {
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
@@ -90,28 +103,32 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
 
         infolist->SetItem(0,1,item.GetText());
 
+        str = wxEmptyString;
+        config->Read(CONTENTTYPE_REG,&str);
+        infolist->SetItem(1,1,str);
+
         value = 0;
         config->Read(SIZE_REG,&value);
-        infolist->SetItem(1,1,ByteString(value));
+        infolist->SetItem(2,1,ByteString(value));
 
         value = 0;
         config->Read(SPEED_REG,&value);
-        infolist->SetItem(2,1,ByteString(value)+wxT("/s"));
+        infolist->SetItem(3,1,ByteString(value)+wxT("/s"));
 
         str = wxEmptyString;
         config->Read(TIMEPASSED_REG,&str);
-        infolist->SetItem(3,1,TimeString(wxstrtolonglong(str)));
+        infolist->SetItem(4,1,TimeString(wxstrtolonglong(str)));
 
         str = wxEmptyString;
         config->Read(DESTINATION_REG,&str);
-        infolist->SetItem(4,1,str);
+        infolist->SetItem(5,1,str);
 
         {
             wxDateTime date;
             value = 0;
             config->Read(START_REG,&value);
             date.Set(value);
-            infolist->SetItem(5,1,date.Format());
+            infolist->SetItem(6,1,date.Format());
         }
 
         {
@@ -119,20 +136,20 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
             value = 0;
             config->Read(END_REG,&value);
             date.Set(value);
-            infolist->SetItem(6,1,date.Format());
+            infolist->SetItem(7,1,date.Format());
         }
 
         str = wxEmptyString;
         config->Read(MD5_REG,&str);
-        infolist->SetItem(7,1,str);
-
-        str = wxEmptyString;
-        config->Read(URL1_REG,&str);
         infolist->SetItem(8,1,str);
 
         str = wxEmptyString;
-        config->Read(COMMENTS_REG,&str);
+        config->Read(URL1_REG,&str);
         infolist->SetItem(9,1,str);
+
+        str = wxEmptyString;
+        config->Read(COMMENTS_REG,&str);
+        infolist->SetItem(10,1,str);
 
         delete config;
     }
@@ -149,5 +166,6 @@ void mFinishedList::SelectUnselect(bool selected,int selection,mMainFrame *mainf
         infolist->SetItem(7, 1, wxEmptyString);
         infolist->SetItem(8, 1, wxEmptyString);
         infolist->SetItem(9, 1, wxEmptyString);
+        infolist->SetItem(10, 1, wxEmptyString);
     }
 }

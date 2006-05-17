@@ -1,3 +1,15 @@
+//
+// C++ Implementation: UrlName
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 mUrlName::mUrlName() : wxURI()
@@ -109,7 +121,10 @@ wxString mUrlName::GetFullName()
 
 wxString mUrlName::GetFullRealName()
 {
-    return wxURI::GetPath().AfterLast('/');
+    if (wxURI::HasQuery())
+        return wxURI::GetPath().AfterLast('/') + wxT("?") + wxURI::GetQuery();
+    else
+        return wxURI::GetPath().AfterLast('/');
 }
 
 wxString mUrlName::GetFullPath()

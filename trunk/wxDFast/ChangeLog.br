@@ -3,6 +3,8 @@
 - Adicionado idioma Alemão
 - Agora valores de velocidade maiores que a escala
   do gráfico não são mostrados
+- Adicionada barra de status e botões "Parar todos
+  os downloads" e "Iniciar todos os downloads"
 
 0.4.0
 ===================================================
