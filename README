@@ -1,15 +1,15 @@
 wxDownload Fast
 =====================================================================
 
-Introduction
-----------
+1) Introduction
+---------------
 This program was created with intention to substitute the existing
 commercial downloads managers.  In this way I intend to add
 the maximum of options in order to let the program the most complete
 possible.
 
-Characteristics of the Program 
-------------------------------
+2) Characteristics of the Program 
+---------------------------------
 * Allows to carry through download of some archives simultaneously,
   and allow to split the downloads in some lowered parts.
 * Allows to schedule a download
@@ -22,8 +22,8 @@ Characteristics of the Program
 * Allows to connect in FTP servers(only FTP) which need password
 * Generate the MD5 of the downloaded archives, facilitating the verification
 
-Command line Parameters
------------------------------
+3) Command line Parameters
+--------------------------
 [URLS],
 Urls space separeted of the files to be downloaded
 Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
@@ -43,8 +43,8 @@ Destination directory
 -comments COMMENTS, --comments=COMMENTS,
 Add comments for the download
 
-Firefox Integration
-------------------------
+4) Firefox Integration
+----------------------
 To activate the Firefox integration, do the follow:
 
 1) Install the FlashGot extension to the Firefox(www.flashgot.org/getit)
@@ -53,13 +53,13 @@ To activate the Firefox integration, do the follow:
 4) In name, insert: wxDownload Fast
 5) In path, insert the place where the program was installed. In general it stay in
    /usr/bin/wxdfast
-6) In parameters of program insert: -list[UFILE]
+6) In parameters of program insert: -list[UFILE] -comments[REFERER]
 
-Installation
-------------
+5) Installation
+---------------
 
-Win32
------
+5.1) Win32
+----------
 
 - Installing from binary
 
@@ -88,8 +88,8 @@ was unpacked and type:
 With this, the executable will be generated, being enough after that to copy the
 executable archive for a desired place, and to use it.
 
-Linux
------
+5.2) Linux
+----------
 
 - Compiling code source
 
@@ -104,8 +104,8 @@ the executable archive for a desired place, and to use it.  For this it types:
 # su
 # make install
 
-MacOS
------
+5.3) MacOS
+----------
 
 - Compiling code source
 

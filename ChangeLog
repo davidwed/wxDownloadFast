@@ -3,6 +3,8 @@
 - Added German language
 - Now the speed values that are bigger them the
   graph scale aren't showed
+- Added status bar and "Stop All downloads" and
+  "Start All downloads" buttons
 
 0.4.0
 ===================================================

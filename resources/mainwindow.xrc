@@ -2,6 +2,10 @@
 <resource version="2.3.0.1">
     <object class="wxFrame" name="mainframe">
         <style>wxDEFAULT_FRAME_STYLE</style>
+        <object class="wxStatusBar" name="statusbar">
+            <fields>2</fields>
+            <widths>-1,200</widths>
+        </object>
         <object class="wxMenuBar" name="menubar">
             <!-- <style>wxMB_DOCKABLE</style> -->
             <object class="wxMenu" name="menufile">
@@ -32,6 +36,14 @@
                    <label>Stop Download</label>
                    <accel>CTRL-T</accel>
                    <bitmap>small/stop.xpm</bitmap>
+                </object>
+                <object class="wxMenuItem" name="menustartall">
+                   <label>Start all downloads</label>
+                   <bitmap>small/startall.xpm</bitmap>
+                </object>
+                <object class="wxMenuItem" name="menustopall">
+                   <label>Stop all downloads</label>
+                   <bitmap>small/stopall.xpm</bitmap>
                 </object>
                 <object class="separator" />
                 <object class="wxMenuItem" name="menuexit">
@@ -121,7 +133,7 @@
             </object>
         </object>
         <object class="wxToolBar" name="toolbar">
-            <style>wxTB_FLAT|wxTB_3DBUTTONS</style>
+            <style>wxTB_FLAT|wxTB_3DBUTTONS|wxTB_TEXT</style>
             <bitmapsize>24,24</bitmapsize>
             <object class="tool"  name="toolnew">
                 <label>New</label>
@@ -148,6 +160,16 @@
                 <label>Stop</label>
                 <bitmap>big/stop.xpm</bitmap>
                 <tooltip>Stop the selected download</tooltip>
+            </object>
+            <object class="tool"  name="toolstartall">
+                <label>Start All</label>
+                <bitmap>big/startall.xpm</bitmap>
+                <tooltip>Start all downloads</tooltip>
+            </object>
+            <object class="tool"  name="toolstopall">
+                <label>Stop All</label>
+                <bitmap>big/stopall.xpm</bitmap>
+                <tooltip>Stop all downloads</tooltip>
             </object>
              <object class="separator"/>
             <object class="tool"  name="toolup">
@@ -179,7 +201,7 @@
                 <option>1</option>
                 <flag>wxEXPAND</flag>
                 <object class="wxNotebook" name="notebook01" subclass="mNotebook">
-                    <style>wxNB_BOTTOM</style>
+                    <!-- <style>wxNB_BOTTOM</style> -->
                     <usenotebooksizer>1</usenotebooksizer>
                     <object class="notebookpage">
                     <label>Downloads in Progress</label>

@@ -11,9 +11,9 @@ WINDRES = $(CROSS_PREFIX)windres
 STRIP = $(CROSS_PREFIX)strip
 
 ifeq ($(DEBUG), 1)
-WXCONFIG = wx-config --debug=yes
+WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=yes
 else
-WXCONFIG = wx-config --debug=no
+WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=no
 endif
 
 WXRC = wxrc
@@ -22,19 +22,20 @@ INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
 ifeq ($(XRC), 1)
-OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o
+OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o
 else
-OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)Resources.o
+OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)Resources.o
 endif
 
 LINKOBJ  = $(OBJ)
 LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
 INCS =  `$(WXCONFIG) --cxxflags`
-RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include/wx-2.6"
-#LIBS =  -L"/usr/lib" -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
-#INCS =  -I"/usr/include" `$(WXCONFIG) --cxxflags`
-#RESINCS = --include-dir="/usr/include" --include-dir="/usr/local/include"
-#CXXINCS =  `$(WXCONFIG) --cxxflags`
+ifeq ($(WXWIDGETS_DIR)1, 1)
+RESINCS = --include-dir="/usr/local/include/wx-2.6"
+else
+RESINCS = --include-dir="$(WXWIDGETS_DIR)include"
+endif
+
 
 ifeq ($(XRC), 1)
 	ifeq ($(DEBUG), 1)
@@ -54,15 +55,16 @@ WXMD5 = libwxmd5.a
 CFLAGS = $(INCS)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.4.0
+VERSION = 0.4.1
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
+
 all: criardir $(BIN).exe
 
 $(BIN).exe: $(LINKOBJ) $(WXMD5) $(RES)
-	$(CPP) $(LINKOBJ) -o $(BIN).exe $(LIBS) $(BUILD_DIR)$(RES) $(CXXFLAGS) -lwxexpat-2.6
-#	$(STRIP) $(BIN).exe
+	$(CPP) $(LINKOBJ) -o $(BIN).exe $(LIBS) $(BUILD_DIR)$(RES) $(CXXFLAGS)
+	$(STRIP) $(BIN).exe
 else
 all: criardir $(BIN)
 
@@ -105,8 +107,17 @@ $(BUILD_DIR)FinishedList.o: src/FinishedList.cpp
 $(BUILD_DIR)ftp.o: src/ftp.cpp
 	$(CPP) -c src/ftp.cpp -o $(BUILD_DIR)ftp.o $(CXXFLAGS)
 
+$(BUILD_DIR)Graph.o: src/Graph.cpp
+	$(CPP) -c src/Graph.cpp -o $(BUILD_DIR)Graph.o $(CXXFLAGS)
+
 $(BUILD_DIR)InProgressList.o: src/InProgressList.cpp
 	$(CPP) -c src/InProgressList.cpp -o $(BUILD_DIR)InProgressList.o $(CXXFLAGS)
+
+$(BUILD_DIR)MainFrame.o: src/MainFrame.cpp
+	$(CPP) -c src/MainFrame.cpp -o $(BUILD_DIR)MainFrame.o $(CXXFLAGS)
+
+$(BUILD_DIR)TaskBarIcon.o: src/TaskBarIcon.cpp
+	$(CPP) -c src/TaskBarIcon.cpp -o $(BUILD_DIR)TaskBarIcon.o $(CXXFLAGS)
 
 $(BUILD_DIR)urlname.o: src/urlname.cpp
 	$(CPP) -c src/urlname.cpp -o $(BUILD_DIR)urlname.o $(CXXFLAGS)
@@ -130,10 +141,8 @@ install: all
 	$(INSTALL_DIR) $(DESTDIR)/usr/lib/$(BIN)
 ifeq ($(BUILD), win32)
 	$(INSTALL_FILE) --mode=755 $(BIN).exe $(DESTDIR)/usr/bin/$(BIN)
-#	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe $(DESTDIR)/usr/bin/$(BIN).exe
 else
 	$(INSTALL_FILE) --mode=755 $(BIN) $(DESTDIR)/usr/bin/$(BIN)
-#	ln -s $(DESTDIR)/usr/lib/$(BIN)/$(BIN) $(DESTDIR)/usr/bin/$(BIN)
 endif
 	$(INSTALL_FILE) Readme.* $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_FILE) Changes.* $(DESTDIR)/usr/lib/$(BIN)
@@ -161,14 +170,11 @@ endif
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast $(DESTDIR)/usr/share/menu
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/applications
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.desktop $(DESTDIR)/usr/share/applications
-#	if [ -x /usr/bin/update-menus ] ; then update-menus ; fi
 
 uninstall:
 ifeq ($(BUILD), win32)
-#	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN).exe
 	rm -f $(DESTDIR)/usr/bin/$(BIN).exe
 else
-#	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(BIN)
 	rm -f $(DESTDIR)/usr/bin/$(BIN)
 endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/Readme.*
@@ -195,25 +201,6 @@ dist: source
 
 deb: clean
 	dpkg-buildpackage -rfakeroot
-#	(cd $(BIN)-$(VERSION);dh_make --single --copyright gpl -e $(EMAIL))
-#	echo "?package(wxdfast): \\" > $(BIN)-$(VERSION)/debian/menu
-#	echo "      needs=\"X11\" \\" >> $(BIN)-$(VERSION)/debian/menu
-#	echo "      section=\"Apps/Net\" \\" >> $(BIN)-$(VERSION)/debian/menu
-#	echo "      title=\"wxDFast\" \\" >> $(BIN)-$(VERSION)/debian/menu
-#	echo "      command=\"/usr/bin/wxdfast\" \\" >> $(BIN)-$(VERSION)/debian/menu
-#	echo "      icon=\"/usr/share/pixmaps/wxdfast.xpm\"" >> $(BIN)-$(VERSION)/debian/menu
-#	rm -f $(BIN)-$(VERSION)/debian/README.Debian
-#	sed -e 's/Section: unknown/Section: net/g' -e '/Description:/,/s>/c Description: Multi-thread download manager\n Multi-thread download manager created using the wxWidgets library.' wxdfast-$(VERSION)/debian/control > wxdfast-$(VERSION)/debian/control.new
-#	sed -e 's/#\tdh_installmenu/\tdh_installmenu/g' wxdfast-$(VERSION)/debian/rules > wxdfast-$(VERSION)/debian/rules.new
-#	sed -e 's/<fill in ftp site>/dfast.sf.net/g' -e 's/<put author(s) name and email here>/Max Magalhães Velasques <maxvelasques at gmail com>/g' wxdfast-$(VERSION)/debian/copyright > wxdfast-$(VERSION)/debian/copyright.new
-#	sed -e '1i wxdfast ($(VERSION)-$(DEBIANPACK)) unstable; urgency=low' -e '1d' -e '3i \  * Initial release.' -e '3d' wxdfast-$(VERSION)/debian/changelog > wxdfast-$(VERSION)/debian/changelog.new
-#	cat wxdfast-$(VERSION)/debian/control.new > wxdfast-$(VERSION)/debian/control
-#	cat wxdfast-$(VERSION)/debian/rules.new > wxdfast-$(VERSION)/debian/rules
-#	cat wxdfast-$(VERSION)/debian/copyright.new > wxdfast-$(VERSION)/debian/copyright
-#	cat wxdfast-$(VERSION)/debian/changelog.new > wxdfast-$(VERSION)/debian/changelog
-#	rm -f wxdfast-$(VERSION)/debian/*.ex wxdfast-$(VERSION)/debian/*.EX wxdfast-$(VERSION)/debian/*.new
-#	(cd $(BIN)-$(VERSION);dpkg-buildpackage -rfakeroot)
-#	rm -r $(BIN)-$(VERSION)
 
 source:
 	rm -f $(BIN)-$(VERSION)-src.tar.gz
@@ -258,7 +245,7 @@ source:
 	cp -r debian/* $(BIN)-$(VERSION)/debian
 	rm -Rf $(BIN)-$(VERSION)/debian/CVS
 	cp Makefile $(BIN)-$(VERSION)
-#	cp makefile.vc $(BIN)-$(VERSION)
+	cp makefile.vc $(BIN)-$(VERSION)
 
 clean:
 	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) debian/wxdfast.postinst.debhelper debian/wxdfast.postrm.debhelper debian/wxdfast.substvars debian/$(BIN) configure-stamp build-stamp

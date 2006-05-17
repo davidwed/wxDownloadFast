@@ -53,7 +53,10 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\DownloadThread.obj \
 	build-vc\FinishedList.obj \
 	build-vc\ftp.obj \
+	build-vc\Graph.obj\
 	build-vc\InProgressList.obj \
+	build-vc\MainFrame.obj\
+	build-vc\TaskBarIcon.obj\
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
 	build-vc\wxMD5.obj \
@@ -68,7 +71,10 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\DownloadThread.obj \
 	build-vc\FinishedList.obj \
 	build-vc\ftp.obj \
+	build-vc\Graph.obj\
 	build-vc\InProgressList.obj \
+	build-vc\MainFrame.obj\
+	build-vc\TaskBarIcon.obj\
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
 	build-vc\wxMD5.obj \
@@ -129,7 +135,16 @@ build-vc\FinishedList.obj: .\src\FinishedList.cpp
 build-vc\ftp.obj: .\src\ftp.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
+build-vc\Graph.obj: .\src\Graph.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
+
 build-vc\InProgressList.obj: .\src\InProgressList.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
+
+build-vc\MainFrame.obj: .\src\MainFrame.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
+
+build-vc\TaskBarIcon.obj: .\src\TaskBarIcon.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
 build-vc\wxDFast.obj: .\src\wxDFast.cpp

@@ -1,3 +1,15 @@
+//
+// C++ Implementation: DownloadThread
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 int mDownloadThread::GetType()
@@ -93,8 +105,15 @@ void *mDownloadThread::Entry()
                     downloadfile->criticalerror = TRUE;
                     break;
                 }
-        }
-        while (redirecting);
+                if ((downloadpartindex == 0) && (downloadfile->contenttype.Lower().Contains(wxT("htm"))))
+                {
+                    PrintMessage( _("This is a HTML file\nOpening in the default browser.\n"),HTMLERROR);
+                    resp = 0;
+                    downloadfile->status = STATUS_FINISHED;
+                    Sleep(1000);
+                    break;
+                }
+        } while (redirecting);
         if ((connection) || (filestream))
         {
 
@@ -128,7 +147,7 @@ void *mDownloadThread::Entry()
         {
             if (downloadfile->status == STATUS_STOPED)
                 resp = 0;
-            else
+            else if (downloadfile->status != STATUS_FINISHED)
                 resp = -1;
         }
         if (downloadpartindex == 0)
@@ -176,8 +195,6 @@ void *mDownloadThread::Entry()
     {
         if (downloadfile->status == STATUS_STOPED) //IMPROVE THIS
             downloadfile->status = STATUS_ACTIVE;  //THIS IS FOR THE LIST BE UPDATED FOR THA LAST TIME
-        else
-            wxGetApp().RegisterListItemOnDisk(downloadfile);
     }
     return NULL;
 }
@@ -398,6 +415,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     wxMD5 md5(filemd5);
                     PrintMessage( wxT("MD5 = ") + md5.GetDigest() + wxT("\n"));
                     downloadfile->MD5 = md5.GetDigest();
+                    downloadfile->urllist = currenturl;
                     PrintMessage( _("Finished\n"));
                 }
                 downloadfile->status = STATUS_FINISHED;
@@ -521,7 +539,13 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong start)
             message += line + wxT("\n");
             if (line.Mid(0,14).Lower() == wxT("content-length"))
             {
-                sizetmp = wxstrtolonglong(line.Mid(16));
+                sizetmp = wxstrtolonglong(line.AfterFirst(':').Trim(TRUE).Trim(FALSE));
+                //this->Sleep(1);
+            }
+            else if (line.Mid(0,12).Lower() == wxT("content-type"))
+            {
+                if (downloadpartindex == 0)
+                    downloadfile->contenttype = line.AfterFirst(':').Trim(TRUE).Trim(FALSE);
                 //this->Sleep(1);
             }
             else if (line.Mid(0,13).Lower() == wxT("accept-ranges")||line.Mid(0,13).Lower() == wxT("content-range"))
@@ -531,7 +555,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong start)
             }
             else if (line.Mid(0,8).Lower() == wxT("location"))
             {
-                currenturl = line.Mid(10);
+                currenturl = line.AfterFirst(':').Trim(TRUE).Trim(FALSE);
                 mUrlName urltmp(currenturl);
                 urltmp.Resolve(url);
                 currenturl = urltmp.BuildURI();
@@ -615,6 +639,8 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong start)
                 }
                 else
                 {
+                    downloadfile->totalsize =  0;
+                    downloadfile->sizecompleted[downloadpartindex] = 0;
                     PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
                     client->Close(); delete client;
                     return NULL;

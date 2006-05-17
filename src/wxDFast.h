@@ -1,3 +1,15 @@
+//
+// C++ Interface: wxDFast
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #ifndef __WXPROG_H__
     #define __WXPROG_H__
     #include "wx/wxprec.h"
@@ -38,6 +50,7 @@
     #include "wx/wfstream.h"
     #include "wx/longlong.h"
     #include "wx/uri.h"
+    #include "wx/mimetype.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
@@ -106,6 +119,7 @@
     const wxString URL1_REG = wxT("url1");
     const wxString MD5_REG = wxT("md5");
     const wxString COMMENTS_REG = wxT("comments");
+    const wxString CONTENTTYPE_REG = wxT("contenttype");
     const wxString START_REG = wxT("date_start");
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
@@ -179,7 +193,7 @@
     const wxString HTMLNORMAL = wxT("#002f5e");        //BLUE
     const wxString HTMLBLACK = wxT("#000000");        //BLACK
 
-    const wxString days[7] = {_("Sunday"),_("Mondays"),_("Tuesdays"),
+    const wxString days[7] = {_("Sundays"),_("Mondays"),_("Tuesdays"),
                               _("Wednesdays"),_("Thursdays"),_("Fridays"),
                               _("Saturdays")};
 
@@ -245,6 +259,7 @@
         wxDateTime start;
         wxDateTime end;
         wxString urllist;
+        wxString contenttype;
         int parts;
         int currentattempt;
         wxLongLong totalsize;
@@ -377,6 +392,8 @@
         void OnSchedule(wxCommandEvent& event);
         void OnStart(wxCommandEvent& event);
         void OnStop(wxCommandEvent& event);
+        void OnStartAll(wxCommandEvent& event);
+        void OnStopAll(wxCommandEvent& event);
         void OnPasteURL(wxCommandEvent& event);
         void OnCopyURL(wxCommandEvent& event);
         void OnFind(wxCommandEvent& event);
@@ -398,10 +415,12 @@
         void GenerateInProgressList();
         void GenerateFinishedList();
         void OnToolLeftClick(wxCommandEvent& event);
+        void OnToolMouseMove(wxCommandEvent& event);
         void OnUpDown(bool up);
         mTaskBarIcon *taskbaricon;
         wxMenuBar *menubar;
         wxToolBar *toolbar;
+        wxStatusBar *statusbar;
         wxMenu *menupopup;
         mOptions programoptions;
         wxMutex *mutex_programoptions;

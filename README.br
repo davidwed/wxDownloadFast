@@ -1,15 +1,15 @@
 wxDownload Fast
 =====================================================================
 
-Introdução
-----------
+1) Introdução
+-------------
 Este programa foi criado com o intuito de substituir os gerenciadores
 de downloads comerciais existentes hoje em dia.
 Deste modo pretendo adicionar o máximo de opções possíveis de modo a
 deixar o programa o mais completo possível.
 
-Características do Programa
----------------------------
+2) Características do Programa
+------------------------------
 * Permite realizar o download de vários arquivos simultaneamente,
   e ainda dividi-lo em várias partes
 * Permite agendar dowloads
@@ -22,8 +22,8 @@ Características do Programa
 * Permite conectar à servidores FTP(apenas FTP e não HTTP) que necessitam de senha
 * Gera o MD5 dos arquivos baixados facilitando assim a verificação dos mesmos
 
-Parametros da linha de comado
------------------------------
+3) Parametros da linha de comado
+--------------------------------
 [URLS],
 Urls, separadas por espaço, dos arquivos a serem baixados
 Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
@@ -44,9 +44,10 @@ Diretório de destino
 -comments COMMENTS, --comments=COMMENTS,
 Adiciona comentários ao download
 
-Integração com o Firefox
-------------------------
+4) Integração com o Firefox
+---------------------------
 Para ativar a integração com o Firefox faça o seguinte:
+
 1) Instale a extenção FlashGot para o Firefox(www.flashgot.org/getit)
 2) Após reiniciar o Firefox vá em Ferramentas -> FlashGot -> Mais opções
 3) Agora clique em adicionar novo gerenciador
@@ -54,13 +55,13 @@ Para ativar a integração com o Firefox faça o seguinte:
 5) No caminho do gerenciador insira o caminho de onde o programa
    foi instalado. No Linux fica normalmente em /usr/bin/wxdfast
    No Windows fica em c:\Arquivos de Programas\wxDownload Fast\wxdfast.exe
-6) Nos parametros para o programa insira: -list[UFILE]
+6) Nos parametros para o programa insira: -list[UFILE] -comments[REFERER]
 
-Instalação
+5) Instalação
+-------------
+
+5.1) Win32
 ----------
-
-Win32
------
 
 - Instalando apartir do binário
 
@@ -97,8 +98,8 @@ OBS: Não esqueça de carregar as varáveis de ambiente referentes ao VC.
      Normalmente existe um atalho na pasta do VC no menu iniciar que faz
      isso automaticamente.
 
-Linux
------
+5.2) Linux
+----------
 
 - Compilando código fonte
 
@@ -119,8 +120,8 @@ Está disponível na página do programa um pacote .DEB contendo este programa.
 Este pacote é compatível com as distribuições DEBIAN, UBUNTU, KURUMIN, entre
 outras.
 
-MacOS
------
+5.3) MacOS
+----------
 
 - Compilando código fonte
 

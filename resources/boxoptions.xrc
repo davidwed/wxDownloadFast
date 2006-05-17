@@ -786,7 +786,7 @@
                                         <flag>wxFIXED_MINSIZE</flag>
                                         <object class="wxListBox" name="lstexceptionlist">
                                             <style>wxLB_SINGLE</style>
-                                            <size>300,100</size>
+                                            <size>300,120</size>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
@@ -794,6 +794,65 @@
                                         <flag>wxFIXED_MINSIZE | wxALIGN_RIGHT</flag>
                                         <object class="wxButton" name="btnexceptionremove">
                                             <label>Remove</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    </object>
+                    <object class="notebookpage">
+                    <label>Browser Integration</label>
+                    <object class="wxPanel" name="paneloption04">
+                        <style>wxTAB_TRAVERSAL</style>
+                        <object class="wxFlexGridSizer">
+                            <hgap>0</hgap>
+                            <rows>2</rows>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <growablecols>1</growablecols>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Firefox Integration</label>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxEXPAND</flag>
+                                        <object class="wxBoxSizer">
+                                            <orient>wxVERTICAL</orient>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="lblfirefox">
+                                                    <label>To activate the Firefox integration, do the follow:\n\n1) Install the FlashGot extension to the Firefox(www.flashgot.org/getit)\n2) After restart the Firefox, go to:\n   Tools -> FlashGot -> More Options\n3) Now click in Add new download manager\n4) In name, insert: wxDownload Fast\n5) In path, insert the place where the program was installed.\n   On Linux it stay in general in /usr/bin/wxdfast\n   On Windows it stay in general in c:/Program Files/wxDownload Fast/wxdfast.exe\n6) In parameters of program insert:\n   -list[UFILE] -comments[REFERER]</label>
+                                                    <size>400, 250</size>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Internet Explorer Integration</label>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxEXPAND</flag>
+                                        <object class="wxBoxSizer">
+                                            <orient>wxVERTICAL</orient>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="lbliexplorer">
+                                                    <label>Not available</label>
+                                                    <size>400, 70</size>
+                                                </object>
+                                            </object>
                                         </object>
                                     </object>
                                 </object>

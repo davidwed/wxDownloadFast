@@ -1,3 +1,15 @@
+//
+// C++ Implementation: InProgressList
+//
+// Description: 
+//
+//
+// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
+
 #include "wxDFast.h"
 
 BEGIN_EVENT_TABLE(mInProgressList, wxListCtrl)
@@ -50,7 +62,7 @@ void mInProgressList::SetCurrentSelection(int selection)
     }
     else
     {
-        this->SetItemState(selection,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+        this->SetItemState(selection, wxLIST_STATE_SELECTED , wxLIST_STATE_SELECTED );
     }
 }
 
@@ -146,6 +158,7 @@ void mInProgressList::RemoveItemListandFile(int item)
             }
         }
         wxGetApp().downloadlist.DeleteObject(currentfile);
+        delete currentfile;
         DeleteItem(GetItemCount()-1);
         SelectUnselect(FALSE,-1,wxGetApp().mainframe);
     }
