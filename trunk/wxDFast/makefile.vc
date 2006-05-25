@@ -59,6 +59,7 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\TaskBarIcon.obj\
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
+	build-vc\UtilFunctions.obj \
 	build-vc\wxMD5.obj \
 	build-vc\md5.obj \
 !else
@@ -77,6 +78,7 @@ DFAST_CXX_OBJECTS =  \
 	build-vc\TaskBarIcon.obj\
 	build-vc\wxDFast.obj \
 	build-vc\urlname.obj \
+	build-vc\UtilFunctions.obj \
 	build-vc\wxMD5.obj \
 	build-vc\md5.obj \
 !endif
@@ -151,6 +153,9 @@ build-vc\wxDFast.obj: .\src\wxDFast.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
 build-vc\urlname.obj: .\src\urlname.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
+
+build-vc\UtilFunctions.obj: .\src\UtilFunctions.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(DFAST_CXX_CXXFLAGS) $**
 
 build-vc\wxMD5.obj: .\src\wxMD5\wxMD5.cpp

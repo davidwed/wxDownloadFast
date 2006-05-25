@@ -1,3 +1,36 @@
+0.4.3
+===================================================
+- Fixed bug that change the first item of the
+  finished list, when the user click in "Open
+  destination directory"
+- Fixed problem when getting the size of finished
+  files bigger than 2Gb
+- Fixed some memory access bug
+- Made a total change on mDownloadFile class,
+  making the class more encapsulated. This class
+  keeps the download data.
+
+0.4.2
+===================================================
+- Fixed problem with the Calendar Control on the
+  schedule option
+- Fixed problems with forbidden filename characters
+- Fixed problems with the calendar box
+- Added dialog box that ask about to open HTML
+  files on the browser
+- Added "Open Destination Directory" command that
+  opens the destination directory of selected
+  download
+- Added tab "Paths" in the Options Box. In this are
+  defined the external programs used, like the 
+  browser, file manager, and so on
+- Now the file size are compared with the already
+  saved values. In this way, we have (almost) sure
+  that the file size not changed since the last
+  time, and that the file will be not corrupted
+- The program internal structure was improved
+- Added some minor features
+
 0.4.1
 ===================================================
 - Added German language

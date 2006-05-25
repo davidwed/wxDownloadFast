@@ -13,7 +13,9 @@
 #include "wxDFast.h"
 
 ////////////////////////XPM IMAGES////////////////////////////////
+#ifndef __WXMSW__
 #include "../resources/wxdfast.xpm"
+#endif
 
 
 BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)
@@ -23,6 +25,11 @@ BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)
     EVT_TASKBAR_LEFT_DOWN(mTaskBarIcon::OnLButtonClick)
     EVT_TASKBAR_MOVE(mTaskBarIcon::OnMouseMove)
 END_EVENT_TABLE()
+
+mTaskBarIcon::mTaskBarIcon(mMainFrame *frame)
+{
+    mainframe = frame;
+};
 
 void mTaskBarIcon::OnLButtonClick(wxTaskBarIconEvent&)
 {
@@ -40,9 +47,9 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
         for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
         {
             mDownloadFile *current = node->GetData();
-            if  (current->status == STATUS_ACTIVE)
+            if  (current->GetStatus() == STATUS_ACTIVE)
             {
-                totalpercentual += current->percentual;
+                totalpercentual += current->GetProgress();
                 totalspeed += current->totalspeed;
                 count++;
             }
@@ -50,7 +57,7 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
         if (count > 0)
         {
             taskTip.Clear();
-            taskTip.Printf(_("Total Speed = %.2fKb/s\nTotal Complete = %d%%\nDownloads in progress = %d"), totalspeed/1024.0, totalpercentual/count,count);
+            taskTip.Printf(_("Total Speed: %.2fKb/s\nTotal Complete: %d%%\nDownloads in progress: %d"), totalspeed/1024.0, totalpercentual/count,count);
         }
     }
     #ifdef __WXMSW__
@@ -64,9 +71,9 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
 {
     wxMenu *traymenu = new wxMenu;
     wxMenuItem *mnuhide;
-    if (wxGetApp().mainframe)
+    if (mainframe)
     {
-        if (wxGetApp().mainframe->IsShown())
+        if (mainframe->IsShown())
             mnuhide = new wxMenuItem(traymenu,HIDE, _("Hide the main window"));
         else
             mnuhide = new wxMenuItem(traymenu,HIDE, _("Show the main window"));
@@ -83,31 +90,31 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
 
 void mTaskBarIcon::OnClose(wxCommandEvent& event)
 {
-    if (wxGetApp().mainframe)
-        wxGetApp().mainframe->Close();
+    if (mainframe)
+        mainframe->Close();
 }
 
 void mTaskBarIcon::OnNew(wxCommandEvent& event)
 {
-    if (wxGetApp().mainframe)
-        wxGetApp().mainframe->OnNew(event);
+    if (mainframe)
+        mainframe->OnNew(event);
 }
 
 void mTaskBarIcon::OnHide(wxCommandEvent& event)
 {
-    if (wxGetApp().mainframe)
+    if (mainframe)
     {
-        if (wxGetApp().mainframe->IsShown())
+        if (mainframe->IsShown())
         {
                 restoring = TRUE;
-            wxGetApp().mainframe->Hide();
+            mainframe->Hide();
         }
         else
         {
                 restoring = TRUE;
-                    if (wxGetApp().mainframe->IsIconized())
-                        wxGetApp().mainframe->Iconize(FALSE);
-                wxGetApp().mainframe->Show();
+                    if (mainframe->IsIconized())
+                        mainframe->Iconize(FALSE);
+                mainframe->Show();
                 restoring = FALSE;
         }
     }

@@ -13,14 +13,14 @@ possible.
 * Allows to carry through download of some archives simultaneously,
   and allow to split the downloads in some lowered parts.
 * Allows to schedule a download
-* Allows to organize the archive already downloaded
+* Allows to organize the files already downloaded
 * Allows to continue one download interrupted of the point where had stopped
 * The messages sent/received for the program when connecting to servers HTTP/FTP
   or for local downloads(file://)
 * It can be translated with easiness for any language.  Being available in
   Portuguese[Brazil], Spanish, English and German 
 * Allows to connect in FTP servers(only FTP) which need password
-* Generate the MD5 of the downloaded archives, facilitating the verification
+* Generate the MD5 of the downloaded files, facilitating the verification
 
 3) Command line Parameters
 --------------------------

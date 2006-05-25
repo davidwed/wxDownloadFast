@@ -12,7 +12,210 @@
 
 #include "wxDFast.h"
 
-int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2)
+void mDownloadList::RecreateIndex()
+{
+    int i=0;
+    for ( mDownloadList::Node *node = this->GetFirst(); node; node = node->GetNext() )
+    {
+        mDownloadFile *current = node->GetData();
+        if (current->index != i)
+        {
+            current->index = i;
+            current->RegisterListItemOnDisk();
+        }
+        i++;
+    }
+}
+
+void mDownloadList::ChangePosition(mDownloadFile *file01, mDownloadFile *file02)
+{
+    int index01,index02;
+    index01 = file01->index;
+    index02 = file02->index;
+    file01->index = index02;
+    file02->index = index01;
+
+    Sort(mDownloadList::ListCompareByIndex);
+}
+
+void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
+{
+    wxString strname = name;
+    if (file->name == strname)
+        return ;
+    wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    config->SetPath(INPROGRESS_REG);
+    config->DeleteGroup(file->name);
+    delete config;
+    if (value > 0)
+        strname = MyUtilFunctions::int2wxstr(value+1) + wxT("-") + strname;
+    if (this->FindDownloadFile(strname))
+    {
+        this->ChangeName(file,name,value+1);
+    }
+    else
+    {
+        file->name = strname;
+        file->MarkWriteAsPending(TRUE);
+        //file->RegisterListItemOnDisk();
+    }
+}
+
+void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlName url,wxFileName destination, wxString user, wxString password, wxString comments)
+{
+    file->urllist = url.GetFullPath();
+    file->destination = destination.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
+    file->user = user;
+    file->password = password;
+    file->comments = comments;
+}
+
+void mDownloadList::LoadDownloadListFromDisk()
+{
+    wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    wxString name;
+    wxString tmp;
+    int status;
+    long index;
+    config->SetPath(INPROGRESS_REG);
+    if (config->GetFirstGroup(name, index))
+    {
+
+        do
+        {
+            mDownloadFile *file = new mDownloadFile();
+            file->name = name;
+            this->Append(file);
+        }
+        while(config->GetNextGroup(name, index));
+    }
+    for ( mDownloadList::Node *node = this->GetFirst(); node; node = node->GetNext() )
+    {
+        mDownloadFile *file = node->GetData();
+        tmp = wxEmptyString;
+        config->SetPath(file->GetName());
+        config->Read(INDEX_REG,&(file->index));
+
+        config->Read(STATUS_REG,&(status));
+        config->Read(SCHEDULED_REG,&(file->scheduled));
+        if (status == STATUS_STOPED)
+            file->SetAsStoped();
+        else if ((status == STATUS_ACTIVE) || (status == STATUS_QUEUE))
+            file->PutOnQueue();
+        else if (status == STATUS_FINISHED)
+            file->SetAsFinished();
+        else if (status == STATUS_ERROR)
+            file->ErrorOccurred();
+        else if ((status == STATUS_SCHEDULE_QUEUE) || (file->scheduled))
+            file->PutOnScheduleQueue();
+        else
+            file->SetAsStoped();
+
+        config->Read(RESTART_REG,&(file->restart));
+        config->Read(PARTS_REG,&(file->parts));
+        config->Read(DESTINATION_REG,&(file->destination));
+
+        config->Read(SIZE_REG,&tmp);
+        file->totalsize = MyUtilFunctions::wxstrtolonglong(tmp);
+
+        config->Read(SIZECOMPLETED_REG,&tmp);
+        file->totalsizecompleted = MyUtilFunctions::wxstrtolonglong(tmp);
+
+        config->Read(TIMEPASSED_REG,&tmp);
+        file->timepassed = MyUtilFunctions::wxstrtolonglong(tmp);
+
+        config->Read(SPEED_REG,&(file->totalspeed));
+        config->Read(PERCENTUAL_REG,&(file->percentual));
+        config->Read(MD5_REG,&(file->MD5));
+        config->Read(COMMENTS_REG,&(file->comments));
+        config->Read(CONTENTTYPE_REG,&(file->contenttype));
+        {
+            time_t value = 0;
+            config->Read(START_REG,&(value));
+            file->start.Set(value);
+            value = 0;
+            config->Read(END_REG,&(value));
+            file->end.Set(value);
+        }
+        config->Read(URL1_REG,&(file->urllist));
+
+
+        if (file->percentual > 100)
+            file->percentual = 0;
+        file->timeremaining = 0;
+        file->totalspeed = 0;
+        file->currentattempt = 0;
+        file->free = TRUE;
+        file->criticalerror = FALSE;
+        file->split = FALSE;
+        file->waitbeforesplit = TRUE;
+        file->MarkWriteAsPending(FALSE);
+        file->MarkRemoveAsPending(FALSE);
+        if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
+            file->parts = 1;
+
+        for (int i =0;i<MAX_NUM_PARTS;i++)
+        {
+
+            file->messages[i].Clear();
+            file->delta_size[i] = 0;
+            file->sizecompleted[i] = 0;
+            file->startpoint[i] = 0;
+            file->size[i] = 0;
+            file->finished[i] = FALSE;
+        }
+
+        config->Read(USER_REG,&(file->user));
+        config->Read(PASSWORD_REG,&(file->password));
+
+        config->SetPath(BACK_DIR_REG);
+    }
+    this->Sort(mDownloadList::ListCompareByIndex);
+    delete config;
+}
+
+void mDownloadList::RemoveDownloadRegister(mDownloadFile *currentfile)
+{
+    unsigned int item = currentfile->GetIndex();
+    if ((item + 1) < this->GetCount())
+    {
+        int count = item;
+        for ( mDownloadList::Node *node = this->Item(item+1); node; node = node->GetNext() )
+        {
+            node->GetData()->index = count;
+            node->GetData()->MarkWriteAsPending(TRUE);
+            count++;
+        }
+    }
+    mDownloadList::Node *node = this->Find(currentfile);
+    this->DeleteNode(node);
+    delete currentfile;
+}
+
+mDownloadList::~mDownloadList() //FREE THE MEMORY OF THE LIST
+{
+    mDownloadList::Node *node = this->GetFirst();
+    mDownloadList::Node *tmpnode;
+    mDownloadFile *currentfile;
+    while (node)
+    {
+        tmpnode = node->GetNext();
+        currentfile = node->GetData();
+        this->DeleteNode(node);
+        delete currentfile;
+        node = tmpnode;
+    }
+}
+
+mDownloadFile *mDownloadList::FindDownloadFile(wxString str)
+{
+    for ( mDownloadList::Node *node = this->GetFirst(); node; node = node->GetNext() )
+        if (node->GetData()->GetName().Lower() == str.Lower())
+            return (node->GetData());
+    return (NULL);
+}
+
+int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2)
 {
     if ((*arg1)->index > (*arg2)->index)
        return 1;
@@ -20,20 +223,10 @@ int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2)
        return -1;
 }
 
-int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData))
-{
-    if (item1 < item2)
-        return 1;
-    if (item1 > item2)
-        return -1;
-
-    return 0;
-}
-
-int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
+int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
 {
     mDownloadFile *file = new mDownloadFile();
-    file->index =  downloadlist.GetCount();
+    file->index =  this->GetCount();
     file->scheduled = scheduled;
     file->status = STATUS_STOPED;
     file->restart = -1;
@@ -74,22 +267,25 @@ int mApplication::CreateDownloadRegister(mUrlName url,wxFileName destination, in
     }
     file->free = TRUE;
     file->criticalerror = FALSE;
-    file->split = WAIT;
+    file->split = FALSE;
+    file->waitbeforesplit = TRUE;
 
-    downloadlist.Append(file);
-    RegisterListItemOnDisk(file);
+    //file->RegisterListItemOnDisk();
+    file->MarkWriteAsPending(TRUE);
+    file->MarkRemoveAsPending(FALSE);
+    this->Append(file);
     return (file->index);
 }
 
-void mApplication::RemoveListItemFromDisk(mDownloadFile *file)
+void mDownloadFile::RemoveListItemFromDisk()
 {
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
     config->SetPath(FILES_REG);
-    if (file->status == STATUS_FINISHED)
+    if (this->status == STATUS_FINISHED)
     {
         config->SetPath(BACK_DIR_REG);
         config->SetPath(INPROGRESS_REG);
-        config->DeleteGroup(file->name);
+        config->DeleteGroup(this->name);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(FINISHED_REG);
@@ -100,19 +296,20 @@ void mApplication::RemoveListItemFromDisk(mDownloadFile *file)
         config->SetPath(BACK_DIR_REG);
         config->SetPath(INPROGRESS_REG);
     }
-    config->DeleteGroup(file->name);
+    config->DeleteGroup(this->name);
     delete config;
+    this->MarkRemoveAsPending(FALSE);
 }
 
-void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
+void mDownloadFile::RegisterListItemOnDisk()
 {
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
     config->SetPath(FILES_REG);
-    if (file->status == STATUS_FINISHED)
+    if (this->status == STATUS_FINISHED)
     {
         config->SetPath(BACK_DIR_REG);
         config->SetPath(INPROGRESS_REG);
-        config->DeleteGroup(file->name);
+        config->DeleteGroup(this->name);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(BACK_DIR_REG);
         config->SetPath(FINISHED_REG);
@@ -123,301 +320,250 @@ void mApplication::RegisterListItemOnDisk(mDownloadFile *file)
         config->SetPath(BACK_DIR_REG);
         config->SetPath(INPROGRESS_REG);
     }
-    config->SetPath(file->name);
-    config->Write(NAME_REG,file->name);
-    config->Write(INDEX_REG,file->index);
-    config->Write(STATUS_REG,file->status);
-    config->Write(SCHEDULED_REG,file->scheduled);
-    config->Write(RESTART_REG,file->restart);
-    config->Write(PARTS_REG,file->parts);
-    config->Write(DESTINATION_REG,file->destination);
-    config->Write(SIZE_REG,file->totalsize.ToString());
-    config->Write(SIZECOMPLETED_REG,file->totalsizecompleted.ToString());
-    config->Write(TIMEPASSED_REG,file->timepassed.ToString());
-    config->Write(SPEED_REG,file->totalspeed);
-    config->Write(PERCENTUAL_REG,file->percentual);
-    config->Write(MD5_REG,file->MD5);
-    config->Write(START_REG,file->start.GetTicks());
-    config->Write(END_REG,file->end.GetTicks());
-    config->Write(COMMENTS_REG,file->comments);
-    config->Write(CONTENTTYPE_REG,file->contenttype);
-    config->Write(URL1_REG,file->urllist);
+    config->SetPath(this->name);
+    config->Write(NAME_REG,this->name);
+    config->Write(INDEX_REG,this->index);
+    config->Write(STATUS_REG,this->status);
+    config->Write(SCHEDULED_REG,this->scheduled);
+    config->Write(RESTART_REG,this->restart);
+    config->Write(PARTS_REG,this->parts);
+    config->Write(DESTINATION_REG,this->destination);
+    config->Write(SIZE_REG,this->totalsize.ToString());
+    config->Write(SIZECOMPLETED_REG,this->totalsizecompleted.ToString());
+    config->Write(TIMEPASSED_REG,this->timepassed.ToString());
+    config->Write(SPEED_REG,this->totalspeed);
+    config->Write(PERCENTUAL_REG,this->percentual);
+    config->Write(MD5_REG,this->MD5);
+    config->Write(START_REG,this->start.GetTicks());
+    config->Write(END_REG,this->end.GetTicks());
+    config->Write(COMMENTS_REG,this->comments);
+    config->Write(CONTENTTYPE_REG,this->contenttype);
+    config->Write(URL1_REG,this->urllist);
 
-    config->Write(USER_REG,file->user);
-    config->Write(PASSWORD_REG,file->password);
+    config->Write(USER_REG,this->user);
+    config->Write(PASSWORD_REG,this->password);
 
     delete config;
+    this->MarkWriteAsPending(FALSE);
 }
 
-void mApplication::RecreateIndex()
+int mDownloadFile::GetIndex()
 {
-    int i=0;
-    for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
-    {
-        mDownloadFile *current = node->GetData();
-        if (current->index != i)
-        {
-            current->index = i;
-            RegisterListItemOnDisk(current);
-        }
-        i++;
-    }
+    return this->index;
 }
 
-void mApplication::LoadDownloadListFromDisk()
+wxString mDownloadFile::GetName()
 {
-    wxFileConfig *config = new wxFileConfig(DFAST_REG);
-    wxString name;
-    wxString tmp;
-    long index;
-    config->SetPath(INPROGRESS_REG);
-    if (config->GetFirstGroup(name, index))
-    {
-
-        do
-        {
-            mDownloadFile *file = new mDownloadFile();
-            file->name = name;
-            downloadlist.Append(file);
-        }
-        while(config->GetNextGroup(name, index));
-    }
-    for ( mDownloadList::Node *node = downloadlist.GetFirst(); node; node = node->GetNext() )
-    {
-        mDownloadFile *file = node->GetData();
-        tmp = wxEmptyString;
-        config->SetPath(file->name);
-        config->Read(INDEX_REG,&(file->index));
-        config->Read(STATUS_REG,&(file->status));
-        config->Read(SCHEDULED_REG,&(file->scheduled));
-        config->Read(RESTART_REG,&(file->restart));
-        config->Read(PARTS_REG,&(file->parts));
-        config->Read(DESTINATION_REG,&(file->destination));
-
-        config->Read(SIZE_REG,&tmp);
-        file->totalsize = wxstrtolonglong(tmp);
-
-        config->Read(SIZECOMPLETED_REG,&tmp);
-        file->totalsizecompleted = wxstrtolonglong(tmp);
-
-        config->Read(TIMEPASSED_REG,&tmp);
-        file->timepassed = wxstrtolonglong(tmp);
-
-        config->Read(SPEED_REG,&(file->totalspeed));
-        config->Read(PERCENTUAL_REG,&(file->percentual));
-        config->Read(MD5_REG,&(file->MD5));
-        config->Read(COMMENTS_REG,&(file->comments));
-        config->Read(CONTENTTYPE_REG,&(file->contenttype));
-        {
-            time_t value = 0;
-            config->Read(START_REG,&(value));
-            file->start.Set(value);
-            value = 0;
-            config->Read(END_REG,&(value));
-            file->end.Set(value);
-        }
-        config->Read(URL1_REG,&(file->urllist));
-        if (file->status == STATUS_ACTIVE)
-            file->status = STATUS_QUEUE;
-        if (file->scheduled)
-            file->status = STATUS_SCHEDULE;
-        if (file->percentual > 100)
-            file->percentual = 0;
-        file->timeremaining = 0;
-        file->totalspeed = 0;
-        file->currentattempt = 0;
-        file->free = TRUE;
-        file->criticalerror = FALSE;
-        file->split = WAIT;
-        if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
-            file->parts = 1;
-
-        for (int i =0;i<MAX_NUM_PARTS;i++)
-        {
-
-            file->messages[i].Clear();
-            file->delta_size[i] = 0;
-            file->sizecompleted[i] = 0;
-            file->startpoint[i] = 0;
-            file->size[i] = 0;
-            file->finished[i] = FALSE;
-        }
-
-        config->Read(USER_REG,&(file->user));
-        config->Read(PASSWORD_REG,&(file->password));
-
-        config->SetPath(BACK_DIR_REG);
-    }
-    downloadlist.Sort(ListCompareByIndex);
-    delete config;
+    return this->name;
 }
 
-void mApplication::ChangeName(mDownloadFile *currentfile, wxString name, int value)
+wxString mDownloadFile::GetExposedName()
 {
-    wxString strname = name;
-    if (currentfile->name == strname)
-        return ;
-    wxFileConfig *config = new wxFileConfig(DFAST_REG);
-    config->SetPath(INPROGRESS_REG);
-    config->DeleteGroup(currentfile->name);
-    delete config;
-    if (value > 0)
-        strname = int2wxstr(value+1) + wxT("-") + strname;
-    if (FindDownloadFile(strname))
-    {
-        ChangeName(currentfile,name,value+1);
-    }
+    if (this->exposedname != wxEmptyString)
+        return this->exposedname;
     else
-    {
-        currentfile->name = strname;
-        RegisterListItemOnDisk(currentfile);
-    }
+        return this->name;
 }
 
-mDownloadFile *mApplication::FindDownloadFile(wxString str)
+void mDownloadFile::SetExposedName(wxString name)
 {
-    for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
-        if (node->GetData()->name.Lower() == str.Lower())
-            return (node->GetData());
-    return (NULL);
+    this->exposedname = name;
 }
 
-wxString int2wxstr(long value,int format)
+void mDownloadFile::UnSetExposedName()
 {
-    wxString temp,string;
-    string << wxT("%0") << format << wxT("ld");
-    temp = temp.Format(string,value);
-    return temp;
+    this->exposedname = wxEmptyString;
 }
 
-wxString TimeString(long value)
+int mDownloadFile::GetStatus()
 {
-    wxString tmp;
-    int hour,min,sec;
-    long time;
-    time = (long) (value / 1000);
-    hour = (int) (time/3600);
-    time = time - (hour * 3600);
-    min = (int) (time/60);
-    sec = (time%60);
-    if (hour == 0)
-       tmp.Printf(wxT("%01dm %01ds"), min, sec);
+    return this->status;
+}
+
+void mDownloadFile::SetAsActive()
+{
+    this->status = STATUS_ACTIVE;
+}
+
+void mDownloadFile::SetAsStoped(bool stopschedule)
+{
+    this->status = STATUS_STOPED;
+    if (stopschedule)
+        this->scheduled = FALSE;
+}
+
+void mDownloadFile::SetAsFinished()
+{
+    this->status = STATUS_FINISHED;
+}
+
+void mDownloadFile::ErrorOccurred()
+{
+    this->status = STATUS_ERROR;
+}
+
+void mDownloadFile::PutOnScheduleQueue()
+{
+    this->scheduled = TRUE;
+    this->status = STATUS_SCHEDULE_QUEUE;
+}
+
+void mDownloadFile::PutOnQueue()
+{
+    this->scheduled = FALSE;
+    this->status = STATUS_QUEUE;
+}
+
+wxString mDownloadFile::GetDestination()
+{
+    return this->destination;
+}
+
+wxString mDownloadFile::GetComments()
+{
+    return this->comments;
+}
+
+wxString mDownloadFile::GetUser()
+{
+    return this->user;
+}
+
+wxString mDownloadFile::GetPassword()
+{
+    return this->password;
+}
+
+int mDownloadFile::RestartSupport()
+{
+    return this->restart;
+}
+
+void mDownloadFile::SetRestartSupport(bool support)
+{
+    if (support)
+        this->restart = YES;
     else
-       tmp.Printf(wxT("%01dh %01dm %01ds"),hour, min, sec);
-    return(tmp);
+        this->restart = NO;
 }
 
-wxString TimeString(wxLongLong value)
+bool mDownloadFile::IsScheduled()
 {
-    wxString tmp;
-    int hour,min,sec;
-    long time;
-    time = (value / 1000).ToLong();
-    hour = (int) (time/3600);
-    time = time - (hour * 3600);
-    min = (int) (time/60);
-    sec = (time%60);
-    if (hour == 0)
-       tmp.Printf(wxT("%01dm %01ds"), min, sec);
-    else
-       tmp.Printf(wxT("%01dh %01dm %01ds"),hour, min, sec);
-    return(tmp);
+    return this->scheduled;
 }
 
-wxString GetLine(wxString text, int line)
+wxString mDownloadFile::GetContentType()
 {
-    wxString str = text;
-    int pos = str.Find(wxT("\n"));
-    int i;
-    if (pos == 0)
-    {
-        str=str.Mid(1);
-        pos = str.Find(wxT("\n"));
-    }
-    for (i=1; i<line;i++)
-    {
-        str = str.Mid(pos+1);
-        pos = str.Find(wxT("\n"));
-    }
-    return str.Mid(0,pos-1);
+    return this->contenttype;
 }
 
-char *wxstr2str(wxString wxstr)
+void mDownloadFile::SetContentType(wxString contenttype)
 {
-    int tamanho = wxstr.Length() + 1;
-    char *data = new char[tamanho];
-    int i;
-    for (i = 0 ; i < (tamanho-1); i++)
-        data[i] = wxstr.GetChar(i);
-    data[i] = '\0';
-    return data;
+    this->contenttype = contenttype;
 }
 
-wxString str2wxstr(char *str)
+int mDownloadFile::GetNumberofParts()
 {
-    wxString retorno;
-    unsigned int i;
-    for (i = 0 ; i < strlen(str); i++)
-        retorno.Append(str[i],1);
-    return retorno;
+    return this->parts;
 }
 
-wxString str2wxstr(char str)
+int mDownloadFile::GetCurrentAttempt()
 {
-    wxString retorno;
-    retorno.Append(str,1);
-    return retorno;
+    return this->currentattempt;
 }
 
-wxString ByteString(long size)
+void mDownloadFile::ResetAttempts()
 {
-    wxString str;
-    if ( size < 1024)
-//        str.Printf(wxT("%0.1f Bytes"),(double) size);
-        str.Printf(wxT("0.0 KB"));
-    if (( size >= 1024) && (size < 1048576))
-        str.Printf(wxT("%0.1f KB"),((double) size) /((double)1024));
-    if ( size >= 1048576)
-        str.Printf(wxT("%0.1f MB"),((double) size)/((double)1048576));
-    return(str);
+    this->currentattempt = 1;
 }
 
-wxString ByteString(wxLongLong size)
+void mDownloadFile::IncrementAttempt()
 {
-    wxString str;
-    if ( size < 1024)
-//        str.Printf(wxT("%0.1f Bytes"),(double) size);
-        str.Printf(wxT("0.0 KB"));
-    if (( size >= 1024) && (size < 1048576))
-        str.Printf(wxT("%0.1f KB"),( wxlonglongtodouble(size)) /((double)1024));
-    if ( size >= 1048576)
-        str.Printf(wxT("%0.1f MB"),( wxlonglongtodouble(size))/((double)1048576));
-    return(str);
+    this->currentattempt++;
 }
 
-wxLongLong wxstrtolonglong(wxString string)
+wxString mDownloadFile::GetNextUrl()
 {
-    wxString tmp = string.Trim().Trim(FALSE);
-    char carac;
-    wxLongLong result = 0;
-    int sign=1;
-    if (tmp.GetChar(0) == '-')
-        sign = -1;
-    for (unsigned int i = 0; i < tmp.Length(); i++)
-    {
-        carac = tmp.GetChar(i);
-        if ((carac >= '0') && (carac <= '9'))
-            result = result * 10LL + carac-'0';
-        else
-            continue;
-    }
-    return result*sign;
+    return this->urllist;
 }
 
-double wxlonglongtodouble(wxLongLong value)
+wxString mDownloadFile::GetFirstUrl()
 {
-    double d = value.GetHi();
-    d *= 1.0 + (double)ULONG_MAX;
-    d += value.GetLo();
-    return d;
+    return this->urllist;
+}
+
+void mDownloadFile::SetFinishedDateTime(wxDateTime time)
+{
+    this->end = time;
+}
+
+wxDateTime mDownloadFile::GetFinishedDateTime()
+{
+    return this->end;
+}
+
+void mDownloadFile::SetMD5(wxString md5)
+{
+    this->MD5 = md5;
+}
+
+int mDownloadFile::GetProgress()
+{
+    return this->percentual;
+}
+
+void mDownloadFile::SetProgress(int percentual)
+{
+    this->percentual = percentual;
+}
+
+bool mDownloadFile::IsSplitted()
+{
+    return this->split;
+}
+
+void mDownloadFile::Split(bool split)
+{
+    this->split = split;
+    this->waitbeforesplit = FALSE;
+}
+
+bool mDownloadFile::WaitingForSplit()
+{
+    return this->waitbeforesplit;
+}
+
+void mDownloadFile::WaitSplit()
+{
+    this->waitbeforesplit = TRUE;
+}
+
+bool mDownloadFile::WriteIsPending()
+{
+    return this->writependig;
+}
+
+void mDownloadFile::MarkWriteAsPending(bool pending)
+{
+    this->writependig = pending;
+}
+
+void mDownloadFile::SetFree(bool free)
+{
+    this->free = free;
+}
+
+bool mDownloadFile::IsFree()
+{
+    return this->free;
+}
+
+bool mDownloadFile::RemoveIsPending()
+{
+    return this->removepending;
+}
+
+void mDownloadFile::MarkRemoveAsPending(bool pending)
+{
+    this->removepending = pending;
 }

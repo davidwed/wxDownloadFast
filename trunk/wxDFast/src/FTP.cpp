@@ -96,7 +96,7 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
                 ok = true;
                 if (!lastresult.GetNextToken().ToLong(&statuscode))
                     ok = false;
-                filesize = wxstrtolonglong(lastresult.GetNextToken());
+                filesize = MyUtilFunctions::wxstrtolonglong(lastresult.GetNextToken());
                 if (filesize < 0)
                     filesize = 0;
             }
@@ -166,7 +166,7 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
                                 lastresult.GetNextToken();
                                 lastresult.GetNextToken();
                                 lastresult.GetNextToken();
-                                filesize = wxstrtolonglong(lastresult.GetNextToken());
+                                filesize = MyUtilFunctions::wxstrtolonglong(lastresult.GetNextToken());
                                 if (filesize < 0)
                                     filesize = 0;
                             }
@@ -184,7 +184,7 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
                             {
                                 lastresult.GetNextToken();
                                 lastresult.GetNextToken();
-                                filesize = wxstrtolonglong(lastresult.GetNextToken());
+                                filesize = MyUtilFunctions::wxstrtolonglong(lastresult.GetNextToken());
                                 if (filesize < 0)
                                     filesize = 0;
                             }
