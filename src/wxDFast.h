@@ -50,10 +50,16 @@
     #include "wx/wfstream.h"
     #include "wx/longlong.h"
     #include "wx/uri.h"
-    #include "wx/mimetype.h"
+    #include "wx/datectrl.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
+
+
+    //CUSTOM EVENTS
+    extern const wxEventType wxEVT_OPEN_URL;
+    extern const wxEventType wxEVT_SHUTDOWN;
+    extern const wxEventType wxEVT_DISCONNECT;
 
     const wxCmdLineEntryDesc cmdlinedesc[] =
     {
@@ -66,6 +72,7 @@
         { wxCMD_LINE_NONE }
     };
 
+    #define ID_MY_WINDOW    1324
     #ifdef __WXMSW__
         #define wxXPM(x)  (wxBitmap((const char **)x))
     #else
@@ -73,7 +80,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.4.0");
+    const wxString VERSION = wxT("0.4.3");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -98,6 +105,9 @@
     #define IPC_TOPIC                  wxT("IPC_WXDOWNLAD_FAST_")
     #define IPC_END_CONNECTION         wxT("IPC_WXDOWNLAD_FAST_END_CONECTION")
 
+    #define TOOLBAR_DEFAULT_MSG        _("Visit http://dfast.sf.net for updates")
+
+    const wxString STOPWITHOUTSAVINGSTOPSTATUS = wxT("STOPWITHOUTSAVINGSTOPSTATUS");
 
     const wxString DFAST_REG = wxT("wxDownloadFast");
     const wxString FILES_REG = wxT("files");
@@ -142,6 +152,8 @@
     const wxString OPT_SIMULTANEOUS_REG = wxT("simultaneous");
     const wxString OPT_REMEMBER_BOXNEW_OPTIONS_REG = wxT("rememberboxnewoptions");
     const wxString OPT_DESTINATION_REG = wxT("dirdestination");
+    const wxString OPT_FILE_MANAGER_PATH_REG = wxT("filemanagerpath");
+    const wxString OPT_BROWSER_PATH_REG = wxT("browserpath");
     const wxString OPT_SHUTDOWN_REG = wxT("shutdown");
     const wxString OPT_SHUTDOWN_CMD_REG = wxT("shutdowncmd");
     const wxString OPT_DISCONNECT_REG = wxT("disconnect");
@@ -226,12 +238,12 @@
     #define TIMER_ID            1003
 
     //mDownloadFile STATUS
-    #define STATUS_STOPED       0
-    #define STATUS_ACTIVE       1
-    #define STATUS_FINISHED     2
-    #define STATUS_ERROR        3
-    #define STATUS_QUEUE        4
-    #define STATUS_SCHEDULE     5
+    #define STATUS_STOPED               0
+    #define STATUS_ACTIVE               1
+    #define STATUS_FINISHED             2
+    #define STATUS_ERROR                3
+    #define STATUS_QUEUE                4
+    #define STATUS_SCHEDULE_QUEUE       5
 
 
     //mDownloadFile RESTART, SPLIT
@@ -239,34 +251,78 @@
     #define YES                 0
     #define NO                  1
 
+    class mUrlName;
+    class mMainFrame;
+    class mBoxNew;
+    class mBoxOptions;
+    class mInProgressList;
+    class mFinishedList;
+    class mTaskBarIcon;
+    class mConnection;
+    class mClient;
+    class mServer;
+    class mDownloadThread;
+
+    WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
+
     class mDownloadFile
     {
     public:
-        bool free;
-        int index;
-        int status;
-        int restart;
-        int scheduled;
-        wxString name;            //DON'T CHANGE THIS VAR DIRECTLY - USE THE ChangeName() function
-        wxString destination;
-        wxString comments;
-        wxString user;
-        wxString password;
-        int percentual;
+        //FUNCTIONS
+        void RegisterListItemOnDisk();
+        void RemoveListItemFromDisk();
+        int GetStatus();
+        void SetAsActive();
+        void SetAsStoped(bool stopschedule = TRUE);
+        void SetAsFinished();
+        void ErrorOccurred();
+        void PutOnQueue();
+        bool IsScheduled();
+        void PutOnScheduleQueue();
+        int GetIndex();
+        wxString GetName();
+        wxString GetExposedName();
+        void SetExposedName(wxString name);
+        void UnSetExposedName();
+        wxString GetDestination();
+        wxString GetComments();
+        wxString GetUser();
+        wxString GetPassword();
+        int RestartSupport();
+        void SetRestartSupport(bool support = TRUE);
+        wxString GetContentType();
+        void SetContentType(wxString contenttype);
+        int GetNumberofParts();
+        int GetCurrentAttempt();
+        void ResetAttempts();
+        void IncrementAttempt();
+        wxString GetFirstUrl();
+        wxString GetNextUrl();
+        void SetFinishedDateTime(wxDateTime time);
+        wxDateTime GetFinishedDateTime();
+        void SetMD5(wxString md5);
+        int GetProgress();
+        void SetProgress(int percentual);
+        bool IsSplitted();
+        void Split(bool split);
+        bool WaitingForSplit();
+        void WaitSplit();
+        bool WriteIsPending();
+        void MarkWriteAsPending(bool pending);
+        bool RemoveIsPending();
+        void MarkRemoveAsPending(bool pending);
+        void SetFree(bool free = TRUE);
+        bool IsFree();
+
+        //PUBLIC VARIABLES
+        friend class mDownloadList;
         wxLongLong timepassed;
         wxLongLong timeremaining;
-        wxString MD5;
-        wxDateTime start;
-        wxDateTime end;
-        wxString urllist;
-        wxString contenttype;
-        int parts;
-        int currentattempt;
         wxLongLong totalsize;
         wxLongLong totalsizecompleted;
-        int totalspeed;
+        long totalspeed;
+
         bool criticalerror;
-        int split;
         bool speedpoint;
         int speedpointowner;
         wxMutex *mutex_speedcalc;
@@ -276,7 +332,50 @@
         wxLongLong sizecompleted[MAX_NUM_PARTS];
         long delta_size[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
+    private:
+        int index;
+        int status;
+        bool split;
+        bool waitbeforesplit;
+        bool free;
+        wxString name;
+        wxString exposedname;
+        wxString destination;
+        wxString comments;
+        wxString user;
+        wxString password;
+        wxString MD5;
+        int scheduled;
+        int restart;
+        wxString contenttype;
+        wxString urllist;
+        int parts;
+        int currentattempt;
+        wxDateTime start;
+        wxDateTime end;
+        int percentual;
+        bool writependig;
+        bool removepending;
     };
+
+    WX_DECLARE_LIST(mDownloadFile, mDownloadListType);
+
+    class mDownloadList: public mDownloadListType
+    {
+    public:
+        ~mDownloadList();
+        void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
+        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
+        void RemoveDownloadRegister(mDownloadFile *currentfile);
+        void ChangeDownload(mDownloadFile *file, mUrlName url,wxFileName destination, wxString user, wxString password, wxString comments);
+        void ChangeName(mDownloadFile *file, wxString name, int value = 0);
+        mDownloadFile *FindDownloadFile(wxString str);
+        void LoadDownloadListFromDisk();
+        void RecreateIndex();
+        static int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
+    };
+
+    WX_DECLARE_LIST(float, mGraphPoints);
 
     class mScheduleException
     {
@@ -316,6 +415,8 @@
         wxString shutdowncmd;
         wxString disconnectcmd;
         wxString destination;
+        wxString browserpath;
+        wxString filemanagerpath;
         int activatescheduling;
         wxDateTime startdatetime;
         wxDateTime finishdatetime;
@@ -327,23 +428,6 @@
         bool rememberboxnewoptions;
     };
 
-    WX_DECLARE_LIST(mDownloadFile, mDownloadList);
-    WX_DECLARE_LIST(float, mGraphPoints);
-
-    class mUrlName;
-    class mMainFrame;
-    class mBoxNew;
-    class mBoxOptions;
-    class mInProgressList;
-    class mFinishedList;
-    class mTaskBarIcon;
-    class mConnection;
-    class mClient;
-    class mServer;
-    class mDownloadThread;
-
-    WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
-
     class mApplication : public wxApp
     {
     public:
@@ -354,20 +438,14 @@
         bool NewInstance();
         mDownloadList downloadlist;
         mDownloadThreadArray *downloadthreads;
-        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
-        void RegisterListItemOnDisk(mDownloadFile *file);
-        void RecreateIndex();
-        void LoadDownloadListFromDisk();
-        void RemoveListItemFromDisk(mDownloadFile *file);
-        mDownloadFile *FindDownloadFile(wxString str);
-        void ChangeName(mDownloadFile *currentfile, wxString name, int value = 0);
-        wxString Configurations(int operation, wxString option, wxString value);
-        int Configurations(int operation, wxString option, int value);
-        long Configurations(int operation, wxString option,long value);
+        static wxString Configurations(int operation, wxString option, wxString value);
+        static int Configurations(int operation, wxString option, int value);
+        static long Configurations(int operation, wxString option,long value);
         mMainFrame *mainframe;
         wxLocale *m_locale;
         wxCmdLineParser *parameters;
         mServer *m_server;
+        wxSocketBase *dummy;
         mConnection *connection;
         wxSingleInstanceChecker *m_checker;
         wxCriticalSection m_critsect;
@@ -386,7 +464,7 @@
         void OnTimer(wxTimerEvent& event);
         bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show);
         bool StartDownload(mDownloadFile *downloadfile);
-        void StopDownload(mDownloadFile *downloadfile);
+        void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
         void OnRemove(wxCommandEvent& event);
         void OnSchedule(wxCommandEvent& event);
@@ -403,6 +481,7 @@
         void OnMove(wxCommandEvent& event);
         void OnDownloadAgain(wxCommandEvent& event);
         void OnCheckMD5(wxCommandEvent& event);
+        void OnOpenDestination(wxCommandEvent& event);
         void OnExportConf(wxCommandEvent& event);
         void OnImportConf(wxCommandEvent& event);
         void OnShutdown(wxCommandEvent& event);
@@ -412,11 +491,14 @@
         void OnExit(wxCommandEvent& event);
         void OnClose(wxCloseEvent& event);
         void OnAbout(wxCommandEvent& WXUNUSED(event));
-        void GenerateInProgressList();
-        void GenerateFinishedList();
+        void BrowserFile();
         void OnToolLeftClick(wxCommandEvent& event);
         void OnToolMouseMove(wxCommandEvent& event);
         void OnUpDown(bool up);
+        void OnOpenURL(wxCommandEvent& event);
+        void OnShutdownEvent(wxCommandEvent& event);
+        void OnDisconnectEvent(wxCommandEvent& event);
+        bool UpdateListItemField(mDownloadFile *current);
         mTaskBarIcon *taskbaricon;
         wxMenuBar *menubar;
         wxToolBar *toolbar;
@@ -478,16 +560,17 @@
     class mTaskBarIcon: public wxTaskBarIcon
     {
     public:
-       mTaskBarIcon(){};
-       void OnLButtonClick(wxTaskBarIconEvent&);
-       void OnMouseMove(wxTaskBarIconEvent&);
-       void OnClose(wxCommandEvent& event);
-       void OnHide(wxCommandEvent& event);
-       void OnNew(wxCommandEvent& event);
-       virtual wxMenu *CreatePopupMenu();
-       bool restoring;
+        mTaskBarIcon(mMainFrame *frame);
+        void OnLButtonClick(wxTaskBarIconEvent&);
+        void OnMouseMove(wxTaskBarIconEvent&);
+        void OnClose(wxCommandEvent& event);
+        void OnHide(wxCommandEvent& event);
+        void OnNew(wxCommandEvent& event);
+        virtual wxMenu *CreatePopupMenu();
+        bool restoring;
     private:
-       DECLARE_EVENT_TABLE()
+        mMainFrame *mainframe;
+        DECLARE_EVENT_TABLE()
     };
 
     class mBoxNew: public wxDialog
@@ -506,6 +589,8 @@
         void OnOk(wxCommandEvent& event);
         void OnCancel(wxCommandEvent& event);
         void OnButtonDir(wxCommandEvent& event);
+        void OnBrowserPath(wxCommandEvent& event);
+        void OnFileManagerPath(wxCommandEvent& event);
         void OnGraphBackgroundColour(wxCommandEvent& event);
         void OnGraphGridColour(wxCommandEvent& event);
         void OnGraphLineColour(wxCommandEvent& event);
@@ -518,33 +603,46 @@
         DECLARE_EVENT_TABLE()
     };
 
-    class wxDatePicker: public wxDialog
+    class mDatePicker: public wxDialog
     {
     public:
-        wxDatePicker::wxDatePicker(wxWindow* parent, wxWindowID id, const wxString& title, wxString date):
+        mDatePicker::mDatePicker(wxWindow* parent, wxWindowID id, const wxString& title, wxString date):
                 wxDialog(parent, id, title)
         {
-            int wdate,hdate,wbtn,hbtn;
+            //int wdate,hdate,wbtn,hbtn;
             wxDateTime tmpdate;
             tmpdate.ParseDate(date);
             m_datepicker = new wxCalendarCtrl(this,0,tmpdate,wxPoint(0,0),wxDefaultSize);
-            m_datepicker->GetClientSize(&wdate,&hdate);
             m_btnok = new wxButton(this,wxID_OK,_("Ok"));
-            m_btnok->GetClientSize(&wbtn,&hbtn);
-            m_btnok->SetSize(wdate-wbtn,hdate,-1,-1);
-            this->SetSize(-1,-1,wdate,hdate+hbtn);
+
+            grid_sizer = new wxFlexGridSizer(2, 1, 0, 0);
+            grid_sizer->Add(m_datepicker, 1, wxEXPAND, 0);
+            grid_sizer->Add(m_btnok, 0, wxALIGN_RIGHT|wxADJUST_MINSIZE, 0);
+            SetAutoLayout(true);
+            SetSizer(grid_sizer);
+            grid_sizer->Fit(this);
+            grid_sizer->SetSizeHints(this);
+            Layout();
+            //this->SetBestFittingSize();
             this->CentreOnParent();
         };
-        void wxDatePicker::OnOk(wxCommandEvent& event)
+        mDatePicker::~mDatePicker()
+        {
+            delete m_datepicker;
+            delete m_btnok;
+            delete grid_sizer;
+        };
+        void mDatePicker::OnOk(wxCommandEvent& event)
         {
             m_selecteddate = m_datepicker->GetDate().Format(wxT("%Y/%m/%d"));
             EndModal(wxID_OK);
         };
-        wxString wxDatePicker::GetSelectedDate()
+        wxString mDatePicker::GetSelectedDate()
         {
             return m_selecteddate;
         };
     private:
+        wxFlexGridSizer* grid_sizer;
         wxCalendarCtrl *m_datepicker;
         wxButton *m_btnok;
         wxString m_selecteddate;
@@ -575,16 +673,21 @@
     class mInProgressList : public wxListCtrl
     {
     public:
+        mInProgressList();
         void OnRClick(wxListEvent& event);
         void OnSelected(wxListEvent& event);
         void OnDeselected(wxListEvent& event);
-        void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
+        void SelectDeselect(bool selected,int selection);
         int Insert(mDownloadFile *current, int item);
         int GetCurrentSelection();
         void SetCurrentSelection(int selection);
         void RemoveItemListandFile(int item);
+        void HandleSelectDeselectEvents(bool value);
+        void GenerateList(wxImageList *imageslist);
+        mMainFrame *mainframe;
          DECLARE_DYNAMIC_CLASS(mInProgressList)
     private:
+        bool handleselectdeselectevents;
         DECLARE_EVENT_TABLE()
     };
 
@@ -592,12 +695,17 @@
     {
     public:
         void OnRClick(wxListEvent& event);
+        void OnDoubleClick(wxListEvent& event);
         void OnSelected(wxListEvent& event);
         void OnDeselected(wxListEvent& event);
-        void SelectUnselect(bool selected,int selection,mMainFrame *mainframe);
+        void OnLeaveWindow(wxMouseEvent& event);
+        void OnEnterWindow(wxMouseEvent& event);
+        void SelectUnselect(bool selected,int selection);
         int GetCurrentSelection();
         void SetCurrentSelection(int selection);
-
+        void GenerateList(wxListCtrl* list,wxImageList *imageslist);
+        static int CompareDates(long item1, long item2, long WXUNUSED(sortData));
+        mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mFinishedList)
     private:
         DECLARE_EVENT_TABLE()
@@ -665,8 +773,8 @@
         virtual void OnExit();
         int GetType();
         wxLongLong CurrentSize(wxString filepath,wxString filename);
-        wxSocketClient *ConnectHTTP(wxLongLong start);
-        wxSocketClient *ConnectFTP(wxLongLong start);
+        wxSocketClient *ConnectHTTP(wxLongLong *start);
+        wxSocketClient *ConnectFTP(wxLongLong *start);
         wxInputStream *ConnectLOCAL_FILE(wxLongLong start);
         int  DownloadPart(wxSocketClient *connection, wxInputStream *filestream, wxLongLong start, wxLongLong end);
                         //the parameter wxInputStream *filestream is used just for LOCAL_FILE
@@ -679,20 +787,21 @@
         int downloadpartindex;
         wxString currenturl;
         bool redirecting;
-        bool restart;
+        mDownloadList *downloadlist;
     };
-
-    wxString int2wxstr(long value,int format = 0);
-    wxString TimeString(long value);
-    wxString TimeString(wxLongLong value);
-    wxString GetLine(wxString text, int line);
-    char *wxstr2str(wxString wxstr);
-    wxString str2wxstr(char *str);
-    wxString str2wxstr(char str);
-    wxString ByteString(long size);
-    wxString ByteString(wxLongLong size);
-    int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
-    wxLongLong wxstrtolonglong(wxString string);
-    double wxlonglongtodouble(wxLongLong value);
-    int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
+    class MyUtilFunctions
+    {
+    public:
+        static wxString int2wxstr(long value,int format = 0);
+        static wxString TimeString(long value);
+        static wxString TimeString(wxLongLong value);
+        static wxString GetLine(wxString text, int line);
+        static char *wxstr2str(wxString wxstr);
+        static wxString str2wxstr(char *str);
+        static wxString str2wxstr(char str);
+        static wxString ByteString(long size);
+        static wxString ByteString(wxLongLong size);
+        static wxLongLong wxstrtolonglong(wxString string);
+        static double wxlonglongtodouble(wxLongLong value);
+    };
 #endif

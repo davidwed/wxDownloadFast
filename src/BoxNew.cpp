@@ -50,6 +50,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             return;
         }
         XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(url);
+        delete urltmp;
     }
     else
     {
@@ -86,6 +87,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
                 return;
             }
             XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->SetString(j,url);
+            delete urltmp;
         }
         if (!atleastoneitemischecked)
         {
@@ -106,6 +108,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         wxMessageBox(_("I can't split the file in so many pieces!"),_("Error..."),wxOK | wxICON_ERROR,this);
         return;
     }
+    delete desttmp;
     EndModal(XRCID("btnok"));
 }
 
@@ -117,7 +120,7 @@ void mBoxNew::OnCancel(wxCommandEvent& event)
 void mBoxNew::OnButtonDir(wxCommandEvent& event)
 {
      wxString dir;
-     dir = wxDirSelector(_("Select the directory:"),wxGetApp().mainframe->programoptions.destination);
+     dir = wxDirSelector(_("Select the directory:"),XRCCTRL(*this, "edtdestination",wxTextCtrl)->GetValue());
      if (dir != wxEmptyString)
          XRCCTRL(*this, "edtdestination",wxTextCtrl)->SetValue(dir);
 }

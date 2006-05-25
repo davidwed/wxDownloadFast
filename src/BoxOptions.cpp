@@ -17,6 +17,9 @@ BEGIN_EVENT_TABLE(mBoxOptions, wxDialog)
     EVT_BUTTON(XRCID("btnoptionsave"), mBoxOptions::OnOk)
     EVT_BUTTON(XRCID("btnoptioncancel"), mBoxOptions::OnCancel)
     EVT_BUTTON(XRCID("btnoptiondestination"), mBoxOptions::OnButtonDir)
+    EVT_BUTTON(XRCID("btnfilemanagerpath"), mBoxOptions::OnFileManagerPath)
+    EVT_BUTTON(XRCID("btnbrowserpath"), mBoxOptions::OnBrowserPath)
+
     EVT_BUTTON(XRCID("graphbtnback"), mBoxOptions::OnGraphBackgroundColour)
     EVT_BUTTON(XRCID("graphbtngrid"), mBoxOptions::OnGraphGridColour)
     EVT_BUTTON(XRCID("graphbtnline"), mBoxOptions::OnGraphLineColour)
@@ -31,8 +34,8 @@ BEGIN_EVENT_TABLE(mBoxOptionsColorPanel, wxPanel)
     EVT_PAINT(mBoxOptionsColorPanel::OnPaint)
 END_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(wxDatePicker, wxDialog)
-    EVT_BUTTON(wxID_OK,wxDatePicker::OnOk)
+BEGIN_EVENT_TABLE(mDatePicker, wxDialog)
+    EVT_BUTTON(wxID_OK,mDatePicker::OnOk)
 END_EVENT_TABLE()
 
 void mBoxOptions::OnOk(wxCommandEvent& event)
@@ -51,6 +54,20 @@ void mBoxOptions::OnButtonDir(wxCommandEvent& event)
      dir = wxDirSelector(_("Select the directory:"));
      if (dir != wxEmptyString)
          XRCCTRL(*this, "edtdestination",wxTextCtrl)->SetValue(dir);
+}
+
+void mBoxOptions::OnBrowserPath(wxCommandEvent& event)
+{
+    wxFileDialog dialog(this, _("Choose a file..."),wxEmptyString,wxEmptyString,wxT("*"),wxOPEN | wxFILE_MUST_EXIST);
+    if (dialog.ShowModal()  == wxID_OK)
+        XRCCTRL(*this, "edtbrowserpath",wxTextCtrl)->SetValue(dialog.GetPath());
+}
+
+void mBoxOptions::OnFileManagerPath(wxCommandEvent& event)
+{
+    wxFileDialog dialog(this, _("Choose a file..."),wxEmptyString,wxEmptyString,wxT("*"),wxOPEN | wxFILE_MUST_EXIST);
+    if (dialog.ShowModal()  == wxID_OK)
+        XRCCTRL(*this, "edtfilemanagerpath",wxTextCtrl)->SetValue(dialog.GetPath());
 }
 
 void mBoxOptions::OnGraphBackgroundColour(wxCommandEvent& event)
@@ -106,16 +123,14 @@ void mBoxOptionsColorPanel::OnPaint(wxPaintEvent &event)
 
 void mBoxOptions::OnButtonStartDate(wxCommandEvent& event)
 {
-    wxDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtstartdate",wxTextCtrl)->GetValue());
-    datepicker.SetBestFittingSize();
+    mDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtstartdate",wxTextCtrl)->GetValue());
     if (datepicker.ShowModal() == wxID_OK)
         XRCCTRL(*this, "edtstartdate",wxTextCtrl)->SetValue(datepicker.GetSelectedDate());
 }
 
 void mBoxOptions::OnButtonFinishDate(wxCommandEvent& event)
 {
-    wxDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtfinishdate",wxTextCtrl)->GetValue());
-    datepicker.SetBestFittingSize();
+    mDatePicker datepicker(this,0,_("Select the date..."),XRCCTRL(*this, "edtfinishdate",wxTextCtrl)->GetValue());
     if (datepicker.ShowModal() == wxID_OK)
         XRCCTRL(*this, "edtfinishdate",wxTextCtrl)->SetValue(datepicker.GetSelectedDate());
 }
@@ -125,8 +140,8 @@ void mBoxOptions::OnAdd(wxCommandEvent& event)
     if (XRCCTRL(*this, "lstexceptionlist",wxListBox)->GetCount() < MAX_SCHEDULE_EXCEPTIONS)
     {
         wxString start,finish,day,string;
-        start = int2wxstr(XRCCTRL(*this, "spinexceptionstarthour",wxSpinCtrl)->GetValue(),2) + wxT(":") + int2wxstr(XRCCTRL(*this, "spinexceptionstartminute",wxSpinCtrl)->GetValue(),2);
-        finish = int2wxstr(XRCCTRL(*this, "spinexceptionfinishhour",wxSpinCtrl)->GetValue(),2) + wxT(":") + int2wxstr(XRCCTRL(*this, "spinexceptionfinishminute",wxSpinCtrl)->GetValue(),2);
+        start = MyUtilFunctions::int2wxstr(XRCCTRL(*this, "spinexceptionstarthour",wxSpinCtrl)->GetValue(),2) + wxT(":") + MyUtilFunctions::int2wxstr(XRCCTRL(*this, "spinexceptionstartminute",wxSpinCtrl)->GetValue(),2);
+        finish = MyUtilFunctions::int2wxstr(XRCCTRL(*this, "spinexceptionfinishhour",wxSpinCtrl)->GetValue(),2) + wxT(":") + MyUtilFunctions::int2wxstr(XRCCTRL(*this, "spinexceptionfinishminute",wxSpinCtrl)->GetValue(),2);
         string = start + wxT(" | ") + finish + wxT(" | ") + XRCCTRL(*this, "comboweekdays",wxComboBox)->GetValue();
         XRCCTRL(*this, "lstexceptionlist",wxListBox)->InsertItems(1,&string,0);
     }

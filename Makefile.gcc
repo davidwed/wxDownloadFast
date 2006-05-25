@@ -11,9 +11,9 @@ WINDRES = $(CROSS_PREFIX)windres
 STRIP = $(CROSS_PREFIX)strip
 
 ifeq ($(DEBUG), 1)
-WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=yes
+	WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=yes
 else
-WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=no
+	WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=no
 endif
 
 WXRC = wxrc
@@ -21,41 +21,48 @@ INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
+OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
+
 ifeq ($(XRC), 1)
-OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o
+	OBJ = $(OBJ_TMP)
 else
-OBJ  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)Resources.o
+	OBJ =$(OBJ_TMP) $(BUILD_DIR)Resources.o
 endif
 
 LINKOBJ  = $(OBJ)
 LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
 INCS =  `$(WXCONFIG) --cxxflags`
+
 ifeq ($(WXWIDGETS_DIR)1, 1)
-RESINCS = --include-dir="/usr/local/include/wx-2.6"
+	RESINCS = --include-dir="/usr/local/include/wx-2.6"
 else
-RESINCS = --include-dir="$(WXWIDGETS_DIR)include"
+	RESINCS = --include-dir="$(WXWIDGETS_DIR)include"
 endif
 
 
 ifeq ($(XRC), 1)
-	ifeq ($(DEBUG), 1)
-	CXXFLAGS = $(INCS) -Wall -O2 -MMD -g -ggdb
-	else
-	CXXFLAGS = $(INCS) -Wall -O2 -MMD
-	endif
+	XRC_PARAM =
 else
-	ifeq ($(DEBUG), 1)
-	CXXFLAGS = $(INCS) -Wall -O2 -MMD -g -ggdb -D RESOURCES_CPP
-	else
-	CXXFLAGS = $(INCS) -Wall -O2 -MMD -D RESOURCES_CPP
-	endif
+	XRC_PARAM = -D RESOURCES_CPP
+endif
+
+ifeq ($(DEBUG), 1)
+	DEBUG_PARAM = -g -ggdb
+else
+	DEBUG_PARAM =
+endif
+
+ifeq ($(CPU)0, 0)
+	CPU_PARAM = 
+else
+	CPU_PARAM = -march=$(CPU)
 endif
 
 WXMD5 = libwxmd5.a
-CFLAGS = $(INCS)
+CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = $(BIN).res
-VERSION = 0.4.1
+VERSION = 0.4.3
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -121,6 +128,9 @@ $(BUILD_DIR)TaskBarIcon.o: src/TaskBarIcon.cpp
 
 $(BUILD_DIR)urlname.o: src/urlname.cpp
 	$(CPP) -c src/urlname.cpp -o $(BUILD_DIR)urlname.o $(CXXFLAGS)
+
+$(BUILD_DIR)UtilFunctions.o: src/UtilFunctions.cpp
+	$(CPP) -c src/UtilFunctions.cpp -o $(BUILD_DIR)UtilFunctions.o $(CXXFLAGS)
 
 $(BUILD_DIR)wxDFast.o: src/wxDFast.cpp
 	$(CPP) -c src/wxDFast.cpp -o $(BUILD_DIR)wxDFast.o $(CXXFLAGS)

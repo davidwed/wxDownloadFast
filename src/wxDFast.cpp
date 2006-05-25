@@ -13,7 +13,7 @@
 #include "wxDFast.h"
 #include "wx/listimpl.cpp"
 
-WX_DEFINE_LIST(mDownloadList);
+WX_DEFINE_LIST(mDownloadListType);
 WX_DEFINE_LIST(mGraphPoints);
 IMPLEMENT_DYNAMIC_CLASS(mInProgressList, wxListCtrl)
 IMPLEMENT_DYNAMIC_CLASS(mFinishedList, wxListCtrl)
@@ -53,6 +53,8 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         if (strtemp != wxEmptyString)
             urls.Add(strtemp);
     }
+    delete tkz01;
+    delete tkz02;
     wxLogNull nolog;
     if ((textfile != wxT("NONE")) && (file.Open(textfile)))
     {
@@ -133,32 +135,27 @@ mApplication::mApplication(): m_condAllDone(m_mutexAllDone)
 
 mApplication::~mApplication()
 {
-
+    delete mainframe;
+    delete m_locale;
+    delete dummy;
+    delete m_server;
+    delete parameters;
 }
 
 bool mApplication::OnInit()
 {
-//    const wxString name = wxString::Format("MyApp-%s", wxGetUserId().c_str());
     parameters = new wxCmdLineParser(cmdlinedesc, argc, argv);
     if (parameters->Parse() != 0)
         exit(TRUE);
 
-//    wxProgressDialog *caixa = new wxProgressDialog(_("Verifying..."),_("Verifying if some instance is already active..."));
-//    m_checker = new wxSingleInstanceChecker(name);
-//    if ( m_checker->IsAnotherRunning() )
-//    {
-           if (NewInstance())
-            return FALSE;
-//    }
-//    caixa->Update(100);
-//    delete caixa;
+    if (NewInstance())
+    return FALSE;
 
     wxString service = IPC_SERVICE; //REGISTER THIS INSTANCE
     m_server = new mServer;
     m_server->Create(service);
 
-    wxSocketBase *dummy;
-    dummy = new wxSocketBase(); //Para o socket funcionar dentro de threads*/
+    dummy = new wxSocketBase(); //TO SOCKETS TO WORK INSIDE THREADS
     dummy->SetTimeout(0);
 
     wxImage::AddHandler(new wxXPMHandler);
@@ -171,24 +168,24 @@ bool mApplication::OnInit()
     wxXmlResource::Get()->Load(wxT("resources/boxoptions.xrc"));
     #endif
     m_locale = new wxLocale();
-    m_locale->Init(Configurations(READ,LANGUAGE_REG,0));
+    m_locale->Init(mApplication::Configurations(READ,LANGUAGE_REG,0));
     m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
     m_locale->AddCatalog(wxT("wxDFast"));
-    LoadDownloadListFromDisk();
+    downloadlist.LoadDownloadListFromDisk();
     mainframe = NULL;
     mainframe = new mMainFrame();
     {
         int x,y,width,height,maximized,separatorposition01,separatorposition02,details;
         wxSplitterWindow *splitter01 = XRCCTRL(*mainframe, "splitter01",wxSplitterWindow);
         wxSplitterWindow *splitter02 = XRCCTRL(*mainframe, "splitter02",wxSplitterWindow);
-        x = Configurations(READ,POS_X_REG,-1);
-        y = Configurations(READ,POS_Y_REG,-1);
-        width = Configurations(READ,SIZE_X_REG,-1);
-        height = Configurations(READ,SIZE_Y_REG,-1);
-        maximized = Configurations(READ,MAXIMIZED_REG,0);
-        separatorposition01 = Configurations(READ,SEPARATOR01_REG,-1);
-        separatorposition02 = Configurations(READ,SEPARATOR02_REG,-1);
-        details = Configurations(READ,DETAILS_REG,-1);
+        x = mApplication::Configurations(READ,POS_X_REG,-1);
+        y = mApplication::Configurations(READ,POS_Y_REG,-1);
+        width = mApplication::Configurations(READ,SIZE_X_REG,-1);
+        height = mApplication::Configurations(READ,SIZE_Y_REG,-1);
+        maximized = mApplication::Configurations(READ,MAXIMIZED_REG,0);
+        separatorposition01 = mApplication::Configurations(READ,SEPARATOR01_REG,-1);
+        separatorposition02 = mApplication::Configurations(READ,SEPARATOR02_REG,-1);
+        details = mApplication::Configurations(READ,DETAILS_REG,-1);
         mainframe->SetSize(x,y,width,height);
         if (maximized)               mainframe->Maximize(TRUE);
         if (!details)            splitter01->Unsplit();
@@ -252,7 +249,6 @@ int mApplication::OnExit()
 {
      // the mutex must be unlocked before being destroyed
     m_mutexAllDone.Unlock();
-    delete m_server;
 //    delete m_checker;
     return 0;
 }

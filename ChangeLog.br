@@ -1,3 +1,39 @@
+0.4.3
+===================================================
+- Corrigido bug que fazia com que o primeiro item
+  da lista de downloads conclúidos, fosse substi
+  tuido por aquele na qual foi aberto a pasta de
+  destino
+- Corrigido problema ao visualizar o tamanho de
+  downloads já concluídos que fossem maior que 2Gb
+- Corrigidos alguns problemas de acesso a memória
+- Feita um reformulação total da classe 
+  mDownloadFile, que armazena as informações dos
+  downloads, ficando mais encapsulada
+
+0.4.2
+===================================================
+- Corrigido problema com o Calendário para seleção
+  de datas na opção de agendamento
+- Corrigido problemas com arquivos com caracteres
+  proibidos
+- Corrigido problema com o controle de calendário
+- Adicionado caixa de diálogo que pergunta sobre
+  abrir arquivos HTML no browser padrão
+- Adicionada comando "Abrir Diretório de Destino"
+  que abre o diretório de destino do dowload sele-
+  cionado
+- Adiciona aba "Caminhos" na caixa de opções. Nes-
+  ta são definidos os programas externos utiliza-
+  dos, como navegador internet, gerenciador de ar-
+  quivos, etc
+- Agora o tamanho dos arquivos são comparados com
+  os valores anteriores já armazenados. De modo
+  a ter certeza que o tamanho do arquivo não mudou
+  e que o arquivo não ficará corrompido
+- A estrutura interna do programa foi melhorada
+- Feito outros melhoramentos
+
 0.4.1
 ===================================================
 - Adicionado idioma Alemão

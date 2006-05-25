@@ -18,26 +18,32 @@ BEGIN_EVENT_TABLE(mInProgressList, wxListCtrl)
     EVT_LIST_ITEM_RIGHT_CLICK(XRCID("inprogresslist"), mInProgressList::OnRClick)
 END_EVENT_TABLE()
 
+mInProgressList::mInProgressList()
+{
+    handleselectdeselectevents = TRUE;
+}
+
 void mInProgressList::OnRClick(wxListEvent& event)
 {
     if (GetCurrentSelection() >= 0)
     {
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menustop"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menumove"),FALSE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menumd5"),FALSE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menuproperties"),TRUE);
-        wxGetApp().mainframe->menupopup->Enable(XRCID("menuagain"),FALSE);
-        wxGetApp().mainframe->PopupMenu(wxGetApp().mainframe->menupopup,event.GetPoint());
+        mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menustop"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menumove"),FALSE);
+        mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menumd5"),FALSE);
+        mainframe->menupopup->Enable(XRCID("menuopendestination"),FALSE);
+        mainframe->menupopup->Enable(XRCID("menuproperties"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menuagain"),FALSE);
+        mainframe->PopupMenu(mainframe->menupopup,event.GetPoint());
     }
 }
 
 int mInProgressList::GetCurrentSelection()
 {
-    wxNotebook *notebook = XRCCTRL(*(wxGetApp().mainframe), "notebook01",wxNotebook );
+    wxNotebook *notebook = XRCCTRL(*(mainframe), "notebook01",wxNotebook );
     int selection = -1;
     if (notebook->GetSelection() == 0)
     {
@@ -68,15 +74,17 @@ void mInProgressList::SetCurrentSelection(int selection)
 
 void mInProgressList::OnSelected(wxListEvent& event)
 {
-    SelectUnselect(TRUE,event.GetIndex(),wxGetApp().mainframe);
+    if (handleselectdeselectevents)
+        SelectDeselect(TRUE,event.GetIndex());
 }
 
 void mInProgressList::OnDeselected(wxListEvent& event)
 {
-    SelectUnselect(FALSE,-1,wxGetApp().mainframe);
+    if (handleselectdeselectevents)
+        SelectDeselect(FALSE,-1);
 }
 
-void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mainframe)
+void mInProgressList::SelectDeselect(bool selected,int selection)
 {
     if (!selected)
         SetCurrentSelection(selection);
@@ -88,6 +96,7 @@ void mInProgressList::SelectUnselect(bool selected,int selection,mMainFrame *mai
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
+    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
     mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
@@ -104,62 +113,119 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
     int currentstatus;
     if (current != NULL)
     {
-        currentstatus = (*current).status;
+        currentstatus = current->GetStatus();
         if (item == -1)
         {
-           item = (*current).index;
+           item = current->GetIndex();
            tmp = this->InsertItem(item, wxEmptyString,currentstatus);
            this->SetItemData(tmp, item);
            this->SetItem(item, INPROGRESS_ICON01, wxEmptyString,currentstatus);
         }
         else
         {
-           wxListItem listitem;
-           listitem.SetId(item);
-           listitem.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
-           listitem.SetColumn(INPROGRESS_ICON01);
-           this->GetItem(listitem);
-           listitem.SetImage(currentstatus);
-           this->SetItem(listitem);
+            wxListItem listitem;
+            listitem.SetId(item);
+            listitem.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
+            listitem.SetColumn(INPROGRESS_ICON01);
+            this->GetItem(listitem);
+            if (currentstatus != listitem.GetImage())
+            {
+                listitem.SetImage(currentstatus);
+                this->SetItem(listitem);
+            }
         }
-        if ((*current).restart == YES)
+        if (current->RestartSupport() == YES)
             this->SetItem(item, INPROGRESS_ICON02, _("   [ Yes ]"));
-        else if ((*current).restart == NO)
+        else if (current->RestartSupport() == NO)
             this->SetItem(item, INPROGRESS_ICON02, _("   [ No  ]"));
         else
             this->SetItem(item, INPROGRESS_ICON02, wxT("   [     ]"));
-        this->SetItem(item, INPROGRESS_NAME, (*current).name);
-        this->SetItem(item, INPROGRESS_SIZE, ByteString((*current).totalsize));
-        this->SetItem(item, INPROGRESS_COMPLETED, ByteString((*current).totalsizecompleted));
-        this->SetItem(item, INPROGRESS_PERCENTUAL, int2wxstr((*current).percentual) + wxT(" %"));
-        this->SetItem(item, INPROGRESS_TIMEPASSED, TimeString((*current).timepassed));
-        this->SetItem(item, INPROGRESS_TIMEREMAINING, TimeString((*current).timeremaining));
-        this->SetItem(item, INPROGRESS_SPEED, ByteString((*current).totalspeed)+wxT("/s"));
-        this->SetItem(item, INPROGRESS_ATTEMPTS, int2wxstr((*current).currentattempt));
-        this->SetItem(item, INPROGRESS_URL, (*current).urllist);
+        this->SetItem(item, INPROGRESS_NAME, current->GetExposedName());
+        this->SetItem(item, INPROGRESS_SIZE, MyUtilFunctions::ByteString(current->totalsize));
+        this->SetItem(item, INPROGRESS_COMPLETED, MyUtilFunctions::ByteString(current->totalsizecompleted));
+        this->SetItem(item, INPROGRESS_PERCENTUAL, MyUtilFunctions::int2wxstr(current->GetProgress()) + wxT(" %"));
+        this->SetItem(item, INPROGRESS_TIMEPASSED, MyUtilFunctions::TimeString(current->timepassed));
+        this->SetItem(item, INPROGRESS_TIMEREMAINING, MyUtilFunctions::TimeString(current->timeremaining));
+        this->SetItem(item, INPROGRESS_SPEED, MyUtilFunctions::ByteString(current->totalspeed)+wxT("/s"));
+        this->SetItem(item, INPROGRESS_ATTEMPTS, MyUtilFunctions::int2wxstr(current->GetCurrentAttempt()));
+        this->SetItem(item, INPROGRESS_URL, current->GetFirstUrl());
     }
     return item;
 }
 
-void mInProgressList::RemoveItemListandFile(int item)
+void mInProgressList::HandleSelectDeselectEvents(bool value)
 {
-    if ((item >=0) && (item < GetItemCount()))
+    handleselectdeselectevents = value;
+}
+
+void mInProgressList::GenerateList(wxImageList *imageslist)
+{
+    wxListItem itemCol;
+
+    this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
+    itemCol.m_mask = wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE;
+    itemCol.m_text = wxEmptyString;
+    itemCol.m_image = -1;
+    this->ClearAll();
+    this->InsertColumn(INPROGRESS_ICON01, itemCol);
+
+    itemCol.m_text = _("Restart");
+    this->InsertColumn(INPROGRESS_ICON02, itemCol);
+
+    itemCol.m_text = _("Filename");
+    this->InsertColumn(INPROGRESS_NAME, itemCol);
+
+    itemCol.m_text = _("Size");
+    this->InsertColumn(INPROGRESS_SIZE, itemCol);
+
+    itemCol.m_text = _("Completed");
+    this->InsertColumn(INPROGRESS_COMPLETED, itemCol);
+
+    itemCol.m_text = _("Percentual");
+    this->InsertColumn(INPROGRESS_PERCENTUAL, itemCol);
+
+    itemCol.m_text = _("Time Passed");
+    this->InsertColumn(INPROGRESS_TIMEPASSED, itemCol);
+
+    itemCol.m_text = _("Remaining");
+    this->InsertColumn(INPROGRESS_TIMEREMAINING, itemCol);
+
+    itemCol.m_text = _("Speed");
+    this->InsertColumn(INPROGRESS_SPEED, itemCol);
+
+    itemCol.m_text = _("Attempts");
+    this->InsertColumn(INPROGRESS_ATTEMPTS, itemCol);
+
+    itemCol.m_text = _("URL");
+    this->InsertColumn(INPROGRESS_URL, itemCol);
+
+    this->Hide();
     {
-        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(item)->GetData();
-        if ((item + 1) < GetItemCount())
-        {
-            int count = item;
-            for ( mDownloadList::Node *node = wxGetApp().downloadlist.Item(item+1); node; node = node->GetNext() )
-            {
-                node->GetData()->index = count;
-                wxGetApp().RegisterListItemOnDisk(node->GetData());
-                Insert(node->GetData(),count);
-                count++;
-            }
-        }
-        wxGetApp().downloadlist.DeleteObject(currentfile);
-        delete currentfile;
-        DeleteItem(GetItemCount()-1);
-        SelectUnselect(FALSE,-1,wxGetApp().mainframe);
+        this->SetColumnWidth(INPROGRESS_ICON01,20);
+        this->SetColumnWidth(INPROGRESS_ICON02,80);
+        this->SetColumnWidth(INPROGRESS_NAME,160);
+        this->SetColumnWidth(INPROGRESS_SIZE,100);
+        this->SetColumnWidth(INPROGRESS_COMPLETED,100);
+        this->SetColumnWidth(INPROGRESS_PERCENTUAL,100);
+        this->SetColumnWidth(INPROGRESS_TIMEPASSED,100);
+        this->SetColumnWidth(INPROGRESS_TIMEREMAINING,100);
+        this->SetColumnWidth(INPROGRESS_SPEED,100);
+        this->SetColumnWidth(INPROGRESS_ATTEMPTS,100);
+        this->SetColumnWidth(INPROGRESS_URL,300);
     }
+    int i=0;
+    bool problemwithindex = FALSE;
+    for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
+    {
+        mDownloadFile *current = node->GetData();
+        if (current->GetIndex() != i)
+            problemwithindex = TRUE;
+        this->Insert(current,-1);
+        i++;
+    }
+    if (problemwithindex)
+        wxGetApp().downloadlist.RecreateIndex();
+
+    this->SelectDeselect(FALSE,-1);
+    this->Show();
 }

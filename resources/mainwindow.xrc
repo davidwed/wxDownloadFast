@@ -95,6 +95,9 @@
                 <object class="wxMenuItem" name="menumd5">
                    <label>Check Integrity</label>
                 </object>
+                <object class="wxMenuItem" name="menuopendestination">
+                   <label>Open Destination Directory</label>
+                </object>
                 <object class="wxMenuItem" name="menuagain">
                    <label>Download File Again</label>
                 </object>
