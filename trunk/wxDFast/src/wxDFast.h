@@ -126,7 +126,7 @@
     const wxString TIMEPASSED_REG = wxT("timepassed");
     const wxString PERCENTUAL_REG = wxT("percentual");
     const wxString SPEED_REG = wxT("speed");
-    const wxString URL1_REG = wxT("url1");
+    const wxString URL_REG = wxT("url");
     const wxString MD5_REG = wxT("md5");
     const wxString COMMENTS_REG = wxT("comments");
     const wxString CONTENTTYPE_REG = wxT("contenttype");
@@ -246,8 +246,7 @@
     #define STATUS_SCHEDULE_QUEUE       5
 
 
-    //mDownloadFile RESTART, SPLIT
-    #define WAIT               -1
+    //mDownloadFile RESTART
     #define YES                 0
     #define NO                  1
 
@@ -264,10 +263,16 @@
     class mDownloadThread;
 
     WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
+    WX_DECLARE_LIST(mUrlName, mUrlList);
 
     class mDownloadFile
     {
     public:
+        ~mDownloadFile()
+        {
+            if (this->urllist)
+                delete this->urllist;
+        };
         //FUNCTIONS
         void RegisterListItemOnDisk();
         void RemoveListItemFromDisk();
@@ -296,8 +301,11 @@
         int GetCurrentAttempt();
         void ResetAttempts();
         void IncrementAttempt();
-        wxString GetFirstUrl();
-        wxString GetNextUrl();
+        mUrlName GetFirstUrl();
+        mUrlName GetNextUrl();
+        bool AppendUrl(mUrlName *url);
+        int GetUrlCount();
+        wxArrayString GetUrlArray();
         void SetFinishedDateTime(wxDateTime time);
         wxDateTime GetFinishedDateTime();
         void SetMD5(wxString md5);
@@ -348,7 +356,8 @@
         int scheduled;
         int restart;
         wxString contenttype;
-        wxString urllist;
+        mUrlList *urllist;
+        unsigned int currenturl;
         int parts;
         int currentattempt;
         wxDateTime start;
@@ -363,11 +372,10 @@
     class mDownloadList: public mDownloadListType
     {
     public:
-        ~mDownloadList();
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        int CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
-        void ChangeDownload(mDownloadFile *file, mUrlName url,wxFileName destination, wxString user, wxString password, wxString comments);
+        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString comments);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
         mDownloadFile *FindDownloadFile(wxString str);
         void LoadDownloadListFromDisk();
@@ -462,7 +470,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show);
+        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show,bool permitdifferentnames);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
@@ -482,6 +490,7 @@
         void OnDownloadAgain(wxCommandEvent& event);
         void OnCheckMD5(wxCommandEvent& event);
         void OnOpenDestination(wxCommandEvent& event);
+        void OnCopyDownloadData(wxCommandEvent& event);
         void OnExportConf(wxCommandEvent& event);
         void OnImportConf(wxCommandEvent& event);
         void OnShutdown(wxCommandEvent& event);
@@ -579,7 +588,11 @@
         void OnOk(wxCommandEvent& event);
         void OnCancel(wxCommandEvent& event);
         void OnButtonDir(wxCommandEvent& event);
+        void OnButtonAdd(wxCommandEvent& event);
+        bool PermitDifferentNames();
+        void SetDifferentNamesPermition(bool permit);
     private:
+        bool permitdifferentnames;
         DECLARE_EVENT_TABLE()
     };
 
@@ -675,8 +688,11 @@
     public:
         mInProgressList();
         void OnRClick(wxListEvent& event);
+        void OnDoubleClick(wxListEvent& event);
         void OnSelected(wxListEvent& event);
         void OnDeselected(wxListEvent& event);
+        void OnLeaveWindow(wxMouseEvent& event);
+        void OnEnterWindow(wxMouseEvent& event);
         void SelectDeselect(bool selected,int selection);
         int Insert(mDownloadFile *current, int item);
         int GetCurrentSelection();
@@ -703,7 +719,7 @@
         void SelectUnselect(bool selected,int selection);
         int GetCurrentSelection();
         void SetCurrentSelection(int selection);
-        void GenerateList(wxListCtrl* list,wxImageList *imageslist);
+        void GenerateList(wxImageList *imageslist);
         static int CompareDates(long item1, long item2, long WXUNUSED(sortData));
         mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mFinishedList)
@@ -725,7 +741,7 @@
     public:
         mUrlName();
         mUrlName(wxString uri);
-        ~mUrlName();
+        //~mUrlName();
         wxString GetHost();
         wxString GetPort();
         wxString GetDir();
@@ -733,7 +749,7 @@
         wxString GetFullRealName();
         wxString GetFullPath();
         int Type();
-        bool UrlIsValid();
+        bool IsComplete();
     };
 
     class mFTP: public wxFTP
@@ -771,7 +787,6 @@
         // called when the thread exits - whether it terminates normally or is
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
-        int GetType();
         wxLongLong CurrentSize(wxString filepath,wxString filename);
         wxSocketClient *ConnectHTTP(wxLongLong *start);
         wxSocketClient *ConnectFTP(wxLongLong *start);
@@ -785,7 +800,7 @@
         mDownloadFile *downloadfile;
         mOptions *programoptions;
         int downloadpartindex;
-        wxString currenturl;
+        mUrlName currenturl;
         bool redirecting;
         mDownloadList *downloadlist;
     };

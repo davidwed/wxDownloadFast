@@ -55,7 +55,7 @@ endif
 ifeq ($(CPU)0, 0)
 	CPU_PARAM = 
 else
-	CPU_PARAM = -march=$(CPU)
+	CPU_PARAM = -mtune=$(CPU)
 endif
 
 WXMD5 = libwxmd5.a

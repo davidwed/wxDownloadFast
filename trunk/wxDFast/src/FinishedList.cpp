@@ -51,6 +51,7 @@ void mFinishedList::OnRClick(wxListEvent& event)
         mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
         mainframe->menupopup->Enable(XRCID("menumove"),TRUE);
         mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menucopydownloaddata"),TRUE);
         mainframe->menupopup->Enable(XRCID("menumd5"),TRUE);
         mainframe->menupopup->Enable(XRCID("menuopendestination"),TRUE);
         mainframe->menupopup->Enable(XRCID("menuproperties"),FALSE);
@@ -111,12 +112,32 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
     mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),selected);
     mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
+
+    infolist->ClearAll();
+    //infolist->SetBackgroundColour(BLUE);
+    //infolist->SetTextColour(*wxWHITE);
+    infolist->InsertColumn(0, wxEmptyString);
+    infolist->InsertColumn(1, wxEmptyString);
+    infolist->SetColumnWidth(0,120);
+    infolist->SetColumnWidth(1,400);
+    infolist->InsertItem(0, _("Name"));
+    infolist->InsertItem(1, _("File type"));
+    infolist->InsertItem(2, _("Size"));
+    infolist->InsertItem(3, _("Time"));
+    infolist->InsertItem(4, _("Destination"));
+    infolist->InsertItem(5, _("Start"));
+    infolist->InsertItem(6, _("Finished"));
+    infolist->InsertItem(7, _("MD5"));
+    infolist->InsertItem(8, _("Comments"));
+    infolist->InsertItem(9, _("URLs"));
+
     if (selected)
     {
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
@@ -139,10 +160,6 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
         str = wxEmptyString;
         config->Read(SIZE_REG,&str);
         infolist->SetItem(2,1,MyUtilFunctions::ByteString(MyUtilFunctions::wxstrtolonglong(str)) + wxT(" (") + str + wxT(" Bytes)"));
-
-        //value = 0;
-        //config->Read(SPEED_REG,&value);
-        //infolist->SetItem(3,1,MyUtilFunctions::ByteString(value)+wxT("/s"));
 
         str = wxEmptyString;
         config->Read(TIMEPASSED_REG,&str);
@@ -173,12 +190,28 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
         infolist->SetItem(7,1,str);
 
         str = wxEmptyString;
-        config->Read(URL1_REG,&str);
+        config->Read(COMMENTS_REG,&str);
         infolist->SetItem(8,1,str);
 
         str = wxEmptyString;
-        config->Read(COMMENTS_REG,&str);
+        config->Read(URL_REG + wxT("1"),&str);
         infolist->SetItem(9,1,str);
+
+        bool existurl = TRUE;
+        int count = 2;
+        while (existurl)
+        {
+            str = wxEmptyString;
+            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
+            if (str.IsEmpty())
+                break;
+            else
+            {
+                infolist->InsertItem(8+count, wxEmptyString);
+                infolist->SetItem(8+count,1,str);
+            }
+            count++;
+        }
 
         delete config;
     }
@@ -198,10 +231,11 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
     }
 }
 
-void mFinishedList::GenerateList(wxListCtrl* list,wxImageList *imageslist)
+void mFinishedList::GenerateList(wxImageList *imageslist)
 {
     wxListItem itemCol;
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    wxListCtrl* infolist = XRCCTRL(*(mainframe), "infolist",wxListCtrl );
     wxString name;
     wxString size;
     time_t enddate = 0;
@@ -221,24 +255,23 @@ void mFinishedList::GenerateList(wxListCtrl* list,wxImageList *imageslist)
     itemCol.m_text = _("Finished");
     this->InsertColumn(FINISHED_END, itemCol);
 
-    list->ClearAll();
-//    list->SetBackgroundColour(BLUE);
-//    list->SetTextColour(*wxWHITE);
-    list->InsertColumn(0, wxEmptyString);
-    list->InsertColumn(1, wxEmptyString);
-    list->SetColumnWidth(0,120);
-    list->SetColumnWidth(1,400);
-    list->InsertItem(0, _("Name"));
-    list->InsertItem(1, _("File type"));
-    list->InsertItem(2, _("Size"));
-    //list->InsertItem(3, _("Speed"));
-    list->InsertItem(3, _("Time"));
-    list->InsertItem(4, _("Destination"));
-    list->InsertItem(5, _("Start"));
-    list->InsertItem(6, _("Finished"));
-    list->InsertItem(7, _("MD5"));
-    list->InsertItem(8, _("URLs"));
-    list->InsertItem(9, _("Comments"));
+    infolist->ClearAll();
+    //infolist->SetBackgroundColour(BLUE);
+    //infolist->SetTextColour(*wxWHITE);
+    infolist->InsertColumn(0, wxEmptyString);
+    infolist->InsertColumn(1, wxEmptyString);
+    infolist->SetColumnWidth(0,120);
+    infolist->SetColumnWidth(1,400);
+    infolist->InsertItem(0, _("Name"));
+    infolist->InsertItem(1, _("File type"));
+    infolist->InsertItem(2, _("Size"));
+    infolist->InsertItem(3, _("Time"));
+    infolist->InsertItem(4, _("Destination"));
+    infolist->InsertItem(5, _("Start"));
+    infolist->InsertItem(6, _("Finished"));
+    infolist->InsertItem(7, _("MD5"));
+    infolist->InsertItem(8, _("Comments"));
+    infolist->InsertItem(9, _("URLs"));
 
     this->Hide();
     {

@@ -9,6 +9,9 @@
 - Made a total change on mDownloadFile class,
   making the class more encapsulated. This class
   keeps the download data.
+- Double-click on In Progress list Start/Stop the
+  downloads
+- Now is possible to add several urls for download
 
 0.4.2
 ===================================================

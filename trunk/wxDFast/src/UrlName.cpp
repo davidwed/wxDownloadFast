@@ -16,10 +16,6 @@ mUrlName::mUrlName() : wxURI()
 {
 }
 
-mUrlName::~mUrlName()
-{
-}
-
 mUrlName::mUrlName(wxString uri)
 {
     wxString m_uri = uri;
@@ -35,44 +31,9 @@ mUrlName::mUrlName(wxString uri)
     wxURI::Create(m_uri);
 }
 
-bool mUrlName::UrlIsValid()
+bool mUrlName::IsComplete()
 {
     return (HasServer() && HasScheme() && HasPath());
-
-/*    wxString m_url = wxURI::BuildURI();
-    if (m_url.Length() <=7 )
-        return FALSE;
-    if (((m_url.Mid(0,7).Lower()) == wxT("http://")) || ((m_url.Mid(0,6).Lower()) == wxT("ftp://")))
-    {
-        int i;
-        for (i=6; i < (int)(m_url.Length() - 1); i++)
-        {
-            if (m_url.Mid(i,2) == wxT("//")    )
-                return FALSE;
-            if (m_url.Mid(i,1) == wxT("\\")    )
-                return FALSE;
-        }
-        if (m_url.Mid(i,1) == wxT("\\")    )
-            return FALSE;
-        return TRUE;
-    }
-    else if (((m_url.Mid(0,7).Lower()) == wxT("file://")) && 
-            (((m_url.Mid(7,1).Lower()) == wxT("/")) || ((m_url.Mid(8,2).Lower()) == wxT(":/"))))
-    {
-        int i;
-        for (i=7; i < (int)(m_url.Length() - 1); i++)
-        {
-            if (m_url.Mid(i,2) == wxT("//")    )
-                return FALSE;
-            if (m_url.Mid(i,1) == wxT("\\")    )
-                return FALSE;
-        }
-        if (m_url.Mid(i,1) == wxT("\\")    )
-            return FALSE;
-        return TRUE;
-    }
-    else
-        return FALSE;*/
 }
 
 wxString mUrlName::GetHost()
