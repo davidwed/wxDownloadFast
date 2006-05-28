@@ -68,6 +68,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menumd5"), mMainFrame::OnCheckMD5)
     EVT_MENU(XRCID("menuopendestination"), mMainFrame::OnOpenDestination)
     EVT_MENU(XRCID("menucopyurl"), mMainFrame::OnCopyURL)
+    EVT_MENU(XRCID("menucopydownloaddata"), mMainFrame::OnCopyDownloadData)
     EVT_MENU(XRCID("menuexport"), mMainFrame::OnExportConf)
     EVT_MENU(XRCID("menuimport"), mMainFrame::OnImportConf)
     EVT_MENU(XRCID("menushutdown"), mMainFrame::OnShutdown)
@@ -219,6 +220,7 @@ mMainFrame::mMainFrame()
     menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
     timerupdateinterval = programoptions.timerupdateinterval;
 
+    graph.DeleteContents(TRUE);
     XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
     XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
     XRCCTRL(*(this), "graphpanel",mGraph )->mainframe = this;
@@ -227,7 +229,7 @@ mMainFrame::mMainFrame()
     XRCCTRL(*this, "inprogresslist",mInProgressList )->mainframe = this;
     XRCCTRL(*this, "finishedlist",mFinishedList )->mainframe = this;
     XRCCTRL(*this, "inprogresslist",mInProgressList )->GenerateList(imageslist);
-    XRCCTRL(*this, "finishedlist",mFinishedList )->GenerateList(XRCCTRL(*this, "infolist",wxListCtrl ),imageslist);
+    XRCCTRL(*this, "finishedlist",mFinishedList )->GenerateList(imageslist);
 
     //CREATE THE POPUPMENU FOR THE LISTS
     menupopup = new wxMenu;
@@ -240,6 +242,7 @@ mMainFrame::mMainFrame()
     wxMenuItem *move = new wxMenuItem(menupopup,XRCID("menumove"), _("Move File"));
     wxMenuItem *checkmd5 = new wxMenuItem(menupopup,XRCID("menumd5"), _("Check Integrity"));
     wxMenuItem *copyurl = new wxMenuItem(menupopup,XRCID("menucopyurl"), _("Copy URL"));
+    wxMenuItem *copydownloaddata = new wxMenuItem(menupopup,XRCID("menucopydownloaddata"), _("Copy Download Data"));
     wxMenuItem *opendestination = new wxMenuItem(menupopup,XRCID("menuopendestination"), _("Open Destination Directory"));
 
     start->SetBitmap(image[1]);
@@ -253,6 +256,7 @@ mMainFrame::mMainFrame()
     menupopup->Append(move);
     menupopup->AppendSeparator();
     menupopup->Append(copyurl);
+    menupopup->Append(copydownloaddata);
     menupopup->Append(checkmd5);
     menupopup->Append(opendestination);
     menupopup->Append(properties);
@@ -328,23 +332,13 @@ mMainFrame::~mMainFrame()
         }
         mApplication::Configurations(WRITE,MAXIMIZED_REG,maximized);
     }
-    mGraphPoints::Node *node = graph.GetFirst();
-    mGraphPoints::Node *tmpnode;
-    float *currentpoint;
-    while (node)
-    {
-        tmpnode = node->GetNext();
-        currentpoint = node->GetData();
-        graph.DeleteNode(node);
-        delete currentpoint;
-        node = tmpnode;
-    }
+ 
     delete taskbaricon;
     delete mtimer;
     delete imageslist;
     delete menupopup;
-    mutex_programoptions->Unlock();
-    delete mutex_programoptions;
+    //mutex_programoptions->Unlock();
+    //delete mutex_programoptions;
 }
 
 void mMainFrame::OnTimer(wxTimerEvent& event)
@@ -610,11 +604,8 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         statusbar->SetStatusText(temp,1);
 
         if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
-        {
-            float *firstvalue = graph.GetFirst()->GetData();
             graph.DeleteNode(graph.GetFirst());
-            delete firstvalue;
-        }
+
         timerinterval = 0;
         if (this->IsShown())
         {
@@ -626,15 +617,15 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mutex_programoptions->Unlock();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show,bool permitdifferentnames)
 {
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments;
     wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit;
     wxRadioButton *optnow,*optschedule;
-    int RETURN;
-    unsigned int i,nparams;
+    int result;
+    int i;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
 
     edturl = XRCCTRL(dlg, "edturl",wxTextCtrl);
@@ -647,28 +638,18 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
 
-    if (url.GetCount() <= 0)
-    {
-        edturl->SetValue(wxEmptyString);
-        lstaddresslist->Hide();
-        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
-    }
-    else if (url.GetCount() == 1)
-    {
+    lstaddresslist->Clear();
+    if (url.GetCount() == 1)
         edturl->SetValue(url.Item(0));
-        lstaddresslist->Hide();
-        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
-    }
     else
     {
-        edturl->Enable(FALSE);
-        lstaddresslist->Clear();
         lstaddresslist->InsertItems(url,0);
-        nparams = lstaddresslist->GetCount();
-        for (i = 0; i < nparams ;i++)
+        for (i = 0; i < lstaddresslist->GetCount() ;i++)
             lstaddresslist->Check(i);
     }
+
     dlg.SetBestFittingSize();
+    dlg.SetDifferentNamesPermition(permitdifferentnames);
     edtdestination->SetValue(destination);
     if (user == ANONYMOUS_USER)
     {
@@ -687,24 +668,17 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         optnow->SetValue(FALSE);
     spinsplit->SetValue(parts);
     if (show)
-        RETURN = dlg.ShowModal();
+        result = dlg.ShowModal();
     else
-        RETURN = XRCID("btnok");
+        result = XRCID("btnok");
 
-    if (RETURN == XRCID("btnok"))
+    if (result == XRCID("btnok"))
     {
-        if (edturl->IsEnabled())
-        {
-            wxArrayString urltmp;
-            urltmp.Add(edturl->GetValue());
-            lstaddresslist->InsertItems(urltmp,0);
-            lstaddresslist->Check(0);
-        }
-        nparams = lstaddresslist->GetCount();
-        wxArrayString fileswitherror;
         wxFileName destinationtmp;
-        int index;
+        mDownloadFile *currentfile = NULL;
         int scheduled, now;
+        int nparams = lstaddresslist->GetCount();
+        wxString name = wxEmptyString;
         scheduled = optschedule->GetValue();
         now = optnow->GetValue();
 
@@ -715,33 +689,36 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             if (!lstaddresslist->IsChecked(i))
                 continue;
 
-            mUrlName urltmp(lstaddresslist->GetString(i));
-            if (!wxGetApp().downloadlist.FindDownloadFile(urltmp.GetFullName()))
+            mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
+
+            if (name.IsEmpty())
+                name = urltmp->GetFullName();
+            if ((!permitdifferentnames) && (name != urltmp->GetFullName()))
+                continue;
+
+            currentfile = wxGetApp().downloadlist.FindDownloadFile(urltmp->GetFullName());
+
+            if (!currentfile)
             {
-                index = wxGetApp().downloadlist.CreateDownloadRegister(urltmp,destinationtmp, spinsplit->GetValue(),
+                mUrlList *urllist = new mUrlList();
+                urllist->Append(urltmp);
+                currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationtmp, spinsplit->GetValue(),
                         edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),scheduled);
-                XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(wxGetApp().downloadlist.Item(index)->GetData(),-1);
-                //XRCCTRL(*this, "inprogresslist",mInProgressList )->SetCurrentSelection(index); //CAUSES SEGMENTATION FAULT
+                XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
             }
             else
             {
-                fileswitherror.Add(lstaddresslist->GetString(i));
+                currentfile->AppendUrl(urltmp);
                 continue;
             }
 
             if (now)
-                wxGetApp().downloadlist.Item(index)->GetData()->PutOnQueue();
+                currentfile->PutOnQueue();
             else if (scheduled)
-                wxGetApp().downloadlist.Item(index)->GetData()->PutOnScheduleQueue();
+                currentfile->PutOnScheduleQueue();
         }
-        if (fileswitherror.GetCount() > 0)
-        {
-            wxString message = _("The follow file(s) already are being downloaded:");
-            for (i = 0; i < fileswitherror.GetCount(); i++)
-                message += wxT("\n") + fileswitherror.Item(i);
-            wxMessageBox(message,_("Error...") ,wxOK | wxICON_ERROR,this);
-            return FALSE;
-        }
+
+        //SET THE LAST BOXNEW OPTIONS LIKE THE DEFAULT ONE
         programoptions.lastnumberofparts = spinsplit->GetValue();
         if (scheduled)
             programoptions.laststartoption = SCHEDULE;
@@ -751,6 +728,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             programoptions.laststartoption = MANUAL;
         programoptions.lastdestination = edtdestination->GetValue();
 
+        //WRITE THE LAST BOXNEW OPTIONS ON DISK
         mApplication::Configurations(WRITE,OPT_LAST_DESTINATION_REG, programoptions.lastdestination);
         mApplication::Configurations(WRITE,OPT_LAST_NUMBER_OF_PARTS_REG, programoptions.lastnumberofparts);
         mApplication::Configurations(WRITE,OPT_LAST_START_OPTION_REG, programoptions.laststartoption);
@@ -990,8 +968,9 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         {
             wxTextDataObject data;
             wxTheClipboard->GetData( data );
-            if (data.GetText().Strip(wxString::both) != wxEmptyString)
-                urltmp.Add(data.GetText().Strip(wxString::both));
+            mUrlName url(data.GetText().Strip(wxString::both));
+            if (url.IsComplete())
+                urltmp.Add(url.GetFullPath());
         }
         wxTheClipboard->Close();
     }
@@ -1008,7 +987,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         startoption = DEFAULT_START_OPTION;
         destinationtmp = programoptions.destination;
     }
-    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE);
+    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1016,39 +995,147 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
     wxString urltmp,destinationtmp;
     if (wxTheClipboard->Open())
     {
+        wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        wxString str,name;
+        wxTextDataObject data;
+        int currentselection,column;
+        wxListCtrl *list;
+        mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
+        mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
+        if ((currentselection = list01->GetCurrentSelection()) >= 0)
+        {
+            config->SetPath(INPROGRESS_REG);
+            column = INPROGRESS_NAME;
+            list = (wxListCtrl*)list01;
+        }
+        else if ((currentselection = list02->GetCurrentSelection()) >= 0)
+        {
+            config->SetPath(FINISHED_REG);
+            column = FINISHED_NAME;
+            list = (wxListCtrl*)list02;
+        }
+        else
+            return;
 
-            wxFileConfig *config = new wxFileConfig(DFAST_REG);
-            wxString str;
-            wxTextDataObject data;
-            int currentselection,column;
-            wxListCtrl *list;
-            mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
-            mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
-            if ((currentselection = list01->GetCurrentSelection()) >= 0)
-            {
-                config->SetPath(INPROGRESS_REG);
-                column = INPROGRESS_NAME;
-                list = (wxListCtrl*)list01;
-            }
-            else if ((currentselection = list02->GetCurrentSelection()) >= 0)
-            {
-                config->SetPath(FINISHED_REG);
-                column = FINISHED_NAME;
-                list = (wxListCtrl*)list02;
-            }
-            else
-               return;
+        if (column == INPROGRESS_NAME)
+            name = wxGetApp().downloadlist.Item(currentselection)->GetData()->GetName();
+        else
+        {
             wxListItem item;
             item.SetId(currentselection);
             item.SetColumn(column);
             item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
             list->GetItem(item);
-            config->SetPath(item.GetText());
+            name = item.GetText();
+        }
+        config->SetPath(name);
+        str = wxEmptyString;
+        config->Read(URL_REG + wxT("1"),&str);
+        wxTheClipboard->SetData( new wxTextDataObject(str));
+        wxTheClipboard->Close();
+        delete config;
+    }
+    else
+        wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+}
+
+void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
+{
+    wxString urltmp,destinationtmp;
+    if (wxTheClipboard->Open())
+    {
+        wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        wxString str = wxEmptyString, downloadinfo = wxEmptyString, name;
+        wxTextDataObject data;
+        int currentselection,column;
+        wxListCtrl *list;
+        mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
+        mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
+        if ((currentselection = list01->GetCurrentSelection()) >= 0)
+        {
+            config->SetPath(INPROGRESS_REG);
+            column = INPROGRESS_NAME;
+            list = (wxListCtrl*)list01;
+        }
+        else if ((currentselection = list02->GetCurrentSelection()) >= 0)
+        {
+            config->SetPath(FINISHED_REG);
+            column = FINISHED_NAME;
+            list = (wxListCtrl*)list02;
+        }
+        else
+            return;
+
+        if (column == INPROGRESS_NAME)
+            name = wxGetApp().downloadlist.Item(currentselection)->GetData()->GetName();
+        else
+        {
+            wxListItem item;
+            item.SetId(currentselection);
+            item.SetColumn(column);
+            item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
+            list->GetItem(item);
+            name = item.GetText();
+        }
+        config->SetPath(name);
+
+        downloadinfo += _("Name");
+        downloadinfo += wxT(": ") + name + wxT("\n");
+
+        str = wxEmptyString;
+        config->Read(CONTENTTYPE_REG,&str);
+        downloadinfo += _("File type");
+        downloadinfo += wxT(": ") + str + wxT("\n");
+
+        str = wxEmptyString;
+        config->Read(SIZE_REG,&str);
+        downloadinfo += _("Size");
+        downloadinfo += wxT(": ") + MyUtilFunctions::ByteString(MyUtilFunctions::wxstrtolonglong(str)) + wxT("\n");
+
+        str = wxEmptyString;
+        config->Read(TIMEPASSED_REG,&str);
+        downloadinfo += _("Time");
+        downloadinfo += wxT(": ") + MyUtilFunctions::TimeString(MyUtilFunctions::wxstrtolonglong(str)) + wxT("\n");
+
+        str = wxEmptyString;
+        config->Read(DESTINATION_REG,&str);
+        downloadinfo += _("Destination");
+        downloadinfo += wxT(": ") + str + wxT("\n");
+
+        if (column == FINISHED_NAME)
+        {
             str = wxEmptyString;
-            config->Read(URL1_REG,&str);
-            wxTheClipboard->SetData( new wxTextDataObject(str));
-            wxTheClipboard->Close();
-            delete config;
+            config->Read(MD5_REG,&str);
+            downloadinfo += _("MD5");
+            downloadinfo += wxT(": ") + str + wxT("\n");
+        }
+
+        str = wxEmptyString;
+        config->Read(COMMENTS_REG,&str);
+        downloadinfo += _("Comments");
+        downloadinfo += wxT(": ") + str + wxT("\n");
+
+        str = wxEmptyString;
+        config->Read(URL_REG + wxT("1"),&str);
+        downloadinfo += _("URLs");
+        downloadinfo += wxT(":\t") + str + wxT("\n");
+
+        bool existurl = TRUE;
+        int count = 2;
+        while (existurl)
+        {
+            str = wxEmptyString;
+            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
+            if (str.IsEmpty())
+                break;
+            else
+                downloadinfo += wxT("\t") + str + wxT("\n");
+            count++;
+        }
+
+        wxTheClipboard->SetData( new wxTextDataObject(downloadinfo));
+        wxTheClipboard->Close();
+        delete config;
     }
     else
         wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
@@ -1091,11 +1178,7 @@ void mMainFrame::OnUpDown(bool up)
         mDownloadFile *newfile = wxGetApp().downloadlist.Item(newselection)->GetData();
 
         wxGetApp().downloadlist.ChangePosition(currentfile,newfile);
-        //currentfile->index = newselection;
-        //newfile->index = currentselection;
-        //wxGetApp().downloadlist.Sort(mDownloadList::ListCompareByIndex);
-        //currentfile->RegisterListItemOnDisk();
-        //newfile->RegisterListItemOnDisk();
+
         currentfile->MarkWriteAsPending(TRUE);
         newfile->MarkWriteAsPending(TRUE);
 
@@ -1145,12 +1228,19 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
     {
         mBoxNew dlg;
         wxString newname, oldname;
+        wxCheckListBox *lstaddresslist;
         mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
         wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
         dlg.Centre(wxBOTH);
         dlg.SetTitle(_("Download Properties"));
-        XRCCTRL(dlg, "edturl",wxTextCtrl)->SetValue(currentfile->GetFirstUrl());
+
+        lstaddresslist = XRCCTRL(dlg,"lstaddresslist",wxCheckListBox);
+
         XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(currentfile->GetDestination());
+        lstaddresslist->Clear();
+        lstaddresslist->InsertItems(currentfile->GetUrlArray(),0);
+        for (int i = 0; i < lstaddresslist->GetCount() ;i++)
+            lstaddresslist->Check(i);
 
         if (currentfile->GetUser() == ANONYMOUS_USER)
         {
@@ -1168,8 +1258,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
 
-        mUrlName urltmp(currentfile->GetFirstUrl());
-        oldname = urltmp.GetFullName();
+        oldname = currentfile->GetFirstUrl().GetFullName();
         if ((currentfile->GetStatus() != STATUS_STOPED) && (currentfile->GetStatus() != STATUS_FINISHED) && (currentfile->GetStatus() != STATUS_ERROR))
         {
             XRCCTRL(dlg, "edturl",wxTextCtrl)->SetEditable(FALSE);
@@ -1177,32 +1266,41 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetEditable(FALSE);
+            lstaddresslist->Enable(FALSE);
+            XRCCTRL(dlg,"btndir",wxButton)->Enable(FALSE);
+            XRCCTRL(dlg,"btnadd",wxButton)->Enable(FALSE);
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 
-        XRCCTRL(dlg,"lstaddresslist",wxCheckListBox)->Hide();
-        XRCCTRL(dlg,"lbladdresslist",wxStaticText)->Hide();
         dlg.SetBestFittingSize();
+        dlg.SetDifferentNamesPermition(FALSE);
 
         if (dlg.ShowModal() == XRCID("btnok"))
         {
-            mUrlName urltmp(XRCCTRL(dlg, "edturl",wxTextCtrl)->GetValue());
             wxFileName destination; destination.AssignDir(XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue());
             wxString user = XRCCTRL(dlg, "edtuser",wxTextCtrl)->GetValue();
             wxString password = XRCCTRL(dlg, "edtpassword",wxTextCtrl)->GetValue();
             wxString comments = XRCCTRL(dlg, "edtcomments",wxTextCtrl)->GetValue();
-            wxGetApp().downloadlist.ChangeDownload(currentfile,urltmp,destination,user,password,comments);
+
+            mUrlList *urllist = new mUrlList();
+            for (int i = 0; i < lstaddresslist->GetCount(); i++)
+            {
+                if (!lstaddresslist->IsChecked(i))
+                    continue;
+                mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
+                urllist->Append(urltmp);
+            }
+            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,comments);
 
             //VERIFY IF THE USER CHANGED THE FILE NAME
-            newname = urltmp.GetFullName();
+            newname = urllist->GetFirst()->GetData()->GetFullName();
             if (newname != oldname)
             {
                 wxGetApp().downloadlist.ChangeName(currentfile,newname);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->SetItem(currentfile->GetIndex(),INPROGRESS_NAME,currentfile->GetName());
             }
-            list->SetItem(currentfile->GetIndex(),INPROGRESS_URL,currentfile->GetFirstUrl());
-            //currentfile->RegisterListItemOnDisk();
-            currentfile->MarkWriteAsPending(TRUE);
+            list->SetItem(currentfile->GetIndex(),INPROGRESS_URL,currentfile->GetFirstUrl().GetFullPath());
+
         }
         dlg.Destroy();
     }
@@ -1228,10 +1326,20 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         config->SetPath(FINISHED_REG);
         config->SetPath(item.GetText());
 
-        url = wxEmptyString;
-        config->Read(URL1_REG,&url);
-        if (url != wxEmptyString)
-            urlarray.Add(url);
+        bool existurl = TRUE;
+        int count = 1;
+        while (existurl)
+        {
+            url = wxEmptyString;
+            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(url));
+            if (url.IsEmpty())
+                break;
+            else
+            {
+                urlarray.Add(url);
+            }
+            count++;
+        }
 
         destination = wxEmptyString;
         config->Read(DESTINATION_REG,&destination);
@@ -1254,7 +1362,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         else
             startoption = DEFAULT_START_OPTION;
 
-        if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE))
+        if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE,FALSE))
         {
             config->DeleteGroup(item.GetText());
             list->DeleteItem(currentselection);

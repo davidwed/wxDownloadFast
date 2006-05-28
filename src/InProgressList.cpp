@@ -16,11 +16,24 @@ BEGIN_EVENT_TABLE(mInProgressList, wxListCtrl)
     EVT_LIST_ITEM_SELECTED(XRCID("inprogresslist"), mInProgressList::OnSelected)
     EVT_LIST_ITEM_DESELECTED(XRCID("inprogresslist"), mInProgressList::OnDeselected)
     EVT_LIST_ITEM_RIGHT_CLICK(XRCID("inprogresslist"), mInProgressList::OnRClick)
+    EVT_LIST_ITEM_ACTIVATED(XRCID("inprogresslist"), mInProgressList::OnDoubleClick)
+    EVT_ENTER_WINDOW(mInProgressList::OnEnterWindow)
+    EVT_LEAVE_WINDOW(mInProgressList::OnLeaveWindow)
 END_EVENT_TABLE()
 
 mInProgressList::mInProgressList()
 {
     handleselectdeselectevents = TRUE;
+}
+
+void mInProgressList::OnEnterWindow(wxMouseEvent& event)
+{
+    mainframe->statusbar->SetStatusText(_("Double-click on the item Start/Stop the download"));
+}
+
+void mInProgressList::OnLeaveWindow(wxMouseEvent& event)
+{
+    mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
 }
 
 void mInProgressList::OnRClick(wxListEvent& event)
@@ -33,11 +46,27 @@ void mInProgressList::OnRClick(wxListEvent& event)
         mainframe->menupopup->Enable(XRCID("menuremove"),TRUE);
         mainframe->menupopup->Enable(XRCID("menumove"),FALSE);
         mainframe->menupopup->Enable(XRCID("menucopyurl"),TRUE);
+        mainframe->menupopup->Enable(XRCID("menucopydownloaddata"),TRUE);
         mainframe->menupopup->Enable(XRCID("menumd5"),FALSE);
         mainframe->menupopup->Enable(XRCID("menuopendestination"),FALSE);
         mainframe->menupopup->Enable(XRCID("menuproperties"),TRUE);
         mainframe->menupopup->Enable(XRCID("menuagain"),FALSE);
         mainframe->PopupMenu(mainframe->menupopup,event.GetPoint());
+    }
+}
+
+void mInProgressList::OnDoubleClick(wxListEvent& event)
+{
+    int index;
+    if ((index = GetCurrentSelection()) >= 0)
+    {
+        mDownloadFile *file = wxGetApp().downloadlist.Item(index)->GetData();
+        wxCommandEvent event;
+        int status = file->GetStatus();
+        if (status == STATUS_STOPED)
+            mainframe->OnStart(event);
+        else if ((status == STATUS_ACTIVE) || (status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE))
+            mainframe->OnStop(event);
     }
 }
 
@@ -93,6 +122,7 @@ void mInProgressList::SelectDeselect(bool selected,int selection)
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
     mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
     mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
@@ -148,7 +178,7 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
         this->SetItem(item, INPROGRESS_TIMEREMAINING, MyUtilFunctions::TimeString(current->timeremaining));
         this->SetItem(item, INPROGRESS_SPEED, MyUtilFunctions::ByteString(current->totalspeed)+wxT("/s"));
         this->SetItem(item, INPROGRESS_ATTEMPTS, MyUtilFunctions::int2wxstr(current->GetCurrentAttempt()));
-        this->SetItem(item, INPROGRESS_URL, current->GetFirstUrl());
+        this->SetItem(item, INPROGRESS_URL, current->GetFirstUrl().GetFullPath());
     }
     return item;
 }

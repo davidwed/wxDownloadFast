@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Created by Max Velasques-->
 <resource version="2.3.0.1">
-    <object class="wxDialog" name="boxnew">
+    <object class="wxDialog" name="boxnew" subclass="MyDialog">
         <style>wxDEFAULT_DIALOG_STYLE</style>
         <title>Add new download</title>
-        <object class="wxBoxSizer">
-            <orient>wxHORIZONTAL</orient>
+        <object class="wxFlexGridSizer">
+            <hgap>0</hgap>
+            <rows>1</rows>
+            <cols>3</cols>
+            <vgap>0</vgap>
             <object class="spacer">
                 <size>10, 20</size>
             </object>
@@ -13,7 +17,7 @@
                 <flag>wxEXPAND</flag>
                 <object class="wxFlexGridSizer">
                     <hgap>0</hgap>
-                    <rows>7</rows>
+                    <rows>10</rows>
                     <cols>1</cols>
                     <vgap>0</vgap>
                     <object class="spacer">
@@ -27,6 +31,22 @@
                             <cols>3</cols>
                             <vgap>5</vgap>
                             <object class="sizeritem">
+                                <object class="wxStaticText" name="lbldestination">
+                                    <label>Save in:</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxTextCtrl" name="edtdestination">
+                                    <size>290, 23</size>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxButton" name="btndir">
+                                    <size>70, 23</size>
+                                    <label>Directory</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
                                 <object class="wxStaticText" name="lblurl">
                                     <label>Address:</label>
                                 </object>
@@ -34,36 +54,39 @@
                             <object class="sizeritem">
                                 <object class="wxTextCtrl" name="edturl">
                                     <focused>1</focused>
-                                    <size>345, 23</size>
                                     <tooltip>URL to download\nExample: http://www.foo.com/foo.exe\nExample: http://www.foo.com:80/foo.exe\nExample: ftp://ftp.foo.com:21/foo.exe</tooltip>
+                                    <size>290, 23</size>
                                 </object>
                             </object>
                             <object class="sizeritem">
-                                <object class="wxButton" name="btnurl">
-                                    <size>15, 23</size>
-                                    <label>...</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxStaticText" name="lbldestination">
-                                    <label>Save in:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxTextCtrl" name="edtdestination">
-                                    <size>345, 23</size>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxButton" name="btndir">
-                                    <size>15, 23</size>
-                                    <label>...</label>
+                                <object class="wxButton" name="btnadd">
+                                    <default>1</default>
+                                    <size>70, 23</size>
+                                    <label>Add</label>
                                 </object>
                             </object>
                         </object>
                     </object>
                     <object class="spacer">
-                        <size>20, 10</size>
+                        <size>20, 5</size>
+                    </object>
+                    <object class="sizeritem">
+                        <option>1</option>
+                        <flag>wxFIXED_MINSIZE</flag>
+                        <object class="wxStaticText" name="lbladdresslist">
+                            <label>Address List:</label>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <option>1</option>
+                        <object class="wxCheckListBox" name="lstaddresslist">
+                            <tooltip>Just the marked addresses will be considered</tooltip>
+                            <style>wxLB_SINGLE</style>
+                            <size>420,100</size>
+                        </object>
+                    </object>
+                    <object class="spacer">
+                        <size>20, 5</size>
                     </object>
                     <object class="sizeritem">
                         <option>1</option>
@@ -195,9 +218,9 @@
                                                                     <object class="sizeritem">
                                                                         <object class="wxSpinCtrl" name="spinsplit">
                                                                             <style>wxSP_ARROW_KEYS|wxSP_WRAP</style>
-                                                                            <value>1</value>
                                                                             <min>1</min>
-                                                                            <max>9</max>
+                                                                            <max> 9</max>
+                                                                            <value>1</value>
                                                                             <size>40, 20</size>
                                                                         </object>
                                                                     </object>
@@ -247,7 +270,6 @@
                                                     <object class="sizeritem">
                                                         <object class="wxRadioButton" name="optmanual">
                                                             <label>Manual</label>
-                                                            <value>1</value>
                                                         </object>
                                                     </object>
                                                     <object class="spacer">
@@ -362,31 +384,6 @@
                                     <object class="spacer">
                                         <size>20, 10</size>
                                     </object>
-                                </object>
-                            </object>
-                        </object>
-                    </object>
-                    <object class="sizeritem">
-                        <option>1</option>
-                        <flag>wxEXPAND|wxALIGN_RIGHT</flag>
-                        <object class="wxFlexGridSizer">
-                            <hgap>5</hgap>
-                            <rows>1</rows>
-                            <cols>1</cols>
-                            <vgap>5</vgap>
-                            <object class="sizeritem">
-                                <option>1</option>
-                                <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="lbladdresslist">
-                                    <label>Address List:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <option>1</option>
-                                <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxCheckListBox" name="lstaddresslist">
-                                    <size>450,100</size>
-                                    <style>wxLB_SINGLE</style>
                                 </object>
                             </object>
                         </object>

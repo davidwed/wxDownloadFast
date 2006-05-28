@@ -16,15 +16,23 @@ BEGIN_EVENT_TABLE(mBoxNew, wxDialog)
     EVT_BUTTON(XRCID("btnok"), mBoxNew::OnOk)
     EVT_BUTTON(XRCID("btncancel"), mBoxNew::OnCancel)
     EVT_BUTTON(XRCID("btndir"), mBoxNew::OnButtonDir)
+    EVT_BUTTON(XRCID("btnadd"), mBoxNew::OnButtonAdd)
 END_EVENT_TABLE()
 
 void mBoxNew::OnOk(wxCommandEvent& event)
 {
     int j;
-    if (XRCCTRL(*this, "edturl",wxTextCtrl)->IsEnabled())
+    bool atleastoneitemischecked = FALSE;
+    wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
+    wxString name;
+
+    for (j = 0; j < list->GetCount(); j++)
     {
+        if (!list->IsChecked(j))
+            continue;
+        atleastoneitemischecked = TRUE;
         wxString url;
-        url = XRCCTRL(*this, "edturl",wxTextCtrl)->GetValue();
+        url = list->GetString(j);
         mUrlName *urltmp;
         if (url.Length() < 3)
         {
@@ -44,57 +52,31 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             url = url + wxT("index.html");
         }
         urltmp = new mUrlName(url);
-        if (!urltmp->UrlIsValid())
+        if (!urltmp->IsComplete())
         {
-            wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
+            wxMessageBox(_("The follow URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
             return;
         }
-        XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(url);
+        list->SetString(j,urltmp->GetFullPath());
+        list->Check(j);
+        if (name.IsEmpty())
+            name = urltmp->GetFullName();
+        if (!this->PermitDifferentNames())
+        {
+            if (name != urltmp->GetFullName())
+            {
+                wxMessageBox(_("The follow URL has a different filename:\n") + urltmp->GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
+                return;
+            }
+        }
         delete urltmp;
     }
-    else
+    if (!atleastoneitemischecked)
     {
-        bool atleastoneitemischecked = FALSE;
-        for (j = 0; j < XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->GetCount(); j++)
-        {
-            if (!XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->IsChecked(j))
-                continue;
-            atleastoneitemischecked = TRUE;
-            wxString url;
-            url = XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->GetString(j);
-            mUrlName *urltmp;
-            if (url.Length() < 3)
-            {
-                wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
-                return;
-            }
-            int i = 0, count = 0;
-            for (i=0; i < (int)(url.Length()-1);i++)
-            {
-                if (url.Mid(i,1) == SEPARATOR_URL)
-                    count++;
-            }
-            if ((count < 1) || (url.Mid(url.Length()-1,1) == SEPARATOR_URL))
-            {
-                if (url.Mid(url.Length()-1,1) != SEPARATOR_URL)
-                    url = url + SEPARATOR_URL;
-                url = url + wxT("index.html");
-            }
-            urltmp = new mUrlName(url);
-            if (!urltmp->UrlIsValid())
-            {
-                wxMessageBox(_("The follow URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
-                return;
-            }
-            XRCCTRL(*this, "lstaddresslist",wxCheckListBox)->SetString(j,url);
-            delete urltmp;
-        }
-        if (!atleastoneitemischecked)
-        {
-            wxMessageBox(_("Select at least one item of the address list!\n"), _("Information..."),wxOK | wxICON_INFORMATION,this);
-            return;
-        }
+        wxMessageBox(_("Select at least one item of the address list!\n"), _("Information..."),wxOK | wxICON_INFORMATION,this);
+        return;
     }
+
     wxString destination;
     destination = XRCCTRL(*this, "edtdestination",wxTextCtrl)->GetValue();
     wxFileName *desttmp = new wxFileName(destination);
@@ -123,4 +105,32 @@ void mBoxNew::OnButtonDir(wxCommandEvent& event)
      dir = wxDirSelector(_("Select the directory:"),XRCCTRL(*this, "edtdestination",wxTextCtrl)->GetValue());
      if (dir != wxEmptyString)
          XRCCTRL(*this, "edtdestination",wxTextCtrl)->SetValue(dir);
+}
+
+void mBoxNew::OnButtonAdd(wxCommandEvent& event)
+{
+    mUrlName url(XRCCTRL(*this, "edturl",wxTextCtrl)->GetValue());
+    if (url.IsComplete())
+    {
+        wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
+        list->Insert(url.GetFullPath(),0);
+        list->Check(0);
+        XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(wxEmptyString);
+        XRCCTRL(*this, "edturl",wxTextCtrl)->SetFocus();
+    }
+    else
+    {
+        wxMessageBox(_("The URL is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
+        return;
+    }
+}
+
+bool mBoxNew::PermitDifferentNames()
+{
+    return this->permitdifferentnames;
+}
+
+void mBoxNew::SetDifferentNamesPermition(bool permit)
+{
+    this->permitdifferentnames = permit;
 }

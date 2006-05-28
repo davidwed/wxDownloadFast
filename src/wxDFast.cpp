@@ -15,6 +15,7 @@
 
 WX_DEFINE_LIST(mDownloadListType);
 WX_DEFINE_LIST(mGraphPoints);
+WX_DEFINE_LIST(mUrlList);
 IMPLEMENT_DYNAMIC_CLASS(mInProgressList, wxListCtrl)
 IMPLEMENT_DYNAMIC_CLASS(mFinishedList, wxListCtrl)
 IMPLEMENT_DYNAMIC_CLASS(mNotebook, wxNotebook)
@@ -82,7 +83,7 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         comments = wxEmptyString;
 
     if (urls.GetCount() > 0)
-        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE);
+        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE,TRUE);
     else if (!wxGetApp().mainframe->IsShown())
     {
         wxCommandEvent event;
@@ -135,7 +136,6 @@ mApplication::mApplication(): m_condAllDone(m_mutexAllDone)
 
 mApplication::~mApplication()
 {
-    delete mainframe;
     delete m_locale;
     delete dummy;
     delete m_server;
@@ -171,6 +171,7 @@ bool mApplication::OnInit()
     m_locale->Init(mApplication::Configurations(READ,LANGUAGE_REG,0));
     m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
     m_locale->AddCatalog(wxT("wxDFast"));
+    downloadlist.DeleteContents(TRUE);
     downloadlist.LoadDownloadListFromDisk();
     mainframe = NULL;
     mainframe = new mMainFrame();
@@ -237,7 +238,7 @@ bool mApplication::OnInit()
     if (!parameters->Found(wxT("comments"),&comments))
         comments = wxEmptyString;
     if (url.GetCount() > 0)
-        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE);
+        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE,TRUE);
 
 
     if (!parameters->Found(wxT("hide")))

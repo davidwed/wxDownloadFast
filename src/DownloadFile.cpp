@@ -57,17 +57,20 @@ void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
     {
         file->name = strname;
         file->MarkWriteAsPending(TRUE);
-        //file->RegisterListItemOnDisk();
     }
 }
 
-void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlName url,wxFileName destination, wxString user, wxString password, wxString comments)
+void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString comments)
 {
-    file->urllist = url.GetFullPath();
+    if (file->urllist)
+        delete file->urllist;
+    file->urllist->DeleteContents(TRUE);
+    file->urllist = urllist;
     file->destination = destination.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
     file->user = user;
     file->password = password;
     file->comments = comments;
+    file->MarkWriteAsPending(TRUE);
 }
 
 void mDownloadList::LoadDownloadListFromDisk()
@@ -137,8 +140,27 @@ void mDownloadList::LoadDownloadListFromDisk()
             config->Read(END_REG,&(value));
             file->end.Set(value);
         }
-        config->Read(URL1_REG,&(file->urllist));
 
+        file->urllist = new mUrlList();
+        file->urllist->DeleteContents(TRUE);
+        file->currenturl = 0;
+        bool existurl = TRUE;
+        int count = 1;
+        wxString str;
+        while (existurl)
+        {
+            str = wxEmptyString;
+            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
+            if (str.IsEmpty())
+                break;
+            else
+            {
+                mUrlName *urltmp = new mUrlName(str);
+                if (urltmp->IsComplete())
+                    file->urllist->Append(urltmp);
+            }
+            count++;
+        }
 
         if (file->percentual > 100)
             file->percentual = 0;
@@ -189,22 +211,6 @@ void mDownloadList::RemoveDownloadRegister(mDownloadFile *currentfile)
     }
     mDownloadList::Node *node = this->Find(currentfile);
     this->DeleteNode(node);
-    delete currentfile;
-}
-
-mDownloadList::~mDownloadList() //FREE THE MEMORY OF THE LIST
-{
-    mDownloadList::Node *node = this->GetFirst();
-    mDownloadList::Node *tmpnode;
-    mDownloadFile *currentfile;
-    while (node)
-    {
-        tmpnode = node->GetNext();
-        currentfile = node->GetData();
-        this->DeleteNode(node);
-        delete currentfile;
-        node = tmpnode;
-    }
 }
 
 mDownloadFile *mDownloadList::FindDownloadFile(wxString str)
@@ -223,7 +229,7 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
 {
     mDownloadFile *file = new mDownloadFile();
     file->index =  this->GetCount();
@@ -231,7 +237,10 @@ int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, i
     file->status = STATUS_STOPED;
     file->restart = -1;
     file->parts = parts;
-    file->name = url.GetFullName();
+    file->urllist = urllist;
+    file->urllist->DeleteContents(TRUE);
+    file->currenturl = 0;
+    file->name = file->GetFirstUrl().GetFullName();
     file->destination = destination.GetFullPath();
     file->totalsize = 0;
     file->totalsizecompleted = 0;
@@ -240,7 +249,6 @@ int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, i
     file->timepassed = 0;
     file->timeremaining = 0;
     file->totalspeed = 0;
-    file->urllist = url.GetFullPath();
     file->contenttype = wxEmptyString;
     file->MD5 = wxEmptyString;
     file->start = wxDateTime::Now();
@@ -255,7 +263,7 @@ int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, i
         file->size[i] = 0;
         file->finished[i] = FALSE;
     }
-    if (user == wxEmptyString)
+    if (user.IsEmpty())
     {
         file->user = ANONYMOUS_USER;
         file->password = ANONYMOUS_PASS;
@@ -274,7 +282,7 @@ int mDownloadList::CreateDownloadRegister(mUrlName url,wxFileName destination, i
     file->MarkWriteAsPending(TRUE);
     file->MarkRemoveAsPending(FALSE);
     this->Append(file);
-    return (file->index);
+    return file;
 }
 
 void mDownloadFile::RemoveListItemFromDisk()
@@ -338,7 +346,24 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(END_REG,this->end.GetTicks());
     config->Write(COMMENTS_REG,this->comments);
     config->Write(CONTENTTYPE_REG,this->contenttype);
-    config->Write(URL1_REG,this->urllist);
+
+    unsigned int count = 1;
+    bool deleteoldurls = TRUE;
+    wxString str;
+    for ( mUrlList::Node *node = urllist->GetFirst(); node; node = node->GetNext() )
+    {
+        config->Write(URL_REG + MyUtilFunctions::int2wxstr(count),node->GetData()->GetFullPath());
+        count++;
+    }
+    while (deleteoldurls) //THIS ERASE URLS THAT WAS WRITE BEFORE, BUT THAT DOESN'T WAS REWRITE NOW
+    {
+        str = wxEmptyString;
+        config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
+        if (str.IsEmpty())
+            break;
+        else
+            config->DeleteEntry(URL_REG + MyUtilFunctions::int2wxstr(count));
+    }
 
     config->Write(USER_REG,this->user);
     config->Write(PASSWORD_REG,this->password);
@@ -482,14 +507,71 @@ void mDownloadFile::IncrementAttempt()
     this->currentattempt++;
 }
 
-wxString mDownloadFile::GetNextUrl()
+mUrlName mDownloadFile::GetNextUrl()
 {
-    return this->urllist;
+    mUrlName urltmp;
+    if (!this->urllist)
+        return urltmp;
+    if (this->urllist->GetCount() > this->currenturl)
+    {
+        mUrlList::Node *node = this->urllist->Item(this->currenturl);
+        if (node)
+        {
+            this->currenturl++;
+            return *(node->GetData());
+        }
+        else
+        {
+            currenturl = 1;
+            return this->GetFirstUrl();
+        }
+    }
+    else
+    {
+        currenturl = 1;
+        return this->GetFirstUrl();
+    }
 }
 
-wxString mDownloadFile::GetFirstUrl()
+mUrlName mDownloadFile::GetFirstUrl()
 {
-    return this->urllist;
+    mUrlName urltmp;
+    if (!urllist)
+        return urltmp;
+    mUrlList::Node *node = this->urllist->GetFirst();
+    if (node)
+    {
+        return *(node->GetData());
+    }
+    else
+    {
+        return urltmp;
+    }
+}
+
+bool mDownloadFile::AppendUrl(mUrlName *url)
+{
+    if (url->IsComplete())
+    {
+        this->urllist->Append(url);
+        this->MarkWriteAsPending(TRUE);
+        return TRUE;
+    }
+    else
+        return FALSE;
+}
+
+int mDownloadFile::GetUrlCount()
+{
+    return this->urllist->GetCount();
+}
+
+wxArrayString mDownloadFile::GetUrlArray()
+{
+    wxArrayString urlarray;
+    for ( mUrlList::Node *node = this->urllist->GetFirst(); node; node = node->GetNext() )
+        urlarray.Add(node->GetData()->GetFullPath());
+    return urlarray;
 }
 
 void mDownloadFile::SetFinishedDateTime(wxDateTime time)
