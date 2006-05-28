@@ -113,6 +113,11 @@ void mBoxNew::OnButtonAdd(wxCommandEvent& event)
     if (url.IsComplete())
     {
         wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
+        for (int i = 0; i < list->GetCount(); i++)
+        {
+            if (list->GetString(i) == url.GetFullPath())
+                break;
+        }
         list->Insert(url.GetFullPath(),0);
         list->Check(0);
         XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(wxEmptyString);

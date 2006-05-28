@@ -106,16 +106,19 @@ void mTaskBarIcon::OnHide(wxCommandEvent& event)
     {
         if (mainframe->IsShown())
         {
+            if (mainframe->active)
+            {
                 restoring = TRUE;
-            mainframe->Hide();
+                mainframe->Hide();
+            }
         }
         else
         {
-                restoring = TRUE;
-                    if (mainframe->IsIconized())
-                        mainframe->Iconize(FALSE);
-                mainframe->Show();
-                restoring = FALSE;
+            restoring = TRUE;
+            if (mainframe->IsIconized())
+                mainframe->Iconize(FALSE);
+            mainframe->Show();
+            restoring = FALSE;
         }
     }
 }

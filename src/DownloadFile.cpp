@@ -561,6 +561,14 @@ bool mDownloadFile::AppendUrl(mUrlName *url)
         return FALSE;
 }
 
+bool mDownloadFile::FindUrl(mUrlName url)
+{
+    for ( mUrlList::Node *node = this->urllist->GetFirst(); node; node = node->GetNext() )
+        if (node->GetData()->GetFullPath().Lower() == url.GetFullPath().Lower())
+            return TRUE;
+    return FALSE;
+}
+
 int mDownloadFile::GetUrlCount()
 {
     return this->urllist->GetCount();

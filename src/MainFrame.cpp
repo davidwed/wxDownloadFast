@@ -266,6 +266,7 @@ mMainFrame::mMainFrame()
     mutex_programoptions = new wxMutex();
 
     //CREATE TASKBARICON
+    this->active = TRUE;
     taskbaricon = new mTaskBarIcon(this);
     if (!(wxGetApp().parameters->Found(wxT("notray"))))
         #ifdef __WXMSW__
@@ -668,7 +669,11 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         optnow->SetValue(FALSE);
     spinsplit->SetValue(parts);
     if (show)
+    {
+        this->active = FALSE;
         result = dlg.ShowModal();
+        this->active = TRUE;
+    }
     else
         result = XRCID("btnok");
 
@@ -708,7 +713,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             }
             else
             {
-                currentfile->AppendUrl(urltmp);
+                if (!currentfile->FindUrl(*urltmp))
+                    currentfile->AppendUrl(urltmp);
                 continue;
             }
 
@@ -764,7 +770,9 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
             {
                 int resp;
                 dlg->Centre(wxBOTH);
+                this->active = FALSE;
                 resp = dlg->ShowModal();
+                this->active = TRUE;
                 if (resp == wxID_YES)
                 {
                     wxString destination = currentfile->GetDestination();
@@ -793,7 +801,9 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
         {
             int resp;
             dlg->Centre(wxBOTH);
+            this->active = FALSE;
             resp = dlg->ShowModal();
+            this->active = TRUE;
             if (resp != wxID_CANCEL)
             {
                 wxString destination,name;
@@ -1147,7 +1157,11 @@ void mMainFrame::OnFind(wxCommandEvent& event)
     data->SetFlags(wxFR_DOWN);
     mBoxFind *dlg = new mBoxFind(this,data,_("Find file..."));
     if (dlg)
+    {
+        this->active = FALSE;
         dlg->Show();
+        this->active = TRUE;
+    }
 }
 
 void mMainFrame::OnDetails(wxCommandEvent& event)
@@ -1275,6 +1289,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         dlg.SetBestFittingSize();
         dlg.SetDifferentNamesPermition(FALSE);
 
+        this->active = FALSE;
         if (dlg.ShowModal() == XRCID("btnok"))
         {
             wxFileName destination; destination.AssignDir(XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue());
@@ -1302,6 +1317,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             list->SetItem(currentfile->GetIndex(),INPROGRESS_URL,currentfile->GetFirstUrl().GetFullPath());
 
         }
+        this->active = TRUE;
         dlg.Destroy();
     }
 }
@@ -1407,6 +1423,7 @@ void mMainFrame::OnMove(wxCommandEvent& event)
             {
                 if (::wxFileExists(destination+name))
                 {
+                    this->active = FALSE;
                     wxProgressDialog *dlg = new wxProgressDialog(_("Moving..."),_("Moving file..."));
                     wxLogNull logNo;
                     if (::wxCopyFile(destination+name,dir+name,TRUE))
@@ -1417,6 +1434,7 @@ void mMainFrame::OnMove(wxCommandEvent& event)
                     }
                     else
                         wxMessageBox(_("Error moving file."),_("Error..."),wxOK|wxICON_ERROR,this);
+                    this->active = TRUE;
                     delete dlg;
                 }
                 else
@@ -1518,6 +1536,7 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
 {
      wxFileDialog *dlg;
     dlg = new wxFileDialog(this, _("Select the file..."), wxEmptyString, wxEmptyString, wxT("*.conf"));
+    this->active = FALSE;
     if (dlg->ShowModal() == wxID_OK)
     {
         wxString source, destination;
@@ -1540,6 +1559,7 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
         else
             wxMessageBox(_("Error importing configurations."), _("Error..."),wxOK|wxICON_ERROR,this);
     }
+    this->active = TRUE;
 }
 
 void mMainFrame::OnShutdown(wxCommandEvent& event)
@@ -1620,6 +1640,7 @@ wxGetTranslation(days[i]));
         }
     }
 
+    this->active = FALSE;
     if (dlg.ShowModal() == XRCID("btnoptionsave"))
     {
         wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configurations..."),_("Updating and saving the configurations..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
@@ -1767,6 +1788,7 @@ wxGetTranslation(days[i]));
         delete waitbox;
         mutex_programoptions->Unlock();
     }
+    this->active = TRUE;
 }
 
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
@@ -1794,13 +1816,16 @@ void mMainFrame::OnClose(wxCloseEvent& event)
             if (dlg)
             {
                 dlg->Centre(wxBOTH);
+                this->active = FALSE;
                 if (dlg->ShowModal() == wxID_YES)
                 {
+                    this->active = TRUE;
                     event.Skip();
                     dlg->Destroy();
                 }
                 else
                 {
+                    this->active = TRUE;
                     event.Veto();
                     dlg->Destroy();
                     return ;

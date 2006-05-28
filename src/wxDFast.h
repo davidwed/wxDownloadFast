@@ -304,6 +304,7 @@
         mUrlName GetFirstUrl();
         mUrlName GetNextUrl();
         bool AppendUrl(mUrlName *url);
+        bool FindUrl(mUrlName url);
         int GetUrlCount();
         wxArrayString GetUrlArray();
         void SetFinishedDateTime(wxDateTime time);
@@ -517,6 +518,7 @@
         wxMutex *mutex_programoptions;
         mGraphPoints graph;
         int timerinterval;
+        bool active;
     private:
         wxTimer *mtimer;
         wxImageList *imageslist;
