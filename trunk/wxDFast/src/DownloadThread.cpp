@@ -1,10 +1,11 @@
 //
 // C++ Implementation: DownloadThread
 //
-// Description: 
+// Description: Implements the download routine by thread. In this file
+//              is made all the communication with the FTP and HTTP serves.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //

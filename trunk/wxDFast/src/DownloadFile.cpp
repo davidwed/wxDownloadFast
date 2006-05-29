@@ -1,10 +1,12 @@
 //
 // C++ Implementation: DownloadFile
 //
-// Description: 
+// Description: Implements the classes DownloadList and DownloadFile. 
+//              It's this classes which keep all the downloads informations,
+//              like URL, size name, etc
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //

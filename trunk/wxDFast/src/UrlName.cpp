@@ -1,10 +1,11 @@
 //
 // C++ Implementation: UrlName
 //
-// Description: 
+// Description: Implements a class with handle url's and permits to return
+//              filenames, paths, host and verify if this is complete or not.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //
