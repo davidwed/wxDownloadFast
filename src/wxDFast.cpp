@@ -1,10 +1,10 @@
 //
 // C++ Implementation: wxDFast
 //
-// Description: 
+// Description: Implements the program initialization.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //

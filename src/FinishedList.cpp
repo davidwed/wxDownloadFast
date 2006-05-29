@@ -1,10 +1,10 @@
 //
 // C++ Implementation: FinishedList
 //
-// Description: 
+// Description: Implements the list of finished downloads.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -21,7 +21,7 @@ BEGIN_EVENT_TABLE(mFinishedList, wxListCtrl)
     EVT_LEAVE_WINDOW(mFinishedList::OnLeaveWindow)
 END_EVENT_TABLE()
 
-int mFinishedList::CompareDates(long item1, long item2, long WXUNUSED(sortData))
+int wxCALLBACK mFinishedList::CompareDates(long item1, long item2, long WXUNUSED(sortData))
 {
     if (item1 < item2)
         return 1;

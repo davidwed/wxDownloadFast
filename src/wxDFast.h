@@ -1,10 +1,11 @@
 //
 // C++ Interface: wxDFast
 //
-// Description: 
+// Description: This file include the external files, and declare the
+//              classes used by the program.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //
@@ -645,7 +646,6 @@
         {
             delete m_datepicker;
             delete m_btnok;
-            delete grid_sizer;
         };
         void mDatePicker::OnOk(wxCommandEvent& event)
         {
@@ -722,7 +722,7 @@
         int GetCurrentSelection();
         void SetCurrentSelection(int selection);
         void GenerateList(wxImageList *imageslist);
-        static int CompareDates(long item1, long item2, long WXUNUSED(sortData));
+        static int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
         mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mFinishedList)
     private:

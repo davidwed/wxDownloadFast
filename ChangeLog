@@ -11,7 +11,9 @@
   keeps the download data.
 - Double-click on In Progress list Start/Stop the
   downloads
-- Now is possible to add several urls for download
+- Now is possible to add several urls for download,
+  this way you can download a file from several
+  different servers.
 
 0.4.2
 ===================================================

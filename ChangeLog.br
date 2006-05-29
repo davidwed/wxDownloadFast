@@ -10,10 +10,11 @@
 - Feita um reformulação total da classe 
   mDownloadFile, que armazena as informações dos
   downloads, ficando mais encapsulada
-- Clique duplor na lista de downloads em progresso
+- Clique duplo na lista de downloads em progresso
   Inicia/Pára o download
 - Agora é possível adicionar várias urls por
-  download
+  download, permitindo com que o download seja
+  feito simultâneamente de vários servidores.
 
 0.4.2
 ===================================================

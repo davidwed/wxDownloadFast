@@ -1,10 +1,11 @@
 //
 // C++ Implementation: ftp
 //
-// Description: 
+// Description: This file contains the implementation of the wxFTP class with
+//              support to files bigger than 2GB. This is made using the wxLongLong.
 //
 //
-// Author: Max Magalhães Velasques <max@debiancomp1>, (C) 2006
+// Author: Max Magalhães Velasques <maxvelasques@gmail.com>, (C) 2006
 //
 // Copyright: See COPYING file that comes with this distribution
 //
