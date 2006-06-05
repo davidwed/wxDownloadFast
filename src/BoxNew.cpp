@@ -25,6 +25,30 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     bool atleastoneitemischecked = FALSE;
     wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
     wxString name;
+    bool alreadyexist = FALSE;
+    mUrlName textctrlurl(XRCCTRL(*this, "edturl",wxTextCtrl)->GetValue());
+    if (textctrlurl.IsComplete())
+    {
+        for (int i = 0; i < list->GetCount(); i++)
+        {
+            if (list->GetString(i) == textctrlurl.GetFullPath())
+            {
+                alreadyexist = TRUE;
+                break;
+            }
+        }
+        if (!alreadyexist)
+        {
+            list->Insert(textctrlurl.GetFullPath(),0);
+            list->Check(0);
+        }
+        XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(wxEmptyString);
+    }
+    else
+    {
+        wxMessageBox(_("The follow URL is invalid:\n") + textctrlurl.GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
+        return;
+    }
 
     for (j = 0; j < list->GetCount(); j++)
     {
@@ -110,16 +134,23 @@ void mBoxNew::OnButtonDir(wxCommandEvent& event)
 void mBoxNew::OnButtonAdd(wxCommandEvent& event)
 {
     mUrlName url(XRCCTRL(*this, "edturl",wxTextCtrl)->GetValue());
+    bool alreadyexist = FALSE;
     if (url.IsComplete())
     {
         wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
         for (int i = 0; i < list->GetCount(); i++)
         {
             if (list->GetString(i) == url.GetFullPath())
+            {
+                alreadyexist = TRUE;
                 break;
+            }
         }
-        list->Insert(url.GetFullPath(),0);
-        list->Check(0);
+        if (!alreadyexist)
+        {
+            list->Insert(url.GetFullPath(),0);
+            list->Check(0);
+        }
         XRCCTRL(*this, "edturl",wxTextCtrl)->SetValue(wxEmptyString);
         XRCCTRL(*this, "edturl",wxTextCtrl)->SetFocus();
     }

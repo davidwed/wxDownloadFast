@@ -67,6 +67,14 @@
                    <label>Copy Download Data</label>
                 </object>
                 <object class="separator" />
+                <object class="wxMenuItem" name="menuselectall">
+                   <label>Select All</label>
+                   <accel>CTRL-A</accel>
+                </object>
+                <object class="wxMenuItem" name="menuinvertselection">
+                   <label>Invert Selection</label>
+                </object>
+                <object class="separator" />
                 <object class="wxMenuItem" name="menufind">
                    <label>Find Download</label>
                    <accel>CTRL-F</accel>
@@ -133,6 +141,10 @@
             <object class="wxMenu" name="menuhelp">
                 <label>_Help</label>
                 <accel>ALT-H</accel>
+                <object class="wxMenuItem" name="menusite">
+                   <label>WxDownload Fast Site</label>
+                </object>
+                <object class="separator" />
                 <object class="wxMenuItem" name="menuabout">
                    <label>About</label>
                    <accel>F1</accel>
@@ -240,7 +252,7 @@
                                             <style>wxSP_3D</style>
                                             <orientation>horizontal</orientation>
                                             <object class="wxListCtrl" name="inprogresslist" subclass="mInProgressList">
-                                                <style>wxLC_REPORT|wxLC_SINGLE_SEL|wxSUNKEN_BORDER  </style>
+                                                <style>wxLC_REPORT|wxSUNKEN_BORDER  </style>
                                             </object>
                                             <object class="wxPanel" name="panelmessages01">
                                                 <style>wxTAB_TRAVERSAL</style>
@@ -281,7 +293,7 @@
                                 <option>1</option>
                                 <flag>wxEXPAND</flag>
                                 <object class="wxListCtrl" name="finishedlist" subclass="mFinishedList">
-                                    <style>wxLC_REPORT|wxLC_SINGLE_SEL|wxSUNKEN_BORDER</style>
+                                    <style>wxLC_REPORT|wxSUNKEN_BORDER</style>
                                 </object>
                             </object>
                             <object class="sizeritem">

@@ -13,6 +13,18 @@
 
 #include "wxDFast.h"
 
+wxString mDownloadThread::CheckHtmlFile(bool downloaded)
+{
+    //if (!downloaded)
+    {
+        PrintMessage( _("This is a HTML file\nOpening in the default browser.\n"),HTMLERROR);
+        wxCommandEvent openurl(wxEVT_OPEN_URL);
+        openurl.SetString(currenturl.GetFullPath());
+        wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(openurl);
+    }
+    return wxEmptyString;
+}
+
 wxLongLong mDownloadThread::CurrentSize(wxString filepath,wxString filename)
 {
     wxFile *outputfile;
@@ -96,32 +108,26 @@ void *mDownloadThread::Entry()
         currenturl = downloadfile->GetNextUrl();
         do
         {
-                int type = currenturl.Type();
-                if (type == HTTP)
-                    connection = ConnectHTTP(&start);
-                else if (type == FTP)
-                    connection = ConnectFTP(&start);
-                else if (type == LOCAL_FILE)
-                    filestream = ConnectLOCAL_FILE(start);
-                else
-                {
-                    PrintMessage( _("This protocol isn't supported.\n"),HTMLERROR);
-                    downloadfile->criticalerror = TRUE;
-                    break;
-                }
-                if ((downloadpartindex == 0) && (downloadfile->GetContentType().Lower().Contains(wxT("html"))))
-                {
-                    PrintMessage( _("This is a HTML file\nOpening in the default browser.\n"),HTMLERROR);
-                    if ((!connection) && (!filestream))
-                    {
-                        resp = 0;
-                        downloadfile->SetAsFinished();
-                    }
-                    wxCommandEvent openurl(wxEVT_OPEN_URL);
-                    openurl.SetString(currenturl.GetFullPath());
-                    wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(openurl);
-                    break;
-                }
+            int type = currenturl.Type();
+            if (type == HTTP)
+                connection = ConnectHTTP(&start);
+            else if (type == FTP)
+                connection = ConnectFTP(&start);
+            else if (type == LOCAL_FILE)
+                filestream = ConnectLOCAL_FILE(start);
+            else
+            {
+                PrintMessage( _("This protocol isn't supported.\n"),HTMLERROR);
+                downloadfile->criticalerror = TRUE;
+                break;
+            }
+            if ((!connection) && (!filestream) && (downloadpartindex == 0) && (downloadfile->IsHtml()))
+            {
+                this->CheckHtmlFile();
+                resp = 0;
+                downloadfile->SetAsFinished();
+                break;
+            }
         } while (redirecting);
         if ((connection) || (filestream))
         {
@@ -165,7 +171,15 @@ void *mDownloadThread::Entry()
                 resp = -1;
         }
         if (downloadpartindex == 0)
-            downloadfile->IncrementAttempt();
+        {
+            if ((downloadfile->GetStatus() == STATUS_FINISHED) && (downloadfile->IsHtml()))
+            {
+                wxString newurl;
+                newurl = this->CheckHtmlFile(TRUE);
+            }
+            else
+                downloadfile->IncrementAttempt();
+        }
         if ((downloadfile->GetCurrentAttempt() <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror))
         {
             PrintMessage( _("New attempt in ") + MyUtilFunctions::int2wxstr(programoptions->attemptstime) + _(" seconds\n"));

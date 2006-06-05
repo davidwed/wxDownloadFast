@@ -43,7 +43,7 @@ void mFinishedList::OnLeaveWindow(wxMouseEvent& event)
 
 void mFinishedList::OnRClick(wxListEvent& event)
 {
-    if (GetCurrentSelection() >= 0)
+    if (GetCurrentSelection().GetCount() > 0)
     {
         mainframe->menupopup->Enable(XRCID("menuschedule"),FALSE);
         mainframe->menupopup->Enable(XRCID("menustart"),FALSE);
@@ -65,19 +65,23 @@ void mFinishedList::OnDoubleClick(wxListEvent& event)
     mainframe->BrowserFile();
 }
 
-int mFinishedList::GetCurrentSelection()
+int mFinishedList::GetCurrentLastSelection()
+{
+    if (this->lastselection >= this->GetItemCount())
+        this->lastselection = -1;
+    return this->lastselection;
+}
+
+mListSelection mFinishedList::GetCurrentSelection()
 {
     wxNotebook *notebook = XRCCTRL(*(mainframe), "notebook01",wxNotebook );
-    int selection = -1;
+    mListSelection selection;
     if (notebook->GetSelection() == 1)
     {
         int j;
         for (j = 0 ; j < this->GetItemCount();j++)
             if (this->GetItemState(j,wxLIST_STATE_SELECTED)&wxLIST_STATE_SELECTED )
-            {
-                selection = j;
-                break;
-            }
+                selection.Add(j);
     }
     return selection;
 }
@@ -85,13 +89,11 @@ int mFinishedList::GetCurrentSelection()
 void mFinishedList::SetCurrentSelection(int selection)
 {
     int i;
-    if (selection < 0)
-    {
-        for (i=0;i<GetItemCount();i++)
-            SetItemState(i,0,wxLIST_STATE_SELECTED);
-    }
-    else
+    for (i=0;i<GetItemCount();i++)
+        SetItemState(i,0,wxLIST_STATE_SELECTED);
+    if (selection >= 0)
         SetItemState(selection,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+    this->lastselection = selection;
 }
 
 void mFinishedList::OnSelected(wxListEvent& event)
@@ -101,13 +103,15 @@ void mFinishedList::OnSelected(wxListEvent& event)
 
 void mFinishedList::OnDeselected(wxListEvent& event)
 {
-    SelectUnselect(FALSE,-1);
+    if (this->GetCurrentSelection().GetCount()==0)
+        SelectUnselect(FALSE,-1);
 }
 
 void mFinishedList::SelectUnselect(bool selected,int selection)
 {
+    this->lastselection = selection;
     wxListCtrl* infolist = XRCCTRL(*(mainframe), "infolist",wxListCtrl );
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),TRUE);
+    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
@@ -309,4 +313,5 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
     delete config;
     this->SortItems(mFinishedList::CompareDates, 0l);
     this->Show();
+    this->lastselection = -1;
 }

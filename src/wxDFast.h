@@ -81,7 +81,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.4.3");
+    const wxString VERSION = wxT("0.4.4");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -161,6 +161,8 @@
     const wxString OPT_DISCONNECT_CMD_REG = wxT("disconnectcmd");
     const wxString OPT_TIMERINTERVAL_REG = wxT("timerinterval");
     const wxString OPT_READBUFFERSIZE_REG = wxT("readbuffersize");
+    const wxString OPT_RESTORE_MAINFRAME_REG = wxT("restoremainframe");
+    const wxString OPT_HIDE_MAINFRAME_REG = wxT("hidemainframe");
     const wxString OPT_GRAPH_SHOW_REG = wxT("graphshow");
     const wxString OPT_GRAPH_HOWMANYVALUES_REG = wxT("graphhowmanyvalues");
     const wxString OPT_GRAPH_REFRESHTIME_REG = wxT("graphrefreshtime");
@@ -263,6 +265,7 @@
     class mServer;
     class mDownloadThread;
 
+    WX_DECLARE_OBJARRAY(int,mListSelection);
     WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
     WX_DECLARE_LIST(mUrlName, mUrlList);
 
@@ -298,6 +301,7 @@
         void SetRestartSupport(bool support = TRUE);
         wxString GetContentType();
         void SetContentType(wxString contenttype);
+        bool IsHtml();
         int GetNumberofParts();
         int GetCurrentAttempt();
         void ResetAttempts();
@@ -410,6 +414,8 @@
         int alwaysdisconnect;
         int timerupdateinterval; //time between the timer refreshs in milliseconds
         long readbuffersize;
+        bool restoremainframe;   //Restore the mainframe when all downloads are finished
+        bool hidemainframe;      //Hide the mainframe when the user start a download
         bool graphshow;
         int graphhowmanyvalues;
         int graphrefreshtime;    //time between the graph refreshs in milliseconds
@@ -484,6 +490,8 @@
         void OnStopAll(wxCommandEvent& event);
         void OnPasteURL(wxCommandEvent& event);
         void OnCopyURL(wxCommandEvent& event);
+        void OnSelectAll(wxCommandEvent& event);
+        void OnInvertSelection(wxCommandEvent& event);
         void OnFind(wxCommandEvent& event);
         void OnDetails(wxCommandEvent& event);
         void OnLanguages(wxCommandEvent& event);
@@ -501,6 +509,7 @@
         void OnIconize(wxIconizeEvent& event);
         void OnExit(wxCommandEvent& event);
         void OnClose(wxCloseEvent& event);
+        void OnSite(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& WXUNUSED(event));
         void BrowserFile();
         void OnToolLeftClick(wxCommandEvent& event);
@@ -695,9 +704,10 @@
         void OnDeselected(wxListEvent& event);
         void OnLeaveWindow(wxMouseEvent& event);
         void OnEnterWindow(wxMouseEvent& event);
-        void SelectDeselect(bool selected,int selection);
+        void SelectUnselect(bool selected,int selection);
         int Insert(mDownloadFile *current, int item);
-        int GetCurrentSelection();
+        mListSelection GetCurrentSelection();
+        int GetCurrentLastSelection();
         void SetCurrentSelection(int selection);
         void RemoveItemListandFile(int item);
         void HandleSelectDeselectEvents(bool value);
@@ -705,6 +715,7 @@
         mMainFrame *mainframe;
          DECLARE_DYNAMIC_CLASS(mInProgressList)
     private:
+        int lastselection;
         bool handleselectdeselectevents;
         DECLARE_EVENT_TABLE()
     };
@@ -719,13 +730,15 @@
         void OnLeaveWindow(wxMouseEvent& event);
         void OnEnterWindow(wxMouseEvent& event);
         void SelectUnselect(bool selected,int selection);
-        int GetCurrentSelection();
+        mListSelection GetCurrentSelection();
+        int GetCurrentLastSelection();
         void SetCurrentSelection(int selection);
         void GenerateList(wxImageList *imageslist);
         static int wxCALLBACK CompareDates(long item1, long item2, long WXUNUSED(sortData));
         mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mFinishedList)
     private:
+        int lastselection;
         DECLARE_EVENT_TABLE()
     };
 
@@ -789,6 +802,7 @@
         // called when the thread exits - whether it terminates normally or is
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
+        wxString CheckHtmlFile(bool downloaded = FALSE);
         wxLongLong CurrentSize(wxString filepath,wxString filename);
         wxSocketClient *ConnectHTTP(wxLongLong *start);
         wxSocketClient *ConnectFTP(wxLongLong *start);

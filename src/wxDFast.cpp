@@ -12,7 +12,9 @@
 
 #include "wxDFast.h"
 #include "wx/listimpl.cpp"
+#include "wx/arrimpl.cpp"
 
+WX_DEFINE_OBJARRAY(mListSelection);
 WX_DEFINE_LIST(mDownloadListType);
 WX_DEFINE_LIST(mGraphPoints);
 WX_DEFINE_LIST(mUrlList);
