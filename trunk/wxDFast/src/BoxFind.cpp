@@ -30,13 +30,13 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
     if (notebook->GetSelection() == 0) //DOWNLOADS IN PROGRESS
 
     {
-        index = list01->GetCurrentSelection();
+        index = list01->GetCurrentLastSelection();
         column = INPROGRESS_NAME;
         list = (wxListCtrl*)list01;
     }
     else if (notebook->GetSelection() == 1) //FINISHED DOWNLOADS
     {
-        index = list02->GetCurrentSelection();
+        index = list02->GetCurrentLastSelection();
         column = FINISHED_NAME;
         list = (wxListCtrl*)list02;
     }

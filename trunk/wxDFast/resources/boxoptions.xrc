@@ -24,7 +24,7 @@
                                 <option>1</option>
                                 <object class="wxFlexGridSizer">
                                     <hgap>0</hgap>
-                                    <rows>10</rows>
+                                    <rows>12</rows>
                                     <cols>1</cols>
                                     <vgap>10</vgap>
                                     <object class="spacer">
@@ -171,6 +171,32 @@
                                                 <object class="wxSpinCtrl" name="spinreadbuffersize">
                                                     <min>1024</min>
                                                     <max>102400</max>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxCheckBox" name="chkrestoremainframe">
+                                                    <label>Restore the mainframe when all downloads finished</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxCheckBox" name="chkhidemainframe">
+                                                    <label>Hide the mainframe when the user start a download</label>
                                                 </object>
                                             </object>
                                         </object>

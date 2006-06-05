@@ -23,7 +23,8 @@ END_EVENT_TABLE()
 
 mInProgressList::mInProgressList()
 {
-    handleselectdeselectevents = TRUE;
+    this->handleselectdeselectevents = TRUE;
+    this->lastselection = -1;
 }
 
 void mInProgressList::OnEnterWindow(wxMouseEvent& event)
@@ -38,7 +39,7 @@ void mInProgressList::OnLeaveWindow(wxMouseEvent& event)
 
 void mInProgressList::OnRClick(wxListEvent& event)
 {
-    if (GetCurrentSelection() >= 0)
+    if (this->GetCurrentSelection().GetCount() >= 0)
     {
         mainframe->menupopup->Enable(XRCID("menuschedule"),TRUE);
         mainframe->menupopup->Enable(XRCID("menustart"),TRUE);
@@ -57,32 +58,39 @@ void mInProgressList::OnRClick(wxListEvent& event)
 
 void mInProgressList::OnDoubleClick(wxListEvent& event)
 {
-    int index;
-    if ((index = GetCurrentSelection()) >= 0)
+    if (this->GetCurrentSelection().GetCount() > 0)
     {
-        mDownloadFile *file = wxGetApp().downloadlist.Item(index)->GetData();
-        wxCommandEvent event;
-        int status = file->GetStatus();
-        if (status == STATUS_STOPED)
-            mainframe->OnStart(event);
-        else if ((status == STATUS_ACTIVE) || (status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE))
-            mainframe->OnStop(event);
+        mDownloadList::Node *node = wxGetApp().downloadlist.Item(this->GetCurrentLastSelection());
+        if (node)
+        {
+            mDownloadFile *file = node->GetData();
+            wxCommandEvent event;
+            int status = file->GetStatus();
+            if (status == STATUS_STOPED)
+                mainframe->OnStart(event);
+            else if ((status == STATUS_ACTIVE) || (status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE))
+                mainframe->OnStop(event);
+        }
     }
 }
 
-int mInProgressList::GetCurrentSelection()
+int mInProgressList::GetCurrentLastSelection()
+{
+    if (this->lastselection >= this->GetItemCount())
+        this->lastselection = -1;
+    return this->lastselection;
+}
+
+mListSelection mInProgressList::GetCurrentSelection()
 {
     wxNotebook *notebook = XRCCTRL(*(mainframe), "notebook01",wxNotebook );
-    int selection = -1;
+    mListSelection selection;
     if (notebook->GetSelection() == 0)
     {
         int j;
         for (j = 0 ; j < this->GetItemCount();j++)
             if (this->GetItemState(j,wxLIST_STATE_SELECTED)&wxLIST_STATE_SELECTED )
-            {
-                selection = j;
-                break;
-            }
+                selection.Add(j);
     }
     return selection;
 }
@@ -90,33 +98,31 @@ int mInProgressList::GetCurrentSelection()
 void mInProgressList::SetCurrentSelection(int selection)
 {
     int i;
-    if (selection < 0)
-    {
-        for (i=0;i<GetItemCount();i++)
-            this->SetItemState(i,0,wxLIST_STATE_SELECTED);
-    }
-    else
-    {
-        this->SetItemState(selection, wxLIST_STATE_SELECTED , wxLIST_STATE_SELECTED );
-    }
+    for (i=0;i<GetItemCount();i++)
+        this->SetItemState(i,0,wxLIST_STATE_SELECTED);
+    if (selection >= 0)
+        this->SetItemState(selection,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+    this->lastselection = selection;
 }
 
 void mInProgressList::OnSelected(wxListEvent& event)
 {
-    if (handleselectdeselectevents)
-        SelectDeselect(TRUE,event.GetIndex());
+    if (this->handleselectdeselectevents)
+        this->SelectUnselect(TRUE,event.GetIndex());
 }
 
 void mInProgressList::OnDeselected(wxListEvent& event)
 {
-    if (handleselectdeselectevents)
-        SelectDeselect(FALSE,-1);
+    if (this->handleselectdeselectevents)
+        if (this->GetCurrentSelection().GetCount()==0)
+            this->SelectUnselect(FALSE,-1);
 }
 
-void mInProgressList::SelectDeselect(bool selected,int selection)
+void mInProgressList::SelectUnselect(bool selected,int selection)
 {
     if (!selected)
-        SetCurrentSelection(selection);
+        this->SetCurrentSelection(selection);
+    this->lastselection = selection;
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
     mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
@@ -185,7 +191,7 @@ int mInProgressList::Insert(mDownloadFile *current, int item)
 
 void mInProgressList::HandleSelectDeselectEvents(bool value)
 {
-    handleselectdeselectevents = value;
+    this->handleselectdeselectevents = value;
 }
 
 void mInProgressList::GenerateList(wxImageList *imageslist)
@@ -256,6 +262,7 @@ void mInProgressList::GenerateList(wxImageList *imageslist)
     if (problemwithindex)
         wxGetApp().downloadlist.RecreateIndex();
 
-    this->SelectDeselect(FALSE,-1);
+    this->SelectUnselect(FALSE,-1);
     this->Show();
+    this->lastselection = -1;
 }

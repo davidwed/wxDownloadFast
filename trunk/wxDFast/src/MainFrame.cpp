@@ -56,12 +56,15 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menustartall"),  mMainFrame::OnStartAll)
     EVT_MENU(XRCID("menustopall"),  mMainFrame::OnStopAll)
     EVT_MENU(XRCID("menuexit"),  mMainFrame::OnExit)
+    EVT_MENU(XRCID("menusite"),  mMainFrame::OnSite)
     EVT_MENU(XRCID("menuabout"), mMainFrame::OnAbout)
     EVT_MENU(XRCID("menulanguage"), mMainFrame::OnLanguages)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
     EVT_MENU(XRCID("menupaste"), mMainFrame::OnPasteURL)
     EVT_MENU(XRCID("menuoptions"), mMainFrame::OnOptions)
     EVT_MENU(XRCID("menuproperties"), mMainFrame::OnProperties)
+    EVT_MENU(XRCID("menuselectall"), mMainFrame::OnSelectAll)
+    EVT_MENU(XRCID("menuinvertselection"), mMainFrame::OnInvertSelection)
     EVT_MENU(XRCID("menufind"), mMainFrame::OnFind)
     EVT_MENU(XRCID("menuagain"), mMainFrame::OnDownloadAgain)
     EVT_MENU(XRCID("menumove"), mMainFrame::OnMove)
@@ -92,9 +95,15 @@ void mNotebook::OnChangePage(wxNotebookEvent& event)
 {
     int oldselection = event.GetOldSelection();
     if (oldselection == 0)
-        XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList )->SelectDeselect(FALSE,-1);
-    else if (oldselection == 1)
+    {
+        XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList )->SelectUnselect(FALSE,-1);
         XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList )->SelectUnselect(FALSE,-1);
+    }
+    else if (oldselection == 1)
+    {
+        XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList )->SelectUnselect(FALSE,-1);
+        XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList )->SelectUnselect(FALSE,-1);
+    }
     if (event.GetSelection() == 1)
     {
         XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList )->SortItems(mFinishedList::CompareDates, 0l);
@@ -154,6 +163,8 @@ mMainFrame::mMainFrame()
     programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("sudo /sbin/shutdown -h now"));
     programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("/usr/bin/poff"));
     #endif
+    programoptions.restoremainframe = mApplication::Configurations(READ,OPT_RESTORE_MAINFRAME_REG, 1);
+    programoptions.hidemainframe = mApplication::Configurations(READ,OPT_HIDE_MAINFRAME_REG, 0);
     programoptions.graphshow = mApplication::Configurations(READ,OPT_GRAPH_SHOW_REG, 1);
     programoptions.graphhowmanyvalues = mApplication::Configurations(READ,OPT_GRAPH_HOWMANYVALUES_REG, 300);
     programoptions.graphrefreshtime = mApplication::Configurations(READ,OPT_GRAPH_REFRESHTIME_REG, 1000);
@@ -253,14 +264,14 @@ mMainFrame::mMainFrame()
     menupopup->Append(start);
     menupopup->Append(stop);
     menupopup->Append(remove);
-    menupopup->Append(move);
+    menupopup->Append(properties);
     menupopup->AppendSeparator();
     menupopup->Append(copyurl);
     menupopup->Append(copydownloaddata);
     menupopup->Append(checkmd5);
     menupopup->Append(opendestination);
-    menupopup->Append(properties);
     menupopup->AppendSeparator();
+    menupopup->Append(move);
     menupopup->Append(downloadagain);
 
     mutex_programoptions = new wxMutex();
@@ -348,7 +359,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         return;
     mInProgressList* list01 = XRCCTRL(*this, "inprogresslist",mInProgressList );
     mFinishedList* list02 = XRCCTRL(*this, "finishedlist",mFinishedList );
-    int selection = list01->GetCurrentSelection();
+    int selection = list01->GetCurrentLastSelection();
     int simultaneous = programoptions.simultaneous;
     bool somedownloadfinishednow = FALSE;
     long currentspeed = 0;
@@ -381,7 +392,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 node = node->GetPrevious();  //GO TO THE PREVIOUS NODE BEFORE DELETE THE CURRENT ONE
             wxGetApp().downloadlist.RemoveDownloadRegister(current);
             list01->DeleteItem(index);
-            list01->SelectDeselect(FALSE,-1);
+            list01->SelectUnselect(FALSE,-1);
             somedownloadfinishednow = TRUE;
             if (index > 0)  //IF THIS IS THE FIRST NODE, WE CANN'T GO TO THE PREVIOUS ONE
                 continue;
@@ -397,7 +408,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 current->RemoveListItemFromDisk();
                 wxGetApp().downloadlist.RemoveDownloadRegister(current);
                 list01->DeleteItem(index);
-                list01->SelectDeselect(FALSE,-1);
+                list01->SelectUnselect(FALSE,-1);
                 if (index > 0)
                     continue;
                 else
@@ -581,6 +592,14 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         }
         if (!somedownloadactive)
         {
+            if (programoptions.restoremainframe)
+            {
+                if (!this->IsShown())
+                {
+                    wxCommandEvent iconizeevent;
+                    taskbaricon->OnHide(iconizeevent);
+                }
+            }
             if (programoptions.shutdown)
             {
                 wxCommandEvent shutdown(wxEVT_SHUTDOWN);
@@ -640,7 +659,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
 
     lstaddresslist->Clear();
-    if (url.GetCount() == 1)
+    if ((url.GetCount() == 1) && (show))
         edturl->SetValue(url.Item(0));
     else
     {
@@ -688,6 +707,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         now = optnow->GetValue();
 
         destinationtmp.Assign(edtdestination->GetValue());
+        if (nparams == 0)
+            return FALSE;
 
         for (i = 0; i < nparams; i++)
         {
@@ -719,7 +740,14 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             }
 
             if (now)
+            {
                 currentfile->PutOnQueue();
+                if (programoptions.hidemainframe) //HIDE THE MAINFRAME
+                {
+                    wxIconizeEvent iconizeevent;
+                    this->OnIconize(iconizeevent);
+                }
+            }
             else if (scheduled)
                 currentfile->PutOnScheduleQueue();
         }
@@ -749,54 +777,28 @@ void mMainFrame::OnNew(wxCommandEvent& event)
 
 void mMainFrame::OnRemove(wxCommandEvent& event)
 {
-    int currentselection;
     mInProgressList *inprogresslist = XRCCTRL(*this, "inprogresslist",mInProgressList );
-    if ((currentselection = inprogresslist->GetCurrentSelection()) >= 0)
+    if (inprogresslist->GetCurrentSelection().GetCount() > 0)
     {
-        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
+        mListSelection currentselectionlist = inprogresslist->GetCurrentSelection();
+        int nselection = currentselectionlist.GetCount();
+        mDownloadFile *currentfile;
+
+        wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before remove..."));
+        for (int i = 0; i < nselection;i++)
         {
-            wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before remove..."));
+            currentfile = wxGetApp().downloadlist.Item(currentselectionlist.Item(i))->GetData();
             StopDownload(currentfile); //STOP AND SET SCHEDULE = FALSE
             while ((currentfile->IsFree() == FALSE) || (currentfile->GetStatus() == STATUS_ACTIVE))
                 wxYield();
-            waitbox->Update(100);
-            delete waitbox;
+            waitbox->Update(100*(i+1)/nselection);
         }
-        if (((currentfile->GetStatus() == STATUS_STOPED) || (currentfile->GetStatus() == STATUS_ERROR)) && (currentfile->IsFree()))
-        {
-            wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want remove the item from the list and the file from the disk?"),_("Remove..."),
-                        wxYES_NO | wxCANCEL | wxICON_QUESTION);
-            if (dlg)
-            {
-                int resp;
-                dlg->Centre(wxBOTH);
-                this->active = FALSE;
-                resp = dlg->ShowModal();
-                this->active = TRUE;
-                if (resp == wxID_YES)
-                {
-                    wxString destination = currentfile->GetDestination();
-                    wxString name = currentfile->GetName();
-                    currentfile->MarkRemoveAsPending(TRUE);
-                    if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-                        destination = destination + SEPARATOR_DIR;
-                    for (int i = 0; i< MAX_NUM_PARTS;i++)
-                        ::wxRemoveFile(destination + PREFIX + name + EXT + MyUtilFunctions::int2wxstr(i));
-                }
-                else if (resp == wxID_NO)
-                {
-                    currentfile->MarkRemoveAsPending(TRUE);
-                }
-                dlg->Destroy();
-            }
-        }
-        return ;
-    }
-    mFinishedList *finishedlist = XRCCTRL(*this, "finishedlist",mFinishedList );
-    if ((currentselection = finishedlist->GetCurrentSelection()) >= 0)
-    {
+        waitbox->Update(100);
+        delete waitbox;
+
         wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want remove the item from the list and the file from the disk?"),_("Remove..."),
                     wxYES_NO | wxCANCEL | wxICON_QUESTION);
+
         if (dlg)
         {
             int resp;
@@ -804,68 +806,129 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
             this->active = FALSE;
             resp = dlg->ShowModal();
             this->active = TRUE;
-            if (resp != wxID_CANCEL)
+            for (int i = nselection-1 ; i >= 0 ;i--) //REMOVE THE ITEM BACKWARD
             {
-                wxString destination,name;
-                if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-                    destination = destination + SEPARATOR_DIR;
-
-                wxFileConfig *config = new wxFileConfig(DFAST_REG);
-                wxListItem item;
-                item.SetId(currentselection);
-                item.SetColumn(FINISHED_NAME);
-                item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
-                finishedlist->GetItem(item);
-                config->SetPath(FINISHED_REG);
-                config->SetPath(item.GetText());
-
-                destination = wxEmptyString;
-                config->Read(DESTINATION_REG,&destination);
-                if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-                    destination = destination + SEPARATOR_DIR;
-
-                name = wxEmptyString;
-                config->Read(NAME_REG,&name);
-
-                config->SetPath(BACK_DIR_REG);
-                config->DeleteGroup(item.GetText());
-                finishedlist->DeleteItem(currentselection);
-                delete config;
-                if (resp == wxID_YES)
-                    ::wxRemoveFile(destination + name);
+                currentfile = wxGetApp().downloadlist.Item(currentselectionlist.Item(i))->GetData();
+                if (((currentfile->GetStatus() == STATUS_STOPED) || (currentfile->GetStatus() == STATUS_ERROR)) && (currentfile->IsFree()))
+                {
+                    if (resp == wxID_YES)
+                    {
+                        wxString destination = currentfile->GetDestination();
+                        wxString name = currentfile->GetName();
+                        currentfile->MarkRemoveAsPending(TRUE);
+                        if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+                            destination = destination + SEPARATOR_DIR;
+                        for (int i = 0; i< MAX_NUM_PARTS;i++)
+                            ::wxRemoveFile(destination + PREFIX + name + EXT + MyUtilFunctions::int2wxstr(i));
+                    }
+                    else if (resp == wxID_NO)
+                    {
+                        currentfile->MarkRemoveAsPending(TRUE);
+                    }
+                }
+                dlg->Destroy();
             }
+        }
+        return ;
+    }
+    mFinishedList *finishedlist = XRCCTRL(*this, "finishedlist",mFinishedList );
+    if (finishedlist->GetCurrentSelection().GetCount() > 0)
+    {
+        wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want remove the item(s) from the list and the file(s) from the disk?"),_("Remove..."),
+                    wxYES_NO | wxCANCEL | wxICON_QUESTION);
+        if (dlg)
+        {
+            int resp;
+            int currentselection;
+            dlg->Centre(wxBOTH);
+            this->active = FALSE;
+            resp = dlg->ShowModal();
+            this->active = TRUE;
+            mListSelection currentselectionlist = finishedlist->GetCurrentSelection();
+            wxFileConfig *config = new wxFileConfig(DFAST_REG);
+            config->SetPath(FINISHED_REG);
+            int nselection = currentselectionlist.GetCount();
+            for (int i = nselection-1 ; i >= 0 ;i--) //REMOVE THE ITEM BACKWARD
+            {
+                currentselection = currentselectionlist.Item(i);
+                if (resp != wxID_CANCEL)
+                {
+                    wxString destination,name;
+                    if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+                        destination = destination + SEPARATOR_DIR;
+
+                    wxListItem item;
+                    item.SetId(currentselection);
+                    item.SetColumn(FINISHED_NAME);
+                    item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
+                    finishedlist->GetItem(item);
+
+                    config->SetPath(item.GetText());
+
+                    destination = wxEmptyString;
+                    config->Read(DESTINATION_REG,&destination);
+                    if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+                        destination = destination + SEPARATOR_DIR;
+
+                    name = wxEmptyString;
+                    config->Read(NAME_REG,&name);
+
+                    config->SetPath(BACK_DIR_REG);
+                    config->DeleteGroup(item.GetText());
+                    finishedlist->DeleteItem(currentselection);
+
+                    if (resp == wxID_YES)
+                        ::wxRemoveFile(destination + name);
+                }
+            }
+            delete config;
         }
     }
 }
 
 void mMainFrame::OnSchedule(wxCommandEvent& event)
 {
-    int currentselection;
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    if (list->GetCurrentSelection().GetCount() > 0)
     {
-        mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
-        if (((file->GetStatus() == STATUS_STOPED) || (file->GetStatus() == STATUS_QUEUE) || (file->GetStatus() == STATUS_ERROR)) && (file->IsFree()))
+        mListSelection selectionlist = list->GetCurrentSelection();
+        mDownloadFile *file;
+        int status;
+        for (unsigned int i = 0; i < selectionlist.GetCount();i++)
         {
-            file->PutOnScheduleQueue();
-            //file->RegisterListItemOnDisk();
-            file->MarkWriteAsPending(TRUE);
+            file = wxGetApp().downloadlist.Item(selectionlist.Item(i))->GetData();
+            status = file->GetStatus();
+            if (((status == STATUS_STOPED) || (status == STATUS_QUEUE) || (status == STATUS_ERROR)) && (file->IsFree()))
+            {
+                file->PutOnScheduleQueue();
+                file->MarkWriteAsPending(TRUE);
+            }
         }
     }
 }
 
 void mMainFrame::OnStart(wxCommandEvent& event)
 {
-    int currentselection;
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    if (list->GetCurrentSelection().GetCount() > 0)
     {
-        mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
-        if (((file->GetStatus() == STATUS_STOPED) || (file->GetStatus() == STATUS_ERROR)) && (file->IsFree()))
+        mListSelection selectionlist = list->GetCurrentSelection();
+        mDownloadFile *file;
+        int status;
+        for (unsigned int i = 0; i < selectionlist.GetCount();i++)
         {
-            file->PutOnQueue();
-            //file->RegisterListItemOnDisk();
-            file->MarkWriteAsPending(TRUE);
+            file = wxGetApp().downloadlist.Item(selectionlist.Item(i))->GetData();
+            status = file->GetStatus();
+            if (((status == STATUS_STOPED) || (status == STATUS_ERROR)) && (file->IsFree()))
+            {
+                file->PutOnQueue();
+                file->MarkWriteAsPending(TRUE);
+                if (programoptions.hidemainframe) //HIDE THE MAINFRAME
+                {
+                    wxIconizeEvent iconizeevent;
+                    this->OnIconize(iconizeevent);
+                }
+            }
         }
     }
 }
@@ -903,17 +966,20 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
 
 void mMainFrame::OnStop(wxCommandEvent& event)
 {
-    int currentselection;
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    mListSelection currentselectionlist = list->GetCurrentSelection();
+    if (currentselectionlist.GetCount() > 0)
     {
         int status;
-        mDownloadFile *file = wxGetApp().downloadlist.Item(currentselection)->GetData();
-        status = file->GetStatus();
-        StopDownload(file); //STOP AND SET SCHEDULE = FALSE
-        if ((status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE)) //WHEN THE DOWNLOAD IS ALREADY ACTIVE THE WRITE ON DISK WILL BE MADE IN THE TIMER
-            //file->RegisterListItemOnDisk();
-            file->MarkWriteAsPending(TRUE);
+        mDownloadFile *file;
+        for (unsigned int i = 0; i < currentselectionlist.GetCount();i++)
+        {
+            file = wxGetApp().downloadlist.Item(currentselectionlist.Item(i))->GetData();
+            status = file->GetStatus();
+            StopDownload(file); //STOP AND SET SCHEDULE = FALSE
+            if ((status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE)) //WHEN THE DOWNLOAD IS ALREADY ACTIVE 
+                file->MarkWriteAsPending(TRUE);                                //THE WRITE ON DISK WILL BE MADE IN THE TIMER
+        }
     }
 }
 
@@ -1012,14 +1078,16 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
         wxListCtrl *list;
         mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
         mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
-        if ((currentselection = list01->GetCurrentSelection()) >= 0)
+        if ((currentselection = list01->GetCurrentLastSelection()) >= 0)
         {
+            list01->SetCurrentSelection(currentselection);
             config->SetPath(INPROGRESS_REG);
             column = INPROGRESS_NAME;
             list = (wxListCtrl*)list01;
         }
-        else if ((currentselection = list02->GetCurrentSelection()) >= 0)
+        if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
         {
+            list02->SetCurrentSelection(currentselection);
             config->SetPath(FINISHED_REG);
             column = FINISHED_NAME;
             list = (wxListCtrl*)list02;
@@ -1061,14 +1129,16 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
         wxListCtrl *list;
         mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
         mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
-        if ((currentselection = list01->GetCurrentSelection()) >= 0)
+        if ((currentselection = list01->GetCurrentLastSelection()) >= 0)
         {
+            list01->SetCurrentSelection(currentselection);
             config->SetPath(INPROGRESS_REG);
             column = INPROGRESS_NAME;
             list = (wxListCtrl*)list01;
         }
-        else if ((currentselection = list02->GetCurrentSelection()) >= 0)
+        if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
         {
+            list02->SetCurrentSelection(currentselection);
             config->SetPath(FINISHED_REG);
             column = FINISHED_NAME;
             list = (wxListCtrl*)list02;
@@ -1150,6 +1220,80 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
     else
         wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
 }
+void mMainFrame::OnSelectAll(wxCommandEvent& event)
+{
+    wxNotebook *notebook = XRCCTRL(*(this), "notebook01",wxNotebook );
+    wxListCtrl *list;
+    if (notebook->GetSelection() == 0)
+    {
+        list = XRCCTRL(*(this), "inprogresslist",mInProgressList);
+    }else if (notebook->GetSelection() == 1)
+    {
+        list = XRCCTRL(*(this), "finishedlist",mFinishedList);
+    }
+    else
+        return;
+    for (int i=0;i<list->GetItemCount();i++)
+        list->SetItemState(i,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+}
+
+void mMainFrame::OnInvertSelection(wxCommandEvent& event)
+{
+    wxNotebook *notebook = XRCCTRL(*(this), "notebook01",wxNotebook );
+    mListSelection selectionlist;
+    if (notebook->GetSelection() == 0)
+    {
+        mInProgressList *list = XRCCTRL(*(this), "inprogresslist",mInProgressList);
+        selectionlist = list->GetCurrentSelection();
+        list->SelectUnselect(FALSE,-1);
+        int nitems = list->GetItemCount();
+        int nselections = selectionlist.GetCount();
+        int count = 0;
+        int next = -1;
+        if (nselections > 0)
+            next = selectionlist.Item(count);
+        for (int i = 0; i < nitems ; i++)
+        {
+            if (i != next)
+                list->SetItemState(i,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+            else
+            {
+                count++;
+                if (count < nselections)
+                {
+                    next = selectionlist.Item(count);
+                }
+            }
+        }
+    }
+    else if (notebook->GetSelection() == 1)
+    {
+        mFinishedList *list = XRCCTRL(*(this), "finishedlist",mFinishedList);
+        selectionlist = list->GetCurrentSelection();
+        list->SelectUnselect(FALSE,-1);
+        int nitems = list->GetItemCount();
+        int nselections = selectionlist.GetCount();
+        int count = 0;
+        int next = -1;
+        if (nselections > 0)
+            next = selectionlist.Item(count);
+        for (int i = 0; i < nitems ; i++)
+        {
+            if (i != next)
+                list->SetItemState(i,wxLIST_STATE_SELECTED,wxLIST_STATE_SELECTED);
+            else
+            {
+                count++;
+                if (count < nselections)
+                {
+                    next = selectionlist.Item(count);
+                }
+            }
+        }
+    }
+    else
+        return;
+}
 
 void mMainFrame::OnFind(wxCommandEvent& event)
 {
@@ -1181,7 +1325,7 @@ void mMainFrame::OnUpDown(bool up)
 {
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
     int newselection = -1,currentselection;
-    currentselection = list->GetCurrentSelection();
+    currentselection = list->GetCurrentLastSelection();
     if ((currentselection > 0) && (up == TRUE))
         newselection = currentselection -1;
     if ((currentselection >= 0) && (up == FALSE) && (currentselection+1 < list->GetItemCount()))
@@ -1210,6 +1354,7 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
     {
         _("(Default)"),
         _("English"),
+        _("Portuguese"),
         _("Portuguese(Brazil)"),
         _("German"),
         _("Spanish"),
@@ -1224,9 +1369,10 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
         {
             case 0 : langvalue = wxLANGUAGE_DEFAULT; break;
             case 1 : langvalue = wxLANGUAGE_ENGLISH; break;
-            case 2 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
-            case 3 : langvalue = wxLANGUAGE_GERMAN; break;
-            case 4 : langvalue = wxLANGUAGE_SPANISH; break;
+            case 2 : langvalue = wxLANGUAGE_PORTUGUESE; break;
+            case 3 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
+            case 4 : langvalue = wxLANGUAGE_GERMAN; break;
+            case 5 : langvalue = wxLANGUAGE_SPANISH; break;
         }
         mApplication::Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
         wxMessageBox(_("You need restart the program to use the new language!"),
@@ -1236,18 +1382,18 @@ void mMainFrame::OnLanguages(wxCommandEvent& event)
 
 void mMainFrame::OnProperties(wxCommandEvent& event)
 {
-    int currentselection;
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    int currentselection;
+    if ((currentselection = list->GetCurrentLastSelection()) >= 0)
     {
+        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
+        list->SetCurrentSelection(currentselection);
         mBoxNew dlg;
         wxString newname, oldname;
         wxCheckListBox *lstaddresslist;
-        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
         wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
         dlg.Centre(wxBOTH);
         dlg.SetTitle(_("Download Properties"));
-
         lstaddresslist = XRCCTRL(dlg,"lstaddresslist",wxCheckListBox);
 
         XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(currentfile->GetDestination());
@@ -1326,83 +1472,19 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
 {
     int currentselection;
     mFinishedList *list = XRCCTRL(*this, "finishedlist",mFinishedList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    if (list->GetCurrentSelection().GetCount() > 0)
     {
-        wxFileConfig *config = new wxFileConfig(DFAST_REG);
-        wxListItem item;
-        int startoption;
-        wxString url,destination,user,password,comments;
-        wxArrayString urlarray;
-        int parts;
-        item.SetId(currentselection);
-        item.SetColumn(FINISHED_NAME);
-        item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
-        list->GetItem(item);
-
-        config->SetPath(FINISHED_REG);
-        config->SetPath(item.GetText());
-
-        bool existurl = TRUE;
-        int count = 1;
-        while (existurl)
+        mListSelection currentselectionlist = list->GetCurrentSelection();
+        int nselection = currentselectionlist.GetCount()-1;
+        for (int i = nselection ; i >= 0 ;i--) //REMOVE THE ITEM BACKWARD
         {
-            url = wxEmptyString;
-            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(url));
-            if (url.IsEmpty())
-                break;
-            else
-            {
-                urlarray.Add(url);
-            }
-            count++;
-        }
-
-        destination = wxEmptyString;
-        config->Read(DESTINATION_REG,&destination);
-
-        parts = 1;
-        config->Read(PARTS_REG,&parts);
-
-        user = wxEmptyString;
-        config->Read(USER_REG,&user);
-
-        password = wxEmptyString;
-        config->Read(PASSWORD_REG,&password);
-
-        comments = wxEmptyString;
-        config->Read(COMMENTS_REG,&comments);
-        config->SetPath(BACK_DIR_REG);
-
-        if (programoptions.rememberboxnewoptions)
-            startoption = programoptions.laststartoption;
-        else
-            startoption = DEFAULT_START_OPTION;
-
-        if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE,FALSE))
-        {
-            config->DeleteGroup(item.GetText());
-            list->DeleteItem(currentselection);
-            list->SelectUnselect(FALSE,-1);
-        }
-        delete config;
-    }
-}
-
-void mMainFrame::OnMove(wxCommandEvent& event)
-{
-    int currentselection;
-    mFinishedList *list = XRCCTRL(*this, "finishedlist",mFinishedList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
-    {
-         wxString dir;
-        dir = wxDirSelector(_("Select the directory:"));
-        if (dir != wxEmptyString)
-        {
-            if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
-                dir = dir + SEPARATOR_DIR;
+            currentselection = currentselectionlist.Item(i);
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
             wxListItem item;
-            wxString name,destination;
+            int startoption;
+            wxString url,destination,user,password,comments;
+            wxArrayString urlarray;
+            int parts;
             item.SetId(currentselection);
             item.SetColumn(FINISHED_NAME);
             item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
@@ -1411,38 +1493,116 @@ void mMainFrame::OnMove(wxCommandEvent& event)
             config->SetPath(FINISHED_REG);
             config->SetPath(item.GetText());
 
-            name = wxEmptyString;
-            config->Read(NAME_REG,&name);
-
             destination = wxEmptyString;
             config->Read(DESTINATION_REG,&destination);
-            if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-                destination = destination + SEPARATOR_DIR;
 
-            if (destination != dir)
+            parts = 1;
+            config->Read(PARTS_REG,&parts);
+
+            user = wxEmptyString;
+            config->Read(USER_REG,&user);
+
+            password = wxEmptyString;
+            config->Read(PASSWORD_REG,&password);
+
+            comments = wxEmptyString;
+            config->Read(COMMENTS_REG,&comments);
+
+            bool existurl = TRUE;
+            int count = 1;
+            while (existurl)
             {
-                if (::wxFileExists(destination+name))
+                url = wxEmptyString;
+                config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(url));
+                if (url.IsEmpty())
+                    break;
+                else
+                    urlarray.Add(url);
+                count++;
+            }
+            config->SetPath(BACK_DIR_REG);
+
+            if (programoptions.rememberboxnewoptions)
+                startoption = programoptions.laststartoption;
+            else
+                startoption = DEFAULT_START_OPTION;
+
+            if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE,FALSE))
+            {
+                config->DeleteGroup(item.GetText());
+                list->DeleteItem(currentselection);
+                list->SelectUnselect(FALSE,-1);
+            }
+            delete config;
+        }
+    }
+}
+
+void mMainFrame::OnMove(wxCommandEvent& event)
+{
+    int currentselection = -1;
+    mFinishedList *list = XRCCTRL(*this, "finishedlist",mFinishedList );
+    if (list->GetCurrentSelection().GetCount() > 0)
+    {
+        wxString dir;
+        dir = wxDirSelector(_("Select the directory:"));
+        if (dir != wxEmptyString)
+        {
+            mListSelection currentselectionlist = list->GetCurrentSelection();
+            if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
+                dir = dir + SEPARATOR_DIR;
+            wxFileConfig *config = new wxFileConfig(DFAST_REG);
+            wxListItem item;
+            config->SetPath(FINISHED_REG);
+
+            for (unsigned int i = 0; i < currentselectionlist.GetCount();i++)
+            {
+                currentselection = currentselectionlist.Item(i);
+
+                wxString name,destination;
+                item.SetId(currentselection);
+                item.SetColumn(FINISHED_NAME);
+                item.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
+                list->GetItem(item);
+
+                config->SetPath(item.GetText());
+
+                name = wxEmptyString;
+                config->Read(NAME_REG,&name);
+
+                destination = wxEmptyString;
+                config->Read(DESTINATION_REG,&destination);
+                if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+                    destination = destination + SEPARATOR_DIR;
+
+                if (destination != dir)
                 {
-                    this->active = FALSE;
-                    wxProgressDialog *dlg = new wxProgressDialog(_("Moving..."),_("Moving file..."));
-                    wxLogNull logNo;
-                    if (::wxCopyFile(destination+name,dir+name,TRUE))
+                    if (::wxFileExists(destination+name))
                     {
-                        dlg->Update(50);
-                        config->Write(DESTINATION_REG,dir);
-                        ::wxRemoveFile(destination+name);
+                        this->active = FALSE;
+                        wxProgressDialog *dlg = new wxProgressDialog(_("Moving..."),_("Moving file..."));
+                        wxLogNull logNo;
+                        if (::wxCopyFile(destination+name,dir+name,TRUE))
+                        {
+                            dlg->Update(50);
+                            config->Write(DESTINATION_REG,dir);
+                            ::wxRemoveFile(destination+name);
+                        }
+                        else
+                            wxMessageBox(_("Error moving file."),_("Error..."),wxOK|wxICON_ERROR,this);
+                        this->active = TRUE;
+                        delete dlg;
                     }
                     else
-                        wxMessageBox(_("Error moving file."),_("Error..."),wxOK|wxICON_ERROR,this);
-                    this->active = TRUE;
-                    delete dlg;
+                    {
+                        wxString message = _("The file isn't in the path that it was saved initially.\nDo you want to change only the old path for the current one?");
+                        message += wxT("\n\nFilename: ") + name;
+                        if (wxMessageBox(message ,
+                                _("Continue..."),wxYES | wxNO | wxICON_QUESTION, this) == wxYES)
+                            config->Write(DESTINATION_REG,dir);
+                    }
                 }
-                else
-                {
-                    if (wxMessageBox(_("The file isn't in the path that it was saved initially.\nDo you want to change only the old path for the current one?"),
-                            _("Continue..."),wxYES | wxNO | wxICON_QUESTION, this) == wxYES)
-                        config->Write(DESTINATION_REG,dir);
-                }
+                config->SetPath(BACK_DIR_REG);
             }
             delete config;
             list->SelectUnselect(TRUE,currentselection);
@@ -1454,8 +1614,9 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
 {
     int currentselection;
     mFinishedList *list = XRCCTRL(*this, "finishedlist",mFinishedList );
-    if ((currentselection = list->GetCurrentSelection()) >= 0)
+    if ((currentselection = list->GetCurrentLastSelection()) >= 0)
     {
+        list->SetCurrentSelection(currentselection);
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
         wxListItem item;
         wxString name,destination,md5old, md5new;
@@ -1613,6 +1774,8 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "spingraphheight",wxSpinCtrl)->SetValue(programoptions.graphheight);
     XRCCTRL(dlg, "spingraphfontsize",wxSpinCtrl)->SetValue(programoptions.graphspeedfontsize);
     XRCCTRL(dlg, "spingraphlinewidth",wxSpinCtrl)->SetValue(programoptions.graphlinewidth);
+    XRCCTRL(dlg, "chkrestoremainframe",wxCheckBox)->SetValue(programoptions.restoremainframe);
+    XRCCTRL(dlg, "chkhidemainframe",wxCheckBox)->SetValue(programoptions.hidemainframe);
     XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->SetValue(programoptions.graphshow);
     XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour = programoptions.graphbackcolor;
     XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour = programoptions.graphgridcolor;
@@ -1661,6 +1824,8 @@ wxGetTranslation(days[i]));
         programoptions.filemanagerpath = XRCCTRL(dlg, "edtfilemanagerpath",wxTextCtrl)->GetValue();
         programoptions.timerupdateinterval = XRCCTRL(dlg, "spintimerinterval",wxSpinCtrl)->GetValue();
         programoptions.readbuffersize = XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->GetValue();
+        programoptions.restoremainframe = XRCCTRL(dlg, "chkrestoremainframe",wxCheckBox)->GetValue();
+        programoptions.hidemainframe = XRCCTRL(dlg, "chkhidemainframe",wxCheckBox)->GetValue();
         programoptions.graphshow = XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->GetValue();
         programoptions.graphhowmanyvalues = XRCCTRL(dlg, "spingraphpoints",wxSpinCtrl)->GetValue();
         programoptions.graphrefreshtime = XRCCTRL(dlg, "spingraphrefreshrate",wxSpinCtrl)->GetValue();
@@ -1726,6 +1891,8 @@ wxGetTranslation(days[i]));
         mApplication::Configurations(WRITE,OPT_DISCONNECT_CMD_REG,programoptions.disconnectcmd);
         mApplication::Configurations(WRITE,OPT_TIMERINTERVAL_REG,programoptions.timerupdateinterval);
         mApplication::Configurations(WRITE,OPT_READBUFFERSIZE_REG,programoptions.readbuffersize);
+        mApplication::Configurations(WRITE,OPT_RESTORE_MAINFRAME_REG, programoptions.restoremainframe);
+        mApplication::Configurations(WRITE,OPT_HIDE_MAINFRAME_REG, programoptions.hidemainframe);
         mApplication::Configurations(WRITE,OPT_GRAPH_SHOW_REG,programoptions.graphshow);
         mApplication::Configurations(WRITE,OPT_GRAPH_HOWMANYVALUES_REG, programoptions.graphhowmanyvalues);
         mApplication::Configurations(WRITE,OPT_GRAPH_REFRESHTIME_REG, programoptions.graphrefreshtime);
@@ -1791,6 +1958,17 @@ wxGetTranslation(days[i]));
     this->active = TRUE;
 }
 
+void mMainFrame::OnSite(wxCommandEvent& event)
+{
+    if (::wxFileExists(programoptions.browserpath))
+        ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net\""));
+    else
+    {
+        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+                _("Error..."),wxOK | wxICON_ERROR, this);
+    }
+}
+
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxString message;
@@ -1847,57 +2025,48 @@ void mMainFrame::OnClose(wxCloseEvent& event)
 
 void mMainFrame::OnToolLeftClick(wxCommandEvent& event)
 {
-    if (event.GetId() == XRCID("toolnew"))
+    int id = event.GetId();
+    if (id == XRCID("toolnew"))
     {
         OnNew(event);
     }
-
-    if (event.GetId() == XRCID("toolremove"))
+    else if (id == XRCID("toolremove"))
     {
         OnRemove(event);
     }
-
-    if (event.GetId() == XRCID("toolschedule"))
+    else if (id == XRCID("toolschedule"))
     {
         OnSchedule(event);
     }
-
-    if (event.GetId() == XRCID("toolstart"))
+    else if (id == XRCID("toolstart"))
     {
         OnStart(event);
     }
-
-    if (event.GetId() == XRCID("toolstop"))
+    else if (id == XRCID("toolstop"))
     {
         OnStop(event);
     }
-
-    if (event.GetId() == XRCID("toolstartall"))
+    else if (id == XRCID("toolstartall"))
     {
         OnStartAll(event);
     }
-
-    if (event.GetId() == XRCID("toolstopall"))
+    else if (id == XRCID("toolstopall"))
     {
         OnStopAll(event);
     }
-
-    if (event.GetId() == XRCID("toolup"))
+    else if (id == XRCID("toolup"))
     {
         OnUpDown(TRUE);
     }
-
-    if (event.GetId() == XRCID("tooldown"))
+    else if (id == XRCID("tooldown"))
     {
         OnUpDown(FALSE);
     }
-
-    if (event.GetId() == XRCID("toolproperties"))
+    else if (id == XRCID("toolproperties"))
     {
         OnProperties(event);
     }
-
-    if (event.GetId() == XRCID("toolclose"))
+    else if (id == XRCID("toolclose"))
     {
         OnExit(event);
     }
@@ -1905,47 +2074,48 @@ void mMainFrame::OnToolLeftClick(wxCommandEvent& event)
 
 void mMainFrame::OnToolMouseMove(wxCommandEvent& event)
 {
-    if (event.GetSelection() == XRCID("toolnew"))
+    int selection = event.GetSelection();
+    if (selection == XRCID("toolnew"))
     {
         statusbar->SetStatusText(_("Add new download"));
     }
-    else if (event.GetSelection() == XRCID("toolremove"))
+    else if (selection == XRCID("toolremove"))
     {
         statusbar->SetStatusText(_("Remove the selected download"));
     }
-    else if (event.GetSelection() == XRCID("toolschedule"))
+    else if (selection == XRCID("toolschedule"))
     {
         statusbar->SetStatusText(_("Mark the selected download as scheduled"));
     }
-    else if (event.GetSelection() == XRCID("toolstart"))
+    else if (selection == XRCID("toolstart"))
     {
         statusbar->SetStatusText(_("Start the selected download"));
     }
-    else if (event.GetSelection() == XRCID("toolstop"))
+    else if (selection == XRCID("toolstop"))
     {
         statusbar->SetStatusText(_("Stop the selected download"));
     }
-    else if (event.GetSelection() == XRCID("toolstartall"))
+    else if (selection == XRCID("toolstartall"))
     {
         statusbar->SetStatusText(_("Start all downloads"));
     }
-    else if (event.GetSelection() == XRCID("toolstopall"))
+    else if (selection == XRCID("toolstopall"))
     {
         statusbar->SetStatusText(_("Stop all downloads"));
     }
-    else if (event.GetSelection() == XRCID("toolup"))
+    else if (selection == XRCID("toolup"))
     {
         statusbar->SetStatusText(_("Raise in one level the selected download in the queue"));
     }
-    else if (event.GetSelection() == XRCID("tooldown"))
+    else if (selection == XRCID("tooldown"))
     {
         statusbar->SetStatusText(_("Lower in one level the selected download in the queue"));
     }
-    else if (event.GetSelection() == XRCID("toolproperties"))
+    else if (selection == XRCID("toolproperties"))
     {
         statusbar->SetStatusText(_("Show the properties of the selected download"));
     }
-    else if (event.GetSelection() == XRCID("toolclose"))
+    else if (selection == XRCID("toolclose"))
     {
         statusbar->SetStatusText(_("Close the program"));
     }
@@ -1957,8 +2127,9 @@ void mMainFrame::BrowserFile()
 {
     int selection;
     mFinishedList *list = XRCCTRL(*this, "finishedlist",mFinishedList );
-    if ((selection = list->GetCurrentSelection()) >= 0)
+    if ((selection = list->GetCurrentLastSelection()) >= 0)
     {
+        list->SetCurrentSelection(selection);
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
         wxString filepath;
         config->SetPath(FINISHED_REG);

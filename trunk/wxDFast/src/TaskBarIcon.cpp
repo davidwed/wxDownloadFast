@@ -119,6 +119,7 @@ void mTaskBarIcon::OnHide(wxCommandEvent& event)
                 mainframe->Iconize(FALSE);
             mainframe->Show();
             restoring = FALSE;
+            //mainframe->RequestUserAttention();
         }
     }
 }

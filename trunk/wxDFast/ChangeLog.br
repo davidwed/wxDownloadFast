@@ -1,3 +1,9 @@
+0.4.4
+===================================================
+- Adicionado seleção multipla nas listas de down-
+  loads concluídos e em progresso.
+- Corrigido problema na caixa Novo Download
+
 0.4.3
 ===================================================
 - Corrigido bug que fazia com que o primeiro item

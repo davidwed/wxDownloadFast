@@ -280,7 +280,6 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
     file->split = FALSE;
     file->waitbeforesplit = TRUE;
 
-    //file->RegisterListItemOnDisk();
     file->MarkWriteAsPending(TRUE);
     file->MarkRemoveAsPending(FALSE);
     this->Append(file);
@@ -487,6 +486,11 @@ wxString mDownloadFile::GetContentType()
 void mDownloadFile::SetContentType(wxString contenttype)
 {
     this->contenttype = contenttype;
+}
+
+bool mDownloadFile::IsHtml()
+{
+    return this->GetContentType().Lower().Contains(wxT("html"));
 }
 
 int mDownloadFile::GetNumberofParts()
