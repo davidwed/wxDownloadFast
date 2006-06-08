@@ -21,7 +21,7 @@ INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
-OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
+OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)http.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
 
 ifeq ($(XRC), 1)
 	OBJ = $(OBJ_TMP)
@@ -80,7 +80,7 @@ $(BIN): $(LINKOBJ) $(WXMD5)
 #	$(STRIP) $(BIN)
 endif
 
-$(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.xrc $(RESOURCE_DIR)mainwindow.xrc
+$(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.xrc $(RESOURCE_DIR)mainwindow.xrc $(RESOURCE_DIR)menubar.xrc $(RESOURCE_DIR)toolbar.xrc
 ifeq ($(XRC), 1)
 	
 else
@@ -113,6 +113,9 @@ $(BUILD_DIR)FinishedList.o: src/FinishedList.cpp
 
 $(BUILD_DIR)ftp.o: src/ftp.cpp
 	$(CPP) -c src/ftp.cpp -o $(BUILD_DIR)ftp.o $(CXXFLAGS)
+
+$(BUILD_DIR)http.o: src/http.cpp
+	$(CPP) -c src/http.cpp -o $(BUILD_DIR)http.o $(CXXFLAGS)
 
 $(BUILD_DIR)Graph.o: src/Graph.cpp
 	$(CPP) -c src/Graph.cpp -o $(BUILD_DIR)Graph.o $(CXXFLAGS)

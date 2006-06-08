@@ -73,17 +73,6 @@ wxString MyUtilFunctions::GetLine(wxString text, int line)
     return str.Mid(0,pos-1);
 }
 
-char *MyUtilFunctions::wxstr2str(wxString wxstr)
-{
-    int tamanho = wxstr.Length() + 1;
-    char *data = new char[tamanho];
-    int i;
-    for (i = 0 ; i < (tamanho-1); i++)
-        data[i] = wxstr.GetChar(i);
-    data[i] = '\0';
-    return data;
-}
-
 wxString MyUtilFunctions::str2wxstr(char *str)
 {
     wxString retorno;

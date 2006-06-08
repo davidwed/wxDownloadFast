@@ -134,6 +134,7 @@ mApplication::mApplication(): m_condAllDone(m_mutexAllDone)
     // only be unlocked when we call Wait()
     m_mutexAllDone.Lock();
     m_waitingUntilAllDone = FALSE;
+    m_locale = NULL;
 }
 
 mApplication::~mApplication()
@@ -166,13 +167,14 @@ bool mApplication::OnInit()
     InitXmlResource();
     #else
     wxXmlResource::Get()->Load(wxT("resources/mainwindow.xrc"));
+    wxXmlResource::Get()->Load(wxT("resources/menubar.xrc"));
+    wxXmlResource::Get()->Load(wxT("resources/toolbar.xrc"));
     wxXmlResource::Get()->Load(wxT("resources/boxnew.xrc"));
     wxXmlResource::Get()->Load(wxT("resources/boxoptions.xrc"));
     #endif
-    m_locale = new wxLocale();
-    m_locale->Init(mApplication::Configurations(READ,LANGUAGE_REG,0));
-    m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
-    m_locale->AddCatalog(wxT("wxDFast"));
+
+    SetLanguage(mApplication::Configurations(READ,LANGUAGE_REG,0)); //SET THE LANGUAGE
+
     downloadlist.DeleteContents(TRUE);
     downloadlist.LoadDownloadListFromDisk();
     mainframe = NULL;
@@ -298,3 +300,12 @@ long mApplication::Configurations(int operation, wxString option,long value)
     return returnvalue;
 }
 
+void mApplication::SetLanguage(int language)
+{
+    if (m_locale)
+        delete m_locale;
+    m_locale = new wxLocale();
+    m_locale->Init(language);
+    m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
+    m_locale->AddCatalog(wxT("wxDFast"));
+}

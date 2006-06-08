@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Created by Max Velasques-->
+<resource version="2.3.0.1">
+    <object class="wxToolBar" name="toolbar">
+        <!--REMOVE THE wxTB_TEXT FLAG TO REMOVE LABELS -->
+        <style>wxTB_FLAT|wxTB_3DBUTTONS|wxTB_TEXT</style>
+        <bitmapsize>24,24</bitmapsize>
+        <object class="tool"  name="toolnew">
+            <label>New</label>
+            <bitmap>big/new.xpm</bitmap>
+            <tooltip>Add new download</tooltip>
+        </object>
+        <object class="tool"  name="toolremove">
+            <label>Remove</label>
+            <bitmap>big/remove.xpm</bitmap>
+            <tooltip>Remove the selected download</tooltip>
+        </object>
+            <object class="separator"/>
+        <object class="tool"  name="toolschedule">
+            <label>Schedule</label>
+            <bitmap>big/schedule.xpm</bitmap>
+            <tooltip>Mark the selected download as scheduled</tooltip>
+        </object>
+        <object class="tool"  name="toolstart">
+            <label>Start</label>
+            <bitmap>big/start.xpm</bitmap>
+            <tooltip>Start the selected download</tooltip>
+        </object>
+        <object class="tool"  name="toolstop">
+            <label>Stop</label>
+            <bitmap>big/stop.xpm</bitmap>
+            <tooltip>Stop the selected download</tooltip>
+        </object>
+        <object class="tool"  name="toolstartall">
+            <label>Start All</label>
+            <bitmap>big/startall.xpm</bitmap>
+            <tooltip>Start all downloads</tooltip>
+        </object>
+        <object class="tool"  name="toolstopall">
+            <label>Stop All</label>
+            <bitmap>big/stopall.xpm</bitmap>
+            <tooltip>Stop all downloads</tooltip>
+        </object>
+            <object class="separator"/>
+        <object class="tool"  name="toolup">
+            <label>Up</label>
+            <bitmap>big/up.xpm</bitmap>
+            <tooltip>Raise in one level the selected download in the queue</tooltip>
+        </object>
+        <object class="tool"  name="tooldown">
+            <label>Down</label>
+            <bitmap>big/down.xpm</bitmap>
+            <tooltip>Lower in one level the selected download in the queue</tooltip>
+        </object>
+            <object class="separator"/>
+        <object class="tool"  name="toolproperties">
+            <label>Properties</label>
+            <bitmap>big/properties.xpm</bitmap>
+            <tooltip>Show the properties of the selected download</tooltip>
+        </object>
+            <object class="separator"/>
+        <object class="tool"  name="toolclose">
+            <label>Close</label>
+            <bitmap>big/close.xpm</bitmap>
+            <tooltip>Close the program</tooltip>
+        </object>
+    </object> 
+</resource>

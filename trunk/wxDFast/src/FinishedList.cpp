@@ -33,12 +33,14 @@ int wxCALLBACK mFinishedList::CompareDates(long item1, long item2, long WXUNUSED
 
 void mFinishedList::OnEnterWindow(wxMouseEvent& event)
 {
-    mainframe->statusbar->SetStatusText(_("Double-click on the item opens the destination directory"));
+    if (mainframe->statusbar)
+        mainframe->statusbar->SetStatusText(_("Double-click on the item opens the destination directory"));
 }
 
 void mFinishedList::OnLeaveWindow(wxMouseEvent& event)
 {
-    mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+    if (mainframe->statusbar)
+        mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
 }
 
 void mFinishedList::OnRClick(wxListEvent& event)
@@ -111,18 +113,22 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
 {
     this->lastselection = selection;
     wxListCtrl* infolist = XRCCTRL(*(mainframe), "infolist",wxListCtrl );
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),FALSE);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
-    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
-    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),FALSE);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
+    if (mainframe->menubar)
+    {
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),FALSE);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),FALSE);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),FALSE);
+        mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+        mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),FALSE);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),selected);
+    }
+    if (mainframe->toolbar)
+        mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
 
     infolist->ClearAll();
     //infolist->SetBackgroundColour(BLUE);
@@ -237,6 +243,9 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
 
 void mFinishedList::GenerateList(wxImageList *imageslist)
 {
+    SelectUnselect(FALSE,-1);
+    this->ClearAll();
+    this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
     wxListItem itemCol;
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
     wxListCtrl* infolist = XRCCTRL(*(mainframe), "infolist",wxListCtrl );
@@ -246,11 +255,9 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
     wxDateTime date;
     long index,i=0;
     int status;
-    this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
     itemCol.m_mask = wxLIST_MASK_TEXT | wxLIST_MASK_IMAGE;
     itemCol.m_text = wxEmptyString;
     itemCol.m_image = -1;
-    this->ClearAll();
     this->InsertColumn(FINISHED_ICON01, itemCol);
     itemCol.m_text = _("Filename");
     this->InsertColumn(FINISHED_NAME, itemCol);

@@ -57,8 +57,15 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menustopall"),  mMainFrame::OnStopAll)
     EVT_MENU(XRCID("menuexit"),  mMainFrame::OnExit)
     EVT_MENU(XRCID("menusite"),  mMainFrame::OnSite)
+    EVT_MENU(XRCID("menubug"),  mMainFrame::OnBug)
     EVT_MENU(XRCID("menuabout"), mMainFrame::OnAbout)
-    EVT_MENU(XRCID("menulanguage"), mMainFrame::OnLanguages)
+    EVT_MENU(XRCID("menulang_default"), mMainFrame::OnDefaultLanguage)
+    EVT_MENU(XRCID("menulang_ent"), mMainFrame::OnEnglish)
+    EVT_MENU(XRCID("menulang_pt"), mMainFrame::OnPortuguese)
+    EVT_MENU(XRCID("menulang_ptbr"), mMainFrame::OnPortugueseBrazil)
+    EVT_MENU(XRCID("menulang_de"), mMainFrame::OnGerman)
+    EVT_MENU(XRCID("menulang_es"), mMainFrame::OnSpanish)
+    EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
     EVT_MENU(XRCID("menupaste"), mMainFrame::OnPasteURL)
     EVT_MENU(XRCID("menuoptions"), mMainFrame::OnOptions)
@@ -90,6 +97,12 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(mNotebook,wxNotebook)
     EVT_NOTEBOOK_PAGE_CHANGED(XRCID("notebook01"),  mNotebook::OnChangePage)
 END_EVENT_TABLE()
+
+void mNotebook::ReSetPagesLabel()
+{
+    SetPageText(0,wxGetTranslation(_("Downloads in Progress")));
+    SetPageText(1,wxGetTranslation(_("Finished Downloads")));
+}
 
 void mNotebook::OnChangePage(wxNotebookEvent& event)
 {
@@ -132,8 +145,19 @@ mMainFrame::mMainFrame()
     #else
     SetIcon(wxICON(wxdfast));
     #endif
-    menubar = this->GetMenuBar();
-    toolbar = this->GetToolBar();
+
+    //LOAD THE MENU BAR
+    if ((menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menubar"))))
+        this->SetMenuBar(menubar);
+    else
+        menubar = NULL;
+
+    //LOAD THE TOOL BAR
+    if ((toolbar = wxXmlResource::Get()->LoadToolBar(this,wxT("toolbar"))))
+        this->SetToolBar(toolbar);
+    else
+        toolbar = NULL;
+
     statusbar = this->GetStatusBar();
 
     //LOAD USER OPTIONS
@@ -227,14 +251,23 @@ mMainFrame::mMainFrame()
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
 
-    menubar->GetMenu(3)->Check(XRCID("menushutdown"),programoptions.shutdown);
-    menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
+    //CHECK THE RIGHT LANGUAGE MENU
+    MarkCurrentLanguageMenu(mApplication::Configurations(READ,LANGUAGE_REG,0));
+
+    if (menubar)
+    {
+        menubar->GetMenu(3)->Check(XRCID("menushutdown"),programoptions.shutdown);
+        menubar->GetMenu(3)->Check(XRCID("menudisconnect"),programoptions.disconnect);
+    }
     timerupdateinterval = programoptions.timerupdateinterval;
 
     graph.DeleteContents(TRUE);
     XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
     XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
     XRCCTRL(*(this), "graphpanel",mGraph )->mainframe = this;
+
+    //SET NOTEBOOK TAB LABELS
+    XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
 
     //GENERATE THE LISTS
     XRCCTRL(*this, "inprogresslist",mInProgressList )->mainframe = this;
@@ -294,7 +327,8 @@ mMainFrame::mMainFrame()
         XRCCTRL(*(this), "graphpanel",mGraph )->Show();
 
     //DEFINE THE STATUSBAR DEFAULT TEXT
-    statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+    if (statusbar)
+        statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
@@ -621,7 +655,8 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 
         temp.Printf(_("Total Speed: %0.1f kb/s"), *value);
         temp.Replace(wxT(","),wxT("."));
-        statusbar->SetStatusText(temp,1);
+        if (statusbar)
+            statusbar->SetStatusText(temp,1);
 
         if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
             graph.DeleteNode(graph.GetFirst());
@@ -1222,7 +1257,7 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
 }
 void mMainFrame::OnSelectAll(wxCommandEvent& event)
 {
-    wxNotebook *notebook = XRCCTRL(*(this), "notebook01",wxNotebook );
+    mNotebook *notebook = XRCCTRL(*(this), "notebook01",mNotebook );
     wxListCtrl *list;
     if (notebook->GetSelection() == 0)
     {
@@ -1239,7 +1274,7 @@ void mMainFrame::OnSelectAll(wxCommandEvent& event)
 
 void mMainFrame::OnInvertSelection(wxCommandEvent& event)
 {
-    wxNotebook *notebook = XRCCTRL(*(this), "notebook01",wxNotebook );
+    mNotebook *notebook = XRCCTRL(*(this), "notebook01",mNotebook );
     mListSelection selectionlist;
     if (notebook->GetSelection() == 0)
     {
@@ -1308,6 +1343,36 @@ void mMainFrame::OnFind(wxCommandEvent& event)
     }
 }
 
+void mMainFrame::OnShowGraph(wxCommandEvent& event)
+{
+    if (programoptions.graphshow)
+        programoptions.graphshow = FALSE;
+    else
+        programoptions.graphshow = TRUE;
+    mApplication::Configurations(WRITE,OPT_GRAPH_SHOW_REG,programoptions.graphshow);
+    ShowHideResizeGraph(programoptions.graphheight);
+}
+
+void mMainFrame::ShowHideResizeGraph(int oldgraphheight)
+{
+    if (programoptions.graphheight != oldgraphheight) //SHOW/HIDE/CHANGE THE HEIGHT OF THE GRAPH
+    {
+        int currentgraphheight = programoptions.graphheight;
+        programoptions.graphheight = oldgraphheight;
+        XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+        programoptions.graphheight = currentgraphheight;
+        if (programoptions.graphshow)
+            XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+    }
+    else
+    {
+        if (!programoptions.graphshow)
+            XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+        else
+            XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+    }
+}
+
 void mMainFrame::OnDetails(wxCommandEvent& event)
 {
     wxSplitterWindow *splitter = XRCCTRL(*this, "splitter01",wxSplitterWindow);
@@ -1348,37 +1413,115 @@ void mMainFrame::OnUpDown(bool up)
     }
 }
 
-void mMainFrame::OnLanguages(wxCommandEvent& event)
+void mMainFrame::MarkCurrentLanguageMenu(int language)
 {
-    wxString langs[] =
-    {
-        _("(Default)"),
-        _("English"),
-        _("Portuguese"),
-        _("Portuguese(Brazil)"),
-        _("German"),
-        _("Spanish"),
-    };
+    if (!menubar)
+        return;
+    if (language != wxLANGUAGE_DEFAULT)
+        menubar->GetMenu(2)->Check(XRCID("menulang_default"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_default"),TRUE);
 
-    int lng = wxGetSingleChoiceIndex(_("Please select the language:"), _("Language"),
-                                   WXSIZEOF(langs), langs);
-    if (lng >= 0)
-    {
-        int langvalue=0;
-        switch (lng)
-        {
-            case 0 : langvalue = wxLANGUAGE_DEFAULT; break;
-            case 1 : langvalue = wxLANGUAGE_ENGLISH; break;
-            case 2 : langvalue = wxLANGUAGE_PORTUGUESE; break;
-            case 3 : langvalue = wxLANGUAGE_PORTUGUESE_BRAZILIAN; break;
-            case 4 : langvalue = wxLANGUAGE_GERMAN; break;
-            case 5 : langvalue = wxLANGUAGE_SPANISH; break;
-        }
-        mApplication::Configurations(WRITE,LANGUAGE_REG,langvalue); //WRITE OPTION
-        wxMessageBox(_("You need restart the program to use the new language!"),
-                 _("Information..."), wxOK | wxICON_INFORMATION, this);
-    }
+    if (language != wxLANGUAGE_ENGLISH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_ent"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_ent"),TRUE);
+
+    if (language != wxLANGUAGE_PORTUGUESE)
+        menubar->GetMenu(2)->Check(XRCID("menulang_pt"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_pt"),TRUE);
+
+    if (language != wxLANGUAGE_PORTUGUESE_BRAZILIAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_ptbr"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_ptbr"),TRUE);
+
+    if (language != wxLANGUAGE_GERMAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_de"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_de"),TRUE);
+
+    if (language != wxLANGUAGE_SPANISH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_es"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_es"),TRUE);
 }
+
+void mMainFrame::SetLanguage(int language)
+{
+    wxGetApp().SetLanguage(language);
+
+    //STOP THE TIMER BEFORE UPDATE THE INTERFACE
+    mtimer->Stop();
+
+    //RELOAD THE MENU BAR
+    wxMenuBar *oldmenubar = menubar;
+    if ((menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menubar"))))
+    {
+        this->SetMenuBar(menubar);
+        delete oldmenubar;
+    }
+    else
+        menubar = oldmenubar;
+
+    //RELOAD THE TOOL BAR
+    wxToolBar *oldtoolbar = toolbar;
+    if ((toolbar = wxXmlResource::Get()->LoadToolBar(this,wxT("toolbar"))))
+    {
+        this->SetToolBar(toolbar);
+        delete oldtoolbar;
+    }
+    else
+        toolbar = oldtoolbar;
+
+    //MARK CURRENT LANGUAGE ON MENU
+    MarkCurrentLanguageMenu(language);
+
+    //REGENERATE THE LISTS
+    XRCCTRL(*(this), "inprogresslist",mInProgressList )->GenerateList(imageslist);
+    XRCCTRL(*(this), "finishedlist",mFinishedList )->GenerateList(imageslist);
+
+    //RESET NOTEBOOK PAGES LABELS
+    XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
+
+    //WRITE LANGUAGE SELECTION
+    mApplication::Configurations(WRITE,LANGUAGE_REG,language);
+
+    //RESTART THE TIMER
+    mtimer->Start(); 
+}
+
+void mMainFrame::OnDefaultLanguage(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_DEFAULT);
+}
+
+void mMainFrame::OnEnglish(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_ENGLISH);
+}
+
+void mMainFrame::OnPortuguese(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_PORTUGUESE);
+}
+
+void mMainFrame::OnPortugueseBrazil(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_PORTUGUESE_BRAZILIAN);
+}
+
+void mMainFrame::OnGerman(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_GERMAN);
+}
+
+void mMainFrame::OnSpanish(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_SPANISH);
+}
+
 
 void mMainFrame::OnProperties(wxCommandEvent& event)
 {
@@ -1935,22 +2078,8 @@ wxGetTranslation(days[i]));
         mApplication::Configurations(WRITE,OPT_SCHED_STARTDATETIME_REG, (long)programoptions.startdatetime.GetTicks());
         mApplication::Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
 
-        if (programoptions.graphheight != oldgraphheight) //SHOW/HIDE/CHANGE THE HEIGHT OF THE GRAPH
-        {
-            int currentgraphheight = programoptions.graphheight;
-            programoptions.graphheight = oldgraphheight;
-            XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
-            programoptions.graphheight = currentgraphheight;
-            if (programoptions.graphshow)
-                XRCCTRL(*(this), "graphpanel",mGraph )->Show();
-        }
-        else
-        {
-            if (!programoptions.graphshow)
-                XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
-            else
-                XRCCTRL(*(this), "graphpanel",mGraph )->Show();
-        }
+        ShowHideResizeGraph(oldgraphheight); //VERIFY IF THE GRAPH SIZE AND STATUS CHANGED
+
         waitbox->Update(100);
         delete waitbox;
         mutex_programoptions->Unlock();
@@ -1962,6 +2091,17 @@ void mMainFrame::OnSite(wxCommandEvent& event)
 {
     if (::wxFileExists(programoptions.browserpath))
         ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net\""));
+    else
+    {
+        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+                _("Error..."),wxOK | wxICON_ERROR, this);
+    }
+}
+
+void mMainFrame::OnBug(wxCommandEvent& event)
+{
+    if (::wxFileExists(programoptions.browserpath))
+        ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net/reportbugs.php\""));
     else
     {
         wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
@@ -2074,6 +2214,8 @@ void mMainFrame::OnToolLeftClick(wxCommandEvent& event)
 
 void mMainFrame::OnToolMouseMove(wxCommandEvent& event)
 {
+    if (!statusbar)
+        return;
     int selection = event.GetSelection();
     if (selection == XRCID("toolnew"))
     {
