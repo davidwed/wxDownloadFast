@@ -695,6 +695,9 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
+    client->SetUser(downloadfile->GetUser());
+    client->SetPassword(downloadfile->GetPassword());
+
     PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
     if (address.Hostname(currenturl.GetHost())==FALSE)
     {
