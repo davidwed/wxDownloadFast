@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- Created by Max Velasques-->
 <resource version="2.3.0.1">
-    <object class="wxDialog" name="boxnew" subclass="MyDialog">
+    <object class="wxDialog" name="boxnew" subclass="mBoxNew">
         <style>wxDEFAULT_DIALOG_STYLE</style>
         <title>Add new download</title>
         <object class="wxFlexGridSizer">

@@ -26,6 +26,7 @@
     #include "wxMD5/wxMD5.h"
     #include "wx/imaglist.h"
     #include "wx/protocol/ftp.h"
+    #include "wx/protocol/http.h"
     #include "wx/file.h"
     #include "wx/thread.h"
     #include "wx/toolbar.h"
@@ -458,7 +459,6 @@
         static int Configurations(int operation, wxString option, int value);
         static long Configurations(int operation, wxString option,long value);
         mMainFrame *mainframe;
-        wxLocale *m_locale;
         wxCmdLineParser *parameters;
         mServer *m_server;
         wxSocketBase *dummy;
@@ -468,6 +468,9 @@
         wxMutex m_mutexAllDone;
         wxCondition m_condAllDone;
         bool m_waitingUntilAllDone;
+        void SetLanguage(int language);
+    private:
+        wxLocale *m_locale;
     };
 
     DECLARE_APP(mApplication)
@@ -493,8 +496,19 @@
         void OnSelectAll(wxCommandEvent& event);
         void OnInvertSelection(wxCommandEvent& event);
         void OnFind(wxCommandEvent& event);
+        void OnShowGraph(wxCommandEvent& event);
+        void ShowHideResizeGraph(int oldgraphheight);
         void OnDetails(wxCommandEvent& event);
-        void OnLanguages(wxCommandEvent& event);
+        //Languages
+        void MarkCurrentLanguageMenu(int language);
+        void SetLanguage(int language);
+        void OnDefaultLanguage(wxCommandEvent& event);
+        void OnEnglish(wxCommandEvent& event);
+        void OnPortuguese(wxCommandEvent& event);
+        void OnPortugueseBrazil(wxCommandEvent& event);
+        void OnGerman(wxCommandEvent& event);
+        void OnSpanish(wxCommandEvent& event);
+
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);
         void OnDownloadAgain(wxCommandEvent& event);
@@ -510,6 +524,7 @@
         void OnExit(wxCommandEvent& event);
         void OnClose(wxCloseEvent& event);
         void OnSite(wxCommandEvent& event);
+        void OnBug(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& WXUNUSED(event));
         void BrowserFile();
         void OnToolLeftClick(wxCommandEvent& event);
@@ -631,7 +646,7 @@
     class mDatePicker: public wxDialog
     {
     public:
-        mDatePicker::mDatePicker(wxWindow* parent, wxWindowID id, const wxString& title, wxString date):
+        mDatePicker(wxWindow* parent, wxWindowID id, const wxString& title, wxString date):
                 wxDialog(parent, id, title)
         {
             //int wdate,hdate,wbtn,hbtn;
@@ -651,17 +666,17 @@
             //this->SetBestFittingSize();
             this->CentreOnParent();
         };
-        mDatePicker::~mDatePicker()
+        ~mDatePicker()
         {
             delete m_datepicker;
             delete m_btnok;
         };
-        void mDatePicker::OnOk(wxCommandEvent& event)
+        void OnOk(wxCommandEvent& event)
         {
             m_selecteddate = m_datepicker->GetDate().Format(wxT("%Y/%m/%d"));
             EndModal(wxID_OK);
         };
-        wxString mDatePicker::GetSelectedDate()
+        wxString GetSelectedDate()
         {
             return m_selecteddate;
         };
@@ -745,9 +760,12 @@
     class mNotebook : public wxNotebook
     {
     public:
+        void ReSetPagesLabel();
         void OnChangePage(wxNotebookEvent& event);
         DECLARE_DYNAMIC_CLASS(mNotebook)
     private:
+        wxString labelpage01;
+        wxString labelpage02;
         DECLARE_EVENT_TABLE()
     };
 
@@ -772,6 +790,23 @@
     public:
         wxLongLong GetFileSize(const wxString& fileName);
         wxInputStream *GetInputStream(const wxString& path);
+    };
+
+    class mHTTP: public wxHTTP
+    {
+    public:
+        mHTTP();
+        wxString BuildGetRequest(mUrlName url,wxLongLong start);
+        void SendGetRequest();
+        wxString GetResponseMessage();
+        bool Connect(wxSockAddress& addr, bool wait);
+        int GetResponse() { return m_http_response; }
+    private:
+        bool ParseHeaders();
+        char *wxstr2str(wxString wxstr);
+        wxString m_headersmsg;
+        wxString m_getcommand;
+        wxString m_messagereceived;
     };
 
     class mConnection: public wxConnection
@@ -804,6 +839,7 @@
         virtual void OnExit();
         wxString CheckHtmlFile(bool downloaded = FALSE);
         wxLongLong CurrentSize(wxString filepath,wxString filename);
+        int FinishDownload(wxFileName destination);
         wxSocketClient *ConnectHTTP(wxLongLong *start);
         wxSocketClient *ConnectFTP(wxLongLong *start);
         wxInputStream *ConnectLOCAL_FILE(wxLongLong start);
@@ -827,7 +863,6 @@
         static wxString TimeString(long value);
         static wxString TimeString(wxLongLong value);
         static wxString GetLine(wxString text, int line);
-        static char *wxstr2str(wxString wxstr);
         static wxString str2wxstr(char *str);
         static wxString str2wxstr(char str);
         static wxString ByteString(long size);

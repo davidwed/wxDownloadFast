@@ -1,7 +1,7 @@
 //
 // C++ Implementation: ftp
 //
-// Description: This file contains the implementation of the wxFTP class with
+// Description: This file contains the implementation of the mFTP class with
 //              support to files bigger than 2GB. This is made using the wxLongLong.
 //
 //

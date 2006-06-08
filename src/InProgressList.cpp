@@ -29,12 +29,14 @@ mInProgressList::mInProgressList()
 
 void mInProgressList::OnEnterWindow(wxMouseEvent& event)
 {
-    mainframe->statusbar->SetStatusText(_("Double-click on the item Start/Stop the download"));
+    if (mainframe->statusbar)
+        mainframe->statusbar->SetStatusText(_("Double-click on the item Start/Stop the download"));
 }
 
 void mInProgressList::OnLeaveWindow(wxMouseEvent& event)
 {
-    mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+    if (mainframe->statusbar)
+        mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
 }
 
 void mInProgressList::OnRClick(wxListEvent& event)
@@ -123,24 +125,30 @@ void mInProgressList::SelectUnselect(bool selected,int selection)
     if (!selected)
         this->SetCurrentSelection(selection);
     this->lastselection = selection;
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
-    mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
-    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
-    mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),FALSE);
-    mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
-    mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolstart"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolstop"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolup"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("tooldown"),selected);
-    mainframe->toolbar-> EnableTool(XRCID("toolproperties"),selected);
+    if (mainframe->menubar)
+    {
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menuremove"),selected);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
+        mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
+        mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
+        mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menumove"),FALSE);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menumd5"),FALSE);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuopendestination"),FALSE);
+        mainframe->menubar->GetMenu(3)->Enable(XRCID("menuagain"),FALSE);
+    }
+    if (mainframe->toolbar)
+    {
+        mainframe->toolbar-> EnableTool(XRCID("toolremove"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("toolstart"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("toolstop"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("toolup"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("tooldown"),selected);
+        mainframe->toolbar-> EnableTool(XRCID("toolproperties"),selected);
+    }
 }
 
 int mInProgressList::Insert(mDownloadFile *current, int item)
@@ -196,13 +204,17 @@ void mInProgressList::HandleSelectDeselectEvents(bool value)
 
 void mInProgressList::GenerateList(wxImageList *imageslist)
 {
+    SelectUnselect(FALSE,-1);
+    this->ClearAll();
+    this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
+
     wxListItem itemCol;
 
-    this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
     itemCol.m_mask = wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE;
     itemCol.m_text = wxEmptyString;
     itemCol.m_image = -1;
-    this->ClearAll();
+
+    //CREATE THE COLUMNS
     this->InsertColumn(INPROGRESS_ICON01, itemCol);
 
     itemCol.m_text = _("Restart");
