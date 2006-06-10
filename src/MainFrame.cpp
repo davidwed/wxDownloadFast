@@ -12,6 +12,9 @@
 
 #include "wxDFast.h"
 
+IMPLEMENT_DYNAMIC_CLASS(mNotebook, wxNotebook)
+IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
+
 ////////////////////////XPM IMAGES////////////////////////////////
 #ifndef __WXMSW__
 #include "../resources/wxdfast.xpm"
@@ -66,6 +69,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_de"), mMainFrame::OnGerman)
     EVT_MENU(XRCID("menulang_es"), mMainFrame::OnSpanish)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
+    EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
     EVT_MENU(XRCID("menupaste"), mMainFrame::OnPasteURL)
     EVT_MENU(XRCID("menuoptions"), mMainFrame::OnOptions)
@@ -189,6 +193,7 @@ mMainFrame::mMainFrame()
     #endif
     programoptions.restoremainframe = mApplication::Configurations(READ,OPT_RESTORE_MAINFRAME_REG, 1);
     programoptions.hidemainframe = mApplication::Configurations(READ,OPT_HIDE_MAINFRAME_REG, 0);
+    programoptions.progressbarshow = mApplication::Configurations(READ,OPT_PROGRESS_BAR_SHOW_REG, 1);
     programoptions.graphshow = mApplication::Configurations(READ,OPT_GRAPH_SHOW_REG, 1);
     programoptions.graphhowmanyvalues = mApplication::Configurations(READ,OPT_GRAPH_HOWMANYVALUES_REG, 300);
     programoptions.graphrefreshtime = mApplication::Configurations(READ,OPT_GRAPH_REFRESHTIME_REG, 1000);
@@ -261,10 +266,16 @@ mMainFrame::mMainFrame()
     }
     timerupdateinterval = programoptions.timerupdateinterval;
 
-    graph.DeleteContents(TRUE);
-    XRCCTRL(*(this), "graphpanel",mGraph )->graph = &graph;
-    XRCCTRL(*(this), "graphpanel",mGraph )->programoptions = &programoptions;
-    XRCCTRL(*(this), "graphpanel",mGraph )->mainframe = this;
+    //SET THE PROGRESS BAR VARS
+    progressbar = XRCCTRL(*(this), "progressbar",mProgressBar );
+    progressbar->SetMainFrame(this);
+
+    //SET THE GRAPH VARS
+    graphpoints.DeleteContents(TRUE);
+    graph = XRCCTRL(*(this), "graphpanel",mGraph );
+    graph->graphpoints = &graphpoints;
+    graph->programoptions = &programoptions;
+    graph->mainframe = this;
 
     //SET NOTEBOOK TAB LABELS
     XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
@@ -322,9 +333,15 @@ mMainFrame::mMainFrame()
 
     //HIDE OR SHOW THE SPEED GRAPH
     if (!programoptions.graphshow)
-        XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+        graph->Hide();
     else
-        XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+        graph->Show();
+
+    //HIDE OR SHOW THE PROGRESS BAR
+    if (!programoptions.progressbarshow)
+        progressbar->Hide();
+    else
+        progressbar->Show();
 
     //DEFINE THE STATUSBAR DEFAULT TEXT
     if (statusbar)
@@ -407,6 +424,8 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     #endif
     if ((selection < 0) &&  (((int)XRCCTRL(*(this), "treemessages",wxTreeCtrl)->GetCount()) > 0))
         XRCCTRL(*(this), "treemessages",wxTreeCtrl)->DeleteAllItems();
+    if ((selection < 0) && (programoptions.progressbarshow))
+        progressbar->SetParams(0,NULL);
     for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
     {
         current = node->GetData();
@@ -490,6 +509,11 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                         treeindex = 0;
                     }
                 }
+
+                //SET PROGRESS BAR NEW PARAMETERS
+                if (programoptions.progressbarshow)
+                    progressbar->SetParams(parts,current->percentualparts);
+
                 #ifdef USE_HTML_MESSAGES
                 if  (*(XRCCTRL(*(this), "messages",wxHtmlWindow)->GetParser()->GetSource()) != current->messages[treeindex])
                 {
@@ -651,21 +675,28 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         float *value = new float();
         wxString temp;
         *value = ((float)currentspeed) / 1024.0;
-        graph.Append(value);
+        graphpoints.Append(value);
 
         temp.Printf(_("Total Speed: %0.1f kb/s"), *value);
         temp.Replace(wxT(","),wxT("."));
         if (statusbar)
             statusbar->SetStatusText(temp,1);
 
-        if (graph.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
-            graph.DeleteNode(graph.GetFirst());
+        if (graphpoints.GetCount() > (unsigned int)programoptions.graphhowmanyvalues)
+            graphpoints.DeleteNode(graphpoints.GetFirst());
 
         timerinterval = 0;
         if (this->IsShown())
         {
             mutex_programoptions->Unlock();
-            XRCCTRL(*this, "graphpanel",mGraph )->Refresh();
+
+            //REFRESH THE GRAPH
+            if (programoptions.graphshow)
+                graph->Refresh();
+
+            //REFRESH THE PROGRESS BAR
+            if (programoptions.progressbarshow)
+                progressbar->Refresh();
         }
     }
     timerinterval += mtimer->GetInterval();
@@ -1343,6 +1374,21 @@ void mMainFrame::OnFind(wxCommandEvent& event)
     }
 }
 
+void mMainFrame::OnShowProgressBar(wxCommandEvent& event)
+{
+    if (programoptions.progressbarshow)
+    {
+        programoptions.progressbarshow = FALSE;
+        progressbar->Hide();
+    }
+    else
+    {
+        programoptions.progressbarshow = TRUE;
+        progressbar->Show();
+    }
+    mApplication::Configurations(WRITE,OPT_PROGRESS_BAR_SHOW_REG,programoptions.progressbarshow);
+}
+
 void mMainFrame::OnShowGraph(wxCommandEvent& event)
 {
     if (programoptions.graphshow)
@@ -1359,17 +1405,17 @@ void mMainFrame::ShowHideResizeGraph(int oldgraphheight)
     {
         int currentgraphheight = programoptions.graphheight;
         programoptions.graphheight = oldgraphheight;
-        XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+        graph->Hide();
         programoptions.graphheight = currentgraphheight;
         if (programoptions.graphshow)
-            XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+            graph->Show();
     }
     else
     {
         if (!programoptions.graphshow)
-            XRCCTRL(*(this), "graphpanel",mGraph )->Hide();
+            graph->Hide();
         else
-            XRCCTRL(*(this), "graphpanel",mGraph )->Show();
+            graph->Show();
     }
 }
 
@@ -2335,7 +2381,7 @@ bool mMainFrame::UpdateListItemField(mDownloadFile *current)
     {
         if (!current->WaitingForSplit())
         {
-            int i;
+            int i,parts;
             current->totalsizecompleted = 0;
 
             for (i=0; i < current->GetNumberofParts(); i++)
@@ -2344,6 +2390,21 @@ bool mMainFrame::UpdateListItemField(mDownloadFile *current)
                 current->timeremaining = wxLongLong(0l,1000l)*(current->totalsize - current->totalsizecompleted)/wxLongLong(0l,current->totalspeed);
             if (current->totalsize > 0)
                 current->SetProgress((int)(100*( MyUtilFunctions::wxlonglongtodouble(current->totalsizecompleted)) / ( MyUtilFunctions::wxlonglongtodouble(current->totalsize))));
+
+            if (current->IsSplitted())
+                parts = current->GetNumberofParts();
+            else
+                parts = 1;
+
+            for (int i = 0; i < parts;i++)
+            {
+                if (current->totalsize > 0)
+                {
+                    current->percentualparts[i] = (100/parts)-(int)(100*(MyUtilFunctions::wxlonglongtodouble(current->size[i] - current->sizecompleted[i]) / MyUtilFunctions::wxlonglongtodouble(current->totalsize)));
+                }
+                else
+                    current->percentualparts[i] = 0;
+            }
             result = TRUE;
         }
         list01->Insert(current,current->GetIndex());

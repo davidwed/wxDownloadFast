@@ -12,6 +12,8 @@
 
 #include "wxDFast.h"
 
+IMPLEMENT_DYNAMIC_CLASS(mInProgressList, wxListCtrl)
+
 BEGIN_EVENT_TABLE(mInProgressList, wxListCtrl)
     EVT_LIST_ITEM_SELECTED(XRCID("inprogresslist"), mInProgressList::OnSelected)
     EVT_LIST_ITEM_DESELECTED(XRCID("inprogresslist"), mInProgressList::OnDeselected)

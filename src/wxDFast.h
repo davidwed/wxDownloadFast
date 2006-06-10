@@ -164,6 +164,7 @@
     const wxString OPT_READBUFFERSIZE_REG = wxT("readbuffersize");
     const wxString OPT_RESTORE_MAINFRAME_REG = wxT("restoremainframe");
     const wxString OPT_HIDE_MAINFRAME_REG = wxT("hidemainframe");
+    const wxString OPT_PROGRESS_BAR_SHOW_REG = wxT("progressbarshow");
     const wxString OPT_GRAPH_SHOW_REG = wxT("graphshow");
     const wxString OPT_GRAPH_HOWMANYVALUES_REG = wxT("graphhowmanyvalues");
     const wxString OPT_GRAPH_REFRESHTIME_REG = wxT("graphrefreshtime");
@@ -201,8 +202,10 @@
 
     const wxColor RED = wxColor(255,0,30);
     const wxColor BLUE = wxColor(0,47,94);
+    const wxColor LIGHT_BLUE = wxColor(0,0,200);
     const wxColor GREEN = wxColor(0,98,65);
-    const wxColor YELLOW = wxColor(170,170,0);
+    const wxColor LIGHT_GREEN = wxColor(0,181,0);
+    const wxColor YELLOW = wxColor(250,230,24);
 
     const wxString HTMLERROR = wxT("#FF0030");         //RED
     const wxString HTMLSERVER = wxT("#009865");        //GREEN
@@ -265,6 +268,8 @@
     class mClient;
     class mServer;
     class mDownloadThread;
+    class mGraph;
+    class mProgressBar;
 
     WX_DECLARE_OBJARRAY(int,mListSelection);
     WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
@@ -346,6 +351,7 @@
         wxLongLong size[MAX_NUM_PARTS];
         wxLongLong sizecompleted[MAX_NUM_PARTS];
         long delta_size[MAX_NUM_PARTS];
+        int percentualparts[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
     private:
         int index;
@@ -417,6 +423,7 @@
         long readbuffersize;
         bool restoremainframe;   //Restore the mainframe when all downloads are finished
         bool hidemainframe;      //Hide the mainframe when the user start a download
+        bool progressbarshow;
         bool graphshow;
         int graphhowmanyvalues;
         int graphrefreshtime;    //time between the graph refreshs in milliseconds
@@ -496,6 +503,7 @@
         void OnSelectAll(wxCommandEvent& event);
         void OnInvertSelection(wxCommandEvent& event);
         void OnFind(wxCommandEvent& event);
+        void OnShowProgressBar(wxCommandEvent& event);
         void OnShowGraph(wxCommandEvent& event);
         void ShowHideResizeGraph(int oldgraphheight);
         void OnDetails(wxCommandEvent& event);
@@ -535,16 +543,19 @@
         void OnDisconnectEvent(wxCommandEvent& event);
         bool UpdateListItemField(mDownloadFile *current);
         mTaskBarIcon *taskbaricon;
+        mProgressBar *progressbar;
+        mGraph *graph;
         wxMenuBar *menubar;
         wxToolBar *toolbar;
         wxStatusBar *statusbar;
         wxMenu *menupopup;
         mOptions programoptions;
         wxMutex *mutex_programoptions;
-        mGraphPoints graph;
+        mGraphPoints graphpoints;
         int timerinterval;
         bool active;
     private:
+        int completed[MAX_NUM_PARTS];
         wxTimer *mtimer;
         wxImageList *imageslist;
         DECLARE_EVENT_TABLE()
@@ -553,45 +564,34 @@
     class mGraph : public wxPanel
     {
     public:
-        bool Hide()
-        {
-            return Show(false);
-        };
-        bool Show(bool show = TRUE)
-        {
-            wxSplitterWindow *splitter = XRCCTRL(*mainframe, "splitter01",wxSplitterWindow);
-            int x,y,width,height;
-            bool value = FALSE;
-            if (show)
-            {
-                this->SetBestFittingSize(wxSize(200,programoptions->graphheight));
-                splitter->GetPosition(&x,&y);
-                splitter->GetSize(&width,&height);
-                this->SetSize(wxSize(width,programoptions->graphheight));
-                if (!IsShown())
-                {
-                    splitter->SetSize(x,y+programoptions->graphheight+5,width,height-programoptions->graphheight-5);
-                    value = wxPanel::Show(TRUE);
-                }
-            }
-            else if (IsShown())
-            {
-                value = wxPanel::Show(FALSE);
-                this->SetBestFittingSize(wxSize(200,0));
-                splitter->GetPosition(&x,&y);
-                splitter->GetSize(&width,&height);
-                splitter->SetSize(x,y-programoptions->graphheight-5,width,height+programoptions->graphheight+5);
-            }
-            return value;
-        };
+        bool Hide();
+        bool Show(bool show = TRUE);
         void OnPaint(wxPaintEvent &event);
         mOptions *programoptions;
-        mGraphPoints *graph;
+        mGraphPoints *graphpoints;
         mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mGraph)
     private:
         DECLARE_EVENT_TABLE()
     };
+
+    class mProgressBar : public wxPanel
+    {
+    public:
+        mProgressBar();
+        void OnPaint(wxPaintEvent &event);
+        bool Hide();
+        bool Show(bool show = TRUE);
+        void SetMainFrame(mMainFrame *mainframe);
+        void SetParams(int parts,int *completed);
+        DECLARE_DYNAMIC_CLASS(mProgressBar)
+    private:
+        mMainFrame *mainframe;
+        int parts;
+        int completed[MAX_NUM_PARTS];
+        DECLARE_EVENT_TABLE()
+    };
+
 
     class mTaskBarIcon: public wxTaskBarIcon
     {

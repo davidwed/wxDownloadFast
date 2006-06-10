@@ -12,6 +12,8 @@
 
 #include "wxDFast.h"
 
+IMPLEMENT_DYNAMIC_CLASS(mFinishedList, wxListCtrl)
+
 BEGIN_EVENT_TABLE(mFinishedList, wxListCtrl)
     EVT_LIST_ITEM_SELECTED(XRCID("finishedlist"), mFinishedList::OnSelected)
     EVT_LIST_ITEM_DESELECTED(XRCID("finishedlist"), mFinishedList::OnDeselected)

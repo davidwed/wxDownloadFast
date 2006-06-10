@@ -21,7 +21,7 @@ INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
-OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)http.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
+OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)http.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)ProgressBar.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
 
 ifeq ($(XRC), 1)
 	OBJ = $(OBJ_TMP)
@@ -126,6 +126,9 @@ $(BUILD_DIR)InProgressList.o: src/InProgressList.cpp
 $(BUILD_DIR)MainFrame.o: src/MainFrame.cpp
 	$(CPP) -c src/MainFrame.cpp -o $(BUILD_DIR)MainFrame.o $(CXXFLAGS)
 
+$(BUILD_DIR)ProgressBar.o: src/ProgressBar.cpp
+	$(CPP) -c src/ProgressBar.cpp -o $(BUILD_DIR)ProgressBar.o $(CXXFLAGS)
+
 $(BUILD_DIR)TaskBarIcon.o: src/TaskBarIcon.cpp
 	$(CPP) -c src/TaskBarIcon.cpp -o $(BUILD_DIR)TaskBarIcon.o $(CXXFLAGS)
 
@@ -160,6 +163,7 @@ endif
 	$(INSTALL_FILE) Readme.* $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_FILE) Changes.* $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_FILE) gpl.txt $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_FILE) COPYING $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)
@@ -193,6 +197,7 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/Readme.*
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/Changes.*
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/gpl.txt
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/COPYING
 	rm -f $(DESTDIR)/usr/share/pixmaps/wxdfast.xpm
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/wxdfast.ico
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/$(RESOURCE_DIR)*.xrc
@@ -245,6 +250,7 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
 	cp gpl.txt $(BIN)-$(VERSION)
+	cp COPYING $(BIN)-$(VERSION)
 	cp Readme.* $(BIN)-$(VERSION)
 	cp Changes.* $(BIN)-$(VERSION)
 	cp ToDo.* $(BIN)-$(VERSION)
