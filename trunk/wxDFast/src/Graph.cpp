@@ -12,6 +12,8 @@
 
 #include "wxDFast.h"
 
+IMPLEMENT_DYNAMIC_CLASS(mGraph, wxPanel)
+
 BEGIN_EVENT_TABLE(mGraph, wxPanel)
     EVT_PAINT  (mGraph::OnPaint)
 END_EVENT_TABLE()
@@ -20,7 +22,7 @@ END_EVENT_TABLE()
 void mGraph::OnPaint(wxPaintEvent &event)
 {
     wxPaintDC dc(this);
-    if (wxGetApp().mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
+    if (mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
     if (!programoptions)
         return;
@@ -63,7 +65,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     wxPen linepen(programoptions->graphlinecolor);
     linepen.SetWidth(programoptions->graphlinewidth);
     dc.SetPen(linepen);
-    mGraphPoints::Node *node = graph->GetFirst();
+    mGraphPoints::Node *node = graphpoints->GetFirst();
     if (node)
     {
         float *current = node->GetData();
@@ -72,7 +74,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
 
         //CALCULATE THE STARTPOINT
         int xstart = x - textarea-5;
-        int nitens = graph->GetCount();
+        int nitens = graphpoints->GetCount();
         int startitem = 0;
         if (xstart > (int)(nitens*dx))
             xstart = x-(int)(nitens*dx);
@@ -123,4 +125,37 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.DrawText(wxT("kb/s"),5,programoptions->graphspeedfontsize + 10);
     }
     wxGetApp().mainframe->mutex_programoptions->Unlock();
+}
+
+bool mGraph::Hide()
+{
+    return Show(false);
+}
+
+bool mGraph::Show(bool show)
+{
+    wxSplitterWindow *splitter = XRCCTRL(*mainframe, "splitter01",wxSplitterWindow);
+    int x,y,width,height;
+    bool value = FALSE;
+    if (show)
+    {
+        this->SetBestFittingSize(wxSize(200,programoptions->graphheight));
+        splitter->GetPosition(&x,&y);
+        splitter->GetSize(&width,&height);
+        this->SetSize(wxSize(width,programoptions->graphheight));
+        if (!IsShown())
+        {
+            splitter->SetSize(x,y+programoptions->graphheight+5,width,height-programoptions->graphheight-5);
+            value = wxPanel::Show(TRUE);
+        }
+    }
+    else if (IsShown())
+    {
+        value = wxPanel::Show(FALSE);
+        this->SetBestFittingSize(wxSize(200,0));
+        splitter->GetPosition(&x,&y);
+        splitter->GetSize(&width,&height);
+        splitter->SetSize(x,y-programoptions->graphheight-5,width,height+programoptions->graphheight+5);
+    }
+    return value;
 }

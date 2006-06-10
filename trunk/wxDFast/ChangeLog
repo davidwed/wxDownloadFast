@@ -4,6 +4,7 @@
   gress list
 - Fixed problem on New Download box
 - Now is possible to change the language on the fly
+- Added multi-segmented progress bar
 
 0.4.3
 ===================================================

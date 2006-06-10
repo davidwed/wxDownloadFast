@@ -118,6 +118,8 @@ void mDownloadList::LoadDownloadListFromDisk()
 
         config->Read(RESTART_REG,&(file->restart));
         config->Read(PARTS_REG,&(file->parts));
+        if (file->parts > MAX_NUM_PARTS)
+            file->parts = 1;
         config->Read(DESTINATION_REG,&(file->destination));
 
         config->Read(SIZE_REG,&tmp);
@@ -184,6 +186,7 @@ void mDownloadList::LoadDownloadListFromDisk()
             file->messages[i].Clear();
             file->delta_size[i] = 0;
             file->sizecompleted[i] = 0;
+            file->percentualparts[i] = 0;
             file->startpoint[i] = 0;
             file->size[i] = 0;
             file->finished[i] = FALSE;
@@ -261,6 +264,7 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
         file->messages[i].Clear();
         file->delta_size[i] = 0;
         file->sizecompleted[i] = 0;
+        file->percentualparts[i] = 0;
         file->startpoint[i] = 0;
         file->size[i] = 0;
         file->finished[i] = FALSE;

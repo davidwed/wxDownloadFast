@@ -14,15 +14,11 @@
 #include "wx/listimpl.cpp"
 #include "wx/arrimpl.cpp"
 
-WX_DEFINE_OBJARRAY(mListSelection);
-WX_DEFINE_LIST(mDownloadListType);
-WX_DEFINE_LIST(mGraphPoints);
-WX_DEFINE_LIST(mUrlList);
-IMPLEMENT_DYNAMIC_CLASS(mInProgressList, wxListCtrl)
-IMPLEMENT_DYNAMIC_CLASS(mFinishedList, wxListCtrl)
-IMPLEMENT_DYNAMIC_CLASS(mNotebook, wxNotebook)
-IMPLEMENT_DYNAMIC_CLASS(mGraph, wxPanel)
-IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
+WX_DEFINE_LIST(mDownloadListType)
+WX_DEFINE_LIST(mUrlList)
+WX_DEFINE_LIST(mGraphPoints)
+WX_DEFINE_OBJARRAY(mListSelection)
+
 IMPLEMENT_APP(mApplication)
 
 wxConnectionBase *mServer::OnAcceptConnection(const wxString& topic)
