@@ -37,13 +37,14 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
     wxArrayString urls;
     wxStringTokenizer *tkz01, *tkz02;
     int numberofparts, startoption;
-    wxString textfile,destination,comments,strurls,strtemp;
+    wxString textfile,destination,comments,reference,strurls,strtemp;
     wxTextFile file;
 
     tkz01 = new wxStringTokenizer(urlsparameter, wxT("$"));
     textfile = tkz01->GetNextToken();
     destination = tkz01->GetNextToken();
     comments = tkz01->GetNextToken();
+    reference = tkz01->GetNextToken();
     strurls = tkz01->GetNextToken();
     tkz02 = new wxStringTokenizer(strurls, wxT("#"));
     while (tkz02->HasMoreTokens())
@@ -79,9 +80,11 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
     }
     if (comments == wxT("NONE"))
         comments = wxEmptyString;
+    if (reference == wxT("NONE"))
+        reference = wxEmptyString;
 
     if (urls.GetCount() > 0)
-        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE,TRUE);
+        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
     else if (!wxGetApp().mainframe->IsShown())
     {
         wxCommandEvent event;
@@ -94,7 +97,7 @@ bool mApplication::NewInstance()
 {
     wxString server = IPC_SERVICE;
     wxString hostName;
-    wxString textfile, destination, comments, urlparameter = wxEmptyString,stringtosend;
+    wxString textfile, destination, comments, reference, urlparameter = wxEmptyString,stringtosend;
     hostName = wxGetHostName();
     bool returntmp;
 
@@ -111,10 +114,12 @@ bool mApplication::NewInstance()
             destination = wxT("NONE");
         if (!wxGetApp().parameters->Found(wxT("comments"),&comments))
             comments = wxT("NONE");
+        if (!wxGetApp().parameters->Found(wxT("reference"),&reference))
+            reference = wxT("NONE");
 
         for (unsigned int i = 0; i < parameters->GetParamCount(); i++)
             urlparameter += parameters->GetParam(i) + wxT("#");
-        stringtosend = textfile + wxT("$") + destination + wxT("$") + comments + wxT("$") + urlparameter + wxT("$");
+        stringtosend = textfile + wxT("$") + destination + wxT("$") + comments + wxT("$") + reference + wxT("$") + urlparameter + wxT("$");
         connection->Execute((wxChar *)stringtosend.c_str(),(stringtosend.Length() + 1) * sizeof(wxChar));
         returntmp = TRUE;
     }
@@ -162,11 +167,23 @@ bool mApplication::OnInit()
     #ifdef RESOURCES_CPP
     InitXmlResource();
     #else
-    wxXmlResource::Get()->Load(wxT("resources/mainwindow.xrc"));
-    wxXmlResource::Get()->Load(wxT("resources/menubar.xrc"));
-    wxXmlResource::Get()->Load(wxT("resources/toolbar.xrc"));
-    wxXmlResource::Get()->Load(wxT("resources/boxnew.xrc"));
-    wxXmlResource::Get()->Load(wxT("resources/boxoptions.xrc"));
+    wxString resourcepath = wxT("resources/");
+    if (!wxFileExists(resourcepath + wxT("mainwindow.xrc")))
+    {
+        //THIS IS NEVER GOING TO HAPPEN ON WINDOWS SYSTEM
+        /*#ifdef __WXMSW__
+        wxFileName programpath(parameters->GetParam(0));
+        resourcepath = programpath.GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME) + resourcepath;
+        #else*/
+        resourcepath = wxT("/usr/share/wxdfast/");
+        //#endif
+    }
+    wxXmlResource::Get()->Load(resourcepath + wxT("mainwindow.xrc"));
+    wxXmlResource::Get()->Load(resourcepath + wxT("menubar.xrc"));
+    wxXmlResource::Get()->Load(resourcepath + wxT("toolbar.xrc"));
+    wxXmlResource::Get()->Load(resourcepath + wxT("boxnew.xrc"));
+    wxXmlResource::Get()->Load(resourcepath + wxT("boxoptions.xrc"));
+    wxXmlResource::Get()->Load(resourcepath + wxT("boxabout.xrc"));
     #endif
 
     SetLanguage(mApplication::Configurations(READ,LANGUAGE_REG,0)); //SET THE LANGUAGE
@@ -198,7 +215,7 @@ bool mApplication::OnInit()
 
     //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE 
     int startoption, numberofparts;
-    wxString listtextfile,comments,destination;
+    wxString listtextfile,reference,comments,destination;
     wxArrayString url; 
     if (parameters->GetParamCount() > 0)
     {
@@ -237,8 +254,10 @@ bool mApplication::OnInit()
     }
     if (!parameters->Found(wxT("comments"),&comments))
         comments = wxEmptyString;
+    if (!parameters->Found(wxT("reference"),&reference))
+        reference = wxEmptyString;
     if (url.GetCount() > 0)
-        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,comments,startoption,TRUE,TRUE);
+        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
 
 
     if (!parameters->Found(wxT("hide")))

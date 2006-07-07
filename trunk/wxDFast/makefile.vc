@@ -75,6 +75,7 @@ WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_FinishedList.obj \
 	build-vc\wxdfast_MainFrame.obj \
 	build-vc\wxdfast_BoxNew.obj \
+	build-vc\CheckNewRelease.obj \
 	build-vc\wxdfast_ftp.obj \
 	build-vc\wxdfast_TaskBarIcon.obj \
 	build-vc\wxdfast_BoxOptions.obj \
@@ -93,6 +94,7 @@ WXDFAST_OBJECTS =  \
 WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_Resources.obj \
 	build-vc\wxdfast_BoxFind.obj \
+	build-vc\CheckNewRelease.obj \
 	build-vc\wxdfast_FinishedList.obj \
 	build-vc\wxdfast_MainFrame.obj \
 	build-vc\wxdfast_BoxNew.obj \
@@ -219,6 +221,9 @@ build-vc\wxdfast_Resources.obj: .\src\Resources.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_BoxFind.obj: .\src\BoxFind.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\CheckNewRelease.obj: .\src\CheckNewRelease.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_FinishedList.obj: .\src\FinishedList.cpp

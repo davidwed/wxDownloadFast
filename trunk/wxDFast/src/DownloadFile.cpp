@@ -62,7 +62,7 @@ void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
     }
 }
 
-void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString comments)
+void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password,wxString reference, wxString comments)
 {
     if (file->urllist)
         delete file->urllist;
@@ -71,6 +71,7 @@ void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFile
     file->destination = destination.GetPath(wxPATH_GET_VOLUME|wxPATH_GET_SEPARATOR);
     file->user = user;
     file->password = password;
+    file->reference = reference;
     file->comments = comments;
     file->MarkWriteAsPending(TRUE);
 }
@@ -121,12 +122,27 @@ void mDownloadList::LoadDownloadListFromDisk()
         if (file->parts > MAX_NUM_PARTS)
             file->parts = 1;
         config->Read(DESTINATION_REG,&(file->destination));
+        config->Read(TEMPDESTINATION_REG,&(file->tempdestination));
 
+        //TOTAL SIZE
         config->Read(SIZE_REG,&tmp);
         file->totalsize = MyUtilFunctions::wxstrtolonglong(tmp);
 
+        //TOTAL SIZE COMPLETED
         config->Read(SIZECOMPLETED_REG,&tmp);
         file->totalsizecompleted = MyUtilFunctions::wxstrtolonglong(tmp);
+
+        //EACH PART SIZE AND SIZECOMPLETED
+        for (int i = 0 ; i < file->parts ; i++)
+        {
+            tmp = wxT("0");
+            config->Read(SIZEPART_REG + MyUtilFunctions::int2wxstr(i+1),&tmp);
+            file->size[i] = MyUtilFunctions::wxstrtolonglong(tmp);
+
+            tmp = wxT("0");
+            config->Read(SIZEPARTCOMPLETED_REG + MyUtilFunctions::int2wxstr(i+1),&tmp);
+            file->sizecompleted[i] = MyUtilFunctions::wxstrtolonglong(tmp);
+        }
 
         config->Read(TIMEPASSED_REG,&tmp);
         file->timepassed = MyUtilFunctions::wxstrtolonglong(tmp);
@@ -135,6 +151,8 @@ void mDownloadList::LoadDownloadListFromDisk()
         config->Read(PERCENTUAL_REG,&(file->percentual));
         config->Read(MD5_REG,&(file->MD5));
         config->Read(COMMENTS_REG,&(file->comments));
+        config->Read(REFERENCE_REG,&(file->reference));
+
         config->Read(CONTENTTYPE_REG,&(file->contenttype));
         {
             time_t value = 0;
@@ -174,7 +192,7 @@ void mDownloadList::LoadDownloadListFromDisk()
         file->free = TRUE;
         file->criticalerror = FALSE;
         file->split = FALSE;
-        file->waitbeforesplit = TRUE;
+        file->waitbeforesplit = FALSE;
         file->MarkWriteAsPending(FALSE);
         file->MarkRemoveAsPending(FALSE);
         if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
@@ -185,10 +203,10 @@ void mDownloadList::LoadDownloadListFromDisk()
 
             file->messages[i].Clear();
             file->delta_size[i] = 0;
-            file->sizecompleted[i] = 0;
+            //file->sizecompleted[i] = 0;
             file->percentualparts[i] = 0;
             file->startpoint[i] = 0;
-            file->size[i] = 0;
+            //file->size[i] = 0;
             file->finished[i] = FALSE;
         }
 
@@ -234,7 +252,7 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled)
 {
     mDownloadFile *file = new mDownloadFile();
     file->index =  this->GetCount();
@@ -247,9 +265,11 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
     file->currenturl = 0;
     file->name = file->GetFirstUrl().GetFullName();
     file->destination = destination.GetFullPath();
+    file->tempdestination = tempdestination.GetFullPath();
     file->totalsize = 0;
     file->totalsizecompleted = 0;
     file->comments = comments;
+    file->reference = reference;
     file->percentual = 0;
     file->timepassed = 0;
     file->timeremaining = 0;
@@ -341,8 +361,17 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(RESTART_REG,this->restart);
     config->Write(PARTS_REG,this->parts);
     config->Write(DESTINATION_REG,this->destination);
+    config->Write(TEMPDESTINATION_REG,this->tempdestination);
     config->Write(SIZE_REG,this->totalsize.ToString());
     config->Write(SIZECOMPLETED_REG,this->totalsizecompleted.ToString());
+
+    //EACH PART SIZE AND SIZECOMPLETED
+    for (int i = 0 ; i < this->parts ; i++)
+    {
+        config->Write(SIZEPART_REG + MyUtilFunctions::int2wxstr(i+1),this->size[i].ToString());
+        config->Write(SIZEPARTCOMPLETED_REG + MyUtilFunctions::int2wxstr(i+1),this->sizecompleted[i].ToString());
+    }
+
     config->Write(TIMEPASSED_REG,this->timepassed.ToString());
     config->Write(SPEED_REG,this->totalspeed);
     config->Write(PERCENTUAL_REG,this->percentual);
@@ -350,6 +379,7 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(START_REG,this->start.GetTicks());
     config->Write(END_REG,this->end.GetTicks());
     config->Write(COMMENTS_REG,this->comments);
+    config->Write(REFERENCE_REG,this->reference);
     config->Write(CONTENTTYPE_REG,this->contenttype);
 
     unsigned int count = 1;
@@ -447,6 +477,19 @@ void mDownloadFile::PutOnQueue()
 wxString mDownloadFile::GetDestination()
 {
     return this->destination;
+}
+
+wxString mDownloadFile::GetTemporaryDestination()
+{
+    if (this->tempdestination.IsEmpty())
+        return this->destination;
+    else
+        return this->tempdestination;
+}
+
+wxString mDownloadFile::GetReferenceURL()
+{
+    return this->reference;
 }
 
 wxString mDownloadFile::GetComments()

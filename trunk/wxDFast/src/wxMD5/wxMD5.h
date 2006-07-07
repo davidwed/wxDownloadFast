@@ -39,7 +39,7 @@ public:
     void SetText(const wxString& szText);
     void SetFile(const wxFileName& szfile);
 
-    const wxString GetDigest();
+    const wxString GetDigest(bool mainthread = FALSE);
 
     // Static Methods
     static const wxString GetDigest(const wxString& szText);

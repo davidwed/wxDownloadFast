@@ -42,7 +42,7 @@ void mFinishedList::OnEnterWindow(wxMouseEvent& event)
 void mFinishedList::OnLeaveWindow(wxMouseEvent& event)
 {
     if (mainframe->statusbar)
-        mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+        mainframe->statusbar->SetStatusText(mainframe->defaultstatusbarmessage);
 }
 
 void mFinishedList::OnRClick(wxListEvent& event)
@@ -147,8 +147,9 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
     infolist->InsertItem(5, _("Start"));
     infolist->InsertItem(6, _("Finished"));
     infolist->InsertItem(7, _("MD5"));
-    infolist->InsertItem(8, _("Comments"));
-    infolist->InsertItem(9, _("URLs"));
+    infolist->InsertItem(8, _("Reference URL"));
+    infolist->InsertItem(9, _("Comments"));
+    infolist->InsertItem(10, _("URLs"));
 
     if (selected)
     {
@@ -202,12 +203,16 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
         infolist->SetItem(7,1,str);
 
         str = wxEmptyString;
-        config->Read(COMMENTS_REG,&str);
+        config->Read(REFERENCE_REG,&str);
         infolist->SetItem(8,1,str);
 
         str = wxEmptyString;
-        config->Read(URL_REG + wxT("1"),&str);
+        config->Read(COMMENTS_REG,&str);
         infolist->SetItem(9,1,str);
+
+        str = wxEmptyString;
+        config->Read(URL_REG + wxT("1"),&str);
+        infolist->SetItem(10,1,str);
 
         bool existurl = TRUE;
         int count = 2;

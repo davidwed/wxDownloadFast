@@ -50,6 +50,14 @@ const wxEventType wxEVT_DISCONNECT = wxNewEventType();
         (wxObject *) NULL \
     ),
 
+const wxEventType wxEVT_NEW_RELEASE = wxNewEventType();
+#define wxEVT_NEW_RELEASE(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        wxEVT_NEW_RELEASE, id, wxID_ANY, \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxCommandEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+
 BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menunew"),  mMainFrame::OnNew)
     EVT_MENU(XRCID("menuremove"),  mMainFrame::OnRemove)
@@ -61,6 +69,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menuexit"),  mMainFrame::OnExit)
     EVT_MENU(XRCID("menusite"),  mMainFrame::OnSite)
     EVT_MENU(XRCID("menubug"),  mMainFrame::OnBug)
+    EVT_MENU(XRCID("menudonate"),  mMainFrame::OnDonate)
     EVT_MENU(XRCID("menuabout"), mMainFrame::OnAbout)
     EVT_MENU(XRCID("menulang_default"), mMainFrame::OnDefaultLanguage)
     EVT_MENU(XRCID("menulang_ent"), mMainFrame::OnEnglish)
@@ -90,6 +99,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     wxEVT_OPEN_URL(wxID_ANY,mMainFrame::OnOpenURL)
     wxEVT_SHUTDOWN(wxID_ANY, mMainFrame::OnShutdownEvent)
     wxEVT_DISCONNECT(wxID_ANY, mMainFrame::OnDisconnectEvent)
+    wxEVT_NEW_RELEASE(wxID_ANY, mMainFrame::OnNewRelease)
     EVT_TOOL(-1, mMainFrame::OnToolLeftClick)
     EVT_TOOL_ENTER(-1, mMainFrame::OnToolMouseMove)
     EVT_ICONIZE(mMainFrame::OnIconize)
@@ -165,16 +175,20 @@ mMainFrame::mMainFrame()
     statusbar = this->GetStatusBar();
 
     //LOAD USER OPTIONS
+    programoptions.currentrelease = mApplication::Configurations(READ,OPT_CURRENT_RELEASE,VERSION);
+    programoptions.lastnewreleasecheck.Set((time_t)mApplication::Configurations(READ,OPT_LAST_NEW_RELEASE_CHECK,0));
     programoptions.closedialog = mApplication::Configurations(READ,OPT_DIALOG_CLOSE_REG,1);
     programoptions.rememberboxnewoptions = mApplication::Configurations(READ,OPT_REMEMBER_BOXNEW_OPTIONS_REG,1);
-    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
     #ifdef __WXMSW__
+    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir() + SEPARATOR_DIR + _("My Documents"));
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("c:\\windows\\explorer.exe"));
-    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxT("c:\\Program Files\\Internet Explorer\\iexplore.exe"));
+    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,_("C:\\Program Files\\Mozilla Firefox\\firefox.exe"));
     #else
+    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
     programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxT("/usr/bin/firefox"));
     #endif
+    programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxEmptyString);
     programoptions.attempts = mApplication::Configurations(READ,OPT_ATTEMPTS_REG,999);
     programoptions.attemptstime = mApplication::Configurations(READ,OPT_ATTEMPTS_TIME_REG,5);
     programoptions.simultaneous = mApplication::Configurations(READ,OPT_SIMULTANEOUS_REG,5);
@@ -345,7 +359,25 @@ mMainFrame::mMainFrame()
 
     //DEFINE THE STATUSBAR DEFAULT TEXT
     if (statusbar)
-        statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+    {
+        this->defaultstatusbarmessage = wxEmptyString;
+        wxStringTokenizer newrelease(programoptions.currentrelease,wxT("."));
+        wxStringTokenizer currentrelease(VERSION,wxT("."));
+        long val01,val02;
+        for (int i=0;i<3;i++)
+        {
+            newrelease.GetNextToken().ToLong(&val01);
+            currentrelease.GetNextToken().ToLong(&val02);
+            if (val01 > val02)
+            {
+                this->defaultstatusbarmessage = _("NEW RELEASE: ");
+                this->defaultstatusbarmessage += wxT("wxDownload Fast ");
+                this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
+                break;
+            }
+        }
+        statusbar->SetStatusText(this->defaultstatusbarmessage);
+    }
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
@@ -512,7 +544,12 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 
                 //SET PROGRESS BAR NEW PARAMETERS
                 if (programoptions.progressbarshow)
-                    progressbar->SetParams(parts,current->percentualparts);
+                {
+                    if ((!current->IsSplitted()) && (current->GetStatus() == STATUS_ACTIVE))
+                        progressbar->SetParams(1,current->percentualparts);
+                    else
+                        progressbar->SetParams(current->GetNumberofParts(),current->percentualparts);
+                }
 
                 #ifdef USE_HTML_MESSAGES
                 if  (*(XRCCTRL(*(this), "messages",wxHtmlWindow)->GetParser()->GetSource()) != current->messages[treeindex])
@@ -703,10 +740,10 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mutex_programoptions->Unlock();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show,bool permitdifferentnames)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames)
 {
     mBoxNew dlg;
-    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtcomments;
+    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments;
     wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit;
     wxRadioButton *optnow,*optschedule;
@@ -718,6 +755,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     edtdestination = XRCCTRL(dlg, "edtdestination",wxTextCtrl);
     edtuser = XRCCTRL(dlg, "edtuser",wxTextCtrl);
     edtpassword = XRCCTRL(dlg, "edtpassword",wxTextCtrl);
+    edtreferenceurl = XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl);
     edtcomments = XRCCTRL(dlg, "edtcomments",wxTextCtrl);
     lstaddresslist = XRCCTRL(dlg, "lstaddresslist",wxCheckListBox);
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
@@ -747,6 +785,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         edtuser->SetValue(user);
         edtpassword->SetValue(password);
     }
+    edtreferenceurl->SetValue(reference);
     edtcomments->SetValue(comments);
     if (startoption == NOW)
         optnow->SetValue(TRUE);
@@ -764,7 +803,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
 
     if (result == XRCID("btnok"))
     {
-        wxFileName destinationtmp;
+        wxFileName destinationvalue,tempdestinationvalue;
         mDownloadFile *currentfile = NULL;
         int scheduled, now;
         int nparams = lstaddresslist->GetCount();
@@ -772,7 +811,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         scheduled = optschedule->GetValue();
         now = optnow->GetValue();
 
-        destinationtmp.Assign(edtdestination->GetValue());
+        destinationvalue.Assign(edtdestination->GetValue());
+        tempdestinationvalue.Assign(programoptions.downloadpartsdefaultdir);
         if (nparams == 0)
             return FALSE;
 
@@ -794,8 +834,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             {
                 mUrlList *urllist = new mUrlList();
                 urllist->Append(urltmp);
-                currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationtmp, spinsplit->GetValue(),
-                        edtuser->GetValue(), edtpassword->GetValue(), edtcomments->GetValue(),scheduled);
+                currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,spinsplit->GetValue(),
+                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),scheduled);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
             }
             else
@@ -1003,6 +1043,12 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
 {
     if (downloadfile->IsFree())
     {
+        if ((wxDateTime::Now()-programoptions.lastnewreleasecheck).GetDays() >= 10)
+        {
+            programoptions.lastnewreleasecheck = wxDateTime::Now();
+            mApplication::Configurations(WRITE,OPT_LAST_NEW_RELEASE_CHECK,programoptions.lastnewreleasecheck.GetTicks());
+            this->CheckNewRelease();
+        }
         downloadfile->SetFree(FALSE);
         downloadfile->WaitSplit();
         downloadfile->speedpointowner = -1;
@@ -1129,7 +1175,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         startoption = DEFAULT_START_OPTION;
         destinationtmp = programoptions.destination;
     }
-    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
+    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1151,7 +1197,7 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
             column = INPROGRESS_NAME;
             list = (wxListCtrl*)list01;
         }
-        if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
+        else if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
         {
             list02->SetCurrentSelection(currentselection);
             config->SetPath(FINISHED_REG);
@@ -1159,7 +1205,10 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
             list = (wxListCtrl*)list02;
         }
         else
+        {
+            wxTheClipboard->Close();
             return;
+        }
 
         if (column == INPROGRESS_NAME)
             name = wxGetApp().downloadlist.Item(currentselection)->GetData()->GetName();
@@ -1202,7 +1251,7 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
             column = INPROGRESS_NAME;
             list = (wxListCtrl*)list01;
         }
-        if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
+        else if ((currentselection = list02->GetCurrentLastSelection()) >= 0)
         {
             list02->SetCurrentSelection(currentselection);
             config->SetPath(FINISHED_REG);
@@ -1210,7 +1259,10 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
             list = (wxListCtrl*)list02;
         }
         else
+        {
+            wxTheClipboard->Close();
             return;
+        }
 
         if (column == INPROGRESS_NAME)
             name = wxGetApp().downloadlist.Item(currentselection)->GetData()->GetName();
@@ -1255,6 +1307,11 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
             downloadinfo += _("MD5");
             downloadinfo += wxT(": ") + str + wxT("\n");
         }
+
+        str = wxEmptyString;
+        config->Read(REFERENCE_REG,&str);
+        downloadinfo += _("Reference URL");
+        downloadinfo += wxT(": ") + str + wxT("\n");
 
         str = wxEmptyString;
         config->Read(COMMENTS_REG,&str);
@@ -1603,6 +1660,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->SetValue(currentfile->GetNumberofParts());
         XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetValue(currentfile->GetComments());
+        XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetValue(currentfile->GetReferenceURL());
         XRCCTRL(dlg, "optmanual",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
@@ -1615,6 +1673,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetEditable(FALSE);
+            XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetEditable(FALSE);
             lstaddresslist->Enable(FALSE);
             XRCCTRL(dlg,"btndir",wxButton)->Enable(FALSE);
             XRCCTRL(dlg,"btnadd",wxButton)->Enable(FALSE);
@@ -1630,6 +1689,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             wxFileName destination; destination.AssignDir(XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue());
             wxString user = XRCCTRL(dlg, "edtuser",wxTextCtrl)->GetValue();
             wxString password = XRCCTRL(dlg, "edtpassword",wxTextCtrl)->GetValue();
+            wxString reference = XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->GetValue();
             wxString comments = XRCCTRL(dlg, "edtcomments",wxTextCtrl)->GetValue();
 
             mUrlList *urllist = new mUrlList();
@@ -1640,7 +1700,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
                 mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
                 urllist->Append(urltmp);
             }
-            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,comments);
+            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,reference,comments);
 
             //VERIFY IF THE USER CHANGED THE FILE NAME
             newname = urllist->GetFirst()->GetData()->GetFullName();
@@ -1665,13 +1725,13 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
     {
         mListSelection currentselectionlist = list->GetCurrentSelection();
         int nselection = currentselectionlist.GetCount()-1;
-        for (int i = nselection ; i >= 0 ;i--) //REMOVE THE ITEM BACKWARD
+        for (int i = nselection ; i >= 0 ;i--)
         {
             currentselection = currentselectionlist.Item(i);
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
             wxListItem item;
             int startoption;
-            wxString url,destination,user,password,comments;
+            wxString url,destination,user,password,comments,reference;
             wxArrayString urlarray;
             int parts;
             item.SetId(currentselection);
@@ -1697,6 +1757,9 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             comments = wxEmptyString;
             config->Read(COMMENTS_REG,&comments);
 
+            reference = wxEmptyString;
+            config->Read(REFERENCE_REG,&reference);
+
             bool existurl = TRUE;
             int count = 1;
             while (existurl)
@@ -1716,7 +1779,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             else
                 startoption = DEFAULT_START_OPTION;
 
-            if (NewDownload(urlarray, destination, parts, user, password, comments, startoption, FALSE,FALSE))
+            if (NewDownload(urlarray, destination, parts, user, password, reference, comments, startoption, FALSE,FALSE))
             {
                 config->DeleteGroup(item.GetText());
                 list->DeleteItem(currentselection);
@@ -1830,9 +1893,13 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
 
         if (::wxFileExists(destination + name))
         {
+            this->active = FALSE;
+            wxProgressDialog *waitbox = new wxProgressDialog(_("Checking file's MD5..."),_("Checking file's MD5..."));
+            waitbox->Update(10);
             wxFileName filemd5 = wxFileName(destination + name);
             wxMD5 md5(filemd5);
-            md5new = md5.GetDigest();
+            md5new = md5.GetDigest(TRUE); //TELL TO GETDIGETS THAT IS THE MAIN THREAD
+            waitbox->Update(100);
             if (md5new == md5old)
                 wxMessageBox(_("The file was verified successfully."), _("Success..."), wxOK | wxICON_INFORMATION,this);
             else
@@ -1843,7 +1910,8 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
                 msg = msg + _("\nCurrent MD5 =\t") + md5new;
                 wxMessageBox(msg, _("Error..."), wxOK | wxICON_ERROR,this);
             }
-
+            delete waitbox;
+            this->active = TRUE;
         }
         else
             wxMessageBox(_("File not found."), _("Error..."), wxOK | wxICON_ERROR,this);
@@ -1954,6 +2022,13 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(programoptions.destination);
     XRCCTRL(dlg, "edtbrowserpath",wxTextCtrl)->SetValue(programoptions.browserpath);
     XRCCTRL(dlg, "edtfilemanagerpath",wxTextCtrl)->SetValue(programoptions.filemanagerpath);
+
+    if (programoptions.downloadpartsdefaultdir.IsEmpty())
+        XRCCTRL(dlg, "optdefaulttemp",wxRadioButton)->SetValue(TRUE);
+    else
+        XRCCTRL(dlg, "optusertemp",wxRadioButton)->SetValue(TRUE);
+    XRCCTRL(dlg, "edttemppath",wxTextCtrl)->SetValue(programoptions.downloadpartsdefaultdir);
+
     XRCCTRL(dlg, "spintimerinterval",wxSpinCtrl)->SetValue(programoptions.timerupdateinterval);
     XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->SetValue(programoptions.readbuffersize);
     XRCCTRL(dlg, "spingraphpoints",wxSpinCtrl)->SetValue(programoptions.graphhowmanyvalues);
@@ -2011,6 +2086,12 @@ wxGetTranslation(days[i]));
         programoptions.destination = XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue();
         programoptions.browserpath = XRCCTRL(dlg, "edtbrowserpath",wxTextCtrl)->GetValue();
         programoptions.filemanagerpath = XRCCTRL(dlg, "edtfilemanagerpath",wxTextCtrl)->GetValue();
+
+        if (XRCCTRL(dlg, "optdefaulttemp",wxRadioButton)->GetValue())
+            programoptions.downloadpartsdefaultdir = wxEmptyString;
+        else
+            programoptions.downloadpartsdefaultdir = XRCCTRL(dlg, "edttemppath",wxTextCtrl)->GetValue();
+
         programoptions.timerupdateinterval = XRCCTRL(dlg, "spintimerinterval",wxSpinCtrl)->GetValue();
         programoptions.readbuffersize = XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->GetValue();
         programoptions.restoremainframe = XRCCTRL(dlg, "chkrestoremainframe",wxCheckBox)->GetValue();
@@ -2071,6 +2152,7 @@ wxGetTranslation(days[i]));
         mApplication::Configurations(WRITE,OPT_DESTINATION_REG,programoptions.destination);
         mApplication::Configurations(WRITE,OPT_BROWSER_PATH_REG,programoptions.browserpath);
         mApplication::Configurations(WRITE,OPT_FILE_MANAGER_PATH_REG,programoptions.filemanagerpath);
+        mApplication::Configurations(WRITE,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,programoptions.downloadpartsdefaultdir);
         mApplication::Configurations(WRITE,OPT_ATTEMPTS_REG,programoptions.attempts);
         mApplication::Configurations(WRITE,OPT_ATTEMPTS_TIME_REG,programoptions.attemptstime);
         mApplication::Configurations(WRITE,OPT_SIMULTANEOUS_REG,programoptions.simultaneous);
@@ -2155,12 +2237,28 @@ void mMainFrame::OnBug(wxCommandEvent& event)
     }
 }
 
+void mMainFrame::OnDonate(wxCommandEvent& event)
+{
+    if (::wxFileExists(programoptions.browserpath))
+        ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net/donate.php\""));
+    else
+    {
+        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+                _("Error..."),wxOK | wxICON_ERROR, this);
+    }
+}
+
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    wxString message;
-    message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + wxT("\n\nhttp://dfast.sf.net") + _("\nCreated by Max Velasques"));
+    //wxString message;
+    //message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + wxT("\n\nhttp://dfast.sf.net") + _("\nCreated by Max Velasques"));
 
-    wxMessageBox(message, _("About..."), wxOK | wxICON_INFORMATION, this);
+    //wxMessageBox(message, _("About..."), wxOK | wxICON_INFORMATION, this);
+    wxDialog dlg;
+    wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxabout"));
+    XRCCTRL(dlg, "lblextrainfo",wxStaticText)->SetLabel(_(" Version: ") + VERSION + wxT("\n\n") + XRCCTRL(dlg, "lblextrainfo",wxStaticText)->GetLabel());
+    dlg.ShowModal();
+    CheckNewRelease();
 }
 
 void mMainFrame::OnExit(wxCommandEvent& event)
@@ -2308,7 +2406,7 @@ void mMainFrame::OnToolMouseMove(wxCommandEvent& event)
         statusbar->SetStatusText(_("Close the program"));
     }
     else
-        statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+        statusbar->SetStatusText(this->defaultstatusbarmessage);
 }
 
 void mMainFrame::BrowserFile()
@@ -2391,16 +2489,26 @@ bool mMainFrame::UpdateListItemField(mDownloadFile *current)
             if (current->totalsize > 0)
                 current->SetProgress((int)(100*( MyUtilFunctions::wxlonglongtodouble(current->totalsizecompleted)) / ( MyUtilFunctions::wxlonglongtodouble(current->totalsize))));
 
-            if (current->IsSplitted())
-                parts = current->GetNumberofParts();
-            else
+            if ((!current->IsSplitted()) && (current->GetStatus() == STATUS_ACTIVE))
                 parts = 1;
+            else
+                parts = current->GetNumberofParts();
 
+            int proportion = 100/parts;
             for (int i = 0; i < parts;i++)
             {
                 if (current->totalsize > 0)
                 {
-                    current->percentualparts[i] = (100/parts)-(int)(100*(MyUtilFunctions::wxlonglongtodouble(current->size[i] - current->sizecompleted[i]) / MyUtilFunctions::wxlonglongtodouble(current->totalsize)));
+                    if (i == (parts-1))
+                    {
+                        current->percentualparts[i] = (100 - ((parts-1)*proportion))-(int)(100*(MyUtilFunctions::wxlonglongtodouble(current->size[i] -
+                                                      current->sizecompleted[i]) / MyUtilFunctions::wxlonglongtodouble(current->totalsize)));
+                    }
+                    else
+                    {
+                        current->percentualparts[i] = (proportion)-(int)(100*(MyUtilFunctions::wxlonglongtodouble(current->size[i] -
+                                                      current->sizecompleted[i]) / MyUtilFunctions::wxlonglongtodouble(current->totalsize)));
+                    }
                 }
                 else
                     current->percentualparts[i] = 0;
@@ -2410,5 +2518,33 @@ bool mMainFrame::UpdateListItemField(mDownloadFile *current)
         list01->Insert(current,current->GetIndex());
     }
     return result;
+}
+
+void mMainFrame::CheckNewRelease()
+{
+    mCheckNewReleaseThread *thread = new mCheckNewReleaseThread();
+    if ( thread->Create() != wxTHREAD_NO_ERROR )
+    {
+        wxMessageBox(_("Error creating thread!"));
+    }
+    else
+    {
+        if ( thread->Run() != wxTHREAD_NO_ERROR )
+        {
+            wxMessageBox(_("Error starting thread!"));
+        }
+    }
+}
+
+void mMainFrame::OnNewRelease(wxCommandEvent& event)
+{
+    programoptions.currentrelease = event.GetString();
+    mApplication::Configurations(WRITE,OPT_CURRENT_RELEASE,programoptions.currentrelease);
+
+    this->defaultstatusbarmessage = _("NEW RELEASE: ");
+    this->defaultstatusbarmessage += wxT("wxDownload Fast ");
+    this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
+
+    wxMessageBox(wxT("wxDownload Fast ") + programoptions.currentrelease + _(" is available.") + wxT("\n") + _("Visit http://dfast.sourceforge.net for more informations."));
 }
 

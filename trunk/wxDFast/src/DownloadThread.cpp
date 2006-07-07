@@ -13,23 +13,70 @@
 
 #include "wxDFast.h"
 
-wxString mDownloadThread::CheckHtmlFile(bool downloaded)
+mUrlName mDownloadThread::CheckHtmlFile(bool downloaded)
 {
-    //if (!downloaded)
+    mUrlName returnurl;
+    wxString result = wxEmptyString;
+    if (downloaded)
+    {
+        wxFile *outputfile;
+        wxFileName file;
+        mUrlName *url = NULL;
+        long data_size = 5*programoptions->readbuffersize;
+        long bytesread;
+        char *data = new char[data_size];
+        wxString wxdata;
+
+        file.Assign(downloadfile->GetDestination() + SEPARATOR_DIR);
+        file.SetFullName(downloadfile->GetName());
+        if (file.FileExists())
+        {
+            outputfile = new wxFile(file.GetFullPath(),wxFile::read);
+            if (outputfile)
+            {
+                bytesread = outputfile->Read(data,data_size);
+                wxdata = MyUtilFunctions::str2wxstr(data);
+                if (long pos1 = wxdata.Lower().Find(wxT("location=")))
+                {
+                    pos1 += 9;
+                    if (wxdata.Mid(pos1,1) == wxT("\""))
+                    {
+                        long pos2 = pos1++;
+                        while (++pos2 < bytesread)
+                            if (wxdata.Mid(pos2,1) == wxT("\""))
+                            {
+                                url = new mUrlName(wxdata.Mid(pos1,pos2-pos1));
+                                break;
+                            }
+                    }
+                }
+                outputfile->Close();
+                delete outputfile;
+                if (url)
+                {
+                    if (url->IsComplete())
+                        result = url->GetFullPath();
+                    returnurl = *(url);
+                    delete url;
+                }
+            }
+        }
+    }
+    if (!returnurl.IsComplete())
     {
         PrintMessage( _("This is a HTML file\nOpening in the default browser.\n"),HTMLERROR);
         wxCommandEvent openurl(wxEVT_OPEN_URL);
         openurl.SetString(currenturl.GetFullPath());
         wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(openurl);
     }
-    return wxEmptyString;
+    return returnurl;
 }
 
 wxLongLong mDownloadThread::CurrentSize(wxString filepath,wxString filename)
 {
     wxFile *outputfile;
     wxFileName file;
-    file.Assign(filepath + wxT("/"));
+    file.Assign(filepath + SEPARATOR_DIR);
     file.SetFullName(filename);
     wxLongLong size = 0;
     if (!file.FileExists())
@@ -102,10 +149,15 @@ void *mDownloadThread::Entry()
     }
     do
     {
+        connection = NULL;
+        filestream = NULL;
         downloadfile->SetAsActive();
-        start = CurrentSize(downloadfile->GetDestination(),PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
+        start = CurrentSize(downloadfile->GetTemporaryDestination(),PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
         start += downloadfile->startpoint[downloadpartindex];
-        currenturl = downloadfile->GetNextUrl();
+        if (!redirecting)
+            currenturl = downloadfile->GetNextUrl();
+        else
+            redirecting = FALSE;
         do
         {
             int type = currenturl.Type();
@@ -150,7 +202,7 @@ void *mDownloadThread::Entry()
                 }
                 else
                 {
-                    wxString partialfile = downloadfile->GetDestination();
+                    wxString partialfile = downloadfile->GetTemporaryDestination();
                     if (partialfile.Mid(partialfile.Length()-1,1) != SEPARATOR_DIR)
                         partialfile += SEPARATOR_DIR;
                     partialfile += PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex);
@@ -162,6 +214,22 @@ void *mDownloadThread::Entry()
             }
             end = downloadfile->startpoint[downloadpartindex] + downloadfile->size[downloadpartindex];
             resp = DownloadPart(connection,filestream,start,end);
+
+            if ((downloadpartindex == 0) && (downloadfile->GetStatus() == STATUS_FINISHED) && (downloadfile->IsHtml()))
+            {
+                mUrlName url = this->CheckHtmlFile(TRUE);
+                if (url.IsComplete())
+                {
+                    currenturl = url;
+                    redirecting = TRUE;
+                    PrintMessage( _("Redirecting to ") + currenturl.GetFullPath() + wxT("\n\n"),HTMLSERVER);
+                    //downloadfile->ErrorOccurred();
+                    downloadlist->ChangeName(downloadfile,currenturl.GetFullPath().Mid(currenturl.GetFullPath().Find('/',true)+1));
+                    resp = -1;
+                    //downloadfile->criticalerror = TRUE;
+                    continue;
+                }
+            }
         }
         else
         {
@@ -171,15 +239,7 @@ void *mDownloadThread::Entry()
                 resp = -1;
         }
         if (downloadpartindex == 0)
-        {
-            if ((downloadfile->GetStatus() == STATUS_FINISHED) && (downloadfile->IsHtml()))
-            {
-                wxString newurl;
-                newurl = this->CheckHtmlFile(TRUE);
-            }
-            else
-                downloadfile->IncrementAttempt();
-        }
+            downloadfile->IncrementAttempt();
         if ((downloadfile->GetCurrentAttempt() <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror))
         {
             PrintMessage( _("New attempt in ") + MyUtilFunctions::int2wxstr(programoptions->attemptstime) + _(" seconds\n"));
@@ -228,11 +288,14 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     int resp = 0;
     wxInputStream *in = NULL;
     wxFileName destination;
+    wxFileName tempdestination;
     int type = currenturl.Type();
     long readbuffersize = programoptions->readbuffersize;
 
     destination.Assign(downloadfile->GetDestination() + wxT("/"));
     destination.SetFullName(downloadfile->GetName());
+    tempdestination.Assign(downloadfile->GetTemporaryDestination() + wxT("/"));
+    tempdestination.SetFullName(PREFIX + destination.GetFullName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
 
     if (start > end)
     {
@@ -268,20 +331,18 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
 
         if (downloadfile->GetStatus() == STATUS_STOPED)
         {
+            if (in) {delete in;}
+            in = NULL;
             if (connection) {connection->Close(); delete connection;}
             connection = NULL;
-            delete in;
-            in = NULL;
             return resp = 1;
         }
         PrintMessage( _("Copying file...\n"));
 
-        wxString filepath = destination.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-        filepath = filepath + PREFIX + destination.GetFullName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex);
-        wxFile *outputfile = new wxFile(filepath,wxFile::write_append);
+        wxFile *outputfile = new wxFile(tempdestination.GetFullPath(),wxFile::write_append);
         if (!outputfile)
         {
-            PrintMessage( _("Error opening file ") + filepath + wxT(".\n"),HTMLERROR);
+            PrintMessage( _("Error opening file ") + tempdestination.GetFullPath() + wxT(".\n"),HTMLERROR);
             if (connection) {connection->Close(); delete connection;}
             connection = NULL;
             delete in;
@@ -419,13 +480,13 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     {
         if (resp == 0)
         {
-            resp = FinishDownload(destination);
+            resp = FinishDownload(&destination,tempdestination);
         }
     }
     return resp;
 }
 
-int mDownloadThread::FinishDownload(wxFileName destination)
+int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdestination)
 {
     int resp = 0;
     if (downloadfile->IsSplitted())
@@ -440,7 +501,7 @@ int mDownloadThread::FinishDownload(wxFileName destination)
         if (downloadfile->IsSplitted())
             PrintMessage( _("Putting all the pieces together...\n"));
         downloadfile->SetFinishedDateTime(wxDateTime::Now());
-        if (!JoinFiles())
+        if (!JoinFiles(destination,tempdestination))
         {
             PrintMessage( _("Error joining the pieces.\nTry restart the download.\n"),HTMLERROR);
             resp = -1;
@@ -450,7 +511,7 @@ int mDownloadThread::FinishDownload(wxFileName destination)
         {
             PrintMessage( _("Checking MD5 of the file...\n"));
             downloadfile->SetExposedName(_("Checking MD5 ... (") + downloadfile->GetName() + wxT(")"));
-            wxFileName filemd5 = wxFileName(destination.GetFullPath());
+            wxFileName filemd5 = wxFileName(destination->GetFullPath());
             wxMD5 md5(filemd5);
             PrintMessage( wxT("MD5 = ") + md5.GetDigest() + wxT("\n"));
             downloadfile->SetMD5(md5.GetDigest());
@@ -687,6 +748,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     wxString buffer = wxEmptyString;
     wxLongLong sizetmp;
     client->Notify(FALSE);
+    //client->SetFlags(wxSOCKET_NOWAIT);
 
     address.Service(currenturl.GetPort());
     destination.Assign(downloadfile->GetDestination());
@@ -920,38 +982,32 @@ void mDownloadThread::WaitUntilAllFinished(bool canstop)
     }
 }
 
-bool mDownloadThread::JoinFiles()
+bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestination)
 {
     wxFile *outputfile;
-    wxFileName destination;
-    wxString str;
     long readbuffersize = programoptions->readbuffersize;
     bool result;
-    int data_size = 60*readbuffersize;
+    long data_size = 60*readbuffersize;
     char *data = new char[data_size];
     long lastread = 0;
-    destination.Assign(downloadfile->GetDestination() + wxT("/"));
-    destination.SetFullName(downloadfile->GetName());
-    str = destination.GetFullPath();
-    destination.SetFullName(PREFIX + downloadfile->GetName());
-    if (destination.FileExists())
+    wxString partfilename;
+    if (destination->FileExists())
     {
-        wxFileName temp(str);
         downloadlist->ChangeName(downloadfile,MyUtilFunctions::int2wxstr(downloadfile->GetFinishedDateTime().GetTicks()) + wxT(" - ") + downloadfile->GetName());
-        temp.SetFullName(downloadfile->GetName());
-        str = temp.GetFullPath();
+        destination->SetFullName(downloadfile->GetName());
     }
-    result = wxRenameFile(destination.GetFullPath() + EXT + MyUtilFunctions::int2wxstr(0),str);
+    partfilename = tempdestination.GetFullPath();
+    result = wxRenameFile(tempdestination.GetFullPath(),destination->GetFullPath());
     if ((downloadfile->IsSplitted()) && (result == TRUE))
     {
-        outputfile = new wxFile(str,wxFile::write_append);
+        outputfile = new wxFile(destination->GetFullPath(),wxFile::write_append);
         int i;
         for (i=1;i < downloadfile->GetNumberofParts();i++)
         {
-            str = destination.GetFullPath() + EXT + MyUtilFunctions::int2wxstr(i);
-            if (::wxFileExists(str))
+            partfilename = tempdestination.GetFullPath().Mid(0,tempdestination.GetFullPath().Length()-1) + MyUtilFunctions::int2wxstr(i);
+            if (::wxFileExists(partfilename))
             {
-                wxFile *piece = new wxFile(destination.GetFullPath() + EXT + MyUtilFunctions::int2wxstr(i),wxFile::read);
+                wxFile *piece = new wxFile(partfilename,wxFile::read);
                 while (!piece->Eof())
                 {
                     lastread = piece->Read(data,data_size);
@@ -960,7 +1016,7 @@ bool mDownloadThread::JoinFiles()
                 }
                 piece->Close();
                 delete piece;
-                wxRemoveFile(str);
+                wxRemoveFile(partfilename);
             }
             else
             {

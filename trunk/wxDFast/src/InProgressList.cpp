@@ -38,7 +38,7 @@ void mInProgressList::OnEnterWindow(wxMouseEvent& event)
 void mInProgressList::OnLeaveWindow(wxMouseEvent& event)
 {
     if (mainframe->statusbar)
-        mainframe->statusbar->SetStatusText(TOOLBAR_DEFAULT_MSG);
+        mainframe->statusbar->SetStatusText(mainframe->defaultstatusbarmessage);
 }
 
 void mInProgressList::OnRClick(wxListEvent& event)

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Created by Max Velasques-->
+
+<resource version="2.3.0.1">
+    <object class="wxDialog" name="boxabout" subclass="mBoxAbout">
+        <style>wxDEFAULT_DIALOG_STYLE</style>
+        <title>About...</title>
+        <object class="wxBoxSizer">
+            <orient>wxVERTICAL</orient>
+            <object class="sizeritem">
+                <option>1</option>
+                <flag>wxEXPAND</flag>
+                <object class="wxFlexGridSizer">
+                    <hgap>0</hgap>
+                    <rows>2</rows>
+                    <cols>1</cols>
+                    <vgap>0</vgap>
+                    <object class="sizeritem">
+                        <flag>wxADJUST_MINSIZE</flag>
+                        <object class="wxStaticBitmap" name="wxdfastlogo">
+                            <bitmap>boxabout.xpm</bitmap>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <flag>wxADJUST_MINSIZE|wxFIXED_MINSIZE</flag>
+                        <object class="wxStaticText" name="lblextrainfo">
+                            <!-- <style>wxALIGN_RIGHT</style>
+                            <fg>#3415ff</fg> -->
+                            <bg>#ffffff</bg>
+                            <size>300, 70</size>
+                            <label> Help to improve the program!\n Donate to this project!</label>
+                        </object>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</resource>

@@ -62,6 +62,7 @@
     extern const wxEventType wxEVT_OPEN_URL;
     extern const wxEventType wxEVT_SHUTDOWN;
     extern const wxEventType wxEVT_DISCONNECT;
+    extern const wxEventType wxEVT_NEW_RELEASE;
 
     const wxCmdLineEntryDesc cmdlinedesc[] =
     {
@@ -70,6 +71,7 @@
         { wxCMD_LINE_OPTION, wxT("list"), wxT("list"),  wxT("Parse a text file with the list of files to download")},
         { wxCMD_LINE_OPTION, wxT("destination"), wxT("destination"),  wxT("Destination directory")},
         { wxCMD_LINE_OPTION, wxT("comments"), wxT("comments"),  wxT("Add comments to download")},
+        { wxCMD_LINE_OPTION, wxT("reference"), wxT("reference"),  wxT("Set a reference URL")},
         { wxCMD_LINE_PARAM, NULL, NULL,  wxT("URL of the file(s) to be downloaded"),wxCMD_LINE_VAL_STRING,wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE},
         { wxCMD_LINE_NONE }
     };
@@ -82,7 +84,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.4.4");
+    const wxString VERSION = wxT("0.4.5");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -107,8 +109,6 @@
     #define IPC_TOPIC                  wxT("IPC_WXDOWNLAD_FAST_")
     #define IPC_END_CONNECTION         wxT("IPC_WXDOWNLAD_FAST_END_CONECTION")
 
-    #define TOOLBAR_DEFAULT_MSG        _("Visit http://dfast.sf.net for updates")
-
     const wxString STOPWITHOUTSAVINGSTOPSTATUS = wxT("STOPWITHOUTSAVINGSTOPSTATUS");
 
     const wxString DFAST_REG = wxT("wxDownloadFast");
@@ -123,14 +123,18 @@
     const wxString RESTART_REG = wxT("restart");
     const wxString PARTS_REG = wxT("parts");
     const wxString DESTINATION_REG = wxT("destination");
+    const wxString TEMPDESTINATION_REG = wxT("tempdestination");
     const wxString SIZE_REG = wxT("size");
+    const wxString SIZEPART_REG = wxT("sizepart");
     const wxString SIZECOMPLETED_REG = wxT("sizecompleted");
+    const wxString SIZEPARTCOMPLETED_REG = wxT("sizepartcompleted");
     const wxString TIMEPASSED_REG = wxT("timepassed");
     const wxString PERCENTUAL_REG = wxT("percentual");
     const wxString SPEED_REG = wxT("speed");
     const wxString URL_REG = wxT("url");
     const wxString MD5_REG = wxT("md5");
     const wxString COMMENTS_REG = wxT("comments");
+    const wxString REFERENCE_REG = wxT("reference");
     const wxString CONTENTTYPE_REG = wxT("contenttype");
     const wxString START_REG = wxT("date_start");
     const wxString END_REG = wxT("date_end");
@@ -148,12 +152,15 @@
     const wxString SEPARATOR01_REG = wxT("separator01position");
     const wxString SEPARATOR02_REG = wxT("separator02position");
 
+    const wxString OPT_LAST_NEW_RELEASE_CHECK = wxT("lastnewreleasecheck");
+    const wxString OPT_CURRENT_RELEASE = wxT("currentrelease");
     const wxString OPT_DIALOG_CLOSE_REG = wxT("closewindow");
     const wxString OPT_ATTEMPTS_REG = wxT("attempts");
     const wxString OPT_ATTEMPTS_TIME_REG = wxT("attemptstime");
     const wxString OPT_SIMULTANEOUS_REG = wxT("simultaneous");
     const wxString OPT_REMEMBER_BOXNEW_OPTIONS_REG = wxT("rememberboxnewoptions");
     const wxString OPT_DESTINATION_REG = wxT("dirdestination");
+    const wxString OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG = wxT("downloadpartsdefaultdir");
     const wxString OPT_FILE_MANAGER_PATH_REG = wxT("filemanagerpath");
     const wxString OPT_BROWSER_PATH_REG = wxT("browserpath");
     const wxString OPT_SHUTDOWN_REG = wxT("shutdown");
@@ -300,6 +307,8 @@
         void SetExposedName(wxString name);
         void UnSetExposedName();
         wxString GetDestination();
+        wxString GetTemporaryDestination();
+        wxString GetReferenceURL();
         wxString GetComments();
         wxString GetUser();
         wxString GetPassword();
@@ -362,6 +371,8 @@
         wxString name;
         wxString exposedname;
         wxString destination;
+        wxString tempdestination;
+        wxString reference;
         wxString comments;
         wxString user;
         wxString password;
@@ -386,9 +397,9 @@
     {
     public:
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination, int parts, wxString user, wxString password, wxString comments,int scheduled);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
-        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString comments);
+        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
         mDownloadFile *FindDownloadFile(wxString str);
         void LoadDownloadListFromDisk();
@@ -411,6 +422,8 @@
     class mOptions
     {
     public:
+        wxString currentrelease;
+        wxDateTime lastnewreleasecheck;
         int attempts;             //number of attempts
         int closedialog;         //show the close dialog
         int simultaneous;         //number of simultaneous downloads
@@ -441,6 +454,7 @@
         wxString destination;
         wxString browserpath;
         wxString filemanagerpath;
+        wxString downloadpartsdefaultdir;
         int activatescheduling;
         wxDateTime startdatetime;
         wxDateTime finishdatetime;
@@ -488,7 +502,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString comments,int startoption, bool show,bool permitdifferentnames);
+        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
@@ -533,6 +547,7 @@
         void OnClose(wxCloseEvent& event);
         void OnSite(wxCommandEvent& event);
         void OnBug(wxCommandEvent& event);
+        void OnDonate(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& WXUNUSED(event));
         void BrowserFile();
         void OnToolLeftClick(wxCommandEvent& event);
@@ -542,6 +557,8 @@
         void OnShutdownEvent(wxCommandEvent& event);
         void OnDisconnectEvent(wxCommandEvent& event);
         bool UpdateListItemField(mDownloadFile *current);
+        void CheckNewRelease();
+        void OnNewRelease(wxCommandEvent& event);
         mTaskBarIcon *taskbaricon;
         mProgressBar *progressbar;
         mGraph *graph;
@@ -554,6 +571,7 @@
         mGraphPoints graphpoints;
         int timerinterval;
         bool active;
+        wxString defaultstatusbarmessage;
     private:
         int completed[MAX_NUM_PARTS];
         wxTimer *mtimer;
@@ -616,6 +634,8 @@
         void OnCancel(wxCommandEvent& event);
         void OnButtonDir(wxCommandEvent& event);
         void OnButtonAdd(wxCommandEvent& event);
+        void OnButtonEdit(wxCommandEvent& event);
+        int CheckURL(mUrlName url);
         bool PermitDifferentNames();
         void SetDifferentNamesPermition(bool permit);
     private:
@@ -631,6 +651,7 @@
         void OnButtonDir(wxCommandEvent& event);
         void OnBrowserPath(wxCommandEvent& event);
         void OnFileManagerPath(wxCommandEvent& event);
+        void OnTempPath(wxCommandEvent& event);
         void OnGraphBackgroundColour(wxCommandEvent& event);
         void OnGraphGridColour(wxCommandEvent& event);
         void OnGraphLineColour(wxCommandEvent& event);
@@ -837,9 +858,9 @@
         // called when the thread exits - whether it terminates normally or is
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
-        wxString CheckHtmlFile(bool downloaded = FALSE);
+        mUrlName CheckHtmlFile(bool downloaded = FALSE);
         wxLongLong CurrentSize(wxString filepath,wxString filename);
-        int FinishDownload(wxFileName destination);
+        int FinishDownload(wxFileName *destination,wxFileName tempdestination);
         wxSocketClient *ConnectHTTP(wxLongLong *start);
         wxSocketClient *ConnectFTP(wxLongLong *start);
         wxInputStream *ConnectLOCAL_FILE(wxLongLong start);
@@ -847,7 +868,7 @@
                         //the parameter wxInputStream *filestream is used just for LOCAL_FILE
         void PrintMessage(wxString str,wxString color=HTMLNORMAL);
         void WaitUntilAllFinished(bool canstop = TRUE);
-        bool JoinFiles();
+        bool JoinFiles(wxFileName *destination,wxFileName tempdestination);
         void SpeedCalculation(long delta_t);
         mDownloadFile *downloadfile;
         mOptions *programoptions;
@@ -856,6 +877,19 @@
         bool redirecting;
         mDownloadList *downloadlist;
     };
+
+    class mCheckNewReleaseThread : public wxThread
+    {
+    public:
+        mCheckNewReleaseThread();
+        // thread execution starts here
+        virtual void *Entry();
+
+        // called when the thread exits - whether it terminates normally or is
+        // stopped with Delete() (but not when it is Kill()ed!)
+        virtual void OnExit();
+    };
+
     class MyUtilFunctions
     {
     public:

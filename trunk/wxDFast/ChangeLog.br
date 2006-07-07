@@ -1,3 +1,21 @@
+0.4.5
+===================================================
+- Corrigido bug na opção "Copiar URL" e "Copiar 
+  Dados do Download"
+- Corrigido problema ao desenhar barra para número
+  de partes ímpares
+- Barra segmentada com cores diferentes
+- Corrigido bug na caixa "Novo Download", quando
+  se deixava a caixa "Endereço" vazia
+- Adicionada opção --reference, veja o arquivo
+  Readme para mais informações
+- Adicionada opção de escolha de onde salvar os
+  arquivos temporários (.part)
+- Adicionada uma nova caixa "Sobre..."
+- Adicionado menu "Doação"
+- Adicionado rotina para verificar se há novas
+  atualizações para o wxDownload Fast
+
 0.4.4
 ===================================================
 - Adicionado seleção multipla nas listas de down-
