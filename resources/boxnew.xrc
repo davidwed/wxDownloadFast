@@ -17,7 +17,7 @@
                 <flag>wxEXPAND</flag>
                 <object class="wxFlexGridSizer">
                     <hgap>0</hgap>
-                    <rows>10</rows>
+                    <rows>11</rows>
                     <cols>1</cols>
                     <vgap>0</vgap>
                     <object class="spacer">
@@ -79,10 +79,26 @@
                     </object>
                     <object class="sizeritem">
                         <option>1</option>
-                        <object class="wxCheckListBox" name="lstaddresslist">
-                            <tooltip>Just the marked addresses will be considered</tooltip>
-                            <style>wxLB_SINGLE</style>
-                            <size>420,100</size>
+                        <object class="wxFlexGridSizer">
+                            <hgap>0</hgap>
+                            <rows>2</rows>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <object class="wxCheckListBox" name="lstaddresslist">
+                                    <tooltip>Just the marked addresses will be considered</tooltip>
+                                    <style>wxLB_SINGLE</style>
+                                    <size>420,100</size>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_RIGHT</flag>
+                                <object class="wxButton" name="btnedit">
+                                    <size>70, 23</size>
+                                    <label>_Edit</label>
+                                </object>
+                            </object>
                         </object>
                     </object>
                     <object class="spacer">
@@ -153,7 +169,7 @@
                                                     </object>
                                                     <object class="sizeritem">
                                                         <object class="wxStaticText" name="label_3">
-                                                            <label>Passwrod:</label>
+                                                            <label>Password:</label>
                                                         </object>
                                                     </object>
                                                     <object class="spacer">
@@ -337,6 +353,26 @@
                                                     </object>
                                                 </object>
                                             </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <option>1</option>
+                        <object class="wxStaticBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <label>Reference URL</label>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxEXPAND</flag>
+                                <object class="wxBoxSizer">
+                                    <orient>wxVERTICAL</orient>
+                                    <object class="sizeritem">
+                                        <object class="wxTextCtrl" name="edtreferenceurl">
+                                            <tooltip>Reference URL</tooltip>
+                                            <size>415, 23</size>
                                         </object>
                                     </object>
                                 </object>

@@ -26,12 +26,11 @@
                                 <flag>wxEXPAND</flag>
                                 <object class="wxFlexGridSizer">
                                     <growablerows>1</growablerows>
-                                    <rows>2</rows>
+                                    <rows>3</rows>
                                     <growablecols>0</growablecols>
                                     <cols>1</cols>
                                     <vgap>5</vgap>
                                     <object class="sizeritem">
-                                        <!-- <minsize>200,48</minsize> -->
                                         <option>1</option>
                                         <flag>wxEXPAND|wxFIXED_MINSIZE</flag>
                                         <object class="wxPanel" name="graphpanel" subclass="mGraph">
@@ -69,6 +68,13 @@
                                                     </object>
                                                 </object>
                                             </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxEXPAND|wxFIXED_MINSIZE</flag>
+                                        <object class="wxPanel" name="progressbar" subclass="mProgressBar">
+                                            <style>wxTAB_TRAVERSAL</style>
                                         </object>
                                     </object>
                                 </object>

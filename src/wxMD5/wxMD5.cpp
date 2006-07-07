@@ -82,7 +82,7 @@ void wxMD5::SetFile(const wxFileName& szfile)
     m_isfile = TRUE;
 }
 
-const wxString wxMD5::GetDigest()
+const wxString wxMD5::GetDigest(bool mainthread)
 {
     if (m_isfile)
     {
@@ -106,6 +106,8 @@ const wxString wxMD5::GetDigest()
             {
                 i = md5file.Read(buffer,16384);
                 MD5Update(&md5Context, buffer, (unsigned) i);
+                if (mainthread)
+                    wxYield();
             }
             MD5Final(m_arrDigest, &md5Context);
 

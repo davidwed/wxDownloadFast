@@ -106,7 +106,7 @@
                                             <vgap>10</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkshutdown">
-                                                    <label>Always shutdown when finish all downloads</label>
+                                                    <label>Always shutdown when all downloads finish</label>
                                                 </object>
                                             </object>
                                         </object>
@@ -119,14 +119,14 @@
                                             <vgap>10</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkdisconnect">
-                                                    <label>Always disconnect when finish all downloads</label>
+                                                    <label>Always disconnect when all downloads finish</label>
                                                 </object>
                                             </object>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
                                         <object class="wxCheckBox" name="chkclosedialog">
-                                            <label>Show dialog box when close program</label>
+                                            <label>Show dialog box when program closes</label>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
@@ -139,7 +139,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <flag>wxFIXED_MINSIZE</flag>
-                                                <object class="wxStaticText" name="label_1">
+                                                <object class="wxStaticText" name="static04">
                                                     <label>Refresh rate of the download list (millisecs):</label>
                                                 </object>
                                             </object>
@@ -162,7 +162,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <flag>wxFIXED_MINSIZE</flag>
-                                                <object class="wxStaticText" name="label_2">
+                                                <object class="wxStaticText" name="static05">
                                                     <label>Download Read Buffer size(in Bytes):</label>
                                                 </object>
                                             </object>
@@ -183,7 +183,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkrestoremainframe">
-                                                    <label>Restore the mainframe when all downloads finished</label>
+                                                    <label>Restore the main window (?) when all downloads finish</label>
                                                 </object>
                                             </object>
                                         </object>
@@ -196,7 +196,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkhidemainframe">
-                                                    <label>Hide the mainframe when the user start a download</label>
+                                                    <label>Hide the main window (?) when you start a download</label>
                                                 </object>
                                             </object>
                                         </object>
@@ -212,135 +212,201 @@
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>10</hgap>
-                            <rows>6</rows>
-                            <cols>2</cols>
+                            <rows>2</rows>
+                            <cols>1</cols>
                             <vgap>10</vgap>
-                            <growablecols>1</growablecols>
-                            <object class="spacer">
-                                <size>1, 1</size>
-                            </object>
-                            <object class="spacer">
-                                <size>1, 1</size>
-                            </object>
                             <object class="sizeritem">
-                                <object class="wxStaticText" name="static06">
-                                    <label>Default destination:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                <flag>wxFIXED_MINSIZE</flag>
                                 <object class="wxFlexGridSizer">
-                                    <hgap>20</hgap>
-                                    <rows>1</rows>
+                                    <hgap>10</hgap>
+                                    <rows>6</rows>
                                     <cols>2</cols>
-                                    <vgap>0</vgap>
-                                    <object class="sizeritem">
-                                        <object class="wxTextCtrl" name="edtdestination">
-                                            <style>wxTE_READONLY</style>
-                                            <size>200, 20</size>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <object class="wxButton" name="btnoptiondestination">
-                                            <size>20, 25</size>
-                                            <label>...</label>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxStaticText" name="static30">
-                                    <label>Browser path:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
-                                <object class="wxFlexGridSizer">
-                                    <hgap>20</hgap>
-                                    <rows>1</rows>
-                                    <cols>2</cols>
-                                    <vgap>0</vgap>
-                                    <object class="sizeritem">
-                                        <object class="wxTextCtrl" name="edtbrowserpath">
-                                            <style>wxTE_READONLY</style>
-                                            <size>200, 20</size>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <object class="wxButton" name="btnbrowserpath">
-                                            <size>20, 25</size>
-                                            <label>...</label>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxStaticText" name="static31">
-                                    <label>File manager path:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
-                                <object class="wxFlexGridSizer">
-                                    <hgap>20</hgap>
-                                    <rows>1</rows>
-                                    <cols>2</cols>
-                                    <vgap>0</vgap>
-                                    <object class="sizeritem">
-                                        <object class="wxTextCtrl" name="edtfilemanagerpath">
-                                            <style>wxTE_READONLY</style>
-                                            <size>200, 20</size>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <object class="wxButton" name="btnfilemanagerpath">
-                                            <size>20, 25</size>
-                                            <label>...</label>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxStaticText" name="static04">
-                                    <label>Shutdown command:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
-                                <object class="wxFlexGridSizer">
-                                    <hgap>20</hgap>
-                                    <rows>1</rows>
-                                    <cols>2</cols>
-                                    <vgap>0</vgap>
-                                    <object class="sizeritem">
-                                        <object class="wxTextCtrl" name="edtshutdown">
-                                            <size>200, 20</size>
-                                        </object>
+                                    <vgap>10</vgap>
+                                    <growablecols>1</growablecols>
+                                    <object class="spacer">
+                                        <size>1, 1</size>
                                     </object>
                                     <object class="spacer">
-                                        <size>20, 25</size>
+                                        <size>1, 1</size>
                                     </object>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <object class="wxStaticText" name="static05">
-                                    <label>Disconnect command:</label>
-                                </object>
-                            </object>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
-                                <object class="wxFlexGridSizer">
-                                    <hgap>20</hgap>
-                                    <rows>1</rows>
-                                    <cols>2</cols>
-                                    <vgap>0</vgap>
                                     <object class="sizeritem">
-                                        <object class="wxTextCtrl" name="edtdisconnect">
-                                            <size>200, 20</size>
+                                        <object class="wxStaticText" name="static06">
+                                            <label>Default destination:</label>
                                         </object>
                                     </object>
-                                    <object class="spacer">
-                                        <size>20, 25</size>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtdestination">
+                                                    <style>wxTE_READONLY</style>
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxButton" name="btnoptiondestination">
+                                                    <size>20, 25</size>
+                                                    <label>...</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxStaticText" name="static07">
+                                            <label>Browser path:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtbrowserpath">
+                                                    <style>wxTE_READONLY</style>
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxButton" name="btnbrowserpath">
+                                                    <size>20, 25</size>
+                                                    <label>...</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxStaticText" name="static08">
+                                            <label>File manager path:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtfilemanagerpath">
+                                                    <style>wxTE_READONLY</style>
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxButton" name="btnfilemanagerpath">
+                                                    <size>20, 25</size>
+                                                    <label>...</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxStaticText" name="static09">
+                                            <label>Shutdown command:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtshutdown">
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 25</size>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxStaticText" name="static10">
+                                            <label>Disconnect command:</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_RIGHT|wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtdisconnect">
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 25</size>
+                                            </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Partial Temporary Files Path</label>
+                                    <growablecols>1</growablecols>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxEXPAND</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>10</hgap>
+                                            <rows>3</rows>
+                                            <cols>3</cols>
+                                            <vgap>5</vgap>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxRadioButton" name="optdefaulttemp">
+                                                    <label></label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="static11">
+                                                    <label>Use the destination directory</label>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 25</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxRadioButton" name="optusertemp">
+                                                    <label></label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edttemppath">
+                                                    <size>335,25</size>
+                                                    <style>wxTE_READONLY</style>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxButton" name="btntemppath">
+                                                    <size>20, 25</size>
+                                                    <label>...</label>
+                                                </object>
+                                            </object>
+                                        </object>
                                     </object>
                                 </object>
                             </object>
@@ -377,7 +443,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_3">
+                                <object class="wxStaticText" name="static12">
                                     <label>Save how many points to graph?</label>
                                 </object>
                             </object>
@@ -390,7 +456,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_4">
+                                <object class="wxStaticText" name="static13">
                                     <label>Graph refresh rate (millisecs):</label>
                                 </object>
                             </object>
@@ -403,7 +469,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_5">
+                                <object class="wxStaticText" name="static14">
                                     <label>Graph maximum value (kb/s):</label>
                                 </object>
                             </object>
@@ -416,7 +482,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_6">
+                                <object class="wxStaticText" name="static15">
                                     <label>The text area Width (pixels):</label>
                                 </object>
                             </object>
@@ -429,7 +495,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_7">
+                                <object class="wxStaticText" name="static16">
                                     <label>Graph height:</label>
                                 </object>
                             </object>
@@ -442,7 +508,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_8">
+                                <object class="wxStaticText" name="static17">
                                     <label>Text font size (points):</label>
                                 </object>
                             </object>
@@ -455,7 +521,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_9">
+                                <object class="wxStaticText" name="static18">
                                     <label>Main line width:</label>
                                 </object>
                             </object>
@@ -468,7 +534,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_10">
+                                <object class="wxStaticText" name="static19">
                                     <label>Background colour:</label>
                                 </object>
                             </object>
@@ -499,7 +565,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_11">
+                                <object class="wxStaticText" name="static20">
                                     <label>Graph grid colour:</label>
                                 </object>
                             </object>
@@ -530,7 +596,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_12">
+                                <object class="wxStaticText" name="static21">
                                     <label>Main line colour:</label>
                                 </object>
                             </object>
@@ -561,7 +627,7 @@
                             </object>
                             <object class="sizeritem">
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_13">
+                                <object class="wxStaticText" name="static22">
                                     <label>Speed font colour:</label>
                                 </object>
                             </object>
@@ -620,14 +686,14 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_14">
+                                        <object class="wxStaticText" name="static23">
                                             <label>Start Date:</label>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_15">
+                                        <object class="wxStaticText" name="static24">
                                             <label>Start Time:</label>
                                         </object>
                                     </object>
@@ -670,7 +736,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_16">
+                                        <object class="wxStaticText" name="static25">
                                             <label>hours</label>
                                         </object>
                                     </object>
@@ -685,7 +751,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_17">
+                                        <object class="wxStaticText" name="static26">
                                             <label>minutes</label>
                                         </object>
                                     </object>
@@ -702,14 +768,14 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_18">
+                                        <object class="wxStaticText" name="static27">
                                             <label>Finish Date:</label>
                                         </object>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_19">
+                                        <object class="wxStaticText" name="static28">
                                             <label>Finish Time:</label>
                                         </object>
                                     </object>
@@ -752,7 +818,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_20">
+                                        <object class="wxStaticText" name="static29">
                                             <label>hours</label>
                                         </object>
                                     </object>
@@ -767,7 +833,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_21">
+                                        <object class="wxStaticText" name="static30">
                                             <label>minutes</label>
                                         </object>
                                     </object>
@@ -780,8 +846,8 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_22">
-                                    <label>Disactivate the downloads in:</label>
+                                <object class="wxStaticText" name="static31">
+                                    <label>Deactivate downloads on:</label>
                                 </object>
                             </object>
                             <object class="sizeritem">
@@ -797,7 +863,6 @@
                                         <flag>wxFIXED_MINSIZE</flag>
                                         <object class="wxComboBox" name="comboweekdays">
                                             <style>wxCB_READONLY|wxCB_DROPDOWN</style>
-
                                         </object>
                                     </object>
                                     <object class="spacer">
@@ -807,7 +872,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_23">
+                                        <object class="wxStaticText" name="static32">
                                             <label>Between</label>
                                         </object>
                                     </object>
@@ -822,7 +887,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_24">
+                                        <object class="wxStaticText" name="static33">
                                             <label>:</label>
                                         </object>
                                     </object>
@@ -837,7 +902,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_25">
+                                        <object class="wxStaticText" name="static34">
                                             <label>and</label>
                                         </object>
                                     </object>
@@ -852,7 +917,7 @@
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <flag>wxFIXED_MINSIZE</flag>
-                                        <object class="wxStaticText" name="label_26">
+                                        <object class="wxStaticText" name="static35">
                                             <label>:</label>
                                         </object>
                                     </object>
@@ -876,7 +941,7 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxFIXED_MINSIZE</flag>
-                                <object class="wxStaticText" name="label_27">
+                                <object class="wxStaticText" name="static36">
                                     <label>Exceptions List:</label>
                                 </object>
                             </object>
@@ -933,7 +998,7 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxStaticText" name="lblfirefox">
-                                                    <label>To activate the Firefox integration, do the follow:\n\n1) Install the FlashGot extension to the Firefox(www.flashgot.org/getit)\n2) After restart the Firefox, go to:\n   Tools -> FlashGot -> More Options\n3) Now click in Add new download manager\n4) In name, insert: wxDownload Fast\n5) In path, insert the place where the program was installed.\n   On Linux it stay in general in /usr/bin/wxdfast\n   On Windows it stay in general in c:/Program Files/wxDownload Fast/wxdfast.exe\n6) In parameters of program insert:\n   -list[UFILE] -comments[REFERER]</label>
+                                                    <label>To integrate with Firefox, do the following:\n\n1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)\n2) After restart the Firefox, go to:\n     Tools -> FlashGot -> More Options\n3) On the General tab, click Add\n4) In \"Enter Download Manager name\", insert:\n     wxDownload Fast\n5) In path, insert the place where the program was installed.\nIn Linux it should be in /usr/bin/wxdfast\nIn Windows, it should be C:/Program Files/wxDownload Fast/wxdfast.exe\n6) In Arguments template of the program insert: -list[UFILE] -reference[REFERER]</label>
                                                     <size>400, 250</size>
                                                 </object>
                                             </object>

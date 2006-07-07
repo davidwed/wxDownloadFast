@@ -19,6 +19,7 @@ BEGIN_EVENT_TABLE(mBoxOptions, wxDialog)
     EVT_BUTTON(XRCID("btnoptiondestination"), mBoxOptions::OnButtonDir)
     EVT_BUTTON(XRCID("btnfilemanagerpath"), mBoxOptions::OnFileManagerPath)
     EVT_BUTTON(XRCID("btnbrowserpath"), mBoxOptions::OnBrowserPath)
+    EVT_BUTTON(XRCID("btntemppath"), mBoxOptions::OnTempPath)
 
     EVT_BUTTON(XRCID("graphbtnback"), mBoxOptions::OnGraphBackgroundColour)
     EVT_BUTTON(XRCID("graphbtngrid"), mBoxOptions::OnGraphGridColour)
@@ -68,6 +69,14 @@ void mBoxOptions::OnFileManagerPath(wxCommandEvent& event)
     wxFileDialog dialog(this, _("Choose a file..."),wxEmptyString,wxEmptyString,wxT("*"),wxOPEN | wxFILE_MUST_EXIST);
     if (dialog.ShowModal()  == wxID_OK)
         XRCCTRL(*this, "edtfilemanagerpath",wxTextCtrl)->SetValue(dialog.GetPath());
+}
+
+void mBoxOptions::OnTempPath(wxCommandEvent& event)
+{
+     wxString dir;
+     dir = wxDirSelector(_("Select the directory:"));
+     if (dir != wxEmptyString)
+         XRCCTRL(*this, "edttemppath",wxTextCtrl)->SetValue(dir);
 }
 
 void mBoxOptions::OnGraphBackgroundColour(wxCommandEvent& event)

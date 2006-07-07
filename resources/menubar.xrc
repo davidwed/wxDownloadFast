@@ -53,6 +53,7 @@
             <object class="wxMenuItem" name="menupaste">
                 <label>Paste URL</label>
                 <accel>CTRL-V</accel>
+                <bitmap>small/paste.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menucopyurl">
                 <label>Copy URL</label>
@@ -80,6 +81,11 @@
             <object class="wxMenuItem" name="menushowgraph">
                 <label>Show/Hide Graph</label>
                 <accel>CTRL-G</accel>
+                <bitmap>small/graph.xpm</bitmap>
+            </object>
+            <object class="wxMenuItem" name="menushowprogressbar">
+                <label>Show/Hide Progress Bar</label>
+                <bitmap>small/progress.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menudetails">
                 <label>Show/Hide Details</label>
@@ -120,6 +126,7 @@
             <object class="wxMenuItem" name="menuproperties">
                 <label>Properties of Download</label>
                 <accel>CTRL-P</accel>
+                <bitmap>small/properties.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menumove">
                 <label>Move File</label>
@@ -163,15 +170,19 @@
             <label>_Help</label>
             <accel>ALT-H</accel>
             <object class="wxMenuItem" name="menusite">
-                <label>Visit the Site</label>
+                <label>wxDownload Fast Site</label>
             </object>
             <object class="wxMenuItem" name="menubug">
-                <label>Report Bugs</label>
+                <label>Report Bugs...</label>
+            </object>
+            <object class="wxMenuItem" name="menudonate">
+                <label>Donate...</label>
             </object>
             <object class="separator" />
             <object class="wxMenuItem" name="menuabout">
                 <label>About</label>
                 <accel>F1</accel>
+                <bitmap>small/wxdfast.xpm</bitmap>
             </object>
         </object>
     </object>

@@ -3,24 +3,28 @@ wxDownload Fast
 
 1) Introdução
 -------------
-Este programa foi criado com o intuito de substituir os gerenciadores
-de downloads comerciais existentes hoje em dia.
-Deste modo pretendo adicionar o máximo de opções possíveis de modo a
-deixar o programa o mais completo possível.
+wxDownload Fast (também conhecido como wxDFast) é um gerenciador de
+downloads de código aberto. Ele é multi-plataforma, por isso ele é
+compatível com Windows(2k,XP), Linux e MacOS. Além disso, ele é um
+gerenciador de downloads multi-threaded. Isto significa que ele pode
+quebrar um arquivo em várias partes e baixar estas partes simultanea-
+mente, juntando-as novamento no final.
+Ele foi criado com o intuito de substituir os gerenciadores de down-
+loads comerciais existentes hoje em dia. Deste modo pretendo adicionar
+o máximo de opções possíveis de modo a deixar o programa o mais
+completo possível.
 
 2) Características do Programa
 ------------------------------
-* Permite realizar o download de vários arquivos simultaneamente,
-  e ainda dividi-lo em várias partes
-* Permite agendar dowloads
-* Permite organizar os arquivo já baixados
-* Permite continuar um download interrompido do ponto onde parou
-* Mostra as mensagens enviadas/recebidas pelo programa quando conectando
-  aos servidores HTTP/FTP ou ainda para downloads locais(file://)
-* Pode ser traduzido com facilidade para qualquer idioma. Estando diponíveis 
-  os idiomas Português[Brasil], Espanhol, Inglês e Alemão
-* Permite conectar à servidores FTP(apenas FTP e não HTTP) que necessitam de senha
-* Gera o MD5 dos arquivos baixados facilitando assim a verificação dos mesmos
+* Downloads mais rápidos (com transferências Segmentadas/Multi-threaded/Aceleradas)
+* Reinicio de downloads (Pare e reinicie onde você parou)
+* Agendamento de downloads
+* Organiza os arquivos que você já baixou
+* Visualização de messagens do servidor (HTTP, FTP, file://). Sem suporte HTTPS.
+* Disponível em vários idiomas e facilmente traduzível. Disponível agora em Português [Brasil], Espanhol, Inglês e Alemão
+* Conexão com servidores FTP que necessitam de senhas
+* Calcula o código de verificação MD5 dos arquivos baixados, de modo que possam ser verificados facilmente
+
 
 3) Parametros da linha de comado
 --------------------------------
@@ -41,6 +45,9 @@ sendo cada linha uma url
 -destination DIR, --destination=DIR,
 Diretório de destino
 
+-reference URL, --reference=URL
+Passa uma URL, que será guardada como uma URL de referência
+
 -comments COMMENTS, --comments=COMMENTS,
 Adiciona comentários ao download
 
@@ -55,7 +62,7 @@ Para ativar a integração com o Firefox faça o seguinte:
 5) No caminho do gerenciador insira o caminho de onde o programa
    foi instalado. No Linux fica normalmente em /usr/bin/wxdfast
    No Windows fica em c:\Arquivos de Programas\wxDownload Fast\wxdfast.exe
-6) Nos parametros para o programa insira: -list[UFILE] -comments[REFERER]
+6) Nos parametros para o programa insira: -list[UFILE] -reference[REFERER]
 
 5) Instalação
 -------------
@@ -75,7 +82,7 @@ Este arquivo está na forma de uma programa de instalação.
 Para compilar o programa no Windows é necessário o MinGW e o MSys[www.mingw.org]
 que são o compilador GCC para windows e um ambiente unix respectivamente.
 Além disso é necessário a biblioteca wxWidgets[www.wxwidgets.org], compilada
-com a opção --enable-xrc.
+com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
 # make BUILD=win32
@@ -89,7 +96,7 @@ Para compilar o programa no Windows é necessário o Microsoft Visual C++[versã
 comercial] ou ainda o Microsoft Visual C++ Toolkit 2003 [versão freeware] + o 
 Microsoft Platform SDK.
 Além disso é necessário a biblioteca wxWidgets[www.wxwidgets.org], compilada
-com a opção --enable-xrc.
+com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
 # nmake -f Makefile.vc
@@ -104,7 +111,8 @@ OBS: Não esqueça de carregar as varáveis de ambiente referentes ao VC.
 - Compilando código fonte
 
 Para compilar o programa no Linux é necessário o gcc e o programa make.
-Além disso é necessário a biblioteca wxWidgets[www.wxwindows.org].
+Além disso é necessário a biblioteca wxWidgets[www.wxwindows.org], compilada
+com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
 # make

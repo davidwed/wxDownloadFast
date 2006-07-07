@@ -45,15 +45,39 @@ void mProgressBar::OnPaint(wxPaintEvent &event)
 
     if (parts > 0)
     {
-        float partssize = ((float)width)/((float)parts);
-        float scale = ((float)width)/((float)100);
+        int proportion = 100/parts;
+        int lastproportion;
+        int scale = width/100;
+        int partssize = scale*proportion;
         int tmpwidth;
+
         for (int i = 0 ; i < parts ; i++)
         {
-            tmpwidth = (int)(completed[i]*scale);
-            dc.SetBrush(wxBrush(LIGHT_BLUE));
-            dc.SetPen(wxPen(LIGHT_BLUE));
-            dc.DrawRectangle(x+((int)(partssize))*i,y,tmpwidth,height);
+            if (i == (parts -1))
+            {
+                lastproportion = 100 - ((parts-1)*proportion);
+                tmpwidth = width-((parts -1)*partssize);
+                tmpwidth = completed[i]*tmpwidth/lastproportion;
+            }
+            else
+                tmpwidth = completed[i]*scale;
+
+            if (i % 3 == 0)
+            {
+                dc.SetBrush(wxBrush(LIGHT_BLUE));
+                dc.SetPen(wxPen(LIGHT_BLUE));
+            }
+            else if (i % 3 == 1)
+            {
+                dc.SetBrush(wxBrush(RED));
+                dc.SetPen(wxPen(RED));
+            }
+            else
+            {
+                dc.SetBrush(wxBrush(YELLOW));
+                dc.SetPen(wxPen(YELLOW));
+            }
+            dc.DrawRectangle(x+partssize*i,y,tmpwidth,height);
         }
     }
 

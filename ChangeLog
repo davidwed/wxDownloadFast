@@ -1,3 +1,20 @@
+0.4.5
+===================================================
+- Fixed bug on "Copy URL" and "Copy Download data"
+- Fixed problem on draw the progress bar for down-
+  loads splited in a odd number of parts
+- Segmented progress bar with different colors
+- Fixed bug on "New Download" box, when the user
+  let the address box empty
+- Added "--reference" option, see the Readme file
+  for more informations
+- Added option to choose where to save the temp
+  files (.part)
+- Added a new "About" box
+- Added a "Donate" menu
+- Added a routine to check if exists new releases
+  of wxDownload Fast
+
 0.4.4
 ===================================================
 - Added multiple selections on Finished and In Pro-

@@ -3,36 +3,33 @@ wxDownload Fast
 
 1) Introduction
 ---------------
-This program was created with intention to substitute the existing
-commercial downloads managers.  In this way I intend to add
-the maximum of options in order to let the program the most complete
-possible.
+This program was created with the intention of replacing existing
+commercial download managers.  It will have many options and be as complete
+as possible.
 
-2) Characteristics of the Program 
+2) Features of wxDownload Fast
 ---------------------------------
-* Allows to carry through download of some archives simultaneously,
-  and allow to split the downloads in some lowered parts.
-* Allows to schedule a download
-* Allows to organize the files already downloaded
-* Allows to continue one download interrupted of the point where had stopped
-* The messages sent/received for the program when connecting to servers HTTP/FTP
-  or for local downloads(file://)
-* It can be translated with easiness for any language.  Being available in
-  Portuguese[Brazil], Spanish, English and German 
-* Allows to connect in FTP servers(only FTP) which need password
-* Generate the MD5 of the downloaded files, facilitating the verification
+* Faster downloads (with Segmented/Multi-threaded/Accelerated transfers)
+* Download resuming (Pause and restart where you stopped)
+* Download scheduling
+* Organizes files you have already downloaded
+* View server messages (HTTP, FTP, file://). No HTTPS support.
+* Available in multiple languages and easily translated.  Now available in
+  Portuguese [Brazil], Spanish, English and German 
+* Connection to FTP servers which require a password
+* Calculates the MD5 checksum of downloaded files so they can be easily verified
 
 3) Command line Parameters
 --------------------------
 [URLS],
-Urls space separeted of the files to be downloaded
+URLs of the files to be downloaded are separated by spaces
 Ex: www.foo.com/foo.exe ftp://ftp.foo.com/foo2.exe http://foo.com:8080/foo3.exe
 
 --hide,
-Start with the the main frame hide
+Start with the the main window hidden
 
 --notray,
-Don't show the icon on system tray
+Don't show the icon in the system tray
 
 -list TEXTFILE, --list=TEXTFILE,
 Parse a text file with the list of files to download
@@ -40,75 +37,84 @@ Parse a text file with the list of files to download
 -destination DIR, --destination=DIR,
 Destination directory
 
+-reference URL, --reference=URL
+Parse a URL that will be set as a reference URL
+
 -comments COMMENTS, --comments=COMMENTS,
 Add comments for the download
 
 4) Firefox Integration
 ----------------------
-To activate the Firefox integration, do the follow:
+To integrate with Firefox, do the following:
 
-1) Install the FlashGot extension to the Firefox(www.flashgot.org/getit)
+1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)
 2) After restart the Firefox, go to Tools -> FlashGot -> More Options
-3) Now click in Add new download manager
-4) In name, insert: wxDownload Fast
-5) In path, insert the place where the program was installed. In general it stay in
+3) On the General tab, click Add
+4) In Enter Download Manager name, insert: wxDownload Fast
+5) In path, insert the place where the program was installed. In Linux it should be in
    /usr/bin/wxdfast
-6) In parameters of program insert: -list[UFILE] -comments[REFERER]
+   In Windows, it should be C:\Program Files\wxDownload Fast\wxdfast.exe
+
+6) In Arguments template of the program insert: -list[UFILE] -reference[REFERER]
 
 5) Installation
 ---------------
 
-5.1) Win32
-----------
+5.1) Windows 2000 & XP
+----------------------
 
 - Installing from binary
 
 Is available in the page of the program contends this program.  This archive is in
-the form of a installation program.
+the form of an installation program.
 To install the program follow the wizard.
-Then to change the Language from Portuguese to English to this:
+
+Then to change the Language from Portuguese to English do this:
 1) Start the program
-2) Go to menu "Ver->Idiomas"
-3) Select "Ingl�"
-4) Press "OK"
-5) Press "OK" again
-6) Close the program
-7) Restart the program and the interface will be in english
+2) Go to menu "Ver->Idiomas->"Ingles"
 
-- Compiling code source
+- Compiling source code
 
-To build the program in the Windows it is necessary the MinGW and the
-MSys[www.mingw.org ] that they are the compiler GCC for windows and an environment
-unix respectively.  Moreover is necessary the library wxWidgets[www.wxwidgets.org ],
-builded with the option: --enable-xrc.
-Of ownership of the requisite ones above it is enough to enter where the code source
-was unpacked and type:
+To build the program on Windows, MinGW and MSys [ www.mingw.org ] are required, 
+which are the GCC compiler for Windows and Unix environments respectively.  
+Other requirements include the library wxWidgets [www.wxwidgets.org ],
+built with the options: --enable-xrc --enable-unicode.
+Once you have the above requirements you can change to the directory where the source 
+code was unpacked and type:
 # make BUILD=win32
 
-With this, the executable will be generated, being enough after that to copy the
-executable archive for a desired place, and to use it.
+With this, the executable will be generated. After that, you can copy the executable to
+another place and run it from there.
 
 5.2) Linux
 ----------
 
-- Compiling code source
+- Compiling source code
 
-To build the program in the Linux it is necessary the GCC and the program make.
-Moreover is necessary the library wxWidgets[www.wxwidgets.org ],builded with
-the option: --enable-xrc.  Of ownership of the requisite ones above it is enough
-to enter where the code source was unpacked and type:
+GCC and the program make are required to build the program in the Linux.
+Other requirements include the library wxWidgets [ www.wxwidgets.org ], built with
+the options: --enable-xrc --enable-unicode.  Once you have the above requirements you can change to
+the directory where the source code was unpacked and type:
 # make
 
-With this, the executable will be generated, being enough after that to copy
-the executable archive for a desired place, and to use it.  For this it types:
+With this, the executable will be generated. After that, you can copy the executable to
+another place and run it from there. To do this, type:
 # su
 # make install
 
-5.3) MacOS
+5.3) Mac OS X
 ----------
 
-- Compiling code source
+- Compiling source code
 
-As I never had access to a system running the MacOS, I never build the program
-in this system, however I believe that the steps used in the Linux should work for
-the MacOS.
+This has not been tested but should work using the same steps as Linux. Please report
+your experiences.
+
+
+
+
+
+
+
+
+
