@@ -81,6 +81,7 @@ bool mHTTP::ParseHeaders()
         else
         {
             m_http_response = wxAtoi(line.Mid(9,1));
+            m_http_complete_response = wxAtoi(line.Mid(9,3));
             firstline = FALSE;
         }
     }while (line != wxEmptyString);

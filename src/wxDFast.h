@@ -101,7 +101,7 @@
     #define DEFAULT_START_OPTION       NOW
                                         //START THE DOWNLOAD IMMEDIATLY
     #define MIN_SIZE_TO_SPLIT          500000l
-    #define USE_HTML_MESSAGES          1 
+    #define USE_HTML_MESSAGES          1
                                         //CHANGE THIS AND THE FILE MAIN_WINDOW.XRC
     #define MAX_SCHEDULE_EXCEPTIONS    9
 
@@ -822,12 +822,14 @@
         wxString GetResponseMessage();
         bool Connect(wxSockAddress& addr, bool wait);
         int GetResponse() { return m_http_response; }
+        int GetCompleteResponse() { return m_http_complete_response; }
     private:
         bool ParseHeaders();
         char *wxstr2str(wxString wxstr);
         wxString m_headersmsg;
         wxString m_getcommand;
         wxString m_messagereceived;
+        int m_http_complete_response;
     };
 
     class mConnection: public wxConnection
