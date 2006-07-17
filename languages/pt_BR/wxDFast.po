@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-07-07 13:52-0300\n"
+"PO-Revision-Date: 2006-07-12 11:50-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Max Velasques <max_mv@yahoo.com.br>\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:55
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:77
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:128
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:127
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1800
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1930
 msgid "Select the directory:"
@@ -386,19 +386,19 @@ msgstr "Tentativas"
 msgid "URL"
 msgstr "URL"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:47
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:80
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:46
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:79
 msgid "The follow URL is invalid:\n"
 msgstr "A URL a seguir é inválida:\n"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:47
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:62
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:80
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:91
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:108
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:113
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:150
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:182
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:46
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:61
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:79
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:90
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:107
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:112
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:149
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:181
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:45
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1232
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1344
@@ -414,34 +414,34 @@ msgstr "A URL a seguir é inválida:\n"
 msgid "Error..."
 msgstr "Erro..."
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:62
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:150
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:182
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:61
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:149
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:181
 msgid "The URL is invalid!"
 msgstr "A URL é inválida!"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:91
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:90
 msgid "The follow URL has a different filename:\n"
 msgstr "A URL a seguir tem um nome de arquivo diferente:\n"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:99
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:98
 msgid "Select at least one item of the address list!\n"
 msgstr "Selecione pelo menos um ítem da lista de endereços!\n"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:99
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:98
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:107
 msgid "Information..."
 msgstr "Informação..."
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:108
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:107
 msgid "The destination directory is invalid!"
 msgstr "O diretório de destino é inválido!"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:113
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:112
 msgid "I can't split the file in so many pieces!"
 msgstr "Eu não posso dividir o arquivo em tantas partes!"
 
-#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:164
+#: /home/max/Projetos/wxDFast/src/BoxNew.cpp:163
 msgid "Edit the URL"
 msgstr "Edite a URL"
 
@@ -1007,12 +1007,12 @@ msgid "Download Read Buffer size(in Bytes):"
 msgstr "Tamanho do Buffer de leitura(em Bytes):"
 
 #: /tmp/dummy:36
-msgid "Restore the main window (?) when all downloads finish"
-msgstr "Restaurar a janela principal (?) quando todos os download terminarem"
+msgid "Restore the main window when all downloads finish"
+msgstr "Restaurar a janela principal quando todos os download terminarem"
 
 #: /tmp/dummy:37
-msgid "Hide the main window (?) when you start a download"
-msgstr "Esconder a janela principal (?) quando você iniciar um download"
+msgid "Hide the main window when you start a download"
+msgstr "Esconder a janela principal quando você iniciar um download"
 
 #: /tmp/dummy:38
 msgid "Paths"
