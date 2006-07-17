@@ -141,3 +141,32 @@ double MyUtilFunctions::wxlonglongtodouble(wxLongLong value)
     d += value.GetLo();
     return d;
 }
+
+#ifdef __WXMSW__
+wxString MyUtilFunctions::GetProgramFilesDir()
+{
+    wxString result = wxEmptyString;
+    wxRegKey regKey;
+    wxString idName(wxT("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion"));
+
+    regKey.SetName(idName);
+    regKey.QueryValue("ProgramFilesDir",result);
+    regKey.Close();
+	
+    return result;
+}
+
+wxString MyUtilFunctions::GetMyDocumentsDir()
+{
+    wxString result = wxEmptyString;
+    wxRegKey regKey;
+    wxString idName(wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"));
+
+    regKey.SetName(idName);
+    regKey.QueryValue("Personal",result);
+    regKey.Close();
+	
+    return result;
+}
+
+#endif
