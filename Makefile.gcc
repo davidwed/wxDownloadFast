@@ -3,14 +3,21 @@ RESOURCE_DIR = resources/
 SOURCE_DIR = src/
 LANGUAGE_DIR = languages/
 MANPAGE_DIR = man/
-BUILD_DIR = build-gcc/
 CPP  = $(CROSS_PREFIX)g++
 CC   = $(CROSS_PREFIX)gcc
 AR   = $(CROSS_PREFIX)ar
 WINDRES = $(CROSS_PREFIX)windres
 STRIP = $(CROSS_PREFIX)strip
 
-ifeq ($(DEBUG), 1)
+BUILD_GCC = build-gcc/
+ifeq ($(Debug),1)
+	DEBUG = 1
+	BUILD_DIR = $(BUILD_GCC)Release/
+else
+	BUILD_DIR = $(BUILD_GCC)Debug/
+endif
+
+ifeq ($(DEBUG),1)
 	WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=yes
 else
 	WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=no
@@ -21,7 +28,7 @@ INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
-OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)CheckNewRelease.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)ftp.o $(BUILD_DIR)http.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)ProgressBar.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)urlname.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
+OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)CheckNewRelease.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)FTP.o $(BUILD_DIR)HTTP.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)ProgressBar.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)UrlName.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
 
 ifeq ($(XRC), 1)
 	OBJ = $(OBJ_TMP)
@@ -88,7 +95,7 @@ else
 endif
 
 criardir:
-	if [ ! -e $(BUILD_DIR) ]; then mkdir "$(BUILD_DIR)"; fi
+	if [ ! -e $(BUILD_DIR) ]; then mkdir -p "$(BUILD_DIR)"; fi
 
 $(BUILD_DIR)Resources.o: $(BUILD_DIR)Resources.cpp
 	$(CPP) -c $(BUILD_DIR)Resources.cpp -o $(BUILD_DIR)Resources.o $(CXXFLAGS)
@@ -114,11 +121,11 @@ $(BUILD_DIR)DownloadThread.o: src/DownloadThread.cpp
 $(BUILD_DIR)FinishedList.o: src/FinishedList.cpp
 	$(CPP) -c src/FinishedList.cpp -o $(BUILD_DIR)FinishedList.o $(CXXFLAGS)
 
-$(BUILD_DIR)ftp.o: src/ftp.cpp
-	$(CPP) -c src/ftp.cpp -o $(BUILD_DIR)ftp.o $(CXXFLAGS)
+$(BUILD_DIR)FTP.o: src/FTP.cpp
+	$(CPP) -c src/FTP.cpp -o $(BUILD_DIR)FTP.o $(CXXFLAGS)
 
-$(BUILD_DIR)http.o: src/http.cpp
-	$(CPP) -c src/http.cpp -o $(BUILD_DIR)http.o $(CXXFLAGS)
+$(BUILD_DIR)HTTP.o: src/HTTP.cpp
+	$(CPP) -c src/HTTP.cpp -o $(BUILD_DIR)HTTP.o $(CXXFLAGS)
 
 $(BUILD_DIR)Graph.o: src/Graph.cpp
 	$(CPP) -c src/Graph.cpp -o $(BUILD_DIR)Graph.o $(CXXFLAGS)
@@ -135,8 +142,8 @@ $(BUILD_DIR)ProgressBar.o: src/ProgressBar.cpp
 $(BUILD_DIR)TaskBarIcon.o: src/TaskBarIcon.cpp
 	$(CPP) -c src/TaskBarIcon.cpp -o $(BUILD_DIR)TaskBarIcon.o $(CXXFLAGS)
 
-$(BUILD_DIR)urlname.o: src/urlname.cpp
-	$(CPP) -c src/urlname.cpp -o $(BUILD_DIR)urlname.o $(CXXFLAGS)
+$(BUILD_DIR)UrlName.o: src/UrlName.cpp
+	$(CPP) -c src/UrlName.cpp -o $(BUILD_DIR)UrlName.o $(CXXFLAGS)
 
 $(BUILD_DIR)UtilFunctions.o: src/UtilFunctions.cpp
 	$(CPP) -c src/UtilFunctions.cpp -o $(BUILD_DIR)UtilFunctions.o $(CXXFLAGS)
@@ -150,8 +157,8 @@ $(RES): src/wxDFast.rc
 $(WXMD5): $(BUILD_DIR)md5.o $(BUILD_DIR)wxMD5.o
 	$(AR) cur $(BUILD_DIR)$(WXMD5) $(BUILD_DIR)wxMD5.o $(BUILD_DIR)md5.o
 
-$(BUILD_DIR)md5.o: src/wxMD5/md5.c
-	$(CPP) -c src/wxMD5/md5.c -o $(BUILD_DIR)md5.o $(CXXFLAGS)
+$(BUILD_DIR)md5.o: src/wxMD5/md5.cpp
+	$(CPP) -c src/wxMD5/md5.cpp -o $(BUILD_DIR)md5.o $(CXXFLAGS)
 
 $(BUILD_DIR)wxMD5.o: src/wxMD5/wxMD5.cpp
 	$(CPP) -c src/wxMD5/wxMD5.cpp -o $(BUILD_DIR)wxMD5.o $(CXXFLAGS)
@@ -163,9 +170,8 @@ ifeq ($(BUILD), win32)
 else
 	$(INSTALL_FILE) --mode=755 $(BIN) $(DESTDIR)/usr/bin/$(BIN)
 endif
-	$(INSTALL_FILE) Readme.* $(DESTDIR)/usr/lib/$(BIN)
-	$(INSTALL_FILE) Changes.* $(DESTDIR)/usr/lib/$(BIN)
-	$(INSTALL_FILE) gpl.txt $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_FILE) README* $(DESTDIR)/usr/lib/$(BIN)
+	$(INSTALL_FILE) ChangeLog* $(DESTDIR)/usr/lib/$(BIN)
 #	$(INSTALL_FILE) COPYING $(DESTDIR)/usr/lib/$(BIN)
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm $(DESTDIR)/usr/share/pixmaps
@@ -202,8 +208,8 @@ ifeq ($(BUILD), win32)
 else
 	rm -f $(DESTDIR)/usr/bin/$(BIN)
 endif
-	rm -f $(DESTDIR)/usr/lib/$(BIN)/Readme.*
-	rm -f $(DESTDIR)/usr/lib/$(BIN)/Changes.*
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/README*
+	rm -f $(DESTDIR)/usr/lib/$(BIN)/ChangeLog*
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/gpl.txt
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/COPYING
 	rm -f $(DESTDIR)/usr/share/$(BIN)/small/*.xpm
@@ -265,8 +271,8 @@ source:
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
 	cp gpl.txt $(BIN)-$(VERSION)
 	cp COPYING $(BIN)-$(VERSION)
-	cp Readme.* $(BIN)-$(VERSION)
-	cp Changes.* $(BIN)-$(VERSION)
+	cp README* $(BIN)-$(VERSION)
+	cp ChangeLog* $(BIN)-$(VERSION)
 	cp ToDo.* $(BIN)-$(VERSION)
 	cp $(SOURCE_DIR)*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)
@@ -277,11 +283,24 @@ source:
 	mkdir $(BIN)-$(VERSION)/debian
 	cp -r debian/* $(BIN)-$(VERSION)/debian
 	rm -Rf $(BIN)-$(VERSION)/debian/CVS
-	cp Makefile $(BIN)-$(VERSION)
+	cp Makefile.gcc $(BIN)-$(VERSION)
 	cp makefile.vc $(BIN)-$(VERSION)
 
-clean:
-	rm -fr $(BUILD_DIR) $(BIN)-$(VERSION) debian/wxdfast.postinst.debhelper debian/wxdfast.postrm.debhelper debian/wxdfast.substvars debian/$(BIN) configure-stamp build-stamp
+cleanRelease: tempclean
+	rm -fr $(BUILD_GCC)Release
+
+cleanDebug: tempclean
+	rm -fr $(BUILD_GCC)Debug
+
+distcleanRelease: cleanall
+
+distcleanDebug: cleanall
+
+clean: tempclean
+	rm -fr $(BUILD_GCC)
 
 cleanall: clean
 	rm -fr $(BIN) $(BIN).exe $(BIN)-$(VERSION)-src.tar.gz 
+
+tempclean:
+	rm -fr $(BIN)-$(VERSION) debian/wxdfast.postinst.debhelper debian/wxdfast.postrm.debhelper debian/wxdfast.substvars debian/$(BIN) configure-stamp build-stamp
