@@ -81,7 +81,7 @@ Other requirements include the library wxWidgets [www.wxwidgets.org ],
 built with the options: --enable-xrc --enable-unicode.
 Once you have the above requirements you can change to the directory where the source 
 code was unpacked and type:
-# make BUILD=win32
+# make -f Makefile.gcc BUILD=win32
 
 With this, the executable will be generated. After that, you can copy the executable to
 another place and run it from there.
@@ -95,6 +95,7 @@ GCC and the program make are required to build the program in the Linux.
 Other requirements include the library wxWidgets [ www.wxwidgets.org ], built with
 the options: --enable-xrc --enable-unicode.  Once you have the above requirements you can change to
 the directory where the source code was unpacked and type:
+# ./configure
 # make
 
 With this, the executable will be generated. After that, you can copy the executable to
@@ -109,12 +110,6 @@ another place and run it from there. To do this, type:
 
 This has not been tested but should work using the same steps as Linux. Please report
 your experiences.
-
-
-
-
-
-
 
 
 
