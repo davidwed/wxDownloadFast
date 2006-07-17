@@ -1,3 +1,13 @@
+0.4.6
+===================================================
+- Corrigido erro quando o programa acessa um
+  servidor e recebe a resposta 404
+- Adicionada funções para retornar os diretórios
+  "Arquivos de Programas" e "Meus documentos"
+- Adicionada checagem do espaço em disco antes de
+  juntar as partes do arquivo depois de terminar
+  um download
+
 0.4.5
 ===================================================
 - Corrigido bug na opção "Copiar URL" e "Copiar 

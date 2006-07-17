@@ -1,3 +1,12 @@
+0.4.6
+===================================================
+- Fixed bug when the program access a server and 
+  receive a 404 response
+- Added functions to get the "Program Files" and
+  "My Documents" directory
+- Added disk space checking before to join the file
+  parts after finish a download
+
 0.4.5
 ===================================================
 - Fixed bug on "Copy URL" and "Copy Download data"
