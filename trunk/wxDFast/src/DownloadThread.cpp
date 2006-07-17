@@ -596,14 +596,14 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
 				urltmp.Resolve(currenturl);
 				currenturl = urltmp;
 			}
-			
+
             returnmessagecode = client->GetResponse();
             if ((returnmessagecode == 1) || (returnmessagecode == 2))
             {
-			
+
 				if (!((headervalue = client->GetHeader( wxT("content-length"))).IsEmpty()))
 					sizetmp = MyUtilFunctions::wxstrtolonglong(headervalue);
-	
+
 				if (!((headervalue = client->GetHeader( wxT("content-type"))).IsEmpty()))
 				{
 					if (downloadpartindex == 0)
@@ -612,7 +612,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
 				if ((!((headervalue = client->GetHeader( wxT("accept-ranges"))).IsEmpty())) ||
 				   (!((headervalue = client->GetHeader( wxT("content-range"))).IsEmpty())))
 					restart = YES;
-	
+
 				if (!((headervalue = client->GetHeader( wxT("Content-Disposition"))).IsEmpty()))
 				{
 					wxStringTokenizer tkz(headervalue,wxT(" "));
@@ -628,7 +628,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
 						}
 					}
 				}
-	
+
 				if (newfilename.IsEmpty())
 					newfilename = downloadfile->GetName();
 				{
@@ -711,16 +711,18 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                 client->Close(); delete client;
                 return NULL;
             }
-            //else if (returnmessagecode == 4)
-            //{    // HTTP/1.1 416 Requested Range Not Satisfiable
-            //     //IF THIS HAPPEN, IS BECAUSE THE THE START POINT IS BIGGER THAT THE END POINT
-            //    PrintMessage( _("The file already was downloaded.\n"));
-            //}
-            else 
+            else //returnmessagecode == 4
             {
+                // HTTP/1.1 416 Requested Range Not Satisfiable
+                //IF THIS HAPPEN, IS BECAUSE THE THE START POINT IS BIGGER THAT THE END POINT
+                //if (client->GetCompleteResponse() == 416)
+                //    PrintMessage( _("The file already was downloaded.\n"));
+                //else
+                //{
                 PrintMessage( _("Error requesting file.\n"),HTMLERROR);
                 client->Close(); delete client;
                 return NULL;
+                //}
             }
         }
         else
@@ -841,7 +843,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     PrintMessage( _("Verifying the size of the ") + currenturl.GetFullName() + wxT("...\n"));
-    if ((sizetmp = client->GetFileSize(currenturl.GetFullName()))== -1) 
+    if ((sizetmp = client->GetFileSize(currenturl.GetFullName()))== -1)
     {
         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
         client->Close();
@@ -993,7 +995,7 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
     long lastread = 0;
 	wxLongLong freespace;
     wxString partfilename;
-	
+
 	//CHECK IF HAS ENOUGH DISK SPACE
 	if (downloadfile->IsSplitted())
 	{
