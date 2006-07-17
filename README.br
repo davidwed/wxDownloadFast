@@ -85,7 +85,7 @@ Além disso é necessário a biblioteca wxWidgets[www.wxwidgets.org], compilada
 com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
-# make BUILD=win32
+# make -f Makefile.gcc BUILD=win32
 
 Com isso o executável será gerado, bastando em seguida copiar o arquivo executável
 para um local desejado, e utilizá-lo.
@@ -115,6 +115,7 @@ Além disso é necessário a biblioteca wxWidgets[www.wxwindows.org], compilada
 com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
+# ./configure
 # make
 
 Com isso o executável será gerado, bastando em seguida copiar o arquivo executável
