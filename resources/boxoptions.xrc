@@ -183,7 +183,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkrestoremainframe">
-                                                    <label>Restore the main window (?) when all downloads finish</label>
+                                                    <label>Restore the main window when all downloads finish</label>
                                                 </object>
                                             </object>
                                         </object>
@@ -196,7 +196,7 @@
                                             <vgap>0</vgap>
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkhidemainframe">
-                                                    <label>Hide the main window (?) when you start a download</label>
+                                                    <label>Hide the main window when you start a download</label>
                                                 </object>
                                             </object>
                                         </object>
