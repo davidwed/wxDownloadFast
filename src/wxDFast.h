@@ -903,5 +903,9 @@
         static wxString ByteString(wxLongLong size);
         static wxLongLong wxstrtolonglong(wxString string);
         static double wxlonglongtodouble(wxLongLong value);
+        #ifdef __WXMSW__
+        static wxString GetProgramFilesDir();
+        static wxString GetMyDocumentsDir();
+        #endif
     };
 #endif

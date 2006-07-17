@@ -180,9 +180,9 @@ mMainFrame::mMainFrame()
     programoptions.closedialog = mApplication::Configurations(READ,OPT_DIALOG_CLOSE_REG,1);
     programoptions.rememberboxnewoptions = mApplication::Configurations(READ,OPT_REMEMBER_BOXNEW_OPTIONS_REG,1);
     #ifdef __WXMSW__
-    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir() + SEPARATOR_DIR + _("My Documents"));
-    programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("c:\\windows\\explorer.exe"));
-    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,_("C:\\Program Files\\Mozilla Firefox\\firefox.exe"));
+    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,MyUtilFunctions::GetMyDocumentsDir());
+    programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxGetOSDirectory() + wxT("\\explorer.exe"));
+    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,MyUtilFunctions::GetProgramFilesDir() + wxT("\\Mozilla Firefox\\firefox.exe"));
     #else
     programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
@@ -199,8 +199,8 @@ mMainFrame::mMainFrame()
     programoptions.readbuffersize = mApplication::Configurations(READ,OPT_READBUFFERSIZE_REG,1024);
     programoptions.disconnect = programoptions.alwaysdisconnect;
     #ifdef __WXMSW__
-    programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("c:\\windows\\system32\\shutdown.exe -s -t 0"));
-    programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("c:\\windows\\system32\\rasdial.exe /disconnect"));
+    programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\shutdown.exe -s -t 0"));
+    programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\rasdial.exe /disconnect"));
     #else
     programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("sudo /sbin/shutdown -h now"));
     programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("/usr/bin/poff"));
@@ -2547,4 +2547,3 @@ void mMainFrame::OnNewRelease(wxCommandEvent& event)
 
     wxMessageBox(wxT("wxDownload Fast ") + programoptions.currentrelease + _(" is available.") + wxT("\n") + _("Visit http://dfast.sourceforge.net for more informations."));
 }
-

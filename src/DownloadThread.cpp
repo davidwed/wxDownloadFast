@@ -590,62 +590,63 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
             //GET SERVER RESPONSE
             PrintMessage( client->GetResponseMessage(),HTMLSERVER);
 
-            if (!((headervalue = client->GetHeader( wxT("content-length"))).IsEmpty()))
-                sizetmp = MyUtilFunctions::wxstrtolonglong(headervalue);
-
-            if (!((headervalue = client->GetHeader( wxT("content-type"))).IsEmpty()))
-            {
-                if (downloadpartindex == 0)
-                    downloadfile->SetContentType(headervalue);
-            }
-            if ((!((headervalue = client->GetHeader( wxT("accept-ranges"))).IsEmpty())) ||
-               (!((headervalue = client->GetHeader( wxT("content-range"))).IsEmpty())))
-                restart = YES;
-
-            if (!((headervalue = client->GetHeader( wxT("location"))).IsEmpty()))
-            {
-                mUrlName urltmp(headervalue);
-                urltmp.Resolve(currenturl);
-                currenturl = urltmp;
-            }
-
-            if (!((headervalue = client->GetHeader( wxT("Content-Disposition"))).IsEmpty()))
-            {
-                wxStringTokenizer tkz(headervalue,wxT(" "));
-                while ( tkz.HasMoreTokens() )
-                {
-                    wxString token = tkz.GetNextToken();
-                    if (token.Mid(0,9).Lower() == wxT("filename="))
-                    {
-                        newfilename = token.Mid(9);
-                        if (newfilename.Mid(0,1) == wxT("\""))
-                            newfilename = newfilename.AfterFirst('\"').BeforeLast('\"');
-                        break;
-                    }
-                }
-            }
-
-            if (newfilename.IsEmpty())
-                newfilename = downloadfile->GetName();
-            {
-                wxString forbiddenchars;
-                int pos;
-                forbiddenchars = wxFileName::GetForbiddenChars();
-                for (unsigned int i=0;i<forbiddenchars.Length();i++)
-                {
-                    if ((pos = newfilename.Find(forbiddenchars.GetChar(i))) >= 0)
-                        newfilename.SetChar(pos,'_');
-                }
-            }
-            if (newfilename != downloadfile->GetName())
-            {
-                if (downloadpartindex == 0)
-                    downloadlist->ChangeName(downloadfile,newfilename);
-            }
-
+			if (!((headervalue = client->GetHeader( wxT("location"))).IsEmpty()))
+			{
+				mUrlName urltmp(headervalue);
+				urltmp.Resolve(currenturl);
+				currenturl = urltmp;
+			}
+			
             returnmessagecode = client->GetResponse();
             if ((returnmessagecode == 1) || (returnmessagecode == 2))
             {
+			
+				if (!((headervalue = client->GetHeader( wxT("content-length"))).IsEmpty()))
+					sizetmp = MyUtilFunctions::wxstrtolonglong(headervalue);
+	
+				if (!((headervalue = client->GetHeader( wxT("content-type"))).IsEmpty()))
+				{
+					if (downloadpartindex == 0)
+						downloadfile->SetContentType(headervalue);
+				}
+				if ((!((headervalue = client->GetHeader( wxT("accept-ranges"))).IsEmpty())) ||
+				   (!((headervalue = client->GetHeader( wxT("content-range"))).IsEmpty())))
+					restart = YES;
+	
+				if (!((headervalue = client->GetHeader( wxT("Content-Disposition"))).IsEmpty()))
+				{
+					wxStringTokenizer tkz(headervalue,wxT(" "));
+					while ( tkz.HasMoreTokens() )
+					{
+						wxString token = tkz.GetNextToken();
+						if (token.Mid(0,9).Lower() == wxT("filename="))
+						{
+							newfilename = token.Mid(9);
+							if (newfilename.Mid(0,1) == wxT("\""))
+								newfilename = newfilename.AfterFirst('\"').BeforeLast('\"');
+							break;
+						}
+					}
+				}
+	
+				if (newfilename.IsEmpty())
+					newfilename = downloadfile->GetName();
+				{
+					wxString forbiddenchars;
+					int pos;
+					forbiddenchars = wxFileName::GetForbiddenChars();
+					for (unsigned int i=0;i<forbiddenchars.Length();i++)
+					{
+						if ((pos = newfilename.Find(forbiddenchars.GetChar(i))) >= 0)
+							newfilename.SetChar(pos,'_');
+					}
+				}
+				if (newfilename != downloadfile->GetName())
+				{
+					if (downloadpartindex == 0)
+						downloadlist->ChangeName(downloadfile,newfilename);
+				}
+
                 if (restart == YES)
                 {
                     downloadfile->sizecompleted[downloadpartindex] = *start - downloadfile->startpoint[downloadpartindex];
@@ -710,11 +711,11 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                 client->Close(); delete client;
                 return NULL;
             }
-            else if (returnmessagecode == 4)
-            {    // HTTP/1.1 416 Requested Range Not Satisfiable
-                 //IF THIS HAPPEN, IS BECAUSE THE THE START POINT IS BIGGER THAT THE END POINT
-                PrintMessage( _("The file already was downloaded.\n"));
-            }
+            //else if (returnmessagecode == 4)
+            //{    // HTTP/1.1 416 Requested Range Not Satisfiable
+            //     //IF THIS HAPPEN, IS BECAUSE THE THE START POINT IS BIGGER THAT THE END POINT
+            //    PrintMessage( _("The file already was downloaded.\n"));
+            //}
             else 
             {
                 PrintMessage( _("Error requesting file.\n"),HTMLERROR);
@@ -990,7 +991,20 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
     long data_size = 60*readbuffersize;
     char *data = new char[data_size];
     long lastread = 0;
+	wxLongLong freespace;
     wxString partfilename;
+	
+	//CHECK IF HAS ENOUGH DISK SPACE
+	if (downloadfile->IsSplitted())
+	{
+		wxGetDiskSpace(destination->GetPath(),NULL,&freespace);
+		if (freespace < downloadfile->size[downloadfile->GetNumberofParts()-1])
+		{
+			PrintMessage(_("There isn't enought disk space to join the file parts.\n"),HTMLERROR);
+			return FALSE;
+		}
+	}
+
     if (destination->FileExists())
     {
         downloadlist->ChangeName(downloadfile,MyUtilFunctions::int2wxstr(downloadfile->GetFinishedDateTime().GetTicks()) + wxT(" - ") + downloadfile->GetName());
