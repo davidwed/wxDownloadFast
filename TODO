@@ -1,4 +1,6 @@
-Problemas a serem resolvidos e funcionalidades a serem adicionadas
-==================================================================
-- Várias novas funcionalidades que eu for precisando. 
-  Idéias serão bem vindas!!!!
+Features			| Priority
+================================|==========
+Add metalink support		| High
+Add bandwidth control		| High
+Add HTTPS support		| Low
+Add Proxy support		| Low

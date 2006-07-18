@@ -6,6 +6,7 @@
   "My Documents" directory
 - Added disk space checking before to join the file
   parts after finish a download
+- Added new configuration method based on autoconf
 
 0.4.5
 ===================================================
