@@ -7,6 +7,8 @@
 - Adicionada checagem do espaço em disco antes de
   juntar as partes do arquivo depois de terminar
   um download
+- Adicionado novo método de configuração baseado no
+  autoconf
 
 0.4.5
 ===================================================
