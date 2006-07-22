@@ -1,7 +1,7 @@
 //
 // C++ Implementation: DownloadFile
 //
-// Description: Implements the classes DownloadList and DownloadFile. 
+// Description: Implements the classes DownloadList and DownloadFile.
 //              It's this classes which keep all the downloads informations,
 //              like URL, size name, etc
 //
@@ -308,6 +308,18 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
     file->MarkRemoveAsPending(FALSE);
     this->Append(file);
     return file;
+}
+
+int mDownloadList::GetNumberofActiveDownloads()
+{
+    if (numberofactivedownloads < 1)
+        return 1;
+    return numberofactivedownloads;
+}
+
+void mDownloadList::SetNumberofActiveDownloads(int number)
+{
+    numberofactivedownloads = number;
 }
 
 void mDownloadFile::RemoveListItemFromDisk()
@@ -710,3 +722,4 @@ void mDownloadFile::MarkRemoveAsPending(bool pending)
 {
     this->removepending = pending;
 }
+

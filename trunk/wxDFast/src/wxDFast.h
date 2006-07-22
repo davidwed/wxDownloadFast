@@ -194,6 +194,8 @@
     const wxString OPT_LAST_DESTINATION_REG = wxT("lastdestination");
     const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
+    const wxString OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG = wxT("bandwidthactivate");
+    const wxString OPT_BAND_WIDTH_REG = wxT("bandwidth");
 
 
     const wxString EXT = wxT(".dfast");
@@ -355,6 +357,7 @@
         bool speedpoint;
         int speedpointowner;
         wxMutex *mutex_speedcalc;
+
         bool finished[MAX_NUM_PARTS];
         wxLongLong startpoint[MAX_NUM_PARTS];
         wxLongLong size[MAX_NUM_PARTS];
@@ -405,6 +408,10 @@
         void LoadDownloadListFromDisk();
         void RecreateIndex();
         static int ListCompareByIndex(const mDownloadFile** arg1, const mDownloadFile** arg2);
+        int GetNumberofActiveDownloads();
+        void SetNumberofActiveDownloads(int number);
+    private:
+        int numberofactivedownloads;
     };
 
     WX_DECLARE_LIST(float, mGraphPoints);
@@ -425,13 +432,13 @@
         wxString currentrelease;
         wxDateTime lastnewreleasecheck;
         int attempts;             //number of attempts
-        int closedialog;         //show the close dialog
+        bool closedialog;         //show the close dialog
         int simultaneous;         //number of simultaneous downloads
         int attemptstime;         //time between the attempts in seconds
-        int shutdown;
-        int disconnect;
-        int alwaysshutdown;
-        int alwaysdisconnect;
+        bool shutdown;
+        bool disconnect;
+        bool alwaysshutdown;
+        bool alwaysdisconnect;
         int timerupdateinterval; //time between the timer refreshs in milliseconds
         long readbuffersize;
         bool restoremainframe;   //Restore the mainframe when all downloads are finished
@@ -455,15 +462,17 @@
         wxString browserpath;
         wxString filemanagerpath;
         wxString downloadpartsdefaultdir;
-        int activatescheduling;
+        bool activatescheduling;
         wxDateTime startdatetime;
         wxDateTime finishdatetime;
         mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
-        int scheduleexceptionschanged;
+        bool scheduleexceptionschanged;
         wxString lastdestination;
         int lastnumberofparts;
         int laststartoption;
         bool rememberboxnewoptions;
+        bool activatebandwidthcontrol;
+        long bandwidth;
     };
 
     class mApplication : public wxApp

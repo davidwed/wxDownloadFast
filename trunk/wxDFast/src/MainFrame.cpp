@@ -269,6 +269,8 @@ mMainFrame::mMainFrame()
     programoptions.lastdestination = mApplication::Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
+    programoptions.activatebandwidthcontrol = mApplication::Configurations(READ,OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG,0);
+    programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_REG,10l);
 
     //CHECK THE RIGHT LANGUAGE MENU
     MarkCurrentLanguageMenu(mApplication::Configurations(READ,LANGUAGE_REG,0));
@@ -427,7 +429,7 @@ mMainFrame::~mMainFrame()
         }
         mApplication::Configurations(WRITE,MAXIMIZED_REG,maximized);
     }
- 
+
     delete taskbaricon;
     delete mtimer;
     delete imageslist;
@@ -446,6 +448,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     int simultaneous = programoptions.simultaneous;
     bool somedownloadfinishednow = FALSE;
     long currentspeed = 0;
+    int numberofactivedownloads = 0;
     mDownloadFile *current;
     #ifdef USE_HTML_MESSAGES
     if ((selection < 0) && (*(XRCCTRL(*(this), "messages",wxHtmlWindow)->GetParser()->GetSource()) != wxEmptyString))
@@ -514,7 +517,10 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             }
 
             if (current->GetStatus() == STATUS_ACTIVE)
+            {
                 simultaneous--;
+                numberofactivedownloads++;
+            }
 
             if (selection == current->GetIndex())
             {
@@ -576,6 +582,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             }
         }
     }
+    wxGetApp().downloadlist.SetNumberofActiveDownloads(numberofactivedownloads);
 
     if (programoptions.scheduleexceptionschanged)
     {
@@ -1089,7 +1096,7 @@ void mMainFrame::OnStop(wxCommandEvent& event)
             file = wxGetApp().downloadlist.Item(currentselectionlist.Item(i))->GetData();
             status = file->GetStatus();
             StopDownload(file); //STOP AND SET SCHEDULE = FALSE
-            if ((status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE)) //WHEN THE DOWNLOAD IS ALREADY ACTIVE 
+            if ((status == STATUS_QUEUE) || (status == STATUS_SCHEDULE_QUEUE)) //WHEN THE DOWNLOAD IS ALREADY ACTIVE
                 file->MarkWriteAsPending(TRUE);                                //THE WRITE ON DISK WILL BE MADE IN THE TIMER
         }
     }
@@ -1592,7 +1599,7 @@ void mMainFrame::SetLanguage(int language)
     mApplication::Configurations(WRITE,LANGUAGE_REG,language);
 
     //RESTART THE TIMER
-    mtimer->Start(); 
+    mtimer->Start();
 }
 
 void mMainFrame::OnDefaultLanguage(wxCommandEvent& event)
@@ -2054,7 +2061,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "spinfinishminute",wxSpinCtrl)->SetValue(programoptions.finishdatetime.GetMinute());
     for (i=0; i<7;i++)
         XRCCTRL(dlg, "comboweekdays",wxComboBox)->Append(
-wxGetTranslation(days[i]));
+                                        wxGetTranslation(days[i]));
     XRCCTRL(dlg, "comboweekdays",wxComboBox)->SetValue(wxGetTranslation(days[0]));
     for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
     {
@@ -2066,6 +2073,8 @@ wxGetTranslation(days[i]));
             XRCCTRL(dlg, "lstexceptionlist",wxListBox)->InsertItems(1,&temp,0);
         }
     }
+    XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->SetValue(programoptions.activatebandwidthcontrol);
+    XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->SetValue(programoptions.bandwidth);
 
     this->active = FALSE;
     if (dlg.ShowModal() == XRCID("btnoptionsave"))
@@ -2146,6 +2155,11 @@ wxGetTranslation(days[i]));
             programoptions.activatescheduling = TRUE;
         else
             programoptions.activatescheduling = FALSE;
+
+        programoptions.activatebandwidthcontrol = XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->GetValue();
+        if (programoptions.activatebandwidthcontrol)
+            programoptions.bandwidth = XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->GetValue();
+
         waitbox->Update(50);
         mApplication::Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
         mApplication::Configurations(WRITE,OPT_REMEMBER_BOXNEW_OPTIONS_REG,programoptions.rememberboxnewoptions);
@@ -2205,6 +2219,8 @@ wxGetTranslation(days[i]));
         mApplication::Configurations(WRITE,OPT_SCHED_ACTIVATESCHEDULING_REG, programoptions.activatescheduling);
         mApplication::Configurations(WRITE,OPT_SCHED_STARTDATETIME_REG, (long)programoptions.startdatetime.GetTicks());
         mApplication::Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
+        mApplication::Configurations(WRITE,OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG, programoptions.activatebandwidthcontrol);
+        mApplication::Configurations(WRITE,OPT_BAND_WIDTH_REG, programoptions.bandwidth);
 
         ShowHideResizeGraph(oldgraphheight); //VERIFY IF THE GRAPH SIZE AND STATUS CHANGED
 
