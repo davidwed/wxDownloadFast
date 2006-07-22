@@ -1,6 +1,7 @@
-Features			| Priority
-================================|==========
-Add metalink support		| High
-Add bandwidth control		| High
-Add HTTPS support		| Low
-Add Proxy support		| Low
+Features				| Priority
+========================================|==========
+Add generic bandwidth control		| Done
+Add metalink support			| High
+Add HTTPS support			| Low
+Add Proxy support			| Low
+Add bandwidth control to each download	| Low

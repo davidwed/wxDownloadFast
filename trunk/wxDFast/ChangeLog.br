@@ -9,6 +9,9 @@
   um download
 - Adicionado novo método de configuração baseado no
   autoconf
+- Adicionado controle de largura de banda, o que
+  permite que o usuário defina um limite para taxa
+  de download
 
 0.4.5
 ===================================================
