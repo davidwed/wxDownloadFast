@@ -1,4 +1,4 @@
-0.4.6
+0.5.0
 ===================================================
 - Fixed bug when the program access a server and 
   receive a 404 response
@@ -7,6 +7,8 @@
 - Added disk space checking before to join the file
   parts after finish a download
 - Added new configuration method based on autoconf
+- Added a band width control, which permits the user
+  to set a upper download rate
 
 0.4.5
 ===================================================

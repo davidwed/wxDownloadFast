@@ -12,9 +12,9 @@ STRIP = $(CROSS_PREFIX)strip
 BUILD_GCC = build-gcc/
 ifeq ($(Debug),1)
 	DEBUG = 1
-	BUILD_DIR = $(BUILD_GCC)Release/
-else
 	BUILD_DIR = $(BUILD_GCC)Debug/
+else
+	BUILD_DIR = $(BUILD_GCC)Release/
 endif
 
 ifeq ($(DEBUG),1)
