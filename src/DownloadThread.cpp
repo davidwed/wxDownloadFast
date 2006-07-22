@@ -22,7 +22,7 @@ mUrlName mDownloadThread::CheckHtmlFile(bool downloaded)
         wxFile *outputfile;
         wxFileName file;
         mUrlName *url = NULL;
-        long data_size = 5*programoptions->readbuffersize;
+        long data_size = 10240;
         long bytesread;
         char *data = new char[data_size];
         wxString wxdata;
@@ -94,7 +94,7 @@ mDownloadThread::mDownloadThread(mDownloadFile *file, int index)
 {
     downloadfile = file;
     downloadpartindex = index;
-    programoptions = new mOptions(wxGetApp().mainframe->programoptions);
+    programoptions = &(wxGetApp().mainframe->programoptions);
     downloadlist = &(wxGetApp().downloadlist);
 }
 
@@ -116,7 +116,7 @@ void mDownloadThread::OnExit()
 
         downloadfile->SetFree();
     }
-    delete programoptions;
+    //delete programoptions;
 }
 
 void *mDownloadThread::Entry()
@@ -124,6 +124,8 @@ void *mDownloadThread::Entry()
     wxSocketClient *connection = NULL;
     wxInputStream *filestream = NULL;
     int resp = -1;
+    int maxattempts;
+    int attemptstime;
     wxLongLong start,end;
     redirecting = FALSE;
     downloadfile->ResetAttempts();
@@ -147,6 +149,10 @@ void *mDownloadThread::Entry()
         if (!downloadfile->IsSplitted())
             return NULL;
     }
+    wxGetApp().mainframe->mutex_programoptions->Lock();
+    maxattempts = programoptions->attempts;
+    attemptstime = programoptions->attemptstime;
+    wxGetApp().mainframe->mutex_programoptions->Unlock();
     do
     {
         connection = NULL;
@@ -240,12 +246,12 @@ void *mDownloadThread::Entry()
         }
         if (downloadpartindex == 0)
             downloadfile->IncrementAttempt();
-        if ((downloadfile->GetCurrentAttempt() <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror))
+        if ((downloadfile->GetCurrentAttempt() <= maxattempts) && (resp == -1) && (!downloadfile->criticalerror))
         {
-            PrintMessage( _("New attempt in ") + MyUtilFunctions::int2wxstr(programoptions->attemptstime) + _(" seconds\n"));
+            PrintMessage( _("New attempt in ") + MyUtilFunctions::int2wxstr(attemptstime) + _(" seconds\n"));
             wxStopWatch waittime;
             waittime.Start();
-            while (waittime.Time() < ((programoptions->attemptstime)*1000))
+            while (waittime.Time() < ((attemptstime)*1000))
             {
                 if (downloadfile->GetStatus() == STATUS_STOPED)
                 {
@@ -256,10 +262,10 @@ void *mDownloadThread::Entry()
             }
             waittime.Pause();
             if ((downloadfile->GetStatus() == STATUS_ACTIVE) && (downloadpartindex == 0))
-                PrintMessage( _("Attempt ") + MyUtilFunctions::int2wxstr(downloadfile->GetCurrentAttempt()) + _(" of ") + MyUtilFunctions::int2wxstr(programoptions->attempts) + wxT(" ...\n"));
+                PrintMessage( _("Attempt ") + MyUtilFunctions::int2wxstr(downloadfile->GetCurrentAttempt()) + _(" of ") + MyUtilFunctions::int2wxstr(maxattempts) + wxT(" ...\n"));
         }
     }
-    while ((downloadfile->GetCurrentAttempt() <= programoptions->attempts) && (resp == -1) && (!downloadfile->criticalerror));
+    while ((downloadfile->GetCurrentAttempt() <= maxattempts) && (resp == -1) && (!downloadfile->criticalerror));
 
     if ((resp == -1) || (downloadfile->criticalerror))
     //WILL BE TRUE IF A ERROR HAPPEN IN THIS THREAD(RESP == -1)
@@ -290,7 +296,6 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     wxFileName destination;
     wxFileName tempdestination;
     int type = currenturl.Type();
-    long readbuffersize = programoptions->readbuffersize;
 
     destination.Assign(downloadfile->GetDestination() + wxT("/"));
     destination.SetFullName(downloadfile->GetName());
@@ -349,6 +354,13 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             in = NULL;
             return resp = -1;
         }
+
+        long readbuffersize;
+
+        wxGetApp().mainframe->mutex_programoptions->Lock();
+        readbuffersize = programoptions->readbuffersize;
+        wxGetApp().mainframe->mutex_programoptions->Unlock();
+
         char *data = new char[readbuffersize];
         long read_buffer;
         wxLongLong readbuffersizelonglong(0l,readbuffersize);
@@ -357,19 +369,57 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
         int counttimes=0;
         wxStopWatch time;
         wxLongLong timepassed = downloadfile->timepassed;
+        long time_checkifbandcontrolchanged;
+        long starttime_bandwidth;
+        long deltasize_bandwidth = 0l;
+        long bandwidth = 0;
+        bool activatebandwidthcontrol=FALSE;
 
         downloadfile->delta_size[downloadpartindex] = 0;
         downloadfile->speedpoint = FALSE;
         time.Pause();
         time.Start();
         lasttime = timepassed + time.Time();
+        starttime_bandwidth = time.Time();
+        time_checkifbandcontrolchanged = time.Time() - 10000;
 
         while (start < end)
         {
+
+            if ((time.Time() - time_checkifbandcontrolchanged) >= 10000)
+            //CHECK EVERY 10 SECONDS IF THE USER CHANGED THE BANDWIDTH
+            {
+                int oldbandwidth = bandwidth;
+                wxGetApp().mainframe->mutex_programoptions->Lock();
+                bandwidth = programoptions->bandwidth*1024/downloadlist->GetNumberofActiveDownloads();
+                if (downloadfile->IsSplitted())
+                    bandwidth = bandwidth/downloadfile->GetNumberofParts();
+                activatebandwidthcontrol = programoptions->activatebandwidthcontrol;
+                wxGetApp().mainframe->mutex_programoptions->Unlock();
+                time_checkifbandcontrolchanged = time.Time();
+                if (oldbandwidth != bandwidth)
+                    deltasize_bandwidth = 0l;
+            }
+
+            if (((time.Time() - starttime_bandwidth) < 1000) && (activatebandwidthcontrol))
+            {
+                if (deltasize_bandwidth >= bandwidth)
+                {
+                    this->Sleep(50);
+                }
+            }
+            else
+            {
+                starttime_bandwidth = time.Time();
+                deltasize_bandwidth = 0;
+            }
+
             read_buffer = readbuffersize;
             endminustart = end - start;
 
-            if (readbuffersizelonglong > endminustart)
+            if (((deltasize_bandwidth + readbuffersize)>= bandwidth) && (readbuffersizelonglong <= endminustart))
+                read_buffer = bandwidth - deltasize_bandwidth;
+            else if (readbuffersizelonglong > endminustart)
                 read_buffer = endminustart.ToLong();
 
             if (downloadfile->GetStatus() == STATUS_STOPED){resp = 1; break;}
@@ -416,6 +466,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                    start += in->LastRead();
                 if (downloadfile->GetStatus() == STATUS_STOPED){resp = 1; break;}
             }
+            deltasize_bandwidth += in->LastRead();
             downloadfile->delta_size[downloadpartindex] += in->LastRead();
             downloadfile->sizecompleted[downloadpartindex] = start - downloadfile->startpoint[downloadpartindex];
 
@@ -438,12 +489,10 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     downloadfile->timepassed = timepassed + time.Time();
                     if (downloadfile->delta_size[downloadpartindex] > 20*readbuffersize)
                     {
-                        //if ((time.Time() - lasttime) > 0)
-                        //    SpeedCalculation(time.Time() - lasttime);
                         if ((timepassed + time.Time() - lasttime).ToLong() > 0)
                             SpeedCalculation((timepassed + time.Time() - lasttime).ToLong());
                         downloadfile->speedpoint = FALSE;
-                        if (time.Time() > 2000000000l) //I DID THIS BECAUSE Time() RETURN A LONG AND NOD LONGLONG;
+                        if (time.Time() > 2000000000l) //I DID THIS BECAUSE Time() RETURN A LONG AND NOT LONGLONG;
                         {
                             timepassed += time.Time();
                             time.Pause();
@@ -988,7 +1037,7 @@ void mDownloadThread::WaitUntilAllFinished(bool canstop)
 bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestination)
 {
     wxFile *outputfile;
-    long readbuffersize = programoptions->readbuffersize;
+    long readbuffersize = 10240;
     bool result;
     long data_size = 60*readbuffersize;
     char *data = new char[data_size];
