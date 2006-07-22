@@ -170,7 +170,7 @@
                                                 <flag>wxFIXED_MINSIZE</flag>
                                                 <object class="wxSpinCtrl" name="spinreadbuffersize">
                                                     <min>1024</min>
-                                                    <max>102400</max>
+                                                    <max>10240</max>
                                                 </object>
                                             </object>
                                         </object>
@@ -974,8 +974,66 @@
                     </object>
                     </object>
                     <object class="notebookpage">
-                    <label>Browser Integration</label>
+                    <label>Bandwidth</label>
                     <object class="wxPanel" name="paneloption05">
+                        <style>wxTAB_TRAVERSAL</style>
+                        <object class="wxFlexGridSizer">
+                            <hgap>0</hgap>
+                            <rows>1</rows>
+                            <cols>1</cols>
+                            <vgap>5</vgap>
+                            <growablecols>1</growablecols>
+                            <object class="sizeritem">
+                                <flag>wxFIXED_MINSIZE</flag>
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Bandwidth Control</label>
+                                    <growablecols>1</growablecols>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <flag>wxEXPAND</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>10</hgap>
+                                            <rows>2</rows>
+                                            <cols>2</cols>
+                                            <vgap>5</vgap>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 5</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxRadioButton" name="optbandwidthunlimited">
+                                                    <label>Unlimited bandwidth</label>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 25</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxRadioButton" name="optbandwidthcustom">
+                                                    <label>The maximum transference rate is (Kb/s):</label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxSpinCtrl" name="spinbandwithcustom">
+                                                    <style>wxSP_ARROW_KEYS</style>
+                                                    <min>5</min>
+                                                    <max>500</max>
+                                                    <tooltip>Set the maximum bandwidth in Kb/s to be used by the program</tooltip>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    </object>
+                    <object class="notebookpage">
+                    <label>Browser Integration</label>
+                    <object class="wxPanel" name="paneloption06">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
