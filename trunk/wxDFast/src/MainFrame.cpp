@@ -384,7 +384,7 @@ mMainFrame::mMainFrame()
 
     //DEFINE THE PREVIEW PANEL TEXT
     {
-        wxString contentstring =  _("File Type");
+        wxString contentstring =  _("File type");
         contentstring += wxT(":\n");
         XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
         XRCCTRL(*this, "btnpreview", wxButton )->SetLabel(_("Preview"));
@@ -533,7 +533,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 
             if (selection == current->GetIndex())
             {
-                wxString contentstring = _("File Type");
+                wxString contentstring = _("File type");
                 contentstring += wxT(":\n") + current->GetContentType();
                 XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
                 if (current->IsZip())
@@ -1614,7 +1614,7 @@ void mMainFrame::SetLanguage(int language)
 
     //RESET THE PREVIEW PANEL TEXT
     {
-        wxString contentstring =  _("File Type");
+        wxString contentstring =  _("File type");
         contentstring += wxT(":\n");
         XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
         XRCCTRL(*this, "btnpreview", wxButton )->SetLabel(_("Preview"));

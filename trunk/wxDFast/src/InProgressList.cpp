@@ -126,7 +126,7 @@ void mInProgressList::SelectUnselect(bool selected,int selection)
 {
     if (!selected)
     {
-        wxString contentstring = _("File Type");
+        wxString contentstring = _("File type");
         contentstring += wxT(":\n");
         XRCCTRL(*mainframe, "btnpreview", wxButton )->Enable(FALSE);
         XRCCTRL(*mainframe, "lblpreview", wxStaticText )->SetLabel(contentstring);
