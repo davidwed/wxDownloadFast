@@ -1,12 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
-dnl Created by Anjuta - will be overwritten
-dnl If you don't want it to overwrite it,
-dnl Please disable it in the Anjuta project configuration
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(wxDFast, 0.4.6)
+AM_INIT_AUTOMAKE(wxdfast, 0.4.6)
 AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
+
+dnl Set of available languages.
+ALL_LINGUAS="de es pt_BR"
+
+dnl AC_ARG_ENABLE(build-resources,
+dnl  [  --enable-build-resources  This option make the xrc file be built inside \
+dnl   the final executable and not as a external resource (defaultenabled)],
+dnl  [ build-resources=yes
+dnl  ])
 
 AC_ISC_POSIX
 AC_PROG_CC
@@ -20,7 +26,7 @@ AM_PROG_LIBTOOL
 
 
 AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.6.0, wxWin=1)
+AM_PATH_WXCONFIG(2.6.0, wxWin=1, , [xrc,std])
         if test "$wxWin" != 1; then
         AC_MSG_ERROR([
                 wxWindows must be installed on your system.
@@ -34,7 +40,25 @@ AM_PATH_WXCONFIG(2.6.0, wxWin=1)
 	fi
 
 
+AC_PATH_PROG([WXRC], [wxrc --version])
+	if test "x$WXRC" = "x"; then
+	AC_MSG_ERROR([
+		wxrc could not be found. This program gets build together with wxWidgets.
+		Please make sure wxrc is within your path.
+		])
+	fi
+
 AC_OUTPUT([
 Makefile
+languages/Makefile
+languages/de/Makefile
+languages/es/Makefile
+languages/pt_BR/Makefile
+man/Makefile
+man/man1/Makefile
+man/pt_BR/Makefile
+man/pt_BR/man1/Makefile
+resources/Makefile
+src/Makefile
 ])
 
