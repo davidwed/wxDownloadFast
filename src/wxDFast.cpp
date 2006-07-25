@@ -164,9 +164,7 @@ bool mApplication::OnInit()
 
     wxImage::AddHandler(new wxXPMHandler);
     wxXmlResource::Get()->InitAllHandlers();
-    #ifdef RESOURCES_CPP
-    InitXmlResource();
-    #else
+    #ifdef USE_EXTERNAL_XRC
     wxString resourcepath = wxT("resources/");
     if (!wxFileExists(resourcepath + wxT("mainwindow.xrc")))
     {
@@ -184,6 +182,8 @@ bool mApplication::OnInit()
     wxXmlResource::Get()->Load(resourcepath + wxT("boxnew.xrc"));
     wxXmlResource::Get()->Load(resourcepath + wxT("boxoptions.xrc"));
     wxXmlResource::Get()->Load(resourcepath + wxT("boxabout.xrc"));
+    #else
+    InitXmlResource();
     #endif
 
     SetLanguage(mApplication::Configurations(READ,LANGUAGE_REG,0)); //SET THE LANGUAGE
@@ -213,10 +213,10 @@ bool mApplication::OnInit()
         splitter02->SetSashPosition(separatorposition02);
     }
 
-    //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE 
+    //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE
     int startoption, numberofparts;
     wxString listtextfile,reference,comments,destination;
-    wxArrayString url; 
+    wxArrayString url;
     if (parameters->GetParamCount() > 0)
     {
         int i, nparams = parameters->GetParamCount();

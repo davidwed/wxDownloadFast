@@ -54,7 +54,7 @@
     #include "wx/uri.h"
     #include "wx/datectrl.h"
     #include "wx/zipstrm.h"
-    #ifdef RESOURCES_CPP
+    #ifndef USE_EXTERNAL_XRC
     extern void InitXmlResource();
     #endif
 
