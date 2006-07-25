@@ -1,7 +1,9 @@
 Features				| Priority
 ========================================|==========
 Add generic bandwidth control		| Done
+Add bandwidth control to each download	| Done
+Add Zip Preview window			| Done
 Add metalink support			| High
+Add mirror automatic search		| Normal
 Add HTTPS support			| Low
 Add Proxy support			| Low
-Add bandwidth control to each download	| Low
