@@ -974,7 +974,7 @@
                     </object>
                     </object>
                     <object class="notebookpage">
-                    <label>Bandwidth</label>
+                    <label>Band width</label>
                     <object class="wxPanel" name="paneloption05">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
@@ -987,7 +987,7 @@
                                 <flag>wxFIXED_MINSIZE</flag>
                                 <object class="wxStaticBoxSizer">
                                     <orient>wxHORIZONTAL</orient>
-                                    <label>Bandwidth Control</label>
+                                    <label>Band width Control</label>
                                     <growablecols>1</growablecols>
                                     <object class="sizeritem">
                                         <option>1</option>
@@ -1005,7 +1005,15 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxRadioButton" name="optbandwidthunlimited">
-                                                    <label>Unlimited bandwidth</label>
+                                                    <label>Unlimited band width</label>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>20, 25</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxRadioButton" name="optbandwidthindependently">
+                                                    <label>Band width independently for each download</label>
                                                 </object>
                                             </object>
                                             <object class="spacer">
@@ -1013,7 +1021,7 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxRadioButton" name="optbandwidthcustom">
-                                                    <label>The maximum transference rate is (Kb/s):</label>
+                                                    <label>Band width for the program (in Kb/s):</label>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">

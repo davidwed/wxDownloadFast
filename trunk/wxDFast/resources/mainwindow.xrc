@@ -57,8 +57,48 @@
                                                             <sashpos>99</sashpos>
                                                             <style>wxSP_3D</style>
                                                             <orientation>vertical</orientation>
-                                                            <object class="wxTreeCtrl" name="treemessages">
-                                                                <style>wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE|wxTR_FULL_ROW_HIGHLIGHT</style>
+                                                            <object class="wxPanel" name="panelmessages01">
+                                                                <style>wxTAB_TRAVERSAL</style>
+                                                                <object class="wxFlexGridSizer">
+                                                                    <hgap>0</hgap>
+                                                                    <rows>2</rows>
+                                                                    <cols>1</cols>
+                                                                    <vgap>0</vgap>
+                                                                    <growablecols>0</growablecols>
+                                                                    <growablerows>0</growablerows>
+                                                                    <object class="sizeritem">
+                                                                        <option>1</option>
+                                                                        <flag>wxEXPAND</flag>
+                                                                        <object class="wxTreeCtrl" name="treemessages">
+                                                                            <style>wxTR_HIDE_ROOT|wxTR_DEFAULT_STYLE|wxTR_FULL_ROW_HIGHLIGHT</style>
+                                                                        </object>
+                                                                    </object>
+                                                                    <object class="sizeritem">
+                                                                        <flag>wxFIXED_MINSIZE</flag>
+                                                                        <object class="wxPanel" name="previewpanel">
+                                                                            <style>wxTAB_TRAVERSAL</style>
+                                                                            <size>20, 70</size>
+                                                                            <object class="wxBoxSizer">
+                                                                                <orient>wxVERTICAL</orient>
+                                                                                <object class="sizeritem">
+                                                                                    <option>1</option>
+                                                                                    <flag>wxEXPAND</flag>
+                                                                                    <object class="wxStaticText" name="lblpreview">
+                                                                                        <label>File Type:\n</label>
+                                                                                    </object>
+                                                                                </object>
+                                                                                <object class="sizeritem">
+                                                                                    <option>1</option>
+                                                                                    <flag>wxEXPAND</flag>
+                                                                                    <object class="wxButton" name="btnpreview">
+                                                                                        <label>Preview</label>
+                                                                                        <enabled>0</enabled>
+                                                                                    </object>
+                                                                                </object>
+                                                                            </object>
+                                                                        </object>
+                                                                    </object>
+                                                                </object>
                                                             </object>
                                                             <!--<object class="wxTextCtrl" name="messages"> -->
                                                             <!--    <style>wxTE_MULTILINE|wxTE_READONLY|wxTE_RICH|wxTE_RICH2|wxTE_AUTO_URL</style> -->
