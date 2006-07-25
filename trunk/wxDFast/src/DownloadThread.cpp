@@ -373,7 +373,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
         long starttime_bandwidth;
         long deltasize_bandwidth = 0l;
         long bandwidth = 0;
-        bool activatebandwidthcontrol=FALSE;
+        int bandwidthoption = 0; //SET AS UNLIMITED
 
         downloadfile->delta_size[downloadpartindex] = 0;
         downloadfile->speedpoint = FALSE;
@@ -391,17 +391,27 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             {
                 int oldbandwidth = bandwidth;
                 wxGetApp().mainframe->mutex_programoptions->Lock();
-                bandwidth = programoptions->bandwidth*1024/downloadlist->GetNumberofActiveDownloads();
+                bandwidthoption = programoptions->bandwidthoption;
+                if (bandwidthoption == 1)
+                {
+                    bandwidth = downloadfile->GetBandWidth()*1024;
+                }
+                else if (bandwidthoption == 2)
+                {
+                    bandwidth = programoptions->bandwidth*1024/downloadlist->GetNumberofActiveDownloads();
+                }
+
                 if (downloadfile->IsSplitted())
                     bandwidth = bandwidth/downloadfile->GetNumberofParts();
-                activatebandwidthcontrol = programoptions->activatebandwidthcontrol;
+
                 wxGetApp().mainframe->mutex_programoptions->Unlock();
+
                 time_checkifbandcontrolchanged = time.Time();
                 if (oldbandwidth != bandwidth)
                     deltasize_bandwidth = 0l;
             }
 
-            if (((time.Time() - starttime_bandwidth) < 1000) && (activatebandwidthcontrol))
+            if (((time.Time() - starttime_bandwidth) < 1000) && (bandwidthoption > 0) && (bandwidth > 0)) //IF HAS NOT UNLIMITED BANDWIDTH
             {
                 if (deltasize_bandwidth >= bandwidth)
                 {
@@ -417,7 +427,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             read_buffer = readbuffersize;
             endminustart = end - start;
 
-            if (((deltasize_bandwidth + readbuffersize)>= bandwidth) && (readbuffersizelonglong <= endminustart))
+            if (((deltasize_bandwidth + readbuffersize)>= bandwidth) && (readbuffersizelonglong <= endminustart) && (bandwidth > 0))
                 read_buffer = bandwidth - deltasize_bandwidth;
             else if (readbuffersizelonglong > endminustart)
                 read_buffer = endminustart.ToLong();

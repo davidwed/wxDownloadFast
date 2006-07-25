@@ -96,6 +96,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menuimport"), mMainFrame::OnImportConf)
     EVT_MENU(XRCID("menushutdown"), mMainFrame::OnShutdown)
     EVT_MENU(XRCID("menudisconnect"), mMainFrame::OnDisconnect)
+    EVT_BUTTON(XRCID("btnpreview"), mMainFrame::OnFilePreview)
     wxEVT_OPEN_URL(wxID_ANY,mMainFrame::OnOpenURL)
     wxEVT_SHUTDOWN(wxID_ANY, mMainFrame::OnShutdownEvent)
     wxEVT_DISCONNECT(wxID_ANY, mMainFrame::OnDisconnectEvent)
@@ -269,8 +270,8 @@ mMainFrame::mMainFrame()
     programoptions.lastdestination = mApplication::Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
-    programoptions.activatebandwidthcontrol = mApplication::Configurations(READ,OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG,0);
-    programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_REG,10l);
+    programoptions.bandwidthoption = mApplication::Configurations(READ,OPT_BAND_WIDTH_OPTION_REG,0);
+    programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,10l);
 
     //CHECK THE RIGHT LANGUAGE MENU
     MarkCurrentLanguageMenu(mApplication::Configurations(READ,LANGUAGE_REG,0));
@@ -379,6 +380,14 @@ mMainFrame::mMainFrame()
             }
         }
         statusbar->SetStatusText(this->defaultstatusbarmessage);
+    }
+
+    //DEFINE THE PREVIEW PANEL TEXT
+    {
+        wxString contentstring =  _("File Type");
+        contentstring += wxT(":\n");
+        XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
+        XRCCTRL(*this, "btnpreview", wxButton )->SetLabel(_("Preview"));
     }
 
     mtimer = new wxTimer(this, TIMER_ID);
@@ -524,6 +533,12 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
 
             if (selection == current->GetIndex())
             {
+                wxString contentstring = _("File Type");
+                contentstring += wxT(":\n") + current->GetContentType();
+                XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
+                if (current->IsZip())
+                    XRCCTRL(*this, "btnpreview", wxButton )->Enable(TRUE);
+
                 long treeindex = 0;
                 if  (((int)XRCCTRL(*(this), "treemessages",wxTreeCtrl)->GetCount()) != parts)
                 {
@@ -752,7 +767,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments;
     wxCheckListBox *lstaddresslist;
-    wxSpinCtrl *spinsplit;
+    wxSpinCtrl *spinsplit, *spinbandwidth;
     wxRadioButton *optnow,*optschedule;
     int result;
     int i;
@@ -768,6 +783,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
     optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
+    spinbandwidth = XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl);
 
     lstaddresslist->Clear();
     if ((url.GetCount() == 1) && (show))
@@ -814,6 +830,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
         mDownloadFile *currentfile = NULL;
         int scheduled, now;
         int nparams = lstaddresslist->GetCount();
+        int bandwidth = spinbandwidth->GetValue();
         wxString name = wxEmptyString;
         scheduled = optschedule->GetValue();
         now = optnow->GetValue();
@@ -842,7 +859,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
                 mUrlList *urllist = new mUrlList();
                 urllist->Append(urltmp);
                 currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,spinsplit->GetValue(),
-                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),scheduled);
+                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),scheduled,bandwidth);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
             }
             else
@@ -1064,7 +1081,7 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
             mDownloadThread *thread = new mDownloadThread(downloadfile,i);
             if ( thread->Create() != wxTHREAD_NO_ERROR )
             {
-                wxMessageBox(_("Error creating thread!"));
+                wxMessageBox(_("Error creating thread!"),_("Error...") ,wxOK | wxICON_ERROR,this);
                 return FALSE;
             }
             else
@@ -1072,7 +1089,7 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
                 wxCriticalSectionLocker enter(wxGetApp().m_critsect);
                 if ( thread->Run() != wxTHREAD_NO_ERROR )
                 {
-                    wxMessageBox(_("Error starting thread!"));
+                    wxMessageBox(_("Error starting thread!"),_("Error...") ,wxOK | wxICON_ERROR,this);
                     return FALSE;
                 }
             }
@@ -1595,6 +1612,14 @@ void mMainFrame::SetLanguage(int language)
     //RESET NOTEBOOK PAGES LABELS
     XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
 
+    //RESET THE PREVIEW PANEL TEXT
+    {
+        wxString contentstring =  _("File Type");
+        contentstring += wxT(":\n");
+        XRCCTRL(*this, "lblpreview", wxStaticText )->SetLabel(contentstring);
+        XRCCTRL(*this, "btnpreview", wxButton )->SetLabel(_("Preview"));
+    }
+
     //WRITE LANGUAGE SELECTION
     mApplication::Configurations(WRITE,LANGUAGE_REG,language);
 
@@ -1668,6 +1693,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->SetValue(currentfile->GetNumberofParts());
         XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetValue(currentfile->GetComments());
         XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetValue(currentfile->GetReferenceURL());
+        XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->SetValue(currentfile->GetBandWidth());
         XRCCTRL(dlg, "optmanual",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optschedule",wxRadioButton)->Enable(FALSE);
@@ -1684,6 +1710,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             lstaddresslist->Enable(FALSE);
             XRCCTRL(dlg,"btndir",wxButton)->Enable(FALSE);
             XRCCTRL(dlg,"btnadd",wxButton)->Enable(FALSE);
+            XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->Enable(FALSE);
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 
@@ -1698,6 +1725,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             wxString password = XRCCTRL(dlg, "edtpassword",wxTextCtrl)->GetValue();
             wxString reference = XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->GetValue();
             wxString comments = XRCCTRL(dlg, "edtcomments",wxTextCtrl)->GetValue();
+            int bandwidth = XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->GetValue();
 
             mUrlList *urllist = new mUrlList();
             for (int i = 0; i < lstaddresslist->GetCount(); i++)
@@ -1707,7 +1735,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
                 mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
                 urllist->Append(urltmp);
             }
-            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,reference,comments);
+            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,reference,comments,bandwidth);
 
             //VERIFY IF THE USER CHANGED THE FILE NAME
             newname = urllist->GetFirst()->GetData()->GetFullName();
@@ -2073,7 +2101,12 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
             XRCCTRL(dlg, "lstexceptionlist",wxListBox)->InsertItems(1,&temp,0);
         }
     }
-    XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->SetValue(programoptions.activatebandwidthcontrol);
+    if (programoptions.bandwidthoption == 1)
+        XRCCTRL(dlg, "optbandwidthindependently", wxRadioButton)->SetValue(TRUE);
+    else if (programoptions.bandwidthoption == 2)
+        XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->SetValue(TRUE);
+    else
+        XRCCTRL(dlg, "optbandwidthunlimited", wxRadioButton)->SetValue(TRUE);
     XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->SetValue(programoptions.bandwidth);
 
     this->active = FALSE;
@@ -2156,9 +2189,15 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         else
             programoptions.activatescheduling = FALSE;
 
-        programoptions.activatebandwidthcontrol = XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->GetValue();
-        if (programoptions.activatebandwidthcontrol)
+        if (XRCCTRL(dlg, "optbandwidthindependently", wxRadioButton)->GetValue())
+            programoptions.bandwidthoption = 1;
+        else if (XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->GetValue())
+        {
+            programoptions.bandwidthoption = 2;
             programoptions.bandwidth = XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->GetValue();
+        }
+        else
+            programoptions.bandwidthoption = 0;
 
         waitbox->Update(50);
         mApplication::Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
@@ -2219,8 +2258,8 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         mApplication::Configurations(WRITE,OPT_SCHED_ACTIVATESCHEDULING_REG, programoptions.activatescheduling);
         mApplication::Configurations(WRITE,OPT_SCHED_STARTDATETIME_REG, (long)programoptions.startdatetime.GetTicks());
         mApplication::Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
-        mApplication::Configurations(WRITE,OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG, programoptions.activatebandwidthcontrol);
-        mApplication::Configurations(WRITE,OPT_BAND_WIDTH_REG, programoptions.bandwidth);
+        mApplication::Configurations(WRITE,OPT_BAND_WIDTH_OPTION_REG, programoptions.bandwidthoption);
+        mApplication::Configurations(WRITE,OPT_BAND_WIDTH_GENERAL_REG, programoptions.bandwidth);
 
         ShowHideResizeGraph(oldgraphheight); //VERIFY IF THE GRAPH SIZE AND STATUS CHANGED
 
@@ -2562,4 +2601,53 @@ void mMainFrame::OnNewRelease(wxCommandEvent& event)
     this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
 
     wxMessageBox(wxT("wxDownload Fast ") + programoptions.currentrelease + _(" is available.") + wxT("\n") + _("Visit http://dfast.sourceforge.net for more informations."));
+}
+
+void mMainFrame::OnFilePreview(wxCommandEvent& event)
+{
+    mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
+    int currentselection;
+    if ((currentselection = list->GetCurrentLastSelection()) >= 0)
+    {
+        wxFileName tempdestination;
+        int lastpiece;
+        wxLogNull nolog;
+        mDownloadFile *currentfile = wxGetApp().downloadlist.Item(currentselection)->GetData();
+        list->SetCurrentSelection(currentselection);
+        if ((!currentfile->IsSplitted()) && (currentfile->GetStatus() == STATUS_ACTIVE))
+            lastpiece = 0;
+        else
+            lastpiece = currentfile->GetNumberofParts()-1;
+
+        tempdestination.Assign(currentfile->GetTemporaryDestination() + wxT("/"));
+        tempdestination.SetFullName(PREFIX + currentfile->GetName() + EXT + MyUtilFunctions::int2wxstr(lastpiece));
+        if (tempdestination.FileExists())
+        {
+            wxZipInputStream *zip = new wxZipInputStream(*(new wxFileInputStream(tempdestination.GetFullPath())));
+            if (zip)
+            {
+                wxZipEntry *currentzipentry;
+                if ((currentzipentry = zip->GetNextEntry()))
+                {
+                    wxArrayString array;
+                    do
+                    {
+                        if (currentzipentry->IsDir())
+                            array.Add(currentzipentry->GetName() + wxT("/"));
+                        else
+                            array.Add(currentzipentry->GetName());
+                    }while ((currentzipentry = zip->GetNextEntry()));
+                    array.Sort();
+                    wxSingleChoiceDialog dlg(this,_("List os files inside Zip archive:"),_("Zip Preview"),array);
+                    dlg.ShowModal();
+                }
+                else
+                    wxMessageBox(_("It was impossible to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+            }
+            else
+                wxMessageBox(_("It was impossible to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+        }
+        else
+            wxMessageBox(_("File not found."),_("Error...") ,wxOK | wxICON_ERROR,this);
+    }
 }

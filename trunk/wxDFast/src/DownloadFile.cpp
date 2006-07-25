@@ -62,7 +62,7 @@ void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
     }
 }
 
-void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password,wxString reference, wxString comments)
+void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password,wxString reference, wxString comments,int bandwidth)
 {
     if (file->urllist)
         delete file->urllist;
@@ -73,6 +73,7 @@ void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFile
     file->password = password;
     file->reference = reference;
     file->comments = comments;
+    file->bandwidth = bandwidth;
     file->MarkWriteAsPending(TRUE);
 }
 
@@ -162,6 +163,8 @@ void mDownloadList::LoadDownloadListFromDisk()
             config->Read(END_REG,&(value));
             file->end.Set(value);
         }
+        file->bandwidth = 0;
+        config->Read(BANDWIDTH_REG,&(file->bandwidth));
 
         file->urllist = new mUrlList();
         file->urllist->DeleteContents(TRUE);
@@ -252,7 +255,7 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled,int bandwidth)
 {
     mDownloadFile *file = new mDownloadFile();
     file->index =  this->GetCount();
@@ -299,6 +302,7 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
         file->user = user;
         file->password = password;
     }
+    file->bandwidth = bandwidth;
     file->free = TRUE;
     file->criticalerror = FALSE;
     file->split = FALSE;
@@ -393,6 +397,7 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(COMMENTS_REG,this->comments);
     config->Write(REFERENCE_REG,this->reference);
     config->Write(CONTENTTYPE_REG,this->contenttype);
+    config->Write(BANDWIDTH_REG,this->bandwidth);
 
     unsigned int count = 1;
     bool deleteoldurls = TRUE;
@@ -550,6 +555,11 @@ void mDownloadFile::SetContentType(wxString contenttype)
 bool mDownloadFile::IsHtml()
 {
     return this->GetContentType().Lower().Contains(wxT("html"));
+}
+
+bool mDownloadFile::IsZip()
+{
+    return this->GetContentType().Lower().Contains(wxT("zip"));
 }
 
 int mDownloadFile::GetNumberofParts()
@@ -721,5 +731,15 @@ bool mDownloadFile::RemoveIsPending()
 void mDownloadFile::MarkRemoveAsPending(bool pending)
 {
     this->removepending = pending;
+}
+
+void mDownloadFile::SetBandWidth(int band)
+{
+    bandwidth = band;
+}
+
+int mDownloadFile::GetBandWidth()
+{
+    return bandwidth;
 }
 
