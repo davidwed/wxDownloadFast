@@ -84,7 +84,7 @@
                                                                                     <option>1</option>
                                                                                     <flag>wxEXPAND</flag>
                                                                                     <object class="wxStaticText" name="lblpreview">
-                                                                                        <label>File Type:\n</label>
+                                                                                        <label>File type</label>
                                                                                     </object>
                                                                                 </object>
                                                                                 <object class="sizeritem">
