@@ -53,6 +53,7 @@
     #include "wx/longlong.h"
     #include "wx/uri.h"
     #include "wx/datectrl.h"
+    #include "wx/zipstrm.h"
     #ifdef RESOURCES_CPP
     extern void InitXmlResource();
     #endif
@@ -136,6 +137,7 @@
     const wxString COMMENTS_REG = wxT("comments");
     const wxString REFERENCE_REG = wxT("reference");
     const wxString CONTENTTYPE_REG = wxT("contenttype");
+    const wxString BANDWIDTH_REG = wxT("bandwidth");
     const wxString START_REG = wxT("date_start");
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
@@ -194,8 +196,8 @@
     const wxString OPT_LAST_DESTINATION_REG = wxT("lastdestination");
     const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
-    const wxString OPT_ACTIVATE_BAND_WIDTH_CONTROL_REG = wxT("bandwidthactivate");
-    const wxString OPT_BAND_WIDTH_REG = wxT("bandwidth");
+    const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
+    const wxString OPT_BAND_WIDTH_GENERAL_REG = wxT("bandwidthgeneral");
 
 
     const wxString EXT = wxT(".dfast");
@@ -319,6 +321,7 @@
         wxString GetContentType();
         void SetContentType(wxString contenttype);
         bool IsHtml();
+        bool IsZip();
         int GetNumberofParts();
         int GetCurrentAttempt();
         void ResetAttempts();
@@ -344,6 +347,8 @@
         void MarkRemoveAsPending(bool pending);
         void SetFree(bool free = TRUE);
         bool IsFree();
+        void SetBandWidth(int band);
+        int GetBandWidth();
 
         //PUBLIC VARIABLES
         friend class mDownloadList;
@@ -392,6 +397,7 @@
         int percentual;
         bool writependig;
         bool removepending;
+        int bandwidth;
     };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadListType);
@@ -400,9 +406,9 @@
     {
     public:
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled,int bandwidth);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
-        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments);
+        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments,int bandwidth);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
         mDownloadFile *FindDownloadFile(wxString str);
         void LoadDownloadListFromDisk();
@@ -471,7 +477,7 @@
         int lastnumberofparts;
         int laststartoption;
         bool rememberboxnewoptions;
-        bool activatebandwidthcontrol;
+        int bandwidthoption;
         long bandwidth;
     };
 
@@ -568,6 +574,7 @@
         bool UpdateListItemField(mDownloadFile *current);
         void CheckNewRelease();
         void OnNewRelease(wxCommandEvent& event);
+        void OnFilePreview(wxCommandEvent& event);
         mTaskBarIcon *taskbaricon;
         mProgressBar *progressbar;
         mGraph *graph;

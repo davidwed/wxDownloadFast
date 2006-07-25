@@ -125,7 +125,13 @@ void mInProgressList::OnDeselected(wxListEvent& event)
 void mInProgressList::SelectUnselect(bool selected,int selection)
 {
     if (!selected)
+    {
+        wxString contentstring = _("File Type");
+        contentstring += wxT(":\n");
+        XRCCTRL(*mainframe, "btnpreview", wxButton )->Enable(FALSE);
+        XRCCTRL(*mainframe, "lblpreview", wxStaticText )->SetLabel(contentstring);
         this->SetCurrentSelection(selection);
+    }
     this->lastselection = selection;
     if (mainframe->menubar)
     {
