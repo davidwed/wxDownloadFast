@@ -48,9 +48,9 @@ endif
 
 
 ifeq ($(XRC), 1)
-	XRC_PARAM =
+	XRC_PARAM = -D USE_EXTERNAL_XRC
 else
-	XRC_PARAM = -D RESOURCES_CPP
+	XRC_PARAM =
 endif
 
 ifeq ($(DEBUG), 1)
