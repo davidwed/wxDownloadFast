@@ -120,9 +120,6 @@
                                     <rows>4</rows>
                                     <cols>1</cols>
                                     <vgap>0</vgap>
-                                    <object class="spacer">
-                                        <size>20, 15</size>
-                                    </object>
                                     <object class="sizeritem">
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
@@ -195,7 +192,7 @@
                                         </object>
                                     </object>
                                     <object class="spacer">
-                                        <size>20, 20</size>
+                                        <size>20, 5</size>
                                     </object>
                                     <object class="sizeritem">
                                         <option>1</option>
@@ -251,10 +248,36 @@
                                             </object>
                                         </object>
                                     </object>
+                                    <object class="sizeritem">
+                                        <option>1</option>
+                                        <object class="wxStaticBoxSizer">
+                                            <orient>wxHORIZONTAL</orient>
+                                            <label>Download band width (in Kb/s)</label>
+                                            <object class="sizeritem">
+                                                <option>1</option>
+                                                <flag>wxEXPAND</flag>
+                                                <object class="wxBoxSizer">
+                                                    <orient>wxHORIZONTAL</orient>
+                                                    <object class="spacer">
+                                                        <size>100, 5</size>
+                                                    </object>
+                                                    <object class="sizeritem">
+                                                        <object class="wxSpinCtrl" name="spinbandwidth">
+                                                            <style>wxSP_ARROW_KEYS|wxSP_WRAP</style>
+                                                            <min>0</min>
+                                                            <max>100</max>
+                                                            <value>0</value>
+                                                            <tooltip>Set the band width that will be used for this download.\nSet "0" to unlimited.</tooltip>
+                                                        </object>
+                                                    </object>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
                                 </object>
                             </object>
                             <object class="spacer">
-                                <size>5, 20</size>
+                                <size>5, 5</size>
                             </object>
                             <object class="sizeritem">
                                 <option>1</option>
@@ -348,7 +371,7 @@
                                                     <object class="sizeritem">
                                                         <object class="wxTextCtrl" name="edtcomments">
                                                             <style>wxTE_MULTILINE</style>
-                                                            <size>200, 70</size>
+                                                            <size>200, 80</size>
                                                         </object>
                                                     </object>
                                                 </object>
