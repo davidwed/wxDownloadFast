@@ -103,6 +103,22 @@ another place and run it from there. To do this, type:
 # su
 # make install
 
+- Cross-compiling source code for windows
+
+This method has as objective to create a Windows executable without the Windows.
+In this case it's necessary to install MinGW on linux and build the wxWidgets
+library with the follow command:
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc --target=i586-mingw32msvc --with-msw --enable-monolithic --disable-shared --enable-xrc
+# make
+
+Where "/usr/i586-mingw32msvc" is the directory that the MinGW was installed.
+
+Then to build the wxDownload Fast do:
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.6.3
+# make
+
+Where "/home/user/wxWidgets-2.6.3" is the directoy where you built the wxWidgets.
+
 5.3) Mac OS X
 ----------
 

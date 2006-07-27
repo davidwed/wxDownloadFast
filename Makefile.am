@@ -14,7 +14,3 @@ EXTRA_DIST = \
 	TODO\
 	COPYING
 
-## nobase_include_HEADERS = \
-## 	languages/de/wxDFast.mo
-## 	languages/es/wxDFast.mo
-## 	languages/pt_BR/wxDFast.mo
