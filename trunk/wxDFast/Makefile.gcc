@@ -3,6 +3,7 @@ RESOURCE_DIR = resources/
 SOURCE_DIR = src/
 LANGUAGE_DIR = languages/
 MANPAGE_DIR = man/
+AWK=awk
 CPP  = $(CROSS_PREFIX)g++
 CC   = $(CROSS_PREFIX)gcc
 AR   = $(CROSS_PREFIX)ar
@@ -40,12 +41,7 @@ LINKOBJ  = $(OBJ)
 LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
 INCS =  `$(WXCONFIG) --cxxflags`
 
-ifeq ($(WXWIDGETS_DIR)1, 1)
-	RESINCS = --include-dir="/usr/local/include/wx-2.6"
-else
-	RESINCS = --include-dir="$(WXWIDGETS_DIR)include"
-endif
-
+RESINCS = --include-dir=`$(WXCONFIG) --cflags | $(AWK) -F-I '{ print $$3 }'`
 
 ifeq ($(XRC), 1)
 	XRC_PARAM = -D USE_EXTERNAL_XRC
@@ -68,8 +64,8 @@ endif
 WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
-RES = $(BIN).res
-VERSION = 0.4.5
+RES = wxDFast.res
+VERSION = 0.5.0
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -151,8 +147,8 @@ $(BUILD_DIR)UtilFunctions.o: src/UtilFunctions.cpp
 $(BUILD_DIR)wxDFast.o: src/wxDFast.cpp
 	$(CPP) -c src/wxDFast.cpp -o $(BUILD_DIR)wxDFast.o $(CXXFLAGS)
 
-$(RES): src/wxDFast.rc 
-	$(WINDRES) -i src/wxDFast.rc -J rc -o $(BUILD_DIR)$(RES) -O coff $(RESINCS)
+$(RES): src/wxDFast.rc
+	(cd src;$(WINDRES) -i wxDFast.rc -J rc -o ../$(BUILD_DIR)$(RES) -O coff $(RESINCS))
 
 $(WXMD5): $(BUILD_DIR)md5.o $(BUILD_DIR)wxMD5.o
 	$(AR) cur $(BUILD_DIR)$(WXMD5) $(BUILD_DIR)wxMD5.o $(BUILD_DIR)md5.o
@@ -245,44 +241,59 @@ source:
 	rm -rf $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)
+	cp $(LANGUAGE_DIR)Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
 	cp $(LANGUAGE_DIR)pt_BR/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
+	cp $(LANGUAGE_DIR)pt_BR/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pt_BR
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
 	cp $(LANGUAGE_DIR)es/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	cp $(LANGUAGE_DIR)es/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	cp $(LANGUAGE_DIR)de/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
+	cp $(LANGUAGE_DIR)de/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
+	cp $(MANPAGE_DIR)Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
+	cp $(MANPAGE_DIR)man1/wxdfast.1 $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
 	cp $(MANPAGE_DIR)man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
+	cp $(MANPAGE_DIR)man1/Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR
+	cp $(MANPAGE_DIR)pt_BR/Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
+	cp $(MANPAGE_DIR)pt_BR/man1/wxdfast.1 $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
 	cp $(MANPAGE_DIR)pt_BR/man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
+	cp $(MANPAGE_DIR)pt_BR/man1/Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
 	mkdir $(BIN)-$(VERSION)/resources
 	cp $(RESOURCE_DIR)*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)*.xrc $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast.desktop $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
 	cp $(RESOURCE_DIR)small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
+	cp $(RESOURCE_DIR)small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
 	cp $(RESOURCE_DIR)big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
+	cp $(RESOURCE_DIR)big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
 	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
-	cp gpl.txt $(BIN)-$(VERSION)
-	cp COPYING $(BIN)-$(VERSION)
-	cp README* $(BIN)-$(VERSION)
-	cp ChangeLog* $(BIN)-$(VERSION)
-	cp ToDo.* $(BIN)-$(VERSION)
+	cp $(SOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.rc $(BIN)-$(VERSION)/$(SOURCE_DIR)
-	cp $(SOURCE_DIR)wxMD5/*.c $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	cp $(SOURCE_DIR)wxMD5/*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	cp $(SOURCE_DIR)wxMD5/*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	mkdir $(BIN)-$(VERSION)/debian
-	cp -r debian/* $(BIN)-$(VERSION)/debian
-	rm -Rf $(BIN)-$(VERSION)/debian/CVS
+	cp -f debian/* $(BIN)-$(VERSION)/debian
+	cp bootstrap $(BIN)-$(VERSION)
+	cp AUTHORS $(BIN)-$(VERSION)
+	cp COPYING $(BIN)-$(VERSION)
+	cp README* $(BIN)-$(VERSION)
+	cp ChangeLog* $(BIN)-$(VERSION)
+	cp TODO* $(BIN)-$(VERSION)
+	cp configure.in $(BIN)-$(VERSION)
+	cp Makefile.am $(BIN)-$(VERSION)
 	cp Makefile.gcc $(BIN)-$(VERSION)
 	cp makefile.vc $(BIN)-$(VERSION)
 
