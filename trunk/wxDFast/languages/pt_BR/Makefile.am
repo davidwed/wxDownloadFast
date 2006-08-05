@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-localesdir = $(datadir)/locales/pt_BR/LC_MESSAGES
+localesdir = $(datadir)/locale/pt_BR/LC_MESSAGES
 
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(localesdir) ; \
