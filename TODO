@@ -13,7 +13,7 @@ Add metalink support					| Done
 Add routine to check new releases			| Done
 Allows to edit the URL on "New Download" box		| Done
 Add option to show/hide the progress bar		| Done
-Add multisegment progress bar				| Done
+Add multi segmented progress bar			| Done
 Add option to change the default temporary dir		| Done
 Redesign of the "About..." box				| Done
 Add new parameter "--reference"			| Done
@@ -25,11 +25,11 @@ Add support to downloads by file:// (local files)	| Done
 Allows to pass a download list (parameter "--list")	| Done
 Allows to pass multiples urls by the command line	| Done
 Add Schedule option					| Done
-Add transferency rate graph				| Done
+Add transference rate graph				| Done
 Add tray icon popup menu				| Done
 Fix bug when stopping download takes too long		| Done
-Add control of simultaneos tasks			| Done
-Routine to start scheduled file acording to the queue	| Done
+Add control of simultaneous tasks			| Done
+Routine to start scheduled file according to the queue	| Done
 Routine to shutdown the PC when finish all downloads	| Done
 Routine to disconnect when finish all downloads		| Done
 Create the "Options" box				| Done
@@ -42,16 +42,16 @@ Allows to move a file for another folder		| Done
 Save default destination path				| Done
 Add "Language" menu					| Done
 Add "Details" menu					| Done
-Check if the filename is valid				| Done
+Check if the file name is valid			| Done
 Check if support restarts, if not remove the file	| Done
 Check if the download already was finished		| Done
 Save Splitters and tree positions			| Done
-Add a "Download Propierties" box			| Done
+Add a "Download Properties" box				| Done
 Add a "Find" box					| Done
-Add MD5 checksum verification				| Done
+Add MD5 check sum verification				| Done
 Add HTTP redirection support				| Done
 Add option to download a file again			| Done
 Add support to FTP with USER and PASSWORD		| Done
-Routine to perfome a defined number of tries if fails	| Done
+Routine to perform a defined number of tries if fails	| Done
 Add HTTP support					| Done
 Add FTP support						| Done
