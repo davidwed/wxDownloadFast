@@ -4,7 +4,7 @@
     <object class="wxFrame" name="mainframe">
         <style>wxDEFAULT_FRAME_STYLE</style>
         <object class="wxStatusBar" name="statusbar">
-            <fields>2</fields>
+            <fields>3</fields>
             <widths>-1,200</widths>
         </object>
         <object class="wxBoxSizer">
