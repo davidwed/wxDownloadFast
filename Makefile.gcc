@@ -273,6 +273,7 @@ source:
 	cp $(RESOURCE_DIR)wxdfast.desktop $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)
+	cp $(RESOURCE_DIR)wxdfast.iss $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
 	cp $(RESOURCE_DIR)small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
 	cp $(RESOURCE_DIR)small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
