@@ -53,6 +53,7 @@
     #include "wx/longlong.h"
     #include "wx/uri.h"
     #include "wx/datectrl.h"
+    #include "wx/xml/xml.h"
     #include "wx/zipstrm.h"
     #ifndef USE_EXTERNAL_XRC
     extern void InitXmlResource();
@@ -142,6 +143,7 @@
     const wxString END_REG = wxT("date_end");
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
+    const wxString NEED_TO_REGET_METALINK_REG = wxT("needtoregetmetalink");
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -254,6 +256,10 @@
     #define NEW                 1001
     #define CLOSE               1002
     #define TIMER_ID            1003
+    #define BAND                1004
+    #define OFF                 1005
+    #define ON                  1006
+    #define PERDOWNLOAD         1007
 
     //mDownloadFile STATUS
     #define STATUS_STOPED               0
@@ -281,6 +287,7 @@
     class mDownloadThread;
     class mGraph;
     class mProgressBar;
+    class mMetalinkData;
 
     WX_DECLARE_OBJARRAY(int,mListSelection);
     WX_DEFINE_ARRAY(mDownloadThread *, mDownloadThreadArray);
@@ -293,6 +300,8 @@
         {
             if (this->urllist)
                 delete this->urllist;
+            //if (this->metalinkdata)
+                //delete this->metalinkdata;
         };
         //FUNCTIONS
         void RegisterListItemOnDisk();
@@ -320,6 +329,7 @@
         void SetRestartSupport(bool support = TRUE);
         wxString GetContentType();
         void SetContentType(wxString contenttype);
+        bool IsMetalink();
         bool IsHtml();
         bool IsZip();
         int GetNumberofParts();
@@ -349,6 +359,8 @@
         bool IsFree();
         void SetBandWidth(int band);
         int GetBandWidth();
+        bool NeedToReGetMetalink();
+        void SetToReGetMetalinkWhenNeeded(bool reget);
 
         //PUBLIC VARIABLES
         friend class mDownloadList;
@@ -370,12 +382,14 @@
         long delta_size[MAX_NUM_PARTS];
         int percentualparts[MAX_NUM_PARTS];
         wxString messages[MAX_NUM_PARTS];
+        mMetalinkData *metalinkdata;
     private:
         int index;
         int status;
         bool split;
         bool waitbeforesplit;
         bool free;
+        bool needtoregetmetalink;
         wxString name;
         wxString exposedname;
         wxString destination;
@@ -636,6 +650,9 @@
         void OnClose(wxCommandEvent& event);
         void OnHide(wxCommandEvent& event);
         void OnNew(wxCommandEvent& event);
+        void OnBandUnlimited(wxCommandEvent& event);
+        void OnBandControlOn(wxCommandEvent& event);
+        void OnBandControlPerDownload(wxCommandEvent& event);
         virtual wxMenu *CreatePopupMenu();
         bool restoring;
     private:
@@ -894,6 +911,7 @@
         mUrlName currenturl;
         bool redirecting;
         mDownloadList *downloadlist;
+        wxLongLong realtotalsize_copy;
     };
 
     class mCheckNewReleaseThread : public wxThread
@@ -906,6 +924,29 @@
         // called when the thread exits - whether it terminates normally or is
         // stopped with Delete() (but not when it is Kill()ed!)
         virtual void OnExit();
+    };
+
+    class mMetalinkData
+    {
+    public:
+        wxString publishername;
+        wxString publisherurl;
+        wxString description;
+        wxString filename;
+        wxString version;
+        wxLongLong size;
+        wxString language;
+        wxString os;
+        wxString md5;
+        wxString sha1;
+        mUrlList urllist;
+        void Clear();
+    };
+
+    class mMetalinkDocument : public wxXmlDocument
+    {
+    public:
+        bool GetMetalinkData(mMetalinkData *data);
     };
 
     class MyUtilFunctions

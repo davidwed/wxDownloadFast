@@ -22,6 +22,9 @@ BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)
     EVT_MENU(HIDE,  mTaskBarIcon::OnHide)
     EVT_MENU(NEW,  mTaskBarIcon::OnNew)
     EVT_MENU(CLOSE,  mTaskBarIcon::OnClose)
+    EVT_MENU(OFF,  mTaskBarIcon::OnBandUnlimited)
+    EVT_MENU(ON,  mTaskBarIcon::OnBandControlOn)
+    EVT_MENU(PERDOWNLOAD,  mTaskBarIcon::OnBandControlPerDownload)
     EVT_TASKBAR_LEFT_DOWN(mTaskBarIcon::OnLButtonClick)
     EVT_TASKBAR_MOVE(mTaskBarIcon::OnMouseMove)
 END_EVENT_TABLE()
@@ -79,11 +82,33 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
             mnuhide = new wxMenuItem(traymenu,HIDE, _("Show the main window"));
         wxMenuItem *mnunew = new wxMenuItem(traymenu,NEW, _("New download"));
         wxMenuItem *mnuclose = new wxMenuItem(traymenu,CLOSE, _("Close the program"));
+
+        wxMenu *mnusubband = new wxMenu;
+        wxMenuItem *mnuband = new wxMenuItem(traymenu,BAND,_("Band control"));
+
+        wxMenuItem *mnuoff = new wxMenuItem(mnusubband,OFF, _("Unlimited"),_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
+        wxString temp; temp = _("Active"); temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" Kb/s)");
+        wxMenuItem *mnuon = new wxMenuItem(mnusubband,ON, temp,_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
+        wxMenuItem *mnuperdownload = new wxMenuItem(mnusubband,PERDOWNLOAD, _("Per Download"),_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
+
+        mnusubband->Append(mnuoff);
+        mnusubband->Append(mnuon);
+        mnusubband->Append(mnuperdownload);
+        mnuband->SetSubMenu(mnusubband);
+
         traymenu->Append(mnuhide);
         traymenu->AppendSeparator();
         traymenu->Append(mnunew);
+        traymenu->Append(mnuband);
         traymenu->AppendSeparator();
         traymenu->Append(mnuclose);
+
+        if (mainframe->programoptions.bandwidthoption == 1)
+            mnuperdownload->Check();
+        else if (mainframe->programoptions.bandwidthoption == 2)
+            mnuon->Check();
+        else
+            mnuoff->Check();
     }
     return traymenu;
 }
@@ -120,6 +145,58 @@ void mTaskBarIcon::OnHide(wxCommandEvent& event)
             mainframe->Show();
             restoring = FALSE;
             //mainframe->RequestUserAttention();
+        }
+    }
+}
+
+void mTaskBarIcon::OnBandUnlimited(wxCommandEvent& event)
+{
+    if (mainframe)
+    {
+        mainframe->mutex_programoptions->Lock();
+        mainframe->programoptions.bandwidthoption = 0;
+        mainframe->mutex_programoptions->Unlock();
+        if (mainframe->statusbar)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Unlimited");
+            mainframe->statusbar->SetStatusText(temp,2);
+        }
+    }
+}
+
+void mTaskBarIcon::OnBandControlOn(wxCommandEvent& event)
+{
+    if (mainframe)
+    {
+        mainframe->mutex_programoptions->Lock();
+        mainframe->programoptions.bandwidthoption = 2;
+        mainframe->mutex_programoptions->Unlock();
+        if (mainframe->statusbar)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Active");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" Kb/s)");
+            mainframe->statusbar->SetStatusText(temp,2);
+        }
+    }
+}
+
+void mTaskBarIcon::OnBandControlPerDownload(wxCommandEvent& event)
+{
+    if (mainframe)
+    {
+        mainframe->mutex_programoptions->Lock();
+        mainframe->programoptions.bandwidthoption = 1;
+        mainframe->mutex_programoptions->Unlock();
+        if (mainframe->statusbar)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Per Download");
+            mainframe->statusbar->SetStatusText(temp,2);
         }
     }
 }

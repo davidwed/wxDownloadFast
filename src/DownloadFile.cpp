@@ -200,6 +200,8 @@ void mDownloadList::LoadDownloadListFromDisk()
         file->MarkRemoveAsPending(FALSE);
         if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
             file->parts = 1;
+        file->metalinkdata = NULL;
+        config->Read(NEED_TO_REGET_METALINK_REG,&(file->needtoregetmetalink));
 
         for (int i =0;i<MAX_NUM_PARTS;i++)
         {
@@ -258,6 +260,8 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
 mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled,int bandwidth)
 {
     mDownloadFile *file = new mDownloadFile();
+    file->metalinkdata = NULL;
+    file->needtoregetmetalink = FALSE;
     file->index =  this->GetCount();
     file->scheduled = scheduled;
     file->status = STATUS_STOPED;
@@ -398,6 +402,7 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(REFERENCE_REG,this->reference);
     config->Write(CONTENTTYPE_REG,this->contenttype);
     config->Write(BANDWIDTH_REG,this->bandwidth);
+    config->Write(NEED_TO_REGET_METALINK_REG,this->needtoregetmetalink);
 
     unsigned int count = 1;
     bool deleteoldurls = TRUE;
@@ -557,6 +562,15 @@ bool mDownloadFile::IsHtml()
     return this->GetContentType().Lower().Contains(wxT("html"));
 }
 
+bool mDownloadFile::IsMetalink()
+{
+    bool result = FALSE;
+    if ((this->GetContentType().Lower().Contains(wxT("metalink"))) ||
+        (this->name.Lower().Contains(wxT("metalink"))))
+        result = TRUE;
+    return result;
+}
+
 bool mDownloadFile::IsZip()
 {
     return this->GetContentType().Lower().Contains(wxT("zip"));
@@ -585,11 +599,35 @@ void mDownloadFile::IncrementAttempt()
 mUrlName mDownloadFile::GetNextUrl()
 {
     mUrlName urltmp;
+    mUrlList::Node *node;
+    if (metalinkdata)
+    {
+        if (metalinkdata->urllist.GetCount() > this->currenturl)
+        {
+            node = metalinkdata->urllist.Item(this->currenturl);
+            if (node)
+            {
+                this->currenturl++;
+                return *(node->GetData());
+            }
+            else
+            {
+                currenturl = 1;
+                return this->GetFirstUrl();
+            }
+        }
+        else
+        {
+            currenturl = 1;
+            return this->GetFirstUrl();
+        }
+    }
+
     if (!this->urllist)
         return urltmp;
     if (this->urllist->GetCount() > this->currenturl)
     {
-        mUrlList::Node *node = this->urllist->Item(this->currenturl);
+        node = this->urllist->Item(this->currenturl);
         if (node)
         {
             this->currenturl++;
@@ -611,9 +649,23 @@ mUrlName mDownloadFile::GetNextUrl()
 mUrlName mDownloadFile::GetFirstUrl()
 {
     mUrlName urltmp;
+    mUrlList::Node *node;
+    if (metalinkdata)
+    {
+        node = metalinkdata->urllist.GetFirst();
+        if (node)
+        {
+            return *(node->GetData());
+        }
+        else
+        {
+            return urltmp;
+        }
+    }
+
     if (!urllist)
         return urltmp;
-    mUrlList::Node *node = this->urllist->GetFirst();
+    node = this->urllist->GetFirst();
     if (node)
     {
         return *(node->GetData());
@@ -700,6 +752,7 @@ bool mDownloadFile::WaitingForSplit()
 
 void mDownloadFile::WaitSplit()
 {
+    this->split = FALSE;
     this->waitbeforesplit = TRUE;
 }
 
@@ -743,3 +796,12 @@ int mDownloadFile::GetBandWidth()
     return bandwidth;
 }
 
+bool mDownloadFile::NeedToReGetMetalink()
+{
+    return needtoregetmetalink;
+}
+
+void mDownloadFile::SetToReGetMetalinkWhenNeeded(bool reget)
+{
+    needtoregetmetalink = reget;
+}

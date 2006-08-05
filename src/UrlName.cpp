@@ -29,16 +29,27 @@ mUrlName::mUrlName(wxString uri)
         m_uri = wxT("file://") + m_uri;
     else if ((m_uri.Mid(1,1).Lower()) == wxT(":"))
         m_uri = wxT("file://") + m_uri;
+
     wxURI::Create(m_uri);
+    if (wxURI::HasFragment())
+    {
+        if (wxURI::GetFragment().Mid(0,11).Lower() == wxT("!metalink3!"))
+            wxURI::Create(wxURI::GetFragment().Mid(11));
+        else
+            wxURI::Create(GetFullPath().BeforeLast('#'));
+    }
 }
 
 bool mUrlName::IsComplete()
 {
-    return (HasServer() && HasScheme() && HasPath());
+    if (Type() == LOCAL_FILE)
+        return (HasScheme() && HasPath());
+    else
+        return (HasServer() && HasScheme() && HasPath());
 }
 
 wxString mUrlName::GetHost()
-{ 
+{
     return wxURI::GetServer();
 }
 
@@ -72,21 +83,23 @@ int mUrlName::Type()
 }
 
 wxString mUrlName::GetDir()
-{ 
+{
     return wxURI::GetPath().BeforeLast('/') + wxT("/");
 }
 
 wxString mUrlName::GetFullName()
 {
-    return wxURI::BuildUnescapedURI().AfterLast('/').AfterLast('=');;
+    wxString fullrealname = wxURI::GetPath().AfterLast('/');
+    return fullrealname;
 }
 
 wxString mUrlName::GetFullRealName()
 {
+    wxString fullrealname = wxURI::GetPath().AfterLast('/');
     if (wxURI::HasQuery())
-        return wxURI::GetPath().AfterLast('/') + wxT("?") + wxURI::GetQuery();
+        return fullrealname + wxT("?") + wxURI::GetQuery();
     else
-        return wxURI::GetPath().AfterLast('/');
+        return fullrealname;
 }
 
 wxString mUrlName::GetFullPath()
