@@ -9,6 +9,10 @@
 - Added new configuration method based on autoconf
 - Added a band width control, which permits the user
   to set a upper download rate
+- Added metalink support. For more informations
+  about what is metalink visit www.metalinker.org
+- Added a tray icon menu to easily change the band
+  configuration
 
 0.4.5
 ===================================================

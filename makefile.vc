@@ -72,20 +72,22 @@ WXDFAST_CXXFLAGS = /MD$(__DEBUGRUNTIME_7) /DWIN32 $(__WXUNICODE_DEFINE_p) \
 !if "$(XRC)" == "1"
 WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_BoxFind.obj \
-	build-vc\wxdfast_FinishedList.obj \
-	build-vc\wxdfast_MainFrame.obj \
 	build-vc\wxdfast_BoxNew.obj \
-	build-vc\CheckNewRelease.obj \
-	build-vc\wxdfast_ftp.obj \
-	build-vc\wxdfast_TaskBarIcon.obj \
 	build-vc\wxdfast_BoxOptions.obj \
-	build-vc\wxdfast_Graph.obj \
-	build-vc\wxdfast_urlname.obj \
+	build-vc\wxdfast_CheckNewRelease.obj \
 	build-vc\wxdfast_DownloadFile.obj \
-	build-vc\wxdfast_http.obj \
-	build-vc\wxdfast_UtilFunctions.obj \
 	build-vc\wxdfast_DownloadThread.obj \
+	build-vc\wxdfast_FinishedList.obj \
+	build-vc\wxdfast_FTP.obj \
+	build-vc\wxdfast_Graph.obj \
+	build-vc\wxdfast_HTTP.obj \
 	build-vc\wxdfast_InProgressList.obj \
+	build-vc\wxdfast_MainFrame.obj \
+	build-vc\wxdfast_Metalink.obj \
+	build-vc\wxdfast_ProgressBar.obj \
+	build-vc\wxdfast_TaskBarIcon.obj \
+	build-vc\wxdfast_UrlName.obj \
+	build-vc\wxdfast_UtilFunctions.obj \
 	build-vc\wxdfast_wxDFast.obj \
 	build-vc\wxdfast_md5.obj \
 	build-vc\wxdfast_wxMD5.obj \
@@ -94,20 +96,22 @@ WXDFAST_OBJECTS =  \
 WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_Resources.obj \
 	build-vc\wxdfast_BoxFind.obj \
-	build-vc\CheckNewRelease.obj \
-	build-vc\wxdfast_FinishedList.obj \
-	build-vc\wxdfast_MainFrame.obj \
 	build-vc\wxdfast_BoxNew.obj \
-	build-vc\wxdfast_ftp.obj \
-	build-vc\wxdfast_TaskBarIcon.obj \
 	build-vc\wxdfast_BoxOptions.obj \
-	build-vc\wxdfast_Graph.obj \
-	build-vc\wxdfast_urlname.obj \
+	build-vc\wxdfast_CheckNewRelease.obj \
 	build-vc\wxdfast_DownloadFile.obj \
-	build-vc\wxdfast_http.obj \
-	build-vc\wxdfast_UtilFunctions.obj \
 	build-vc\wxdfast_DownloadThread.obj \
+	build-vc\wxdfast_FinishedList.obj \
+	build-vc\wxdfast_FTP.obj \
+	build-vc\wxdfast_Graph.obj \
+	build-vc\wxdfast_HTTP.obj \
 	build-vc\wxdfast_InProgressList.obj \
+	build-vc\wxdfast_MainFrame.obj \
+	build-vc\wxdfast_Metalink.obj \
+	build-vc\wxdfast_ProgressBar.obj \
+	build-vc\wxdfast_TaskBarIcon.obj \
+	build-vc\wxdfast_UrlName.obj \
+	build-vc\wxdfast_UtilFunctions.obj \
 	build-vc\wxdfast_wxDFast.obj \
 	build-vc\wxdfast_md5.obj \
 	build-vc\wxdfast_wxMD5.obj \
@@ -223,53 +227,59 @@ build-vc\wxdfast_Resources.obj: .\src\Resources.cpp
 build-vc\wxdfast_BoxFind.obj: .\src\BoxFind.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
-build-vc\CheckNewRelease.obj: .\src\CheckNewRelease.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_FinishedList.obj: .\src\FinishedList.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_MainFrame.obj: .\src\MainFrame.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
 build-vc\wxdfast_BoxNew.obj: .\src\BoxNew.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_ftp.obj: .\src\ftp.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_TaskBarIcon.obj: .\src\TaskBarIcon.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_BoxOptions.obj: .\src\BoxOptions.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
-build-vc\wxdfast_Graph.obj: .\src\Graph.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_urlname.obj: .\src\urlname.cpp
+build-vc\wxdfast_CheckNewRelease.obj: .\src\CheckNewRelease.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_DownloadFile.obj: .\src\DownloadFile.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
-build-vc\wxdfast_http.obj: .\src\http.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
-build-vc\wxdfast_UtilFunctions.obj: .\src\UtilFunctions.cpp
-	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
-
 build-vc\wxdfast_DownloadThread.obj: .\src\DownloadThread.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_FinishedList.obj: .\src\FinishedList.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_FTP.obj: .\src\FTP.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_Graph.obj: .\src\Graph.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_HTTP.obj: .\src\HTTP.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_InProgressList.obj: .\src\InProgressList.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
+build-vc\wxdfast_MainFrame.obj: .\src\MainFrame.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_Metalink.obj: .\src\Metalink.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_ProgressBar.obj: .\src\ProgressBar.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_TaskBarIcon.obj: .\src\TaskBarIcon.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_UrlName.obj: .\src\UrlName.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_UtilFunctions.obj: .\src\UtilFunctions.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
 build-vc\wxdfast_wxDFast.obj: .\src\wxDFast.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
-build-vc\wxdfast_md5.obj: .\src\wxMD5\md5.c
-	$(CC) /c /nologo /TC /Fo$@ $(WXDFAST_CFLAGS) $**
+build-vc\wxdfast_md5.obj: .\src\wxMD5\md5.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CFLAGS) $**
 
 build-vc\wxdfast_wxMD5.obj: .\src\wxMD5\wxMD5.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**

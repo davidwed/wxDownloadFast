@@ -29,7 +29,7 @@ INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
 
-OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)CheckNewRelease.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)FTP.o $(BUILD_DIR)HTTP.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)ProgressBar.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)UrlName.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
+OBJ_TMP  = $(BUILD_DIR)BoxFind.o $(BUILD_DIR)BoxNew.o $(BUILD_DIR)BoxOptions.o $(BUILD_DIR)CheckNewRelease.o $(BUILD_DIR)DownloadFile.o $(BUILD_DIR)DownloadThread.o $(BUILD_DIR)FinishedList.o $(BUILD_DIR)FTP.o $(BUILD_DIR)HTTP.o $(BUILD_DIR)Graph.o $(BUILD_DIR)InProgressList.o $(BUILD_DIR)MainFrame.o $(BUILD_DIR)Metalink.o $(BUILD_DIR)ProgressBar.o $(BUILD_DIR)TaskBarIcon.o $(BUILD_DIR)UrlName.o $(BUILD_DIR)wxDFast.o $(BUILD_DIR)UtilFunctions.o
 
 ifeq ($(XRC), 1)
 	OBJ = $(OBJ_TMP)
@@ -131,6 +131,9 @@ $(BUILD_DIR)InProgressList.o: src/InProgressList.cpp
 
 $(BUILD_DIR)MainFrame.o: src/MainFrame.cpp
 	$(CPP) -c src/MainFrame.cpp -o $(BUILD_DIR)MainFrame.o $(CXXFLAGS)
+
+$(BUILD_DIR)Metalink.o: src/Metalink.cpp
+	$(CPP) -c src/Metalink.cpp -o $(BUILD_DIR)Metalink.o $(CXXFLAGS)
 
 $(BUILD_DIR)ProgressBar.o: src/ProgressBar.cpp
 	$(CPP) -c src/ProgressBar.cpp -o $(BUILD_DIR)ProgressBar.o $(CXXFLAGS)
