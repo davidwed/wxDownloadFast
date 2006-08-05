@@ -1,4 +1,4 @@
-0.4.6
+0.5.0
 ===================================================
 - Corrigido erro quando o programa acessa um
   servidor e recebe a resposta 404
@@ -12,6 +12,11 @@
 - Adicionado controle de largura de banda, o que
   permite que o usuário defina um limite para taxa
   de download
+- Adicionado suporte ao metalink. Para mais
+  informações sobre o que é metalink visite
+  www.metalinker.org
+- Adicionado um menu para o ícone na bandeja para
+  alterar com facilidade as configurações de banda
 
 0.4.5
 ===================================================
