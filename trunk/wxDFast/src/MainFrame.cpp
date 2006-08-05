@@ -271,7 +271,7 @@ mMainFrame::mMainFrame()
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
     programoptions.bandwidthoption = mApplication::Configurations(READ,OPT_BAND_WIDTH_OPTION_REG,0);
-    programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,10l);
+    programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,20l);
 
     //CHECK THE RIGHT LANGUAGE MENU
     MarkCurrentLanguageMenu(mApplication::Configurations(READ,LANGUAGE_REG,0));
@@ -380,6 +380,28 @@ mMainFrame::mMainFrame()
             }
         }
         statusbar->SetStatusText(this->defaultstatusbarmessage);
+        if (programoptions.bandwidthoption == 1)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Per Download");
+            statusbar->SetStatusText(temp,2);
+        }
+        else if (programoptions.bandwidthoption == 2)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Active");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+            statusbar->SetStatusText(temp,2);
+        }
+        else
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Unlimited");
+            statusbar->SetStatusText(temp,2);
+        }
     }
 
     //DEFINE THE PREVIEW PANEL TEXT
@@ -2190,14 +2212,40 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
             programoptions.activatescheduling = FALSE;
 
         if (XRCCTRL(dlg, "optbandwidthindependently", wxRadioButton)->GetValue())
+        {
             programoptions.bandwidthoption = 1;
+            if (statusbar)
+            {
+                wxString temp = _("Band control");
+                temp += wxT(": ");
+                temp += _("Per Download");
+                statusbar->SetStatusText(temp,2);
+            }
+        }
         else if (XRCCTRL(dlg, "optbandwidthcustom", wxRadioButton)->GetValue())
         {
             programoptions.bandwidthoption = 2;
             programoptions.bandwidth = XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->GetValue();
+            if (statusbar)
+            {
+                wxString temp = _("Band control");
+                temp += wxT(": ");
+                temp += _("Active");
+                temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+                statusbar->SetStatusText(temp,2);
+            }
         }
         else
+        {
             programoptions.bandwidthoption = 0;
+            if (statusbar)
+            {
+                wxString temp = _("Band control");
+                temp += wxT(": ");
+                temp += _("Unlimited");
+                statusbar->SetStatusText(temp,2);
+            }
+        }
 
         waitbox->Update(50);
         mApplication::Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
@@ -2305,10 +2353,6 @@ void mMainFrame::OnDonate(wxCommandEvent& event)
 
 void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
-    //wxString message;
-    //message.Printf( PROGRAM_NAME + wxT(" ")  + VERSION + wxT("\n\nhttp://dfast.sf.net") + _("\nCreated by Max Velasques"));
-
-    //wxMessageBox(message, _("About..."), wxOK | wxICON_INFORMATION, this);
     wxDialog dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxabout"));
     XRCCTRL(dlg, "lblextrainfo",wxStaticText)->SetLabel(_(" Version: ") + VERSION + wxT("\n\n") + XRCCTRL(dlg, "lblextrainfo",wxStaticText)->GetLabel());

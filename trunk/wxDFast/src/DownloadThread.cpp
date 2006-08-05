@@ -128,9 +128,15 @@ void *mDownloadThread::Entry()
     int attemptstime;
     wxLongLong start,end;
     redirecting = FALSE;
+    realtotalsize_copy = -1;
     downloadfile->ResetAttempts();
     downloadfile->messages[downloadpartindex].Clear();
     downloadfile->finished[downloadpartindex] = FALSE;
+    if (downloadfile->metalinkdata)
+    {
+        delete downloadfile->metalinkdata;
+        downloadfile->metalinkdata = NULL;
+    }
     if (downloadpartindex == 0)
     {
         downloadfile->mutex_speedcalc = new wxMutex();
@@ -143,6 +149,8 @@ void *mDownloadThread::Entry()
         while (downloadfile->WaitingForSplit())
         {
             if (downloadfile->GetStatus() == STATUS_STOPED)
+                return NULL;
+            else if (downloadfile->criticalerror)
                 return NULL;
             Sleep(10);
         }
@@ -158,12 +166,18 @@ void *mDownloadThread::Entry()
         connection = NULL;
         filestream = NULL;
         downloadfile->SetAsActive();
-        start = CurrentSize(downloadfile->GetTemporaryDestination(),PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
-        start += downloadfile->startpoint[downloadpartindex];
         if (!redirecting)
             currenturl = downloadfile->GetNextUrl();
         else
             redirecting = FALSE;
+        if ((!downloadfile->metalinkdata) && (downloadfile->NeedToReGetMetalink()))
+        {
+            downloadlist->ChangeName(downloadfile,currenturl.GetFullPath().Mid(currenturl.GetFullPath().Find('/',true)+1));
+            start = 0;
+        }
+        else
+            start = CurrentSize(downloadfile->GetTemporaryDestination(),PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
+        start += downloadfile->startpoint[downloadpartindex];
         do
         {
             int type = currenturl.Type();
@@ -192,7 +206,7 @@ void *mDownloadThread::Entry()
 
             if ((downloadpartindex == 0) && (downloadfile->WaitingForSplit()))
             {
-                if ((downloadfile->RestartSupport() == YES) && (downloadfile->totalsize > MIN_SIZE_TO_SPLIT))
+                if ((downloadfile->RestartSupport() == YES) && (downloadfile->totalsize > MIN_SIZE_TO_SPLIT) && (!downloadfile->IsMetalink()) && (!downloadfile->IsHtml()))
                 {
                     wxLongLong tempsize = (downloadfile->totalsize / downloadfile->GetNumberofParts());
                     int i;
@@ -214,7 +228,8 @@ void *mDownloadThread::Entry()
                     partialfile += PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex);
                     ::wxRemoveFile(partialfile);
                     start = 0;
-                    downloadfile->Split(FALSE);
+                    if ((!downloadfile->IsMetalink()) && (!downloadfile->IsHtml()))
+                        downloadfile->Split(FALSE);
                     downloadfile->size[downloadpartindex] = downloadfile->totalsize;
                 }
             }
@@ -234,6 +249,67 @@ void *mDownloadThread::Entry()
                     resp = -1;
                     //downloadfile->criticalerror = TRUE;
                     continue;
+                }
+                else
+                    downloadfile->Split(FALSE);
+            }
+            if ((downloadpartindex == 0) && (downloadfile->GetStatus() == STATUS_FINISHED) && (downloadfile->IsMetalink()))
+            {
+                mMetalinkDocument metalinkfile;
+                wxFileName file(downloadfile->GetDestination() + wxT("/") + downloadfile->GetName());
+                if (metalinkfile.Load(file.GetFullPath()))
+                {
+                    PrintMessage( wxT("\n"),HTMLSERVER);
+                    PrintMessage( _("Metalink file detected\n"),HTMLSERVER);
+                    PrintMessage( _("Getting Metalink data\n"),HTMLSERVER);
+
+                    if (!downloadfile->metalinkdata)
+                        downloadfile->metalinkdata = new mMetalinkData();
+                    downloadfile->metalinkdata->Clear();
+                    if (metalinkfile.GetMetalinkData(downloadfile->metalinkdata))
+                    {
+                        wxString str;
+                        str = wxT("PublisherName: ");
+                        str += downloadfile->metalinkdata->publishername;
+                        str += wxT("\nPublisherUrl: ");
+                        str += downloadfile->metalinkdata->publisherurl;
+                        str += wxT("\nDescription: ");
+                        str += downloadfile->metalinkdata->description;
+                        str += wxT("\nFilename: ");
+                        str += downloadfile->metalinkdata->filename;
+                        str += wxT("\nVersion: ");
+                        str += downloadfile->metalinkdata->version;
+                        str += wxT("\nSize: ");
+                        if (downloadfile->metalinkdata->size > 0)
+                            str += downloadfile->metalinkdata->size.ToString();
+                        else
+                            str += wxT("Not available");
+                        str += wxT("\nLanguage: ");
+                        str += downloadfile->metalinkdata->language;
+                        str += wxT("\nOS: ");
+                        str += downloadfile->metalinkdata->os;
+                        str += wxT("\nMD5: ");
+                        str += downloadfile->metalinkdata->md5;
+                        //str += wxT("\nSHA1: ");
+                        //str += downloadfile->metalinkdata->sha1;
+                        str += wxT("\n\n");
+                        PrintMessage( str,HTMLSERVER);
+
+                        currenturl = downloadfile->GetFirstUrl();
+                        redirecting = TRUE;
+                        downloadlist->ChangeName(downloadfile,downloadfile->metalinkdata->filename);
+                        downloadfile->SetToReGetMetalinkWhenNeeded(TRUE);
+                        ::wxRemoveFile(file.GetFullPath());
+                        resp = -1;
+                        continue;
+                    }
+                    else
+                    {
+                        PrintMessage( _("Error retrieving Metalink data\n"),HTMLERROR);
+                        downloadfile->criticalerror = TRUE;
+                        downloadfile->Split(FALSE);
+                        break;
+                    }
                 }
             }
         }
@@ -575,7 +651,23 @@ int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdesti
             PrintMessage( wxT("MD5 = ") + md5.GetDigest() + wxT("\n"));
             downloadfile->SetMD5(md5.GetDigest());
             downloadfile->UnSetExposedName();
-            PrintMessage( _("Finished\n"));
+            if ((downloadfile->metalinkdata) && (!downloadfile->metalinkdata->md5.IsEmpty()))
+            {
+                PrintMessage( _("Comparing expected and calculated MD5...\n"));
+                if (md5.GetDigest().Lower() == downloadfile->metalinkdata->md5.Lower())
+                {
+                    PrintMessage( _("File verified successfully\n"));
+                    PrintMessage( _("Finished\n"));
+                }
+                else
+                {
+                    PrintMessage( _("Comparing expected and calculated MD5...\n"),HTMLERROR);
+                    resp = -1;
+                    downloadfile->criticalerror = TRUE;
+                }
+            }
+            else
+                PrintMessage( _("Finished\n"));
         }
         downloadfile->SetAsFinished();
     }
@@ -711,7 +803,18 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                     downloadfile->sizecompleted[downloadpartindex] = *start - downloadfile->startpoint[downloadpartindex];
                     if (downloadpartindex == 0)
                     {
-                        if ((downloadfile->totalsize > 0) && (downloadfile->totalsize != sizetmp + *start) && (downloadfile->GetCurrentAttempt() == 1))
+                        //THIS IS DONE TO RECOVERY THE FILE SIZE OF THE REAL FILE
+                        if (realtotalsize_copy >= 0)
+                        {
+                            downloadfile->totalsize = realtotalsize_copy;
+                            realtotalsize_copy = -1;
+                        }
+
+                        //KEEP A COPY OF THE FILE SIZE OF THE REAL FILE TO BE DOWNLOADED
+                        if (downloadfile->IsMetalink())
+                            realtotalsize_copy = downloadfile->totalsize;
+
+                        if ((downloadfile->totalsize > 0) && (downloadfile->totalsize != sizetmp + *start) && (downloadfile->GetCurrentAttempt() == 1) && (!downloadfile->IsMetalink()))
                         {
                             wxString partialfile = downloadfile->GetDestination();
                             if (partialfile.Mid(partialfile.Length()-1,1) != SEPARATOR_DIR)
@@ -732,29 +835,39 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                         }
                         else
                             downloadfile->totalsize =  sizetmp + *start;
+
                         downloadfile->SetRestartSupport();
                     }
                 }
                 else
                 {
-                    restart = NO;
-                    if (sizetmp > 0)
+                    if (downloadpartindex == 0)
                     {
-                        downloadfile->totalsize =  sizetmp;
-                        downloadfile->sizecompleted[downloadpartindex] = 0;
-                        PrintMessage( _("This server don't support restart.\n"),HTMLERROR);
-                        if (downloadpartindex == 0)
-                            downloadfile->SetRestartSupport(FALSE);
+                        restart = NO;
+                        if (sizetmp > 0)
+                        {
+                            downloadfile->totalsize =  sizetmp;
+                            downloadfile->sizecompleted[downloadpartindex] = 0;
+                            PrintMessage( _("This server don't support restart.\n"),HTMLERROR);
+                            if (downloadpartindex == 0)
+                                downloadfile->SetRestartSupport(FALSE);
+                            else
+                            {
+                                client->Close(); delete client;
+                                return NULL;
+                            }
+                        }
                         else
                         {
+                            downloadfile->totalsize =  0;
+                            downloadfile->sizecompleted[downloadpartindex] = 0;
+                            PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
                             client->Close(); delete client;
                             return NULL;
                         }
                     }
                     else
                     {
-                        downloadfile->totalsize =  0;
-                        downloadfile->sizecompleted[downloadpartindex] = 0;
                         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
                         client->Close(); delete client;
                         return NULL;
@@ -774,14 +887,14 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
             {
                 // HTTP/1.1 416 Requested Range Not Satisfiable
                 //IF THIS HAPPEN, IS BECAUSE THE THE START POINT IS BIGGER THAT THE END POINT
-                //if (client->GetCompleteResponse() == 416)
+                if (client->GetCompleteResponse() != 416)
                 //    PrintMessage( _("The file already was downloaded.\n"));
                 //else
-                //{
-                PrintMessage( _("Error requesting file.\n"),HTMLERROR);
-                client->Close(); delete client;
-                return NULL;
-                //}
+                {
+                    PrintMessage( _("Error requesting file.\n"),HTMLERROR);
+                    client->Close(); delete client;
+                    return NULL;
+                }
             }
         }
         else
@@ -918,7 +1031,18 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
             downloadfile->sizecompleted[downloadpartindex] = *start - downloadfile->startpoint[downloadpartindex];
         if (downloadpartindex == 0)
         {
-            if ((downloadfile->totalsize > 0) && (downloadfile->totalsize != sizetmp))
+            //THIS IS DONE TO RECOVERY THE FILE SIZE OF THE REAL FILE
+            if (realtotalsize_copy >= 0)
+            {
+                downloadfile->totalsize = realtotalsize_copy;
+                realtotalsize_copy = -1;
+            }
+
+            //KEEP A COPY OF THE FILE SIZE OF THE REAL FILE TO BE DOWNLOADED
+            if (downloadfile->IsMetalink())
+                realtotalsize_copy = downloadfile->totalsize;
+
+            if ((downloadfile->totalsize > 0) && (downloadfile->totalsize != sizetmp) && (!downloadfile->IsMetalink()))
             {
                 wxString partialfile = downloadfile->GetDestination();
                 if (partialfile.Mid(partialfile.Length()-1,1) != SEPARATOR_DIR)
@@ -979,6 +1103,17 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
     }
     else
     {
+        //THIS IS DONE TO RECOVERY THE FILE SIZE OF THE REAL FILE
+        if (realtotalsize_copy >= 0)
+        {
+            downloadfile->totalsize = realtotalsize_copy;
+            realtotalsize_copy = -1;
+        }
+
+        //KEEP A COPY OF THE FILE SIZE OF THE REAL FILE TO BE DOWNLOADED
+        if (downloadfile->IsMetalink())
+            realtotalsize_copy = downloadfile->totalsize;
+
         sizetmp = file->Length();
         PrintMessage( _("File size: ") + sizetmp.ToString() + wxT("\n"),HTMLSERVER);
         if (downloadpartindex == 0)

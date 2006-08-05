@@ -27,6 +27,7 @@ wxdfast_SOURCES = \
 	BoxNew.cpp\
 	FinishedList.cpp\
 	MainFrame.cpp\
+	Metalink.cpp\
 	wxDFast.cpp\
 	BoxOptions.cpp\
 	FTP.cpp\
