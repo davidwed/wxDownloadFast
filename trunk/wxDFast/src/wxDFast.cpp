@@ -84,7 +84,7 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         reference = wxEmptyString;
 
     if (urls.GetCount() > 0)
-        wxGetApp().mainframe->NewDownload(urls,destination,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
+        wxGetApp().mainframe->NewDownload(urls,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
     else if (!wxGetApp().mainframe->IsShown())
     {
         wxCommandEvent event;
@@ -257,7 +257,7 @@ bool mApplication::OnInit()
     if (!parameters->Found(wxT("reference"),&reference))
         reference = wxEmptyString;
     if (url.GetCount() > 0)
-        mainframe->NewDownload(url,destination,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
+        mainframe->NewDownload(url,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
 
 
     if (!parameters->Found(wxT("hide")))

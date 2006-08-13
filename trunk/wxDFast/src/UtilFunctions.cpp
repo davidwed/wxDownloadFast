@@ -150,7 +150,7 @@ wxString MyUtilFunctions::GetProgramFilesDir()
     wxString idName(wxT("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion"));
 
     regKey.SetName(idName);
-    regKey.QueryValue("ProgramFilesDir",result);
+    regKey.QueryValue(wxT("ProgramFilesDir"),result);
     regKey.Close();
 	
     return result;
@@ -163,7 +163,7 @@ wxString MyUtilFunctions::GetMyDocumentsDir()
     wxString idName(wxT("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"));
 
     regKey.SetName(idName);
-    regKey.QueryValue("Personal",result);
+    regKey.QueryValue(wxT("Personal"),result);
     regKey.Close();
 	
     return result;

@@ -23,6 +23,7 @@
     #include "wx/frame.h"
     #include "wx/fileconf.h"
     #include "wx/splitter.h"
+    #include "wx/notebook.h"
     #include "wxMD5/wxMD5.h"
     #include "wx/imaglist.h"
     #include "wx/protocol/ftp.h"
@@ -65,6 +66,7 @@
     extern const wxEventType wxEVT_SHUTDOWN;
     extern const wxEventType wxEVT_DISCONNECT;
     extern const wxEventType wxEVT_NEW_RELEASE;
+    extern const wxEventType wxEVT_NEW_DOWNLOAD;
 
     const wxCmdLineEntryDesc cmdlinedesc[] =
     {
@@ -86,7 +88,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.0");
+    const wxString VERSION = wxT("0.5.1");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -144,6 +146,7 @@
     const wxString USER_REG = wxT("user");
     const wxString PASSWORD_REG = wxT("password");
     const wxString NEED_TO_REGET_METALINK_REG = wxT("needtoregetmetalink");
+    const wxString METALINK_INDEX_REG = wxT("metalinkindex");
 
     const wxString CONFIG_REG = wxT("config");
     const wxString LANGUAGE_REG = wxT("language");
@@ -361,6 +364,8 @@
         int GetBandWidth();
         bool NeedToReGetMetalink();
         void SetToReGetMetalinkWhenNeeded(bool reget);
+        void SetMetalinkFileIndex(int index);
+        int GetMetalinkFileIndex();
 
         //PUBLIC VARIABLES
         friend class mDownloadList;
@@ -412,6 +417,7 @@
         bool writependig;
         bool removepending;
         int bandwidth;
+        int metalinkindex;
     };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadListType);
@@ -420,7 +426,7 @@
     {
     public:
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled,int bandwidth);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled,int bandwidth);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
         void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments,int bandwidth);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
@@ -531,7 +537,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames);
+        bool NewDownload(wxArrayString url, wxString destination,int metalinkindex, int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
@@ -589,6 +595,7 @@
         void CheckNewRelease();
         void OnNewRelease(wxCommandEvent& event);
         void OnFilePreview(wxCommandEvent& event);
+        void OnNewDownloadEvent(wxCommandEvent& event);
         mTaskBarIcon *taskbaricon;
         mProgressBar *progressbar;
         mGraph *graph;
@@ -946,7 +953,9 @@
     class mMetalinkDocument : public wxXmlDocument
     {
     public:
-        bool GetMetalinkData(mMetalinkData *data);
+        int GetMetalinkData(mMetalinkData *data,int index);
+    private:
+        int GetFileData(mMetalinkData *data,wxXmlNode *subnode);
     };
 
     class MyUtilFunctions

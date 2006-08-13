@@ -269,18 +269,12 @@ void mInProgressList::GenerateList(wxImageList *imageslist)
         this->SetColumnWidth(INPROGRESS_ATTEMPTS,100);
         this->SetColumnWidth(INPROGRESS_URL,300);
     }
-    int i=0;
-    bool problemwithindex = FALSE;
+    wxGetApp().downloadlist.RecreateIndex();
     for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
     {
         mDownloadFile *current = node->GetData();
-        if (current->GetIndex() != i)
-            problemwithindex = TRUE;
         this->Insert(current,-1);
-        i++;
     }
-    if (problemwithindex)
-        wxGetApp().downloadlist.RecreateIndex();
 
     this->SelectUnselect(FALSE,-1);
     this->Show();

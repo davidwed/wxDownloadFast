@@ -66,12 +66,13 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
     // return the filesize of the given file if possible
     // return -1 otherwise (predominantly if file doesn't exist
     // in current dir)
-
     wxLongLong filesize = -1;
 
     // Check for existance of file via wxFTP::FileExists(...)
+    wxLogDebug(wxT("Checking FTP file exists"));
     if ( FileExists(fileName) )
     {
+        wxLogDebug(wxT("Foundit"));
         wxString command;
 
         // First try "SIZE" command using BINARY(IMAGE) transfermode
@@ -81,12 +82,14 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
         // will we need to hold this file?
         TransferMode oldTransfermode = m_currentTransfermode;
         SetTransferMode(BINARY);
+        wxLogDebug(wxT("Sending SIZE command"));
         command << _T("SIZE ") << fileName;
 
         bool ok = CheckCommand(command, '2');
 
         if ( ok )
         {
+            wxLogDebug(wxT("Received ok message"));
             // The answer should be one line: "213 <filesize>\n"
             // 213 is File Status (STD9)
             // "SIZE" is not described anywhere..? It works on most servers
@@ -120,10 +123,12 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
         // invalid "2yz" reply
         if ( !ok )
         {
+            wxLogDebug(wxT("Received error message"));
             // The server didn't understand the "SIZE"-command or it
             // returned an invalid reply.
             // We now try to get details for the file with a "LIST"-command
             // and then parse the output from there..
+            wxLogDebug(wxT("Getting filelist"));
             wxArrayString fileList;
             if ( GetList(fileList, fileName, true) )
             {
@@ -141,6 +146,7 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
                     {
                         foundIt = fileList[i].Upper().Contains(fileName.Upper());
                     }
+                    wxLogDebug(wxT("Found the file"));
 
                     if ( foundIt )
                     {
@@ -158,15 +164,16 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
                         // check if the first character is '-'. This would
                         // indicate Unix-style (this also limits this function
                         // to searching for files, not directories)
+                        wxLogDebug(wxT("Checking the file list"));
                         if ( fileList[i].Mid(0, 1) == _T("-") )
                         {
                             wxStringTokenizer lastresult(fileList[i],wxT(" "));
                             if (lastresult.CountTokens() == 9)
                             {
-                                lastresult.GetNextToken();
-                                lastresult.GetNextToken();
-                                lastresult.GetNextToken();
-                                lastresult.GetNextToken();
+                                wxLogDebug(lastresult.GetNextToken());
+                                wxLogDebug(lastresult.GetNextToken());
+                                wxLogDebug(lastresult.GetNextToken());
+                                wxLogDebug(lastresult.GetNextToken());
                                 filesize = MyUtilFunctions::wxstrtolonglong(lastresult.GetNextToken());
                                 if (filesize < 0)
                                     filesize = 0;
@@ -204,8 +211,8 @@ wxLongLong mFTP::GetFileSize(const wxString& fileName)
 
     // filesize might still be -1 when exiting
     return filesize;
-} 
- 
+}
+
 wxInputStream *mFTP::GetInputStream(const wxString& path)
 {
     if ( ( m_currentTransfermode == NONE ) && !SetTransferMode(BINARY) )
@@ -236,3 +243,4 @@ wxInputStream *mFTP::GetInputStream(const wxString& path)
 
     return in_stream;
 }
+
