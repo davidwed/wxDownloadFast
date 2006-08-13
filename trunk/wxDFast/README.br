@@ -123,11 +123,22 @@ para um local desejado, e utilizá-lo. Para isso digite:
 # su
 # make install
 
-- Instalando apartir do binário
+- Compilando no Linux para o Windows
 
-Está disponível na página do programa um pacote .DEB contendo este programa.
-Este pacote é compatível com as distribuições DEBIAN, UBUNTU, KURUMIN, entre
-outras.
+Este método tem como objetivo criar um executável para o sistema Windows sem
+ter o Windows instalado.
+Neste caso é necessário instalar o compilador MinGW no linux e compilar a
+biblioteca wxWidgets com o seguinte comando:
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc --target=i586-mingw32msvc --with-msw --enable-monolithic --disable-shared --enable-xrc --enable-unicode
+# make
+
+Onde "/usr/i586-mingw32msvc" é o diretório onde o MinGW foi instalado.
+
+Agora para compilar o wxDownload Fast faça:
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.7.0
+# make
+
+Onde "/home/user/wxWidgets-2.7.0" é o diretório onde a biblioteca wxWidgets foi compilada.
 
 5.3) MacOS
 ----------
