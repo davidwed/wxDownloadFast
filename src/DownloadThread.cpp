@@ -711,7 +711,8 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     destination.SetFullName(PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
     redirecting = FALSE;
     int restart = NO;
-    downloadfile->SetContentType(_("Not available"));
+    if (downloadpartindex == 0)
+        downloadfile->SetContentType(_("Not available"));
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
@@ -957,7 +958,8 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     wxString buffer = wxEmptyString;
     wxLongLong sizetmp;
     client->Notify(FALSE);
-    downloadfile->SetContentType(_("Not available"));
+    if (downloadpartindex == 0)
+        downloadfile->SetContentType(_("Not available"));
     //client->SetFlags(wxSOCKET_NOWAIT);
 
     address.Service(currenturl.GetPort());
@@ -1132,7 +1134,8 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
     wxFileName source, destination;
     wxString buffer = wxEmptyString;
     wxLongLong sizetmp;
-    downloadfile->SetContentType(_("Not available"));
+    if (downloadpartindex == 0)
+        downloadfile->SetContentType(_("Not available"));
 
     source.Assign(currenturl.GetDir() + currenturl.GetFullRealName());
     destination.Assign(downloadfile->GetDestination());
