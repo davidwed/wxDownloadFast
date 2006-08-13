@@ -22,7 +22,7 @@ END_EVENT_TABLE()
 
 void mBoxNew::OnOk(wxCommandEvent& event)
 {
-    int j;
+    unsigned int j;
     bool atleastoneitemischecked = FALSE;
     wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
     wxString name;
@@ -151,7 +151,7 @@ void mBoxNew::OnButtonAdd(wxCommandEvent& event)
 
 void mBoxNew::OnButtonEdit(wxCommandEvent& event)
 {
-    int i;
+    unsigned int i;
     wxCheckListBox *listbox = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
     for (i = 0;i < listbox->GetCount();i++)
     {
@@ -193,7 +193,7 @@ int mBoxNew::CheckURL(mUrlName url)
     if (url.IsComplete())
     {
         wxCheckListBox *list = XRCCTRL(*this, "lstaddresslist",wxCheckListBox);
-        for (int i = 0; i < list->GetCount(); i++)
+        for (unsigned int i = 0; i < list->GetCount(); i++)
         {
             if (list->GetString(i) == url.GetFullPath())
                 //alreadyexist

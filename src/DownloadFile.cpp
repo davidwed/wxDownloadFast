@@ -165,6 +165,8 @@ void mDownloadList::LoadDownloadListFromDisk()
         }
         file->bandwidth = 0;
         config->Read(BANDWIDTH_REG,&(file->bandwidth));
+        file->metalinkindex = -1;
+        config->Read(METALINK_INDEX_REG,&(file->metalinkindex));
 
         file->urllist = new mUrlList();
         file->urllist->DeleteContents(TRUE);
@@ -257,7 +259,7 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled,int bandwidth)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled,int bandwidth)
 {
     mDownloadFile *file = new mDownloadFile();
     file->metalinkdata = NULL;
@@ -270,7 +272,10 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
     file->urllist = urllist;
     file->urllist->DeleteContents(TRUE);
     file->currenturl = 0;
-    file->name = file->GetFirstUrl().GetFullName();
+    if (metalinkindex > 0)
+        file->name = MyUtilFunctions::int2wxstr(metalinkindex) + file->GetFirstUrl().GetFullName();
+    else
+        file->name = file->GetFirstUrl().GetFullName();
     file->destination = destination.GetFullPath();
     file->tempdestination = tempdestination.GetFullPath();
     file->totalsize = 0;
@@ -311,6 +316,7 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
     file->criticalerror = FALSE;
     file->split = FALSE;
     file->waitbeforesplit = TRUE;
+    file->metalinkindex = metalinkindex;
 
     file->MarkWriteAsPending(TRUE);
     file->MarkRemoveAsPending(FALSE);
@@ -403,6 +409,7 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(CONTENTTYPE_REG,this->contenttype);
     config->Write(BANDWIDTH_REG,this->bandwidth);
     config->Write(NEED_TO_REGET_METALINK_REG,this->needtoregetmetalink);
+    config->Write(METALINK_INDEX_REG,this->metalinkindex);
 
     unsigned int count = 1;
     bool deleteoldurls = TRUE;
@@ -573,7 +580,8 @@ bool mDownloadFile::IsMetalink()
 
 bool mDownloadFile::IsZip()
 {
-    return this->GetContentType().Lower().Contains(wxT("zip"));
+    return (this->GetContentType().Lower().Contains(wxT("zip"))
+          & this->GetName().Lower().Contains(wxT(".zip"))) ;
 }
 
 int mDownloadFile::GetNumberofParts()
@@ -805,3 +813,14 @@ void mDownloadFile::SetToReGetMetalinkWhenNeeded(bool reget)
 {
     needtoregetmetalink = reget;
 }
+
+int mDownloadFile::GetMetalinkFileIndex()
+{
+    return metalinkindex;
+}
+
+void mDownloadFile::SetMetalinkFileIndex(int index)
+{
+    metalinkindex = index;
+}
+

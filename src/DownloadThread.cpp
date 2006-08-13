@@ -121,6 +121,7 @@ void mDownloadThread::OnExit()
 
 void *mDownloadThread::Entry()
 {
+    wxLogNull nolog;
     wxSocketClient *connection = NULL;
     wxInputStream *filestream = NULL;
     int resp = -1;
@@ -259,16 +260,25 @@ void *mDownloadThread::Entry()
                 wxFileName file(downloadfile->GetDestination() + wxT("/") + downloadfile->GetName());
                 if (metalinkfile.Load(file.GetFullPath()))
                 {
+                    int index,count;
                     PrintMessage( wxT("\n"),HTMLSERVER);
                     PrintMessage( _("Metalink file detected\n"),HTMLSERVER);
-                    PrintMessage( _("Getting Metalink data\n"),HTMLSERVER);
+                    PrintMessage( _("Getting Metalink data...\n"),HTMLSERVER);
 
                     if (!downloadfile->metalinkdata)
                         downloadfile->metalinkdata = new mMetalinkData();
+                    if (downloadfile->GetMetalinkFileIndex() >= 0)
+                        index = downloadfile->GetMetalinkFileIndex();
+                    else
+                        index = 0;
                     downloadfile->metalinkdata->Clear();
-                    if (metalinkfile.GetMetalinkData(downloadfile->metalinkdata))
+                    wxLogDebug(wxT("Metalinkindex = ") + MyUtilFunctions::int2wxstr(index));
+                    count = metalinkfile.GetMetalinkData(downloadfile->metalinkdata,index);
+                    wxLogDebug(wxT("NumberofMetalinkFiles = ") + MyUtilFunctions::int2wxstr(count));
+                    if (count > 0 )
                     {
                         wxString str;
+                        int currentmetalinkindex = downloadfile->GetMetalinkFileIndex();
                         str = wxT("PublisherName: ");
                         str += downloadfile->metalinkdata->publishername;
                         str += wxT("\nPublisherUrl: ");
@@ -283,7 +293,7 @@ void *mDownloadThread::Entry()
                         if (downloadfile->metalinkdata->size > 0)
                             str += downloadfile->metalinkdata->size.ToString();
                         else
-                            str += wxT("Not available");
+                            str += _("Not available");
                         str += wxT("\nLanguage: ");
                         str += downloadfile->metalinkdata->language;
                         str += wxT("\nOS: ");
@@ -294,13 +304,31 @@ void *mDownloadThread::Entry()
                         //str += downloadfile->metalinkdata->sha1;
                         str += wxT("\n\n");
                         PrintMessage( str,HTMLSERVER);
-
+                        downloadfile->SetAsActive();
+                        downloadfile->SetMetalinkFileIndex(index);
+                        downloadfile->SetToReGetMetalinkWhenNeeded(TRUE);
+                        downloadlist->ChangeName(downloadfile,downloadfile->metalinkdata->filename);
                         currenturl = downloadfile->GetFirstUrl();
                         redirecting = TRUE;
-                        downloadlist->ChangeName(downloadfile,downloadfile->metalinkdata->filename);
-                        downloadfile->SetToReGetMetalinkWhenNeeded(TRUE);
                         ::wxRemoveFile(file.GetFullPath());
                         resp = -1;
+                        if (count > 1)
+                        {
+                            PrintMessage( _("This Metalink file contains multiples files.\n"),HTMLSERVER);
+                            if (currentmetalinkindex < 0)
+                            {
+                                PrintMessage( _("Creating all downloads....\n"),HTMLSERVER);
+                                for (int i = 1 ; i<count ; i++)
+                                {
+                                    wxCommandEvent newdownload(wxEVT_NEW_DOWNLOAD);
+                                    newdownload.SetInt(i);
+                                    newdownload.SetClientObject((wxClientData*)downloadfile);
+                                    wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(newdownload);
+                                    Sleep(500);
+                                }
+                            }
+                            PrintMessage( _("Getting file number ") + MyUtilFunctions::int2wxstr(index+1)  + wxT("\n"),HTMLSERVER);
+                        }
                         continue;
                     }
                     else
@@ -683,6 +711,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     destination.SetFullName(PREFIX + downloadfile->GetName() + EXT + MyUtilFunctions::int2wxstr(downloadpartindex));
     redirecting = FALSE;
     int restart = NO;
+    downloadfile->SetContentType(_("Not available"));
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
@@ -827,6 +856,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                                 downloadfile->sizecompleted[i] = 0;
                             }
                             downloadfile->totalsize =  sizetmp + *start;
+                            downloadfile->MarkWriteAsPending(TRUE);
                             *start = 0;
 
                             redirecting = TRUE;
@@ -834,7 +864,10 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                             return NULL;
                         }
                         else
+                        {
                             downloadfile->totalsize =  sizetmp + *start;
+                            downloadfile->MarkWriteAsPending(TRUE);
+                        }
 
                         downloadfile->SetRestartSupport();
                     }
@@ -869,6 +902,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                     else
                     {
                         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+                        downloadfile->criticalerror = TRUE;
                         client->Close(); delete client;
                         return NULL;
                     }
@@ -923,6 +957,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     wxString buffer = wxEmptyString;
     wxLongLong sizetmp;
     client->Notify(FALSE);
+    downloadfile->SetContentType(_("Not available"));
     //client->SetFlags(wxSOCKET_NOWAIT);
 
     address.Service(currenturl.GetPort());
@@ -1015,9 +1050,25 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
     PrintMessage( _("Verifying the size of the ") + currenturl.GetFullName() + wxT("...\n"));
-    if ((sizetmp = client->GetFileSize(currenturl.GetFullName()))== -1)
+    sizetmp = client->GetFileSize(currenturl.GetFullName());
+    if (sizetmp == -1)
+    {
+        wxArrayString fileList;
+        client->GetList(fileList,wxEmptyString,false);
+        for (unsigned int i=0;i<fileList.GetCount();i++)
+        {
+            wxLogDebug(fileList.Item(i));
+            if (fileList.Item(i).Lower() == currenturl.GetFullName().Lower())
+            {
+                sizetmp = client->GetFileSize(fileList.Item(i));
+                break;
+            }
+        }
+    }
+    if (sizetmp == -1)
     {
         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+        downloadfile->criticalerror = TRUE;
         client->Close();
         delete client;
         return NULL;
@@ -1056,12 +1107,16 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
                 }
                 *start = 0;
                 downloadfile->totalsize =  sizetmp;
+                downloadfile->MarkWriteAsPending(TRUE);
                 redirecting = TRUE;
                 client->Close(); delete client;
                 return NULL;
             }
             else
+            {
                 downloadfile->totalsize =  sizetmp;
+                downloadfile->MarkWriteAsPending(TRUE);
+            }
         }
     }
 
@@ -1077,6 +1132,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
     wxFileName source, destination;
     wxString buffer = wxEmptyString;
     wxLongLong sizetmp;
+    downloadfile->SetContentType(_("Not available"));
 
     source.Assign(currenturl.GetDir() + currenturl.GetFullRealName());
     destination.Assign(downloadfile->GetDestination());

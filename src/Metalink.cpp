@@ -12,13 +12,16 @@
 
 #include "wxDFast.h"
 
-bool mMetalinkDocument::GetMetalinkData(mMetalinkData *data)
+/*RETURN THE NUMBER OS FILE ENTRY ON THE METALINK FILE*/
+
+int mMetalinkDocument::GetMetalinkData(mMetalinkData *data,int index)
 {
-    bool result = FALSE;
+    int result = 0;
     wxXmlNode *rootnode;
     if (IsOk())
     {
         rootnode = this->GetRoot();
+        wxLogDebug(wxT("metalink tag"));
         if (rootnode->GetName().Lower() == wxT("metalink"))
         {
             wxXmlNode *node = rootnode->GetChildren();
@@ -26,6 +29,7 @@ bool mMetalinkDocument::GetMetalinkData(mMetalinkData *data)
             {
                 if (node->GetName().Lower() == wxT("publisher"))
                 {
+                    wxLogDebug(wxT("publisher tag..."));
                     wxXmlNode *subnode = node->GetChildren();
                     while (subnode)
                     {
@@ -38,63 +42,37 @@ bool mMetalinkDocument::GetMetalinkData(mMetalinkData *data)
                 }
                 else if (node->GetName().Lower() == wxT("description"))
                 {
+                    wxLogDebug(wxT("description tag..."));
                     data->description = node->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
                 }
                 else if (node->GetName().Lower() == wxT("files"))
                 {
+                    wxLogDebug(wxT("files tag..."));
                     wxXmlNode *subnode = node->GetChildren();
+                    bool ok = false;
                     while (subnode)
                     {
                         if (subnode->GetName().Lower() == wxT("file"))
                         {
-                            data->filename = subnode->GetPropVal(wxT("name"),wxT("")).Trim(TRUE).Trim(FALSE);
-                            wxXmlNode *subsubnode = subnode->GetChildren();
-                            while (subsubnode)
+                            if (result==index)
                             {
-                                if (subsubnode->GetName().Lower() == wxT("version"))
-                                    data->version = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
-                                else if (subsubnode->GetName().Lower() == wxT("size"))
-                                    data->size = MyUtilFunctions::wxstrtolonglong(subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
-                                else if (subsubnode->GetName().Lower() == wxT("language"))
-                                    data->language = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
-                                else if (subsubnode->GetName().Lower() == wxT("os"))
-                                    data->os = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
-                                else if (subsubnode->GetName().Lower() == wxT("verification"))
+                                wxLogDebug(wxT("Getting file tag..."));
+                                if (this->GetFileData(data,subnode))
                                 {
-                                    wxXmlNode *subsubsubnode = subsubnode->GetChildren();
-                                    while (subsubsubnode)
-                                    {
-                                        if (subsubsubnode->GetName().Lower() == wxT("hash"))
-                                        {
-                                            if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("md5"))
-                                                data->md5 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
-                                            else if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("sha1"))
-                                                data->sha1 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
-                                        }
-                                        subsubsubnode = subsubsubnode->GetNext();
-                                    }
+                                    ok = true;
+                                    wxLogDebug(wxT("OK"));
                                 }
-                                else if (subsubnode->GetName().Lower() == wxT("resources"))
-                                {
-                                    wxXmlNode *subsubsubnode = subsubnode->GetChildren();
-                                    while (subsubsubnode)
-                                    {
-                                        if (subsubsubnode->GetName().Lower() == wxT("url"))
-                                        {
-                                            mUrlName *urltmp = new mUrlName(subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
-                                            if ((urltmp->IsComplete()) && (!urltmp->GetFullRealName().Contains(wxT(".torrent"))))
-                                            {
-                                                data->urllist.Append(urltmp);
-                                                result = TRUE;
-                                            }
-                                        }
-                                        subsubsubnode = subsubsubnode->GetNext();
-                                    }
-                                }
-                                subsubnode = subsubnode->GetNext();
+                                else
+                                    break;
                             }
+                            result++;
                         }
                         subnode = subnode->GetNext();
+                    }
+                    if (!ok)
+                    {
+                        result = 0;
+                        wxLogDebug(wxT("ERRO"));
                     }
                 }
 
@@ -103,8 +81,59 @@ bool mMetalinkDocument::GetMetalinkData(mMetalinkData *data)
 
         }
     }
-
     return result;
+}
+
+int mMetalinkDocument::GetFileData(mMetalinkData *data,wxXmlNode *subnode)
+{
+    bool result = false;
+	data->filename = subnode->GetPropVal(wxT("name"),wxT("")).Trim(TRUE).Trim(FALSE);
+	wxXmlNode *subsubnode = subnode->GetChildren();
+	while (subsubnode)
+	{
+        if (subsubnode->GetName().Lower() == wxT("version"))
+            data->version = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+        else if (subsubnode->GetName().Lower() == wxT("size"))
+            data->size = MyUtilFunctions::wxstrtolonglong(subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
+        else if (subsubnode->GetName().Lower() == wxT("language"))
+            data->language = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+        else if (subsubnode->GetName().Lower() == wxT("os"))
+            data->os = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+        else if (subsubnode->GetName().Lower() == wxT("verification"))
+        {
+            wxXmlNode *subsubsubnode = subsubnode->GetChildren();
+            while (subsubsubnode)
+            {
+                if (subsubsubnode->GetName().Lower() == wxT("hash"))
+                {
+                    if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("md5"))
+                        data->md5 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                    else if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("sha1"))
+                        data->sha1 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                }
+                subsubsubnode = subsubsubnode->GetNext();
+            }
+        }
+        else if (subsubnode->GetName().Lower() == wxT("resources"))
+        {
+            wxXmlNode *subsubsubnode = subsubnode->GetChildren();
+            while (subsubsubnode)
+            {
+                if (subsubsubnode->GetName().Lower() == wxT("url"))
+                {
+                    mUrlName *urltmp = new mUrlName(subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
+                    if ((urltmp->IsComplete()) && (!urltmp->GetFullRealName().Contains(wxT(".torrent"))) && (urltmp->Type() != -1))
+                    {
+                        data->urllist.Append(urltmp);
+                        result = true;
+                    }
+                }
+                subsubsubnode = subsubsubnode->GetNext();
+            }
+        }
+        subsubnode = subsubnode->GetNext();
+	}
+	return result;
 }
 
 void mMetalinkData::Clear()

@@ -58,6 +58,14 @@ const wxEventType wxEVT_NEW_RELEASE = wxNewEventType();
         (wxObject *) NULL \
     ),
 
+const wxEventType wxEVT_NEW_DOWNLOAD = wxNewEventType();
+#define wxEVT_NEW_DOWNLOAD(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        wxEVT_NEW_DOWNLOAD, id, wxID_ANY, \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxCommandEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+
 BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menunew"),  mMainFrame::OnNew)
     EVT_MENU(XRCID("menuremove"),  mMainFrame::OnRemove)
@@ -101,6 +109,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     wxEVT_SHUTDOWN(wxID_ANY, mMainFrame::OnShutdownEvent)
     wxEVT_DISCONNECT(wxID_ANY, mMainFrame::OnDisconnectEvent)
     wxEVT_NEW_RELEASE(wxID_ANY, mMainFrame::OnNewRelease)
+    wxEVT_NEW_DOWNLOAD(wxID_ANY, mMainFrame::OnNewDownloadEvent)
     EVT_TOOL(-1, mMainFrame::OnToolLeftClick)
     EVT_TOOL_ENTER(-1, mMainFrame::OnToolMouseMove)
     EVT_ICONIZE(mMainFrame::OnIconize)
@@ -221,36 +230,36 @@ mMainFrame::mMainFrame()
         wxString colour;
         long red,green,blue;
         colour = mApplication::Configurations(READ,OPT_GRAPH_COLORBACK_REG, wxT(""));
-        if (!colour.Mid(1,3).ToLong(&red))            red = wxBLACK->Red();
+        if (!colour.Mid(0,3).ToLong(&red))            red = wxBLACK->Red();
         if (!colour.Mid(4,3).ToLong(&green))        green = wxBLACK->Green();
-        if (!colour.Mid(7,3).ToLong(&blue))            blue = wxBLACK->Blue();
+        if (!colour.Mid(8,3).ToLong(&blue))            blue = wxBLACK->Blue();
         programoptions.graphbackcolor.Set(red,green,blue);
     }
     {
         wxString colour;
         long red,green,blue;
         colour = mApplication::Configurations(READ,OPT_GRAPH_COLORGRID_REG, wxT(""));
-        if (!colour.Mid(1,3).ToLong(&red))            red = wxGREEN->Red();
+        if (!colour.Mid(0,3).ToLong(&red))            red = wxGREEN->Red();
         if (!colour.Mid(4,3).ToLong(&green))        green = wxGREEN->Green();
-        if (!colour.Mid(7,3).ToLong(&blue))            blue = wxGREEN->Blue();
+        if (!colour.Mid(8,3).ToLong(&blue))            blue = wxGREEN->Blue();
         programoptions.graphgridcolor.Set(red,green,blue);
     }
     {
         wxString colour;
         long red,green,blue;
         colour = mApplication::Configurations(READ,OPT_GRAPH_COLORLINE_REG, wxT(""));
-        if (!colour.Mid(1,3).ToLong(&red))            red = wxRED->Red();
+        if (!colour.Mid(0,3).ToLong(&red))            red = wxRED->Red();
         if (!colour.Mid(4,3).ToLong(&green))        green = wxRED->Green();
-        if (!colour.Mid(7,3).ToLong(&blue))            blue = wxRED->Blue();
+        if (!colour.Mid(8,3).ToLong(&blue))            blue = wxRED->Blue();
         programoptions.graphlinecolor.Set(red,green,blue);
     }
     {
         wxString colour;
         long red,green,blue;
         colour = mApplication::Configurations(READ,OPT_GRAPH_COLORFONT_REG, wxT(""));
-        if (!colour.Mid(1,3).ToLong(&red))            red = wxBLUE->Red();
+        if (!colour.Mid(0,3).ToLong(&red))            red = wxBLUE->Red();
         if (!colour.Mid(4,3).ToLong(&green))        green = wxBLUE->Green();
-        if (!colour.Mid(7,3).ToLong(&blue))            blue = wxBLUE->Blue();
+        if (!colour.Mid(8,3).ToLong(&blue))            blue = wxBLUE->Blue();
         programoptions.graphfontcolor.Set(red,green,blue);
     }
     programoptions.activatescheduling = mApplication::Configurations(READ,OPT_SCHED_ACTIVATESCHEDULING_REG,0);
@@ -784,7 +793,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mutex_programoptions->Unlock();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames)
 {
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments;
@@ -813,7 +822,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
     else
     {
         lstaddresslist->InsertItems(url,0);
-        for (i = 0; i < lstaddresslist->GetCount() ;i++)
+        for (unsigned int i = 0; i < lstaddresslist->GetCount() ;i++)
             lstaddresslist->Check(i);
     }
 
@@ -880,7 +889,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int parts,w
             {
                 mUrlList *urllist = new mUrlList();
                 urllist->Append(urltmp);
-                currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,spinsplit->GetValue(),
+                currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,metalinkindex,spinsplit->GetValue(),
                         edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),scheduled,bandwidth);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
             }
@@ -1221,7 +1230,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         startoption = DEFAULT_START_OPTION;
         destinationtmp = programoptions.destination;
     }
-    NewDownload(urltmp,destinationtmp,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
+    NewDownload(urltmp,destinationtmp,-1,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1699,7 +1708,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         XRCCTRL(dlg, "edtdestination",wxTextCtrl)->SetValue(currentfile->GetDestination());
         lstaddresslist->Clear();
         lstaddresslist->InsertItems(currentfile->GetUrlArray(),0);
-        for (int i = 0; i < lstaddresslist->GetCount() ;i++)
+        for (unsigned int i = 0; i < lstaddresslist->GetCount() ;i++)
             lstaddresslist->Check(i);
 
         if (currentfile->GetUser() == ANONYMOUS_USER)
@@ -1750,7 +1759,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             int bandwidth = XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->GetValue();
 
             mUrlList *urllist = new mUrlList();
-            for (int i = 0; i < lstaddresslist->GetCount(); i++)
+            for (unsigned int i = 0; i < lstaddresslist->GetCount(); i++)
             {
                 if (!lstaddresslist->IsChecked(i))
                     continue;
@@ -1836,7 +1845,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             else
                 startoption = DEFAULT_START_OPTION;
 
-            if (NewDownload(urlarray, destination, parts, user, password, reference, comments, startoption, FALSE,FALSE))
+            if (NewDownload(urlarray, destination,-1, parts, user, password, reference, comments, startoption, FALSE,FALSE))
             {
                 config->DeleteGroup(item.GetText());
                 list->DeleteItem(currentselection);
@@ -2064,7 +2073,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 
     mBoxOptions dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxoptions"));
-    int i,j;
+    unsigned int i,j;
     int oldgraphheight = programoptions.graphheight;
 
     XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->SetValue(programoptions.attempts);
@@ -2694,4 +2703,11 @@ void mMainFrame::OnFilePreview(wxCommandEvent& event)
         else
             wxMessageBox(_("File not found."),_("Error...") ,wxOK | wxICON_ERROR,this);
     }
+}
+
+void mMainFrame::OnNewDownloadEvent(wxCommandEvent& event)
+{
+    mDownloadFile *file = (mDownloadFile *)event.GetClientObject();
+    NewDownload(file->GetUrlArray(),file->GetDestination(),event.GetInt(),file->GetNumberofParts(),file->GetUser(),
+                file->GetPassword(),file->GetReferenceURL(),file->GetComments(),programoptions.laststartoption, false,false);
 }
