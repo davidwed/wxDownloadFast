@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxDownload Fast
-AppVerName=wxDownload Fast 0.5.0
+AppVerName=wxDownload Fast 0.5.1
 AppPublisher=Max Velasques
 AppPublisherURL=http://dfast.sourceforge.net
 AppSupportURL=http://dfast.sourceforge.net
