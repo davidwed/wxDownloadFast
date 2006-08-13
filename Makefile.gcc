@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.0
+VERSION = 0.5.1
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)

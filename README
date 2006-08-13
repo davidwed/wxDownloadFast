@@ -108,16 +108,16 @@ another place and run it from there. To do this, type:
 This method has as objective to create a Windows executable without the Windows.
 In this case it's necessary to install MinGW on linux and build the wxWidgets
 library with the follow command:
-# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc --target=i586-mingw32msvc --with-msw --enable-monolithic --disable-shared --enable-xrc
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc --target=i586-mingw32msvc --with-msw --enable-monolithic --disable-shared --enable-xrc --enable-unicode
 # make
 
 Where "/usr/i586-mingw32msvc" is the directory that the MinGW was installed.
 
 Then to build the wxDownload Fast do:
-# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.6.3
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.7.0
 # make
 
-Where "/home/user/wxWidgets-2.6.3" is the directoy where you built the wxWidgets.
+Where "/home/user/wxWidgets-2.7.0" is the directoy where you built the wxWidgets.
 
 5.3) Mac OS X
 ----------
