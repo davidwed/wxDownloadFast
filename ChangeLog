@@ -1,3 +1,9 @@
+0.5.1
+===================================================
+- Added support for multiples files inside metalinks
+- Fixed bug when saving graph colors
+- Fixed bug when getting file size on FTP servers
+
 0.5.0
 ===================================================
 - Fixed bug when the program access a server and 

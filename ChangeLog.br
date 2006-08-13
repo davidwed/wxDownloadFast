@@ -1,3 +1,11 @@
+0.5.1
+===================================================
+- Adicionado suporte a multiplos arquivos dentro
+  de um único arquivo metalink
+- Corrigido erro quando salvando as cores do gráfico
+- Corrigido erro obtendo tamanho de arquivo em
+  servidores FTP
+
 0.5.0
 ===================================================
 - Corrigido erro quando o programa acessa um
