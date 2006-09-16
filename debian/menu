@@ -3,4 +3,4 @@
       section="Apps/Net" \
       title="wxDownload Fast" \
       command="/usr/bin/wxdfast" \
-      icon="/usr/share/pixmaps/wxdfast.xpm"
+      icon="/usr/share/pixmaps/wxdfast.png"

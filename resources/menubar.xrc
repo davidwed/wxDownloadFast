@@ -9,42 +9,42 @@
             <object class="wxMenuItem" name="menunew">
                 <label>New Download</label>
                 <accel>CTRL-N</accel>
-                <bitmap>small/new.xpm</bitmap>
+                <bitmap>Old/small/new.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menuremove">
                 <label>Remove Download</label>
                 <accel>CTRL-R</accel>
-                <bitmap>small/remove.xpm</bitmap>
+                <bitmap>Old/small/remove.xpm</bitmap>
             </object>
             <object class="separator" />
             <object class="wxMenuItem" name="menuschedule">
                 <label>Schedule Download</label>
                 <accel>CTRL-H</accel>
-                <bitmap>small/schedule.xpm</bitmap>
+                <bitmap>Old/small/schedule.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menustart">
                 <label>Start Download</label>
                 <accel>CTRL-S</accel>
-                <bitmap>small/start.xpm</bitmap>
+                <bitmap>Old/small/start.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menustop">
                 <label>Stop Download</label>
                 <accel>CTRL-T</accel>
-                <bitmap>small/stop.xpm</bitmap>
+                <bitmap>Old/small/stop.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menustartall">
                 <label>Start all downloads</label>
-                <bitmap>small/startall.xpm</bitmap>
+                <bitmap>Old/small/startall.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menustopall">
                 <label>Stop all downloads</label>
-                <bitmap>small/stopall.xpm</bitmap>
+                <bitmap>Old/small/stopall.xpm</bitmap>
             </object>
             <object class="separator" />
             <object class="wxMenuItem" name="menuexit">
                 <label>Exit</label>
                 <accel>Alt-F4</accel>
-                <bitmap>small/exit.xpm</bitmap>
+                <bitmap>Old/small/exit.xpm</bitmap>
             </object>
         </object>
         <object class="wxMenu" name="menuedit">
@@ -53,7 +53,7 @@
             <object class="wxMenuItem" name="menupaste">
                 <label>Paste URL</label>
                 <accel>CTRL-V</accel>
-                <bitmap>small/paste.xpm</bitmap>
+                <bitmap>Old/small/paste.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menucopyurl">
                 <label>Copy URL</label>
@@ -81,11 +81,11 @@
             <object class="wxMenuItem" name="menushowgraph">
                 <label>Show/Hide Graph</label>
                 <accel>CTRL-G</accel>
-                <bitmap>small/graph.xpm</bitmap>
+                <bitmap>Old/small/graph.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menushowprogressbar">
                 <label>Show/Hide Progress Bar</label>
-                <bitmap>small/progress.xpm</bitmap>
+                <bitmap>Old/small/progress.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menudetails">
                 <label>Show/Hide Details</label>
@@ -126,7 +126,7 @@
             <object class="wxMenuItem" name="menuproperties">
                 <label>Properties of Download</label>
                 <accel>CTRL-P</accel>
-                <bitmap>small/properties.xpm</bitmap>
+                <bitmap>Old/small/properties.xpm</bitmap>
             </object>
             <object class="wxMenuItem" name="menumove">
                 <label>Move File</label>
@@ -163,7 +163,7 @@
             <object class="wxMenuItem" name="menuoptions">
                 <label>Options</label>
                 <accel>CTRL-O</accel>
-                <bitmap>small/options.xpm</bitmap>
+                <bitmap>Old/small/options.xpm</bitmap>
             </object>
         </object>
         <object class="wxMenu" name="menuhelp">
@@ -182,7 +182,7 @@
             <object class="wxMenuItem" name="menuabout">
                 <label>About</label>
                 <accel>F1</accel>
-                <bitmap>small/wxdfast.xpm</bitmap>
+                <bitmap>Old/small/wxdfast.xpm</bitmap>
             </object>
         </object>
     </object>

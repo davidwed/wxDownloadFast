@@ -1,3 +1,9 @@
+0.5.2
+===================================================
+- Added a new theme called RipStop
+- Now if you try to set as destination a directory
+  that don't exists, the program ask to create it
+
 0.5.1
 ===================================================
 - Added support for multiples files inside metalinks

@@ -163,8 +163,8 @@ bool mApplication::OnInit()
     dummy->SetTimeout(0);
 
     wxImage::AddHandler(new wxXPMHandler);
+    wxImage::AddHandler(new wxPNGHandler);
     wxXmlResource::Get()->InitAllHandlers();
-    #ifdef USE_EXTERNAL_XRC
     wxString resourcepath = wxT("resources/");
     if (!wxFileExists(resourcepath + wxT("mainwindow.xrc")))
     {
@@ -176,6 +176,8 @@ bool mApplication::OnInit()
         resourcepath = wxT("/usr/share/wxdfast/");
         //#endif
     }
+    themepath = resourcepath + wxT("RipStop/");
+    #ifdef USE_EXTERNAL_XRC
     wxXmlResource::Get()->Load(resourcepath + wxT("mainwindow.xrc"));
     wxXmlResource::Get()->Load(resourcepath + wxT("menubar.xrc"));
     wxXmlResource::Get()->Load(resourcepath + wxT("toolbar.xrc"));

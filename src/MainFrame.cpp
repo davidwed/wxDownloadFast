@@ -17,14 +17,14 @@ IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
 
 ////////////////////////XPM IMAGES////////////////////////////////
 #ifndef __WXMSW__
-#include "../resources/wxdfast.xpm"
+#include "../resources/Old/wxdfast.xpm"
 #endif
-#include "../resources/small/stop.xpm"
-#include "../resources/small/start.xpm"
-#include "../resources/small/ok.xpm"
-#include "../resources/small/error.xpm"
-#include "../resources/small/queue.xpm"
-#include "../resources/small/schedule.xpm"
+#include "../resources/Old/small/stop.xpm"
+#include "../resources/Old/small/start.xpm"
+#include "../resources/Old/small/ok.xpm"
+#include "../resources/Old/small/error.xpm"
+#include "../resources/Old/small/queue.xpm"
+#include "../resources/Old/small/schedule.xpm"
 
 const wxEventType wxEVT_OPEN_URL = wxNewEventType();
 #define wxEVT_OPEN_URL(id, fn) \
@@ -164,25 +164,6 @@ mMainFrame::mMainFrame()
     wxXmlResource::Get()->LoadFrame(this,NULL, wxT("mainframe"));
     SetSize(-1,-1,600,400);
     SetTitle(PROGRAM_NAME);
-    #ifdef __WXMSW__
-    SetIcon(wxICON(wxdfast_ico));
-    #else
-    SetIcon(wxICON(wxdfast));
-    #endif
-
-    //LOAD THE MENU BAR
-    if ((menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menubar"))))
-        this->SetMenuBar(menubar);
-    else
-        menubar = NULL;
-
-    //LOAD THE TOOL BAR
-    if ((toolbar = wxXmlResource::Get()->LoadToolBar(this,wxT("toolbar"))))
-        this->SetToolBar(toolbar);
-    else
-        toolbar = NULL;
-
-    statusbar = this->GetStatusBar();
 
     //LOAD USER OPTIONS
     programoptions.currentrelease = mApplication::Configurations(READ,OPT_CURRENT_RELEASE,VERSION);
@@ -281,6 +262,39 @@ mMainFrame::mMainFrame()
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
     programoptions.bandwidthoption = mApplication::Configurations(READ,OPT_BAND_WIDTH_OPTION_REG,0);
     programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,20l);
+    programoptions.taskbariconsize = mApplication::Configurations(READ,OPT_TASKBAR_ICON_SIZE_REG,32);
+
+   //LOAD THE PROGRAM ICON
+    wxString iconpath = wxGetApp().themepath + wxT("logo/wxdfast.png");
+    if (wxFileName::FileExists(iconpath))
+    {
+        wxBitmap tmpicon = wxBitmap(iconpath);
+        //wxBitmap tmpicon = wxBitmap(wxBitmap(iconpath).ConvertToImage().Rescale(32,32));
+        wxGetApp().appicon.CopyFromBitmap(tmpicon);
+    }
+    else
+    {
+        #ifdef __WXMSW__
+        wxGetApp().appicon = wxICON(wxdfast_ico);
+        #else
+        wxGetApp().appicon = wxICON(wxdfast);
+        #endif
+    }
+    SetIcon(wxGetApp().appicon);
+
+    //LOAD THE MENU BAR
+    if ((menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menubar"))))
+        this->SetMenuBar(menubar);
+    else
+        menubar = NULL;
+
+    //LOAD THE TOOL BAR
+    if ((toolbar = wxXmlResource::Get()->LoadToolBar(this,wxT("toolbar"))))
+        this->SetToolBar(toolbar);
+    else
+        toolbar = NULL;
+
+    statusbar = this->GetStatusBar();
 
     //CHECK THE RIGHT LANGUAGE MENU
     MarkCurrentLanguageMenu(mApplication::Configurations(READ,LANGUAGE_REG,0));
@@ -350,11 +364,7 @@ mMainFrame::mMainFrame()
     this->active = TRUE;
     taskbaricon = new mTaskBarIcon(this);
     if (!(wxGetApp().parameters->Found(wxT("notray"))))
-        #ifdef __WXMSW__
-        taskbaricon->SetIcon(wxICON(wxdfast_ico),PROGRAM_NAME);
-        #else
-        taskbaricon->SetIcon(wxICON(wxdfast),PROGRAM_NAME);
-        #endif
+        taskbaricon->SetIcon(wxGetApp().appicon,PROGRAM_NAME);
     taskbaricon->restoring = FALSE;
 
     //HIDE OR SHOW THE SPEED GRAPH
@@ -1651,6 +1661,50 @@ void mMainFrame::SetLanguage(int language)
         XRCCTRL(*this, "btnpreview", wxButton )->SetLabel(_("Preview"));
     }
 
+    //RESET THE STATUSBAR TEXT
+    if (statusbar)
+    {
+        this->defaultstatusbarmessage = wxEmptyString;
+        wxStringTokenizer newrelease(programoptions.currentrelease,wxT("."));
+        wxStringTokenizer currentrelease(VERSION,wxT("."));
+        long val01,val02;
+        for (int i=0;i<3;i++)
+        {
+            newrelease.GetNextToken().ToLong(&val01);
+            currentrelease.GetNextToken().ToLong(&val02);
+            if (val01 > val02)
+            {
+                this->defaultstatusbarmessage = _("NEW RELEASE: ");
+                this->defaultstatusbarmessage += wxT("wxDownload Fast ");
+                this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
+                break;
+            }
+        }
+        statusbar->SetStatusText(this->defaultstatusbarmessage);
+        if (programoptions.bandwidthoption == 1)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Per Download");
+            statusbar->SetStatusText(temp,2);
+        }
+        else if (programoptions.bandwidthoption == 2)
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Active");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+            statusbar->SetStatusText(temp,2);
+        }
+        else
+        {
+            wxString temp = _("Band control");
+            temp += wxT(": ");
+            temp += _("Unlimited");
+            statusbar->SetStatusText(temp,2);
+        }
+    }
+
     //WRITE LANGUAGE SELECTION
     mApplication::Configurations(WRITE,LANGUAGE_REG,language);
 
@@ -2364,7 +2418,20 @@ void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxDialog dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxabout"));
-    XRCCTRL(dlg, "lblextrainfo",wxStaticText)->SetLabel(_(" Version: ") + VERSION + wxT("\n\n") + XRCCTRL(dlg, "lblextrainfo",wxStaticText)->GetLabel());
+    wxString aboutstring;
+    aboutstring  = _(" Version: ") + VERSION + wxT("\n");
+    aboutstring += _(" Creator: ");
+    aboutstring += wxT("Max Magalhães Velasques\n");
+    aboutstring += _(" RipStop Theme designer: ");
+    aboutstring += wxT("Erno Szabados\n\n");
+    aboutstring += _(" Special thanks to ");
+    aboutstring += wxT("Anthony Bryan");
+    aboutstring += _(" for several tips and\n donations");
+    aboutstring += wxT("\n\n");
+    aboutstring += XRCCTRL(dlg, "lblextrainfo",wxStaticText)->GetLabel();
+
+    XRCCTRL(dlg, "lblextrainfo",wxStaticText)->SetLabel(aboutstring);
+
     dlg.ShowModal();
     CheckNewRelease();
 }

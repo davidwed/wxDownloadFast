@@ -77,6 +77,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         if (!urltmp->IsComplete())
         {
             wxMessageBox(_("The follow URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
+            delete urltmp;
             return;
         }
         list->SetString(j,urltmp->GetFullPath());
@@ -104,8 +105,21 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     wxFileName *desttmp = new wxFileName(destination);
     if (!desttmp->DirExists())
     {
-        wxMessageBox(_("The destination directory is invalid!"),_("Error..."),wxOK | wxICON_ERROR,this);
-        return;
+        if (wxMessageBox(_("The destination directory don't exists!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
+        {
+            wxLogNull nolog;
+            if (!desttmp->Mkdir(0777,wxPATH_MKDIR_FULL))
+            {
+                wxMessageBox(_("You don't have permission to create the directory!"),_("Error..."),wxOK | wxICON_ERROR,this);
+                delete desttmp;
+                return;
+            }
+        }
+        else
+        {
+            delete desttmp;
+            return;
+        }
     }
     if (XRCCTRL(*this, "spinsplit",wxSpinCtrl)->GetValue() > MAX_NUM_PARTS)
     {

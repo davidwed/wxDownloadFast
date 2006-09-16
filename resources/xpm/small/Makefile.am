@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-pkgdatadir = $(datadir)/@PACKAGE@/small
+pkgdatadir = $(datadir)/@PACKAGE@/xpm/small
 
 dist_pkgdata_DATA = \
 	error.xpm \

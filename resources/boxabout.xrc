@@ -18,7 +18,8 @@
                     <object class="sizeritem">
                         <flag>wxADJUST_MINSIZE</flag>
                         <object class="wxStaticBitmap" name="wxdfastlogo">
-                            <bitmap>boxabout.xpm</bitmap>
+                            <bitmap>RipStop/logo/logo_3d.png</bitmap>
+                            <size>350,98</size>
                         </object>
                     </object>
                     <object class="sizeritem">
@@ -27,7 +28,7 @@
                             <!-- <style>wxALIGN_RIGHT</style>
                             <fg>#3415ff</fg> -->
                             <bg>#ffffff</bg>
-                            <size>300, 70</size>
+                            <size>350, 180</size>
                             <label> Help to improve the program!\n Donate to this project!</label>
                         </object>
                     </object>

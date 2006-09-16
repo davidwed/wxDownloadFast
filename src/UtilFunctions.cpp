@@ -152,7 +152,7 @@ wxString MyUtilFunctions::GetProgramFilesDir()
     regKey.SetName(idName);
     regKey.QueryValue(wxT("ProgramFilesDir"),result);
     regKey.Close();
-	
+
     return result;
 }
 
@@ -165,7 +165,7 @@ wxString MyUtilFunctions::GetMyDocumentsDir()
     regKey.SetName(idName);
     regKey.QueryValue(wxT("Personal"),result);
     regKey.Close();
-	
+
     return result;
 }
 
