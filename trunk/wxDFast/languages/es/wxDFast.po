@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-07-25 11:56-0300\n"
+"PO-Revision-Date: 2006-09-07 17:06-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Max Velasques, Carlos Garces <max_mv@yahoo.com.br>\n"
 "MIME-Version: 1.0\n"
@@ -259,7 +259,7 @@ msgstr ""
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:291
 #: /tmp/dummy:168
 msgid "Comments"
-msgstr "Comentários"
+msgstr "Comentarios"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1347
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:152

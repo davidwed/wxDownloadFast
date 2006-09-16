@@ -14,7 +14,7 @@
 
 ////////////////////////XPM IMAGES////////////////////////////////
 #ifndef __WXMSW__
-#include "../resources/wxdfast.xpm"
+#include "../resources/Old/wxdfast.xpm"
 #endif
 
 
@@ -63,11 +63,8 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
             taskTip.Printf(_("Total Speed: %.2fKb/s\nTotal Complete: %d%%\nDownloads in progress: %d"), totalspeed/1024.0, totalpercentual/count,count);
         }
     }
-    #ifdef __WXMSW__
-    SetIcon(wxICON(wxdfast_ico),taskTip);
-    #else
-    SetIcon(wxICON(wxdfast),taskTip);
-    #endif
+    SetIcon(wxGetApp().appicon,taskTip);
+
 }
 
 wxMenu *mTaskBarIcon::CreatePopupMenu()

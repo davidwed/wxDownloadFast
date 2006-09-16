@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-pkgdatadir = $(datadir)/@PACKAGE@/big
+pkgdatadir = $(datadir)/@PACKAGE@/xpm/big
 
 dist_pkgdata_DATA = \
 	close.xpm \

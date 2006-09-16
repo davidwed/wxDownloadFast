@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.1
+VERSION = 0.5.2
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -175,15 +175,28 @@ endif
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)
-	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.ico $(DESTDIR)/usr/share/$(BIN)
-ifeq ($(XRC), 1)
 	$(INSTALL_FILE) $(RESOURCE_DIR)*.xrc $(DESTDIR)/usr/share/$(BIN)/
-	$(INSTALL_FILE) $(RESOURCE_DIR)*.xpm $(DESTDIR)/usr/share/$(BIN)/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/big
-	$(INSTALL_FILE) $(RESOURCE_DIR)big/*.xpm $(DESTDIR)/usr/share/$(BIN)/big/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/small
-	$(INSTALL_FILE) $(RESOURCE_DIR)small/*.xpm $(DESTDIR)/usr/share/$(BIN)/small/
-endif
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old
+	$(INSTALL_FILE) $(RESOURCE_DIR)Old/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/
+	$(INSTALL_FILE) $(RESOURCE_DIR)Old/*.ico $(DESTDIR)/usr/share/$(BIN)/Old/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old/big
+	$(INSTALL_FILE) $(RESOURCE_DIR)Old/big/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/big/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old/small
+	$(INSTALL_FILE) $(RESOURCE_DIR)Old/small/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/small/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/readme.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/licence.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/png/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/svg/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/logo
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.ico $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
@@ -211,13 +224,24 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/ChangeLog*
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/gpl.txt
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/COPYING
-	rm -f $(DESTDIR)/usr/share/$(BIN)/small/*.xpm
-	rmdir $(DESTDIR)/usr/share/$(BIN)/small
-	rm -f $(DESTDIR)/usr/share/$(BIN)/big/*.xpm
-	rmdir $(DESTDIR)/usr/share/$(BIN)/big
-	rm -f $(DESTDIR)/usr/share/$(BIN)/*.xpm
+	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/small/*.xpm
+	rmdir $(DESTDIR)/usr/share/$(BIN)/Old/small
+	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/big/*.xpm
+	rmdir $(DESTDIR)/usr/share/$(BIN)/Old/big
+	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/*.xpm
+	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/*.ico
+	rmdir $(DESTDIR)/usr/share/$(BIN)/Old
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png/*.png
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg/*.svg
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.png
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.svg
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.ico
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/logo
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop
 	rm -f $(DESTDIR)/usr/share/$(BIN)/*.xrc
-	rm -f $(DESTDIR)/usr/share/$(BIN)/wxdfast.ico
 	rmdir $(DESTDIR)/usr/share/$(BIN)
 	rm -f $(DESTDIR)/usr/share/pixmaps/wxdfast.xpm
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
@@ -267,19 +291,40 @@ source:
 	cp $(MANPAGE_DIR)pt_BR/man1/wxdfast.1.gz $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
 	cp $(MANPAGE_DIR)pt_BR/man1/Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)pt_BR/man1
 	mkdir $(BIN)-$(VERSION)/resources
-	cp $(RESOURCE_DIR)*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)
-	cp $(RESOURCE_DIR)*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)*.xrc $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast.desktop $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast.iss $(BIN)-$(VERSION)/$(RESOURCE_DIR)
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
-	cp $(RESOURCE_DIR)small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
-	cp $(RESOURCE_DIR)small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)small
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
-	cp $(RESOURCE_DIR)big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
-	cp $(RESOURCE_DIR)big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)big
+	mkdir $(BIN)-$(VERSION)/resources/Old
+	cp $(RESOURCE_DIR)Old/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
+	cp $(RESOURCE_DIR)Old/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
+	cp $(RESOURCE_DIR)Old/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
+	cp $(RESOURCE_DIR)Old/small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
+	cp $(RESOURCE_DIR)Old/small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
+	cp $(RESOURCE_DIR)Old/big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
+	cp $(RESOURCE_DIR)Old/big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/licence.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/readme.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
+	cp $(RESOURCE_DIR)RipStop/icon/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
+	cp $(RESOURCE_DIR)RipStop/icon/png/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
+	cp $(RESOURCE_DIR)RipStop/icon/png/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
+	cp $(RESOURCE_DIR)RipStop/icon/svg/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
+	cp $(RESOURCE_DIR)RipStop/icon/svg/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
+	cp $(RESOURCE_DIR)RipStop/logo/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
+	cp $(RESOURCE_DIR)RipStop/logo/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
+	cp $(RESOURCE_DIR)RipStop/logo/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
+	cp $(RESOURCE_DIR)RipStop/logo/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
 	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
 	cp $(SOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(SOURCE_DIR)

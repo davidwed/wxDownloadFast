@@ -1,3 +1,10 @@
+0.5.2
+===================================================
+- Adicionado um novo tema chamado RipStop
+- Agora se você tentar definir como destino um
+  diretório que não existe, o programa perguntará
+  se você deseja criá-lo
+
 0.5.1
 ===================================================
 - Adicionado suporte a multiplos arquivos dentro

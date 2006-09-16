@@ -88,7 +88,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.1");
+    const wxString VERSION = wxT("0.5.2");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -203,6 +203,7 @@
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
     const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
     const wxString OPT_BAND_WIDTH_GENERAL_REG = wxT("bandwidthgeneral");
+    const wxString OPT_TASKBAR_ICON_SIZE_REG = wxT("taskbariconsize");
 
 
     const wxString EXT = wxT(".dfast");
@@ -499,6 +500,7 @@
         bool rememberboxnewoptions;
         int bandwidthoption;
         long bandwidth;
+        int taskbariconsize;
     };
 
     class mApplication : public wxApp
@@ -525,6 +527,8 @@
         wxCondition m_condAllDone;
         bool m_waitingUntilAllDone;
         void SetLanguage(int language);
+        wxString themepath;
+        wxIcon appicon;
     private:
         wxLocale *m_locale;
     };
