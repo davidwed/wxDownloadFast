@@ -345,6 +345,7 @@ source:
 	cp Makefile.am $(BIN)-$(VERSION)
 	cp Makefile.gcc $(BIN)-$(VERSION)
 	cp makefile.vc $(BIN)-$(VERSION)
+	cp wxDFast.cbp $(BIN)-$(VERSION)
 
 cleanRelease: tempclean
 	rm -fr $(BUILD_GCC)Release
