@@ -18,7 +18,7 @@
             <object class="separator"/>
         <object class="tool"  name="toolschedule">
             <label>Schedule</label>
-            <bitmap>Old/big/schedule.xpm</bitmap>
+            <bitmap>xpm/big/schedule.xpm</bitmap>
             <tooltip>Mark the selected download as scheduled</tooltip>
         </object>
         <object class="tool"  name="toolstart">

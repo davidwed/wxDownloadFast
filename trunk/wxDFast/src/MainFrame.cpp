@@ -17,14 +17,14 @@ IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
 
 ////////////////////////XPM IMAGES////////////////////////////////
 #ifndef __WXMSW__
-#include "../resources/Old/wxdfast.xpm"
+#include "../resources/xpm/wxdfast.xpm"
 #endif
-#include "../resources/Old/small/stop.xpm"
-#include "../resources/Old/small/start.xpm"
-#include "../resources/Old/small/ok.xpm"
-#include "../resources/Old/small/error.xpm"
-#include "../resources/Old/small/queue.xpm"
-#include "../resources/Old/small/schedule.xpm"
+#include "../resources/xpm/small/stop.xpm"
+#include "../resources/xpm/small/start.xpm"
+#include "../resources/xpm/small/ok.xpm"
+#include "../resources/xpm/small/error.xpm"
+#include "../resources/xpm/small/queue.xpm"
+#include "../resources/xpm/small/schedule.xpm"
 
 const wxEventType wxEVT_OPEN_URL = wxNewEventType();
 #define wxEVT_OPEN_URL(id, fn) \
