@@ -14,7 +14,7 @@
 
 ////////////////////////XPM IMAGES////////////////////////////////
 #ifndef __WXMSW__
-#include "../resources/Old/wxdfast.xpm"
+#include "../resources/xpm/wxdfast.xpm"
 #endif
 
 
