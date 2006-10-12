@@ -4,7 +4,7 @@
     <object class="wxToolBar" name="toolbar">
         <!--REMOVE THE wxTB_TEXT FLAG TO REMOVE LABELS -->
         <style>wxTB_FLAT|wxTB_3DBUTTONS|wxTB_TEXT</style>
-        <bitmapsize>24,24</bitmapsize>
+        <bitmapsize>40,40</bitmapsize>
         <object class="tool"  name="toolnew">
             <label>New</label>
             <bitmap>RipStop/icon/png/download_add.png</bitmap>
