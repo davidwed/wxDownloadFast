@@ -44,6 +44,8 @@
                                             <object class="sizeritem">
                                                 <object class="wxSpinCtrl" name="spinattempts">
                                                     <style>wxSP_ARROW_KEYS</style>
+                                                    <min>5</min>
+                                                    <max>1000</max>
                                                     <tooltip>Number of attempts</tooltip>
                                                 </object>
                                             </object>
@@ -1027,7 +1029,7 @@
                                             <object class="sizeritem">
                                                 <object class="wxSpinCtrl" name="spinbandwithcustom">
                                                     <style>wxSP_ARROW_KEYS</style>
-                                                    <min>5</min>
+                                                    <min>1</min>
                                                     <max>500</max>
                                                     <tooltip>Set the maximum bandwidth in Kb/s to be used by the program</tooltip>
                                                 </object>

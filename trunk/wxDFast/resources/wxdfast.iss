@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxDownload Fast
-AppVerName=wxDownload Fast 0.5.1
+AppVerName=wxDownload Fast 0.5.2
 AppPublisher=Max Velasques
 AppPublisherURL=http://dfast.sourceforge.net
 AppSupportURL=http://dfast.sourceforge.net
@@ -39,7 +39,10 @@ Source: "..\languages\es\wxDFast.mo"; DestDir: "{app}\languages\es"; Flags: igno
 Source: "..\languages\es\wxDFast.po"; DestDir: "{app}\languages\es"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\resources\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\resources\RipStop\logo\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\resources\RipStop\logo\logo_3d.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
+Source: "..\resources\RipStop\logo\wxdfast.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
+Source: "..\resources\RipStop\icon\png\*.png"; DestDir: "{app}\resources\RipStop\icon\png"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [REGISTRY]
