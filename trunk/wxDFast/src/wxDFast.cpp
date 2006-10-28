@@ -37,7 +37,7 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
     wxArrayString urls;
     wxStringTokenizer *tkz01, *tkz02;
     int numberofparts, startoption;
-    wxString textfile,destination,comments,reference,strurls,strtemp;
+    wxString textfile,destination,comments,command,reference,strurls,strtemp;
     wxTextFile file;
 
     tkz01 = new wxStringTokenizer(urlsparameter, wxT("$"));
@@ -70,9 +70,11 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         numberofparts = wxGetApp().mainframe->programoptions.lastnumberofparts;
         if (destination == wxT("NONE"))
             destination = wxGetApp().mainframe->programoptions.lastdestination;
+        command = wxGetApp().mainframe->programoptions.lastcommand;
     }
     else
     {
+        command = wxEmptyString;
         startoption = DEFAULT_START_OPTION;
         numberofparts = DEFAULT_NUM_PARTS;
         if (destination == wxT("NONE"))
@@ -84,7 +86,7 @@ bool mConnection::OnExecute(const wxString& topic, wxChar* data, int size, wxIPC
         reference = wxEmptyString;
 
     if (urls.GetCount() > 0)
-        wxGetApp().mainframe->NewDownload(urls,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
+        wxGetApp().mainframe->NewDownload(urls,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,command,startoption,TRUE,TRUE);
     else if (!wxGetApp().mainframe->IsShown())
     {
         wxCommandEvent event;
@@ -217,7 +219,7 @@ bool mApplication::OnInit()
 
     //IF A URL OR A TEXT FILE WAS PASSED BY THE COMMAND LINE
     int startoption, numberofparts;
-    wxString listtextfile,reference,comments,destination;
+    wxString listtextfile,reference,comments,destination,command;
     wxArrayString url;
     if (parameters->GetParamCount() > 0)
     {
@@ -246,9 +248,11 @@ bool mApplication::OnInit()
         startoption = mainframe->programoptions.laststartoption;
         if (!parameters->Found(wxT("destination"),&destination))
             destination = mainframe->programoptions.lastdestination;
+        command = mainframe->programoptions.lastcommand;
     }
     else
     {
+        command = wxEmptyString;
         numberofparts = DEFAULT_NUM_PARTS;
         startoption = DEFAULT_START_OPTION;
         if (!parameters->Found(wxT("destination"),&destination))
@@ -259,7 +263,7 @@ bool mApplication::OnInit()
     if (!parameters->Found(wxT("reference"),&reference))
         reference = wxEmptyString;
     if (url.GetCount() > 0)
-        mainframe->NewDownload(url,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,startoption,TRUE,TRUE);
+        mainframe->NewDownload(url,destination,-1,numberofparts,wxEmptyString,wxEmptyString,reference,comments,command,startoption,TRUE,TRUE);
 
 
     if (!parameters->Found(wxT("hide")))

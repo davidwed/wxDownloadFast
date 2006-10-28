@@ -1066,7 +1066,7 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxStaticText" name="lblfirefox">
-                                                    <label>To integrate with Firefox, do the following:\n\n1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)\n2) After restart the Firefox, go to:\n     Tools -> FlashGot -> More Options\n3) On the General tab, click Add\n4) In \"Enter Download Manager name\", insert:\n     wxDownload Fast\n5) In path, insert the place where the program was installed.\nIn Linux it should be in /usr/bin/wxdfast\nIn Windows, it should be C:/Program Files/wxDownload Fast/wxdfast.exe\n6) In Arguments template of the program insert: -list[UFILE] -reference[REFERER]</label>
+                                                    <label>To integrate with Firefox, do the following:\n\n1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)\n2) After restart the Firefox, go to:\n     Tools -> FlashGot -> More Options\n3)Now select the wxDownload Fast on the Download Manager's List</label>
                                                     <size>400, 250</size>
                                                 </object>
                                             </object>
