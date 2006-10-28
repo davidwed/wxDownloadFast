@@ -4,7 +4,7 @@ wxdfast_ico ICON "../resources/RipStop/logo/wxdfast.ico"
 
 1 VERSIONINFO
 FILEVERSION 0,5,2,163
-PRODUCTVERSION 0,5,0,163
+PRODUCTVERSION 0,5,2,163
 // FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
