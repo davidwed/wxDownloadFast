@@ -176,13 +176,13 @@ endif
 	$(INSTALL_FILE) $(RESOURCE_DIR)wxdfast.xpm $(DESTDIR)/usr/share/pixmaps
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)
 	$(INSTALL_FILE) $(RESOURCE_DIR)*.xrc $(DESTDIR)/usr/share/$(BIN)/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old
-	$(INSTALL_FILE) $(RESOURCE_DIR)Old/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/
-	$(INSTALL_FILE) $(RESOURCE_DIR)Old/*.ico $(DESTDIR)/usr/share/$(BIN)/Old/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old/big
-	$(INSTALL_FILE) $(RESOURCE_DIR)Old/big/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/big/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/Old/small
-	$(INSTALL_FILE) $(RESOURCE_DIR)Old/small/*.xpm $(DESTDIR)/usr/share/$(BIN)/Old/small/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/xpm
+	$(INSTALL_FILE) $(RESOURCE_DIR)xpm/*.xpm $(DESTDIR)/usr/share/$(BIN)/xpm/
+	$(INSTALL_FILE) $(RESOURCE_DIR)xpm/*.ico $(DESTDIR)/usr/share/$(BIN)/xpm/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/xpm/big
+	$(INSTALL_FILE) $(RESOURCE_DIR)xpm/big/*.xpm $(DESTDIR)/usr/share/$(BIN)/xpm/big/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/xpm/small
+	$(INSTALL_FILE) $(RESOURCE_DIR)xpm/small/*.xpm $(DESTDIR)/usr/share/$(BIN)/xpm/small/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/readme.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/licence.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
@@ -224,13 +224,13 @@ endif
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/ChangeLog*
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/gpl.txt
 	rm -f $(DESTDIR)/usr/lib/$(BIN)/COPYING
-	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/small/*.xpm
-	rmdir $(DESTDIR)/usr/share/$(BIN)/Old/small
-	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/big/*.xpm
-	rmdir $(DESTDIR)/usr/share/$(BIN)/Old/big
-	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/*.xpm
-	rm -f $(DESTDIR)/usr/share/$(BIN)/Old/*.ico
-	rmdir $(DESTDIR)/usr/share/$(BIN)/Old
+	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/small/*.xpm
+	rmdir $(DESTDIR)/usr/share/$(BIN)/xpm/small
+	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/big/*.xpm
+	rmdir $(DESTDIR)/usr/share/$(BIN)/xpm/big
+	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/*.xpm
+	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/*.ico
+	rmdir $(DESTDIR)/usr/share/$(BIN)/xpm
 	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png/*.png
 	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png
 	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg/*.svg
@@ -296,16 +296,16 @@ source:
 	cp $(RESOURCE_DIR)wxdfast $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)
 	cp $(RESOURCE_DIR)wxdfast.iss $(BIN)-$(VERSION)/$(RESOURCE_DIR)
-	mkdir $(BIN)-$(VERSION)/resources/Old
-	cp $(RESOURCE_DIR)Old/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
-	cp $(RESOURCE_DIR)Old/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
-	cp $(RESOURCE_DIR)Old/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
-	cp $(RESOURCE_DIR)Old/small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
-	cp $(RESOURCE_DIR)Old/small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/small
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
-	cp $(RESOURCE_DIR)Old/big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
-	cp $(RESOURCE_DIR)Old/big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)Old/big
+	mkdir $(BIN)-$(VERSION)/resources/xpm
+	cp $(RESOURCE_DIR)xpm/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm
+	cp $(RESOURCE_DIR)xpm/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm
+	cp $(RESOURCE_DIR)xpm/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/small
+	cp $(RESOURCE_DIR)xpm/small/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/small
+	cp $(RESOURCE_DIR)xpm/small/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/small
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/big
+	cp $(RESOURCE_DIR)xpm/big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/big
+	cp $(RESOURCE_DIR)xpm/big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/big
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/licence.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/readme.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
