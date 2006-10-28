@@ -66,6 +66,14 @@ const wxEventType wxEVT_NEW_DOWNLOAD = wxNewEventType();
         (wxObject *) NULL \
     ),
 
+const wxEventType wxEVT_EXECUTE_COMMAND = wxNewEventType();
+#define wxEVT_EXECUTE_COMMAND(id, fn) \
+    DECLARE_EVENT_TABLE_ENTRY( \
+        wxEVT_EXECUTE_COMMAND, id, wxID_ANY, \
+        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent( wxCommandEventFunction, &fn ), \
+        (wxObject *) NULL \
+    ),
+
 BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menunew"),  mMainFrame::OnNew)
     EVT_MENU(XRCID("menuremove"),  mMainFrame::OnRemove)
@@ -108,6 +116,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     wxEVT_OPEN_URL(wxID_ANY,mMainFrame::OnOpenURL)
     wxEVT_SHUTDOWN(wxID_ANY, mMainFrame::OnShutdownEvent)
     wxEVT_DISCONNECT(wxID_ANY, mMainFrame::OnDisconnectEvent)
+    wxEVT_EXECUTE_COMMAND(wxID_ANY, mMainFrame::OnExecuteEvent)
     wxEVT_NEW_RELEASE(wxID_ANY, mMainFrame::OnNewRelease)
     wxEVT_NEW_DOWNLOAD(wxID_ANY, mMainFrame::OnNewDownloadEvent)
     EVT_TOOL(-1, mMainFrame::OnToolLeftClick)
@@ -257,6 +266,7 @@ mMainFrame::mMainFrame()
         programoptions.scheduleexceptions[i].newstart = wxEmptyString;
         programoptions.scheduleexceptions[i].newfinish = wxEmptyString;
     }
+    programoptions.lastcommand = mApplication::Configurations(READ,OPT_LAST_COMMAND_REG,wxEmptyString);
     programoptions.lastdestination = mApplication::Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
@@ -309,6 +319,7 @@ mMainFrame::mMainFrame()
     //SET THE PROGRESS BAR VARS
     progressbar = XRCCTRL(*(this), "progressbar",mProgressBar );
     progressbar->SetMainFrame(this);
+    progressbar->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     //SET THE GRAPH VARS
     graphpoints.DeleteContents(TRUE);
@@ -316,6 +327,7 @@ mMainFrame::mMainFrame()
     graph->graphpoints = &graphpoints;
     graph->programoptions = &programoptions;
     graph->mainframe = this;
+    graph->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     //SET NOTEBOOK TAB LABELS
     XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
@@ -516,6 +528,12 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         current = node->GetData();
         if ((current->GetStatus() == STATUS_FINISHED) && (current->IsFree()))
         {
+            if (current->GetCommand() != wxEmptyString)
+            {
+                wxCommandEvent command(wxEVT_EXECUTE_COMMAND);
+                command.SetString(current->GetCommand());
+                GetEventHandler()->AddPendingEvent(command);
+            }
             int i = list02->GetItemCount();
             int index = current->GetIndex();
             mUrlName url(current->GetFirstUrl());
@@ -803,10 +821,10 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mutex_programoptions->Unlock();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool show,bool permitdifferentnames)
 {
     mBoxNew dlg;
-    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments;
+    wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments, *edtcommand;
     wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit, *spinbandwidth;
     wxRadioButton *optnow,*optschedule;
@@ -819,6 +837,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
     edtuser = XRCCTRL(dlg, "edtuser",wxTextCtrl);
     edtpassword = XRCCTRL(dlg, "edtpassword",wxTextCtrl);
     edtreferenceurl = XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl);
+    edtcommand = XRCCTRL(dlg, "edtcommand",wxTextCtrl);
     edtcomments = XRCCTRL(dlg, "edtcomments",wxTextCtrl);
     lstaddresslist = XRCCTRL(dlg, "lstaddresslist",wxCheckListBox);
     optnow = XRCCTRL(dlg, "optnow",wxRadioButton);
@@ -850,6 +869,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         edtpassword->SetValue(password);
     }
     edtreferenceurl->SetValue(reference);
+    edtcommand->SetValue(command);
     edtcomments->SetValue(comments);
     if (startoption == NOW)
         optnow->SetValue(TRUE);
@@ -900,7 +920,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
                 mUrlList *urllist = new mUrlList();
                 urllist->Append(urltmp);
                 currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,metalinkindex,spinsplit->GetValue(),
-                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),scheduled,bandwidth);
+                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),edtcommand->GetValue(),scheduled,bandwidth);
                 XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
             }
             else
@@ -932,8 +952,10 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         else
             programoptions.laststartoption = MANUAL;
         programoptions.lastdestination = edtdestination->GetValue();
+        programoptions.lastcommand = edtcommand->GetValue();
 
         //WRITE THE LAST BOXNEW OPTIONS ON DISK
+        mApplication::Configurations(WRITE,OPT_LAST_COMMAND_REG, programoptions.lastcommand);
         mApplication::Configurations(WRITE,OPT_LAST_DESTINATION_REG, programoptions.lastdestination);
         mApplication::Configurations(WRITE,OPT_LAST_NUMBER_OF_PARTS_REG, programoptions.lastnumberofparts);
         mApplication::Configurations(WRITE,OPT_LAST_START_OPTION_REG, programoptions.laststartoption);
@@ -1213,7 +1235,7 @@ void mMainFrame::OnStopAll(wxCommandEvent& event)
 void mMainFrame::OnPasteURL(wxCommandEvent& event)
 {
     int numberofparts, startoption;
-    wxString destinationtmp = wxEmptyString;
+    wxString destinationtmp = wxEmptyString, command = wxEmptyString;
     wxArrayString urltmp;
     if (wxTheClipboard->Open())
     {
@@ -1233,6 +1255,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         numberofparts = programoptions.lastnumberofparts;
         startoption = programoptions.laststartoption;
         destinationtmp = programoptions.lastdestination;
+        command = programoptions.lastcommand;
     }
     else
     {
@@ -1240,7 +1263,7 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         startoption = DEFAULT_START_OPTION;
         destinationtmp = programoptions.destination;
     }
-    NewDownload(urltmp,destinationtmp,-1,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,startoption,TRUE,FALSE);
+    NewDownload(urltmp,destinationtmp,-1,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,command,startoption,TRUE,FALSE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1778,6 +1801,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->SetValue(currentfile->GetNumberofParts());
         XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetValue(currentfile->GetComments());
         XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetValue(currentfile->GetReferenceURL());
+        XRCCTRL(dlg, "edtcommand",wxTextCtrl)->SetValue(currentfile->GetCommand());
         XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->SetValue(currentfile->GetBandWidth());
         XRCCTRL(dlg, "optmanual",wxRadioButton)->Enable(FALSE);
         XRCCTRL(dlg, "optnow",wxRadioButton)->Enable(FALSE);
@@ -1792,6 +1816,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetEditable(FALSE);
             XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetEditable(FALSE);
+            XRCCTRL(dlg, "edtcommand",wxTextCtrl)->SetEditable(FALSE);
             lstaddresslist->Enable(FALSE);
             XRCCTRL(dlg,"btndir",wxButton)->Enable(FALSE);
             XRCCTRL(dlg,"btnadd",wxButton)->Enable(FALSE);
@@ -1809,6 +1834,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             wxString user = XRCCTRL(dlg, "edtuser",wxTextCtrl)->GetValue();
             wxString password = XRCCTRL(dlg, "edtpassword",wxTextCtrl)->GetValue();
             wxString reference = XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->GetValue();
+            wxString command = XRCCTRL(dlg, "edtcommand",wxTextCtrl)->GetValue();
             wxString comments = XRCCTRL(dlg, "edtcomments",wxTextCtrl)->GetValue();
             int bandwidth = XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->GetValue();
 
@@ -1820,7 +1846,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
                 mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
                 urllist->Append(urltmp);
             }
-            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,reference,comments,bandwidth);
+            wxGetApp().downloadlist.ChangeDownload(currentfile,urllist,destination,user,password,reference,comments,command,bandwidth);
 
             //VERIFY IF THE USER CHANGED THE FILE NAME
             newname = urllist->GetFirst()->GetData()->GetFullName();
@@ -1851,7 +1877,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
             wxListItem item;
             int startoption;
-            wxString url,destination,user,password,comments,reference;
+            wxString url,destination,user,password,comments,reference,command;
             wxArrayString urlarray;
             int parts;
             item.SetId(currentselection);
@@ -1880,6 +1906,9 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             reference = wxEmptyString;
             config->Read(REFERENCE_REG,&reference);
 
+            command = wxEmptyString;
+            config->Read(COMMAND_REG,&command);
+
             bool existurl = TRUE;
             int count = 1;
             while (existurl)
@@ -1899,7 +1928,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             else
                 startoption = DEFAULT_START_OPTION;
 
-            if (NewDownload(urlarray, destination,-1, parts, user, password, reference, comments, startoption, FALSE,FALSE))
+            if (NewDownload(urlarray, destination,-1, parts, user, password, reference, comments, command, startoption, FALSE,FALSE))
             {
                 config->DeleteGroup(item.GetText());
                 list->DeleteItem(currentselection);
@@ -2646,6 +2675,11 @@ void mMainFrame::OnDisconnectEvent(wxCommandEvent& event)
         ::wxExecute(programoptions.disconnectcmd);
 }
 
+void mMainFrame::OnExecuteEvent(wxCommandEvent& event)
+{
+    ::wxExecute(event.GetString());
+}
+
 bool mMainFrame::UpdateListItemField(mDownloadFile *current)
 {
     mInProgressList* list01 = XRCCTRL(*this, "inprogresslist",mInProgressList );
@@ -2776,5 +2810,5 @@ void mMainFrame::OnNewDownloadEvent(wxCommandEvent& event)
 {
     mDownloadFile *file = (mDownloadFile *)event.GetClientObject();
     NewDownload(file->GetUrlArray(),file->GetDestination(),event.GetInt(),file->GetNumberofParts(),file->GetUser(),
-                file->GetPassword(),file->GetReferenceURL(),file->GetComments(),programoptions.laststartoption, false,false);
+                file->GetPassword(),file->GetReferenceURL(),file->GetComments(),file->GetCommand(),programoptions.laststartoption, false,false);
 }

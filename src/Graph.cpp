@@ -21,7 +21,7 @@ END_EVENT_TABLE()
 
 void mGraph::OnPaint(wxPaintEvent &event)
 {
-    wxPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
     if (mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
     if (!programoptions)

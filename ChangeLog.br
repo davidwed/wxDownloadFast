@@ -4,6 +4,11 @@
 - Agora se você tentar definir como destino um
   diretório que não existe, o programa perguntará
   se você deseja criá-lo
+- Corrigido alguns problemas de flickering na barra
+  de progresso e no gráfico
+- Adiciona opção para executar um comando
+  personalizado quando um download é concluído
+- Atualizado para compilar com wxWidgets 2.7.1
 
 0.5.1
 ===================================================

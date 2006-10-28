@@ -62,7 +62,7 @@ void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
     }
 }
 
-void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password,wxString reference, wxString comments,int bandwidth)
+void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password,wxString reference, wxString comments,wxString command,int bandwidth)
 {
     if (file->urllist)
         delete file->urllist;
@@ -72,6 +72,7 @@ void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFile
     file->user = user;
     file->password = password;
     file->reference = reference;
+    file->command = command;
     file->comments = comments;
     file->bandwidth = bandwidth;
     file->MarkWriteAsPending(TRUE);
@@ -153,6 +154,7 @@ void mDownloadList::LoadDownloadListFromDisk()
         config->Read(MD5_REG,&(file->MD5));
         config->Read(COMMENTS_REG,&(file->comments));
         config->Read(REFERENCE_REG,&(file->reference));
+        config->Read(COMMAND_REG,&(file->command));
 
         config->Read(CONTENTTYPE_REG,&(file->contenttype));
         {
@@ -259,7 +261,7 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password, wxString reference, wxString comments,int scheduled,int bandwidth)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password, wxString reference, wxString comments,wxString command,int scheduled,int bandwidth)
 {
     mDownloadFile *file = new mDownloadFile();
     file->metalinkdata = NULL;
@@ -278,6 +280,7 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
         file->name = file->GetFirstUrl().GetFullName();
     file->destination = destination.GetFullPath();
     file->tempdestination = tempdestination.GetFullPath();
+    file->command = command;
     file->totalsize = 0;
     file->totalsizecompleted = 0;
     file->comments = comments;
@@ -406,6 +409,7 @@ void mDownloadFile::RegisterListItemOnDisk()
     config->Write(END_REG,this->end.GetTicks());
     config->Write(COMMENTS_REG,this->comments);
     config->Write(REFERENCE_REG,this->reference);
+    config->Write(COMMAND_REG,this->command);
     config->Write(CONTENTTYPE_REG,this->contenttype);
     config->Write(BANDWIDTH_REG,this->bandwidth);
     config->Write(NEED_TO_REGET_METALINK_REG,this->needtoregetmetalink);
@@ -824,3 +828,7 @@ void mDownloadFile::SetMetalinkFileIndex(int index)
     metalinkindex = index;
 }
 
+wxString mDownloadFile::GetCommand()
+{
+    return command;
+}

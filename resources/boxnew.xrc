@@ -17,7 +17,7 @@
                 <flag>wxEXPAND</flag>
                 <object class="wxFlexGridSizer">
                     <hgap>0</hgap>
-                    <rows>11</rows>
+                    <rows>12</rows>
                     <cols>1</cols>
                     <vgap>0</vgap>
                     <object class="spacer">
@@ -198,7 +198,7 @@
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
                                             <orient>wxHORIZONTAL</orient>
-                                            <label>Break File</label>
+                                            <label>Segmented download</label>
                                             <object class="sizeritem">
                                                 <option>1</option>
                                                 <flag>wxEXPAND</flag>
@@ -214,7 +214,7 @@
                                                             <orient>wxVERTICAL</orient>
                                                             <object class="sizeritem">
                                                                 <object class="wxStaticText" name="label_4">
-                                                                    <label>Split file in how many pieces?</label>
+                                                                    <label>Split download into how many\npieces?</label>
                                                                 </object>
                                                             </object>
                                                             <object class="spacer">
@@ -395,6 +395,26 @@
                                     <object class="sizeritem">
                                         <object class="wxTextCtrl" name="edtreferenceurl">
                                             <tooltip>Reference URL</tooltip>
+                                            <size>415, 23</size>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    <object class="sizeritem">
+                        <option>1</option>
+                        <object class="wxStaticBoxSizer">
+                            <orient>wxHORIZONTAL</orient>
+                            <label>Execute the follow command when the download finish</label>
+                            <object class="sizeritem">
+                                <option>1</option>
+                                <flag>wxEXPAND</flag>
+                                <object class="wxBoxSizer">
+                                    <orient>wxVERTICAL</orient>
+                                    <object class="sizeritem">
+                                        <object class="wxTextCtrl" name="edtcommand">
+                                            <tooltip>Execute the follow command when the download finish</tooltip>
                                             <size>415, 23</size>
                                         </object>
                                     </object>

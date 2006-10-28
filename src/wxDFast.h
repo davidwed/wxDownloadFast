@@ -56,6 +56,7 @@
     #include "wx/datectrl.h"
     #include "wx/xml/xml.h"
     #include "wx/zipstrm.h"
+    #include "wx/dcbuffer.h"
     #ifndef USE_EXTERNAL_XRC
     extern void InitXmlResource();
     #endif
@@ -67,6 +68,7 @@
     extern const wxEventType wxEVT_DISCONNECT;
     extern const wxEventType wxEVT_NEW_RELEASE;
     extern const wxEventType wxEVT_NEW_DOWNLOAD;
+    extern const wxEventType wxEVT_EXECUTE_COMMAND;
 
     const wxCmdLineEntryDesc cmdlinedesc[] =
     {
@@ -139,6 +141,7 @@
     const wxString MD5_REG = wxT("md5");
     const wxString COMMENTS_REG = wxT("comments");
     const wxString REFERENCE_REG = wxT("reference");
+    const wxString COMMAND_REG = wxT("command");
     const wxString CONTENTTYPE_REG = wxT("contenttype");
     const wxString BANDWIDTH_REG = wxT("bandwidth");
     const wxString START_REG = wxT("date_start");
@@ -199,6 +202,7 @@
     const wxString OPT_SCHED_SCHEDULEEXCEPTION_DAY_REG = wxT("scheduleexceptionday");
     const wxString OPT_SCHED_SCHEDULEEXCEPTION_ISACTIVE_REG = wxT("scheduleexceptionisactive");
     const wxString OPT_LAST_DESTINATION_REG = wxT("lastdestination");
+    const wxString OPT_LAST_COMMAND_REG = wxT("lastcommand");
     const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
     const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
@@ -367,6 +371,7 @@
         void SetToReGetMetalinkWhenNeeded(bool reget);
         void SetMetalinkFileIndex(int index);
         int GetMetalinkFileIndex();
+        wxString GetCommand();
 
         //PUBLIC VARIABLES
         friend class mDownloadList;
@@ -419,6 +424,7 @@
         bool removepending;
         int bandwidth;
         int metalinkindex;
+        wxString command;
     };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadListType);
@@ -427,9 +433,9 @@
     {
     public:
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password,wxString reference, wxString comments,int scheduled,int bandwidth);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password,wxString reference, wxString comments,wxString command,int scheduled,int bandwidth);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
-        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments,int bandwidth);
+        void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments,wxString command,int bandwidth);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
         mDownloadFile *FindDownloadFile(wxString str);
         void LoadDownloadListFromDisk();
@@ -494,6 +500,7 @@
         wxDateTime finishdatetime;
         mScheduleException scheduleexceptions[MAX_SCHEDULE_EXCEPTIONS];
         bool scheduleexceptionschanged;
+        wxString lastcommand;
         wxString lastdestination;
         int lastnumberofparts;
         int laststartoption;
@@ -541,7 +548,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int metalinkindex, int parts,wxString user,wxString password,wxString reference,wxString comments,int startoption, bool show,bool permitdifferentnames);
+        bool NewDownload(wxArrayString url, wxString destination,int metalinkindex, int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool show,bool permitdifferentnames);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
@@ -595,6 +602,7 @@
         void OnOpenURL(wxCommandEvent& event);
         void OnShutdownEvent(wxCommandEvent& event);
         void OnDisconnectEvent(wxCommandEvent& event);
+        void OnExecuteEvent(wxCommandEvent& event);
         bool UpdateListItemField(mDownloadFile *current);
         void CheckNewRelease();
         void OnNewRelease(wxCommandEvent& event);

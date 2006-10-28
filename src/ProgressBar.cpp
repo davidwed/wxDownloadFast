@@ -25,7 +25,7 @@ mProgressBar::mProgressBar()
 
 void mProgressBar::OnPaint(wxPaintEvent &event)
 {
-    wxPaintDC dc(this);
+    wxBufferedPaintDC dc(this);
     int realwidth, realheight;
     int width, height,x,y;
 

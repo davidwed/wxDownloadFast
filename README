@@ -49,13 +49,8 @@ To integrate with Firefox, do the following:
 
 1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)
 2) After restart the Firefox, go to Tools -> FlashGot -> More Options
-3) On the General tab, click Add
-4) In Enter Download Manager name, insert: wxDownload Fast
-5) In path, insert the place where the program was installed. In Linux it should be in
-   /usr/bin/wxdfast
-   In Windows, it should be C:\Program Files\wxDownload Fast\wxdfast.exe
+3) Now select the "wxDownload Fast" on the Download Manager's List
 
-6) In Arguments template of the program insert: -list[UFILE] -reference[REFERER]
 
 5) Installation
 ---------------

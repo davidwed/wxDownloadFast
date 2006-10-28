@@ -1,8 +1,14 @@
 0.5.2
 ===================================================
-- Added a new theme called RipStop
+- Added a partial new theme called RipStop
 - Now if you try to set as destination a directory
   that don't exists, the program ask to create it
+- Fixed some flickering problems on the graph and
+  the progress bar
+- Added option to execute a custom command when
+  some download is finished
+- Updated to build with wxWidgets 2.7.1
+
 
 0.5.1
 ===================================================
