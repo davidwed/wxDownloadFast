@@ -90,7 +90,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.2");
+    const wxString VERSION = wxT("0.5.3");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -576,6 +576,7 @@
         void OnPortugueseBrazil(wxCommandEvent& event);
         void OnGerman(wxCommandEvent& event);
         void OnSpanish(wxCommandEvent& event);
+        void OnCzech(wxCommandEvent& event);
 
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);

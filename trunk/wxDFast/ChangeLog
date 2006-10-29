@@ -1,3 +1,8 @@
+0.5.3
+===================================================
+- Added Czech language(by David Vachulka)
+- Fixed problem when retriving some metalink files
+
 0.5.2
 ===================================================
 - Added a partial new theme called RipStop

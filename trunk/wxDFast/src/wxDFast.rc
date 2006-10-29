@@ -3,8 +3,8 @@ wxdfast_ico ICON "../resources/RipStop/logo/wxdfast.ico"
 #include "wx/msw/wx.rc"
 
 1 VERSIONINFO
-FILEVERSION 0,5,2,163
-PRODUCTVERSION 0,5,2,163
+FILEVERSION 0,5,3,45
+PRODUCTVERSION 0,5,3,45
 // FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -12,14 +12,14 @@ PRODUCTVERSION 0,5,2,163
          BLOCK "041604E4"
          {
              VALUE "CompanyName", "Max Velasques"
-             VALUE "FileVersion", "0.5.2"
+             VALUE "FileVersion", "0.5.3"
              VALUE "FileDescription", "Developed using KDevelop3 and Code::Blocks on Debian Linux"
              VALUE "InternalName", "wxDFast"
              VALUE "LegalCopyright", "Max Velasques"
              VALUE "LegalTrademarks", "Max Velasques"
              VALUE "OriginalFilename", "wxdfast.exe"
              VALUE "ProductName", "wxDownload Fast"
-             VALUE "ProductVersion", "0.5.2"
+             VALUE "ProductVersion", "0.5.3"
          }
      }
 }

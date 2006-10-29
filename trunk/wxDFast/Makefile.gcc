@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.2
+VERSION = 0.5.3
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -203,6 +203,8 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)de/wxDFast.mo $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)cs/wxDFast.mo $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_FILE) $(MANPAGE_DIR)man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt_BR/man1
@@ -246,6 +248,7 @@ endif
 	rm -f $(DESTDIR)/usr/share/pixmaps/wxdfast.xpm
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
@@ -278,6 +281,9 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	cp $(LANGUAGE_DIR)de/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	cp $(LANGUAGE_DIR)de/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
+	cp $(LANGUAGE_DIR)cs/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
+	cp $(LANGUAGE_DIR)cs/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	cp $(MANPAGE_DIR)Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1

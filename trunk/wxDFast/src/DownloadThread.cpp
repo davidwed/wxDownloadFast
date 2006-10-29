@@ -903,7 +903,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                     else
                     {
                         PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
-                        downloadfile->criticalerror = TRUE;
+                        //downloadfile->criticalerror = TRUE;
                         client->Close(); delete client;
                         return NULL;
                     }

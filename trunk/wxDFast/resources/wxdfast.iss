@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxDownload Fast
-AppVerName=wxDownload Fast 0.5.2
+AppVerName=wxDownload Fast 0.5.3
 AppPublisher=Max Velasques
 AppPublisherURL=http://dfast.sourceforge.net
 AppSupportURL=http://dfast.sourceforge.net
@@ -33,6 +33,8 @@ Source: "..\ChangeLog"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\ChangeLog.br"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\TODO"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\COPYING"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\languages\cs\wxDFast.mo"; DestDir: "{app}\languages\cs"; Flags: ignoreversion
+Source: "..\languages\cs\wxDFast.po"; DestDir: "{app}\languages\cs"; Flags: ignoreversion
 Source: "..\languages\de\wxDFast.mo"; DestDir: "{app}\languages\de"; Flags: ignoreversion
 Source: "..\languages\de\wxDFast.po"; DestDir: "{app}\languages\de"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.mo"; DestDir: "{app}\languages\es"; Flags: ignoreversion
