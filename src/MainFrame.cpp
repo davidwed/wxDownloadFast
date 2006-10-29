@@ -93,6 +93,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_ptbr"), mMainFrame::OnPortugueseBrazil)
     EVT_MENU(XRCID("menulang_de"), mMainFrame::OnGerman)
     EVT_MENU(XRCID("menulang_es"), mMainFrame::OnSpanish)
+    EVT_MENU(XRCID("menulang_cs"), mMainFrame::OnCzech)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
@@ -1637,6 +1638,11 @@ void mMainFrame::MarkCurrentLanguageMenu(int language)
         menubar->GetMenu(2)->Check(XRCID("menulang_es"),FALSE);
     else
         menubar->GetMenu(2)->Check(XRCID("menulang_es"),TRUE);
+
+    if (language != wxLANGUAGE_CZECH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_cs"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_cs"),TRUE);
 }
 
 void mMainFrame::SetLanguage(int language)
@@ -1763,6 +1769,11 @@ void mMainFrame::OnGerman(wxCommandEvent& event)
 void mMainFrame::OnSpanish(wxCommandEvent& event)
 {
     SetLanguage(wxLANGUAGE_SPANISH);
+}
+
+void mMainFrame::OnCzech(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_CZECH);
 }
 
 

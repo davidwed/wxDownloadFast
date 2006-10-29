@@ -1,3 +1,9 @@
+0.5.3
+===================================================
+- Adicionado idioma Tcheco(por David Vachulka)
+- Corrigido problema quando tentando fazer o
+  download de alguns arquivos metalink
+
 0.5.2
 ===================================================
 - Adicionado um novo tema chamado RipStop
