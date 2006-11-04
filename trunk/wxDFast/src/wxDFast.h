@@ -90,7 +90,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.3");
+    const wxString VERSION = wxT("0.6.0");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -205,6 +205,8 @@
     const wxString OPT_LAST_COMMAND_REG = wxT("lastcommand");
     const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
+    const wxString OPT_LAST_BOXNEW_X_REG = wxT("lastboxnew_x");
+    const wxString OPT_LAST_BOXNEW_Y_REG = wxT("lastboxnew_y");
     const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
     const wxString OPT_BAND_WIDTH_GENERAL_REG = wxT("bandwidthgeneral");
     const wxString OPT_TASKBAR_ICON_SIZE_REG = wxT("taskbariconsize");
@@ -508,6 +510,7 @@
         int bandwidthoption;
         long bandwidth;
         int taskbariconsize;
+        int boxnew_x, boxnew_y;
     };
 
     class mApplication : public wxApp
@@ -577,6 +580,10 @@
         void OnGerman(wxCommandEvent& event);
         void OnSpanish(wxCommandEvent& event);
         void OnCzech(wxCommandEvent& event);
+        void OnHungarian(wxCommandEvent& event);
+        void OnRussian(wxCommandEvent& event);
+        void OnIndonesian(wxCommandEvent& event);
+        void OnArmenian(wxCommandEvent& event);
 
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);
@@ -675,6 +682,8 @@
         void OnBandControlPerDownload(wxCommandEvent& event);
         virtual wxMenu *CreatePopupMenu();
         bool restoring;
+        wxBitmap NewDownload;
+        wxBitmap Quit;
     private:
         mMainFrame *mainframe;
         DECLARE_EVENT_TABLE()

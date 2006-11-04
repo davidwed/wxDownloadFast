@@ -3,7 +3,6 @@
 pkgdatadir = $(datadir)/@PACKAGE@/RipStop/toolbar
 
 dist_pkgdata_DATA = \
-	download_add.png \
 	download_new.png \
 	download_stop_all.png \
 	download_info.png \
@@ -12,4 +11,5 @@ dist_pkgdata_DATA = \
 	download_move_down.png \
 	download_start_all.png \
 	download_move_up.png \
-	download_start.png
+	download_start.png \
+	download_schedule.png

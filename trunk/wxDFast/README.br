@@ -21,7 +21,9 @@ completo possível.
 * Agendamento de downloads
 * Organiza os arquivos que você já baixou
 * Visualização de messagens do servidor (HTTP, FTP, file://). Sem suporte HTTPS.
-* Disponível em vários idiomas e facilmente traduzível. Disponível agora em Português [Brasil], Espanhol, Inglês e Alemão
+* Disponível em vários idiomas e facilmente traduzível. Disponível agora
+  em Português [Brasil], Espanhol, Inglês, Alemão, Russo, Húngaro, Indonésio e
+  Armenio
 * Conexão com servidores FTP que necessitam de senhas
 * Calcula o código de verificação MD5 dos arquivos baixados, de modo que possam ser verificados facilmente
 

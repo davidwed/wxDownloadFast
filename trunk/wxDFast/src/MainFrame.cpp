@@ -25,6 +25,8 @@ IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
 #include "../resources/xpm/small/error.xpm"
 #include "../resources/xpm/small/queue.xpm"
 #include "../resources/xpm/small/schedule.xpm"
+#include "../resources/xpm/small/new.xpm"
+#include "../resources/xpm/small/exit.xpm"
 
 const wxEventType wxEVT_OPEN_URL = wxNewEventType();
 #define wxEVT_OPEN_URL(id, fn) \
@@ -94,6 +96,10 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_de"), mMainFrame::OnGerman)
     EVT_MENU(XRCID("menulang_es"), mMainFrame::OnSpanish)
     EVT_MENU(XRCID("menulang_cs"), mMainFrame::OnCzech)
+    EVT_MENU(XRCID("menulang_hu"), mMainFrame::OnHungarian)
+    EVT_MENU(XRCID("menulang_ru"), mMainFrame::OnRussian)
+    EVT_MENU(XRCID("menulang_id"), mMainFrame::OnIndonesian)
+    EVT_MENU(XRCID("menulang_hy"), mMainFrame::OnArmenian)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
@@ -163,12 +169,38 @@ mMainFrame::mMainFrame()
     imageslist = new wxImageList(16, 16, TRUE);
     wxBitmap image[6];
     int i,timerupdateinterval;
-    image[0] = wxXPM(stop_xpm);
-    image[1] = wxXPM(start_xpm);
-    image[2] = wxXPM(ok_xpm);
-    image[3] = wxXPM(error_xpm);
-    image[4] = wxXPM(queue_xpm);
-    image[5] = wxXPM(schedule_xpm);
+
+    wxString iconpath = wxGetApp().themepath;
+    if (wxFileName::FileExists(iconpath + wxT("menubar/stop.png")))
+        image[0] = wxBitmap(iconpath + wxT("menubar/stop.png"));
+    else
+        image[0] = wxXPM(stop_xpm);
+
+    if (wxFileName::FileExists(iconpath + wxT("menubar/start.png")))
+        image[1] = wxBitmap(iconpath + wxT("menubar/start.png"));
+    else
+        image[1] = wxXPM(start_xpm);
+
+    if (wxFileName::FileExists(iconpath + wxT("menubar/completed.png")))
+        image[2] = wxBitmap(iconpath + wxT("menubar/completed.png"));
+    else
+        image[2] = wxXPM(ok_xpm);
+
+    if (wxFileName::FileExists(iconpath + wxT("menubar/error.png")))
+        image[3] = wxBitmap(iconpath + wxT("menubar/error.png"));
+    else
+        image[3] = wxXPM(error_xpm);
+
+    if (wxFileName::FileExists(iconpath + wxT("menubar/scheduled.png")))
+        image[4] = wxBitmap(iconpath + wxT("menubar/scheduled.png"));
+    else
+        image[4] = wxXPM(queue_xpm);
+
+    if (wxFileName::FileExists(iconpath + wxT("menubar/schedule.png")))
+        image[5] = wxBitmap(iconpath + wxT("menubar/schedule.png"));
+    else
+        image[5] = wxXPM(schedule_xpm);
+
     for (i=0;i<=5;i++)
        imageslist->Add(image[i]);
     wxXmlResource::Get()->LoadFrame(this,NULL, wxT("mainframe"));
@@ -267,6 +299,8 @@ mMainFrame::mMainFrame()
         programoptions.scheduleexceptions[i].newstart = wxEmptyString;
         programoptions.scheduleexceptions[i].newfinish = wxEmptyString;
     }
+    programoptions.boxnew_x = mApplication::Configurations(READ,OPT_LAST_BOXNEW_X_REG,200);
+    programoptions.boxnew_y = mApplication::Configurations(READ,OPT_LAST_BOXNEW_Y_REG,200);
     programoptions.lastcommand = mApplication::Configurations(READ,OPT_LAST_COMMAND_REG,wxEmptyString);
     programoptions.lastdestination = mApplication::Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
@@ -276,10 +310,9 @@ mMainFrame::mMainFrame()
     programoptions.taskbariconsize = mApplication::Configurations(READ,OPT_TASKBAR_ICON_SIZE_REG,32);
 
    //LOAD THE PROGRAM ICON
-    wxString iconpath = wxGetApp().themepath + wxT("logo/wxdfast.png");
-    if (wxFileName::FileExists(iconpath))
+    if (wxFileName::FileExists(iconpath + wxT("icon/wxdfast.png")))
     {
-        wxBitmap tmpicon = wxBitmap(iconpath);
+        wxBitmap tmpicon = wxBitmap(iconpath + wxT("icon/wxdfast.png"));
         //wxBitmap tmpicon = wxBitmap(wxBitmap(iconpath).ConvertToImage().Rescale(32,32));
         wxGetApp().appicon.CopyFromBitmap(tmpicon);
     }
@@ -356,7 +389,14 @@ mMainFrame::mMainFrame()
     start->SetBitmap(image[1]);
     stop->SetBitmap(image[0]);
     schedule->SetBitmap(image[5]);
-    remove->SetBitmap(image[3]);
+    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/remove.png")))
+        remove->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/remove.png")));
+    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/properties.png")))
+        properties->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/properties.png")));
+    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/copyurl.png")))
+        copyurl->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/copyurl.png")));
+    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/copydata.png")))
+        copydownloaddata->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/copydata.png")));
     menupopup->Append(schedule);
     menupopup->Append(start);
     menupopup->Append(stop);
@@ -379,6 +419,14 @@ mMainFrame::mMainFrame()
     if (!(wxGetApp().parameters->Found(wxT("notray"))))
         taskbaricon->SetIcon(wxGetApp().appicon,PROGRAM_NAME);
     taskbaricon->restoring = FALSE;
+    if (wxFileName::FileExists(iconpath + wxT("menubar/new.png")))
+        taskbaricon->NewDownload = wxBitmap(iconpath + wxT("menubar/new.png"));
+    else
+        taskbaricon->NewDownload = wxXPM(new_xpm);
+    if (wxFileName::FileExists(iconpath + wxT("menubar/quit.png")))
+        taskbaricon->Quit = wxBitmap(iconpath + wxT("menubar/quit.png"));
+    else
+        taskbaricon->Quit = wxXPM(exit_xpm);
 
     //HIDE OR SHOW THE SPEED GRAPH
     if (!programoptions.graphshow)
@@ -880,7 +928,9 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
     if (show)
     {
         this->active = FALSE;
+        dlg.SetSize(programoptions.boxnew_x,programoptions.boxnew_y,-1,-1);
         result = dlg.ShowModal();
+        dlg.GetPosition(&programoptions.boxnew_x,&programoptions.boxnew_y);
         this->active = TRUE;
     }
     else
@@ -956,6 +1006,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         programoptions.lastcommand = edtcommand->GetValue();
 
         //WRITE THE LAST BOXNEW OPTIONS ON DISK
+        mApplication::Configurations(WRITE,OPT_LAST_BOXNEW_X_REG, programoptions.boxnew_x);
+        mApplication::Configurations(WRITE,OPT_LAST_BOXNEW_Y_REG, programoptions.boxnew_y);
         mApplication::Configurations(WRITE,OPT_LAST_COMMAND_REG, programoptions.lastcommand);
         mApplication::Configurations(WRITE,OPT_LAST_DESTINATION_REG, programoptions.lastdestination);
         mApplication::Configurations(WRITE,OPT_LAST_NUMBER_OF_PARTS_REG, programoptions.lastnumberofparts);
@@ -1643,6 +1695,27 @@ void mMainFrame::MarkCurrentLanguageMenu(int language)
         menubar->GetMenu(2)->Check(XRCID("menulang_cs"),FALSE);
     else
         menubar->GetMenu(2)->Check(XRCID("menulang_cs"),TRUE);
+
+    if (language != wxLANGUAGE_RUSSIAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_ru"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_ru"),TRUE);
+
+    if (language != wxLANGUAGE_HUNGARIAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_hu"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_hu"),TRUE);
+
+    if (language != wxLANGUAGE_INDONESIAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_id"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_id"),TRUE);
+
+    if (language != wxLANGUAGE_ARMENIAN)
+        menubar->GetMenu(2)->Check(XRCID("menulang_hy"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_hy"),TRUE);
+
 }
 
 void mMainFrame::SetLanguage(int language)
@@ -1776,6 +1849,25 @@ void mMainFrame::OnCzech(wxCommandEvent& event)
     SetLanguage(wxLANGUAGE_CZECH);
 }
 
+void mMainFrame::OnHungarian(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_HUNGARIAN);
+}
+
+void mMainFrame::OnRussian(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_RUSSIAN);
+}
+
+void mMainFrame::OnArmenian(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_ARMENIAN);
+}
+
+void mMainFrame::OnIndonesian(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_INDONESIAN);
+}
 
 void mMainFrame::OnProperties(wxCommandEvent& event)
 {
@@ -2459,18 +2551,21 @@ void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     wxDialog dlg;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxabout"));
     wxString aboutstring;
-    aboutstring  = _(" Version: ") + VERSION + wxT("\n");
-    aboutstring += _(" Creator: ");
-    aboutstring += wxT("Max Magalhães Velasques\n");
-    aboutstring += _(" RipStop Theme designer: ");
-    aboutstring += wxT("Erno Szabados\n\n");
-    aboutstring += _(" Special thanks to ");
-    aboutstring += wxT("Anthony Bryan");
-    aboutstring += _(" for several tips and\n donations");
+    aboutstring  = _("Version: ") + VERSION + wxT("\n");
+    aboutstring += _("Creator: ");
+    aboutstring += wxT("Max Magalhães Velasques\n\n");
+    aboutstring += _("I'd like to thank for the next contributors for their help:\n");
+    aboutstring += wxT("Anthony Brian");
+    aboutstring += _(" - several tips and donations\n");
+    aboutstring += wxT("Erno Szabados");
+    aboutstring += _(" - Ripstop theme\n\n");
+    aboutstring += _("Visit our website:\n");
+    aboutstring += wxT("http://dfast.sourceforge.net");
     aboutstring += wxT("\n\n");
-    aboutstring += XRCCTRL(dlg, "lblextrainfo",wxStaticText)->GetLabel();
+    aboutstring += _("Help to improve the program!\n");
+    aboutstring += _("Donate to this project!");
 
-    XRCCTRL(dlg, "lblextrainfo",wxStaticText)->SetLabel(aboutstring);
+    XRCCTRL(dlg, "wxdfastabouttext",wxTextCtrl)->SetValue(aboutstring);
 
     dlg.ShowModal();
     CheckNewRelease();

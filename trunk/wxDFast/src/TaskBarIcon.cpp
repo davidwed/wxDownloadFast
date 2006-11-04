@@ -93,6 +93,8 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
         mnusubband->Append(mnuperdownload);
         mnuband->SetSubMenu(mnusubband);
 
+        mnunew->SetBitmap(NewDownload);
+        mnuclose->SetBitmap(Quit);
         traymenu->Append(mnuhide);
         traymenu->AppendSeparator();
         traymenu->Append(mnunew);
