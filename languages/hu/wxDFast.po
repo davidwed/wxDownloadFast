@@ -1,16 +1,20 @@
+# translation of wxDFast.po to Hungarian
+# Erno Szabados <chromecat77@gmail.com>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: wxDownload Fast\n"
+"Project-Id-Version: wxDFast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-11-04 19:37-0300\n"
+"PO-Revision-Date: 2006-11-04 19:41-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
-"Language-Team: Max Velasques <maxvelasques@gmail.com>\n"
+"Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: /home/max/Projetos/wxDFast/src\n"
-"X-Poedit-Country: BRAZIL\n"
-"X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Poedit-Country: HUNGARY\n"
+"X-Poedit-SourceCharset: iso-8859-2\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-SearchPath-0: /home/max/Projetos/wxDFast/src/wxMD5\n"
 "X-Poedit-SearchPath-1: /home/max/Projetos/wxDFast/src\n"
 "X-Poedit-SearchPath-2: /home/max/Projetos/wxDFast/resources\n"
@@ -22,26 +26,26 @@ msgid ""
 "Total Complete: %d%%\n"
 "Downloads in progress: %d"
 msgstr ""
-"Velocidade Total: %.2fKb/s\n"
-"Total Conclu�do: %d%%\n"
-"Downloads em progresso: %d"
+"Letöltési sebesség: %.2fKb/s\n"
+"Kész letöltések: %d%%\n"
+"Letöltések folyamatban: %d"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:77
 msgid "Hide the main window"
-msgstr "Esconder a janela principal"
+msgstr "Főablak elrejtése"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:79
 msgid "Show the main window"
-msgstr "Mostrar a janela principal"
+msgstr "Főablak megjelenítése"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:80
 msgid "New download"
-msgstr "Novo download"
+msgstr "Új letöltés"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:81
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2716
 msgid "Close the program"
-msgstr "Fecha o programa"
+msgstr "Program bezárása"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:84
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:160
@@ -56,115 +60,120 @@ msgstr "Fecha o programa"
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2414
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2426
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2438
+#, fuzzy
 msgid "Band control"
-msgstr "Controle de banda"
+msgstr "Sávszélesség beállítása"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:86
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:162
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:482
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1805
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2440
+#, fuzzy
 msgid "Unlimited"
-msgstr "Ilimitada"
+msgstr "Korlátlan"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:86
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:88
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:89
+#, fuzzy
 msgid "Just for this session. To change definitely go to \"Options\""
-msgstr "Apenas para esta sess�o. Para alterar definitivamente v� em \"Op��es\""
+msgstr "Csak erre a munkamenetre. Az általános beállításokat a \"Beállítások\" menüpontban módosíthatja."
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:87
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:179
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:474
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1797
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2428
+#, fuzzy
 msgid "Active"
-msgstr "Ativo"
+msgstr "Aktív"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:89
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:197
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:467
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1790
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2416
+#, fuzzy
 msgid "Per Download"
-msgstr "Por Download"
+msgstr "Letöltésenként"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:143
 msgid "Downloads in Progress"
-msgstr "Downloads em Progresso"
+msgstr "Letöltések folyamatban"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:144
 msgid "Finished Downloads"
-msgstr "Downloads Terminados"
+msgstr "Befejezett letöltések"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:377
 #: /tmp/dummy:26
 msgid "Schedule Download"
-msgstr "Agendar Download"
+msgstr "Ütemezett letöltések"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:378
 #: /tmp/dummy:27
 #: /tmp/dummy:89
 msgid "Start Download"
-msgstr "Iniciar Download"
+msgstr "Letöltés indítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:379
 #: /tmp/dummy:28
 msgid "Stop Download"
-msgstr "Parar Download"
+msgstr "Letöltés leállítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:380
 #: /tmp/dummy:25
 msgid "Remove Download"
-msgstr "Remover Download"
+msgstr "Letöltés törlése"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:381
 #: /tmp/dummy:56
 msgid "Properties of Download"
-msgstr "Propriedades do Download"
+msgstr "Letöltés jellemzői"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:382
 #: /tmp/dummy:60
 msgid "Download File Again"
-msgstr "Baixar Arquivo Novamente"
+msgstr "Fájl ismételt letöltése"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:383
 #: /tmp/dummy:57
 msgid "Move File"
-msgstr "Mover Arquivo"
+msgstr "Fájl áthelyezése"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:384
 #: /tmp/dummy:58
 msgid "Check Integrity"
-msgstr "Verificar Integridade"
+msgstr "Integritásellenőrzés"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:385
 #: /tmp/dummy:34
 msgid "Copy URL"
-msgstr "Copiar URL"
+msgstr "URL másolása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:386
 #: /tmp/dummy:35
 msgid "Copy Download Data"
-msgstr "Copiar Dados do Download"
+msgstr "Letöltési adatok másolása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:387
 #: /tmp/dummy:59
 msgid "Open Destination Directory"
-msgstr "Abrir Diret�rio de Destino"
+msgstr "Célkönyvtár megnyitása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:456
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1779
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2859
 msgid "NEW RELEASE: "
-msgstr "NOVA VERS�O: "
+msgstr "ÚJ KIBOCSÁTÁS:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:458
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1781
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2861
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2863
 msgid " is available."
-msgstr " est� dispon�vel."
+msgstr "elérhető."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:489
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:644
@@ -175,48 +184,49 @@ msgstr " est� dispon�vel."
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:284
 #: /tmp/dummy:100
 msgid "File type"
-msgstr "Tipo do arquivo"
+msgstr "Fájltípus"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:492
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1763
 #: /tmp/dummy:101
 msgid "Preview"
-msgstr "Previsualiza��o"
+msgstr "Előnézet"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:658
 msgid "Piece "
-msgstr "Parte "
+msgstr "Szegmens"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:847
 #, c-format
 msgid "Total Speed: %0.1f kb/s"
-msgstr "Velocidade Total: %0.1f kb/s"
+msgstr "Maximális sebesség: %0.1f kb/s"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1033
 msgid "Stopping the download..."
-msgstr "Parando o download..."
+msgstr "Letöltés leállítása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1033
 msgid "Stopping the current download before remove..."
-msgstr "Parando o download atual antes de remover..."
+msgstr "Letöltés leállítása a törlés előtt..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1045
 msgid "Do you want remove the item from the list and the file from the disk?"
-msgstr "Voc� deseja remover o item da lista e o arquivo do disco?"
+msgstr "Törli az elemet a listából és a fájlt a lemezről?"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1045
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1083
 msgid "Remove..."
-msgstr "Remover..."
+msgstr "Törlés..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1083
 msgid "Do you want remove the item(s) from the list and the file(s) from the disk?"
-msgstr "Voc� deseja remover o(s) item(s) da lista e o(s) arquivo(s) do disco?"
+msgstr "Törli az elem(ek)et a listából és a fájl(ok)t a lemezről?"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1200
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2843
+#, fuzzy
 msgid "Error creating thread!"
-msgstr "Erro criando thread!"
+msgstr "Nem sikerült szálat létrehozni!"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1200
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1208
@@ -243,32 +253,33 @@ msgstr "Erro criando thread!"
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:126
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:163
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:195
+#, fuzzy
 msgid "Error..."
-msgstr "Erro..."
+msgstr "Hiba..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1208
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2849
 msgid "Error starting thread!"
-msgstr "Erro iniciando thread!"
+msgstr "Nem lehet elindítani a szálat!"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1247
 msgid "Starting the downloads..."
-msgstr "Iniciando os downloads..."
+msgstr "Letöltések indítása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1264
 msgid "Stopping the downloads..."
-msgstr "Parando os downloads..."
+msgstr "Letöltés leállítása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1373
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1485
 msgid "It was impossible to open the clipboard!"
-msgstr "N�o foi poss�vel abrir a �rea de transfer�ncia!"
+msgstr "Nem sikerült megnyitni a vágólapot!"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1421
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:142
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:283
 msgid "Name"
-msgstr "Nome"
+msgstr "Név"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1431
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:234
@@ -276,19 +287,19 @@ msgstr "Nome"
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:271
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:285
 msgid "Size"
-msgstr "Tamanho"
+msgstr "Méret"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1436
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:145
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:286
 msgid "Time"
-msgstr "Tempo"
+msgstr "Idő"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1441
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:146
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:287
 msgid "Destination"
-msgstr "Destino"
+msgstr "Cél"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1448
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:149
@@ -301,28 +312,28 @@ msgstr "MD5"
 #: /tmp/dummy:94
 #: /tmp/dummy:95
 msgid "Reference URL"
-msgstr "URL de refer�ncia"
+msgstr "URL hivatkozás"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1459
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:151
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:291
 #: /tmp/dummy:93
 msgid "Comments"
-msgstr "Coment�rios"
+msgstr "Megjegyzés"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1464
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:152
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:292
 msgid "URLs"
-msgstr "URLs"
+msgstr "URL-ek"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1566
 msgid "Find file..."
-msgstr "Localizar arquivo..."
+msgstr "Fájl keresése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1885
 msgid "Download Properties"
-msgstr "Propriedades do download"
+msgstr "Letöltés jellemzői"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2052
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2182
@@ -330,51 +341,51 @@ msgstr "Propriedades do download"
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:55
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:77
 msgid "Select the directory:"
-msgstr "Selecione o diret�rio:"
+msgstr "Könyvtár kiválasztása:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2087
 msgid "Moving..."
-msgstr "Movendo..."
+msgstr "Áthelyezés..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2087
 msgid "Moving file..."
-msgstr "Movendo arquivo..."
+msgstr "Fájl áthelyezése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2096
 msgid "Error moving file."
-msgstr "Erro movendo arquivo."
+msgstr "Nem lehet áthelyezni a fájt."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2102
 msgid ""
 "The file isn't in the path that it was saved initially.\n"
 "Do you want to change only the old path for the current one?"
 msgstr ""
-"O arquivo n�o est� no caminho no qual ele foi salvo inicialmente.\n"
-"Voc� deseja alterar apenas do caminho antigo para o atual?"
+"A fájl nem ott található, ahová eredetileg el lett mentve. \n"
+"Lecseréli a régi elérési utat az aktuálisra?"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2105
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2748
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:108
 msgid "Continue..."
-msgstr "Continuar..."
+msgstr "Tovább..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2149
 msgid "Checking file's MD5..."
-msgstr "Verificando o MD5 do arquivo..."
+msgstr "Fájl MD5 ellenőrzése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2156
 msgid "The file was verified successfully."
-msgstr "O arquivo foi verificado com sucesso."
+msgstr "A fájl ellenőrzése sikeresen megtörtént."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2156
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2199
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2225
 msgid "Success..."
-msgstr "Sucesso"
+msgstr "Siker..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2160
 msgid "The MD5 calculated previously is different of the current one."
-msgstr "O MD5 calculado anteriormente � diferente do atual."
+msgstr "A korábban kiszámolt MD5 ellenőrzőösszeg különbözik a jelenlegitől."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2161
 msgid ""
@@ -382,7 +393,7 @@ msgid ""
 "Old MD5 =\t\t"
 msgstr ""
 "\n"
-"MD5 anterior =\t\t"
+"Régi MD5 =\t\t"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2162
 msgid ""
@@ -390,58 +401,58 @@ msgid ""
 "Current MD5 =\t"
 msgstr ""
 "\n"
-"MD5 atual =\t"
+"Új MD5 =\t"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2169
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2911
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:107
 msgid "File not found."
-msgstr "Arquivo n�o encontrado."
+msgstr "Nem találom a fájlt."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2199
 msgid "The configurations were exported successfully."
-msgstr "As configura��es foram exportadas com sucesso."
+msgstr "A beállítások exportálása sikeresen megtörtént."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2201
 msgid "Error exporting configurations."
-msgstr "Erro exportando configura��es."
+msgstr "Hiba történt a beállítások exportálása közben."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2208
 msgid "Select the file..."
-msgstr "Selecione o arquivo..."
+msgstr "Fájl kiválasztása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2225
 msgid ""
 "The configurations were imported successfully.\n"
 "The program will be restated now to the alterations have effect."
 msgstr ""
-"As configura��es foram importadas com sucesso.\n"
-"O programa ser� reiniciado agora para que as altera��es tenham efeito."
+"A beállítások importálása sikeresen megtörtént. \n"
+"A változások érvényesítéséhez a program most újraindul."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2230
 msgid "Error importing configurations."
-msgstr "Erro importando configura��es."
+msgstr "Hiba történt a beállítások importálása közben."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2240
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2251
 msgid "Command :\t"
-msgstr "Comando :\t"
+msgstr "Parancs:\t"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2240
 msgid "Shutdown Command..."
-msgstr "Comando para desligar..."
+msgstr "Leállítási parancs..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2251
 msgid "Disconnect Command..."
-msgstr "Comando para desconectar"
+msgstr "Kapcsolatbontási parancs..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2332
 msgid "Updating the configurations..."
-msgstr "Atualizando configura��es..."
+msgstr "Beállítások frissítése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2332
 msgid "Updating and saving the configurations..."
-msgstr "Atualizando e salvando as configura��es..."
+msgstr "Beállítások frissítése és mentése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2522
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2533
@@ -450,244 +461,248 @@ msgstr "Atualizando e salvando as configura��es..."
 msgid ""
 "Impossible to find the browser.\n"
 "Go to \"Options\" and define a valid one."
-msgstr ""
-"Imposs�vel encontrar o navegador.\n"
-"V� em \"Op��es\" e defina um caminho v�lido."
+msgstr "Nem sikerült megtalálni a böngészőt. Állítsa be a használni kívánt böngészőt a \"Beállítások\" menüpontban."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2554
+#, fuzzy
 msgid "Version: "
-msgstr "Vers�o: "
+msgstr "Verzió:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2555
+#, fuzzy
 msgid "Creator: "
-msgstr "Criador: "
+msgstr "Készítő:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2557
 msgid "I'd like to thank for the next contributors for their help:\n"
-msgstr "Eu gostariamos de agradecer aos seguintes contribuidores por sua ajuda:\n"
+msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2559
+#, fuzzy
 msgid " - several tips and donations\n"
-msgstr " - devido a varias dicas e doa��es\n"
+msgstr ""
+"az ötletekért és \n"
+"a támogatásért"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2561
 msgid ""
 " - Ripstop theme\n"
 "\n"
 msgstr ""
-" - Tema Ripstop\n"
-"\n"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2562
 msgid "Visit our website:\n"
-msgstr "Visite nossa site:\n"
+msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2565
+#, fuzzy
 msgid "Help to improve the program!\n"
-msgstr " Ajude a melhorar o programa!\n"
+msgstr ""
+"Segítsen jobbá tenni a programot!\n"
+"Támogassa a projektet!"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2566
 msgid "Donate to this project!"
-msgstr "Doe para este projeto!"
+msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2586
 msgid "Do you want to close the program?"
-msgstr "Voc� deseja fechar o programa?"
+msgstr "Bezárja a programot?"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2586
 msgid "Close..."
-msgstr "Fechar..."
+msgstr "Bezárás..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2676
 #: /tmp/dummy:4
 #: /tmp/dummy:73
 msgid "Add new download"
-msgstr "Adiciona novo download"
+msgstr "Új letöltés"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2680
 #: /tmp/dummy:6
 msgid "Remove the selected download"
-msgstr "Remove o download selecionado"
+msgstr "Kiválasztott letöltés törlése"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2684
 #: /tmp/dummy:8
 msgid "Mark the selected download as scheduled"
-msgstr "Marca o download selecionado como agendado"
+msgstr "Kiválasztott letöltés ütemezettként"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2688
 #: /tmp/dummy:10
 msgid "Start the selected download"
-msgstr "Inicia o download selecionado"
+msgstr "Kiválasztott letöltés indítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2692
 #: /tmp/dummy:12
 msgid "Stop the selected download"
-msgstr "P�ra o download selecionado"
+msgstr "Kiválasztott letöltés leállítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2696
 #: /tmp/dummy:14
 #: /tmp/dummy:29
 msgid "Start all downloads"
-msgstr "Iniciar todos os downloads"
+msgstr "Az összes letöltés elindítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2700
 #: /tmp/dummy:16
 #: /tmp/dummy:30
 msgid "Stop all downloads"
-msgstr "Parar todos os downloads"
+msgstr "Az összes letöltés leállítása"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2704
 #: /tmp/dummy:18
 msgid "Raise in one level the selected download in the queue"
-msgstr "Eleva em um n�vel o download selecionado na fila"
+msgstr "Előrébb a letöltést a letöltési sorban"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2708
 #: /tmp/dummy:20
 msgid "Lower in one level the selected download in the queue"
-msgstr "Diminui em um n�vel o download selecionado na fila"
+msgstr "Hátrébb a letöltést a letöltési sorban"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2712
 #: /tmp/dummy:22
 msgid "Show the properties of the selected download"
-msgstr "Mostra as propriedades do download selecionado"
+msgstr "Kiválasztott letöltés jellemzőinek megjelenítése"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2747
 msgid ""
 "A HTML file was detected on the current downloads.\n"
 "Do you want to open this file on the browser?"
 msgstr ""
-"Um arquivo HTML foi detectado nos downloads em progresso.\n"
-"Deseja abrir este arquivo no navegador?"
+"Egy HTML fájl van a letöltési sorban. \n"
+"Megnyitja a böngészőben?"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2764
 msgid "Shutdown the computer..."
-msgstr "Desligar o computador..."
+msgstr "Számítógép leállítása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2764
 msgid "The computer will be shutdown in seconds..."
-msgstr "O computador ser� desligado em segundos..."
+msgstr "A számítógép hamarosan leáll..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2776
 msgid "Disconnecting from the internet..."
-msgstr "Desconectando da internet..."
+msgstr "Internet-kapcsolat bontása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2776
 msgid "The internet connection will be closed in seconds..."
-msgstr "A conex�o com a internet ser� fechada em segundos..."
+msgstr "Az Internet-kapcsolat hamarosan véget ér..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2863
 msgid "Visit http://dfast.sourceforge.net for more informations."
-msgstr "Visite http://dfast.sourceforge.net para obter mais informa��es."
+msgstr "További információkért látogassa meg a http://dfast.sourceforge.net oldalt."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2901
 msgid "List os files inside Zip archive:"
-msgstr "Conte�do do arquivo Zip:"
+msgstr "Zip archívumban található fájlok listája:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2901
 msgid "Zip Preview"
-msgstr "Previsualiza��o do Zip"
+msgstr "Zip előnézet"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2905
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2908
 msgid "It was impossible to extract zip file content!"
-msgstr "N�o foi poss�vel extrair o conte�do do arquivo zip!"
+msgstr "Nem sikerült a Zip archívum kicsomagolása!"
 
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:45
 msgid ""
 "Impossible to search in this page.\n"
 "Change to another page and try again"
 msgstr ""
-"Imposs�vel procurar nesta aba.\n"
-"Mude para outra aba e tente novamente"
+"Nem lehet keresni a lapon.\n"
+"Válasszon egy másik lapot, és ismételje meg a keresést."
 
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:107
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:99
 msgid "Information..."
-msgstr "Informa��o..."
+msgstr "Információ..."
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:46
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:79
 msgid "The follow URL is invalid:\n"
-msgstr "A URL a seguir � inv�lida:\n"
+msgstr "Érvénytelen URL:\n"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:61
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:163
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:195
 msgid "The URL is invalid!"
-msgstr "A URL � inv�lida!"
+msgstr "Az URL érvénytelen!"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:91
 msgid "The follow URL has a different filename:\n"
-msgstr "A URL a seguir tem um nome de arquivo diferente:\n"
+msgstr "A következő URL fájlneve eltér. \n"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:99
 msgid "Select at least one item of the address list!\n"
-msgstr "Selecione pelo menos um �tem da lista de endere�os!\n"
+msgstr "Jelöljön ki legalább egy elemet a címlistáról!\n"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:108
 msgid ""
 "The destination directory don't exists!\n"
 "Do you want to create it?"
 msgstr ""
-"O diret�rio de destino n�o existe!\n"
-"Voc� deseja cri�-lo?"
+"A célkönyvtár nem létezik.\n"
+"Létrehozza?"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:113
 msgid "You don't have permission to create the directory!"
-msgstr "Voc� n�o tem permiss�o para criar o diret�rio!"
+msgstr "Nem jogosult a könyvtár létrehozására."
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:126
 msgid "I can't split the file in so many pieces!"
-msgstr "Eu n�o posso dividir o arquivo em tantas partes!"
+msgstr "Nem lehet ennyi szegmensre osztani a fájlt!"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:177
 msgid "Edit the URL"
-msgstr "Edite a URL"
+msgstr "URL szerkesztése"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:35
 msgid "Double-click on the item Start/Stop the download"
-msgstr "Duplo-click no item Inicia/P�ra o download"
+msgstr "Kattintson duplán az elemen a letöltés elindításához/leállításához."
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:190
 msgid "   [ Yes ]"
-msgstr "   [ Sim ]"
+msgstr "   [ Igen]"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:192
 msgid "   [ No  ]"
-msgstr "   [ N�o ]"
+msgstr "   [ Nem  ]"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:228
 msgid "Restart"
-msgstr "Reiniciar"
+msgstr "Újraindítás"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:231
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:269
 msgid "Filename"
-msgstr "Nome do arquivo"
+msgstr "Fájlnév"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:237
 msgid "Completed"
-msgstr "Conclu�do"
+msgstr "Befejezve"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:240
 msgid "Percentual"
-msgstr "Percentual"
+msgstr "Százalék"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:243
 msgid "Time Passed"
-msgstr "Tempo decorrido"
+msgstr "Eltelt idő"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:246
 msgid "Remaining"
-msgstr "Restando"
+msgstr "Hátralévő idő"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:249
 msgid "Speed"
-msgstr "Velocidade"
+msgstr "Sebesség"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:252
 msgid "Attempts"
-msgstr "Tentativas"
+msgstr "Próbálkozások"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:255
 msgid "URL"
@@ -695,44 +710,44 @@ msgstr "URL"
 
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:39
 msgid "Double-click on the item opens the destination directory"
-msgstr "Duplo-click no item abre o diret�rio de destino"
+msgstr "Kattintson duplán az elemen a célkönyvtár megnyitásához"
 
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:147
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:288
 #: /tmp/dummy:9
 msgid "Start"
-msgstr "Iniciar"
+msgstr "Kezdés"
 
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:148
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:273
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:289
 msgid "Finished"
-msgstr "Terminado"
+msgstr "Befejezve"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:67
 msgid ""
 "This is a HTML file\n"
 "Opening in the default browser.\n"
 msgstr ""
-"Este � um arquivo HTML\n"
-"Abrindo no navegador padr�o.\n"
+"Ez egy HTML fájl \n"
+"Megnyitás az alapértelmezett böngészővel. \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:193
 msgid "This protocol isn't supported.\n"
-msgstr "Este protocolo n�o � suportado.\n"
+msgstr "Nem támogatott protokoll.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:247
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:915
 msgid "Redirecting to "
-msgstr "Redirecionando para "
+msgstr "Átirányítás ide:"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:265
 msgid "Metalink file detected\n"
-msgstr "Arquivo Metalink detectado\n"
+msgstr "Metalink fájlt észleltem\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:266
 msgid "Getting Metalink data...\n"
-msgstr "Obtendo dados do arquivo Metalink...\n"
+msgstr "Metalink adatok lekérdezése...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:296
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:715
@@ -740,114 +755,114 @@ msgstr "Obtendo dados do arquivo Metalink...\n"
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1138
 #: /tmp/dummy:175
 msgid "Not available"
-msgstr "N�o dispon�vel"
+msgstr "Nem elérhető"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:317
 msgid "This Metalink file contains multiples files.\n"
-msgstr "Este arquivo Metalink cont�m multiplos arquivos.\n"
+msgstr "A Metalink fájl több fájlt tartalmaz.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:320
 msgid "Creating all downloads....\n"
-msgstr "Criando todos os downloads...\n"
+msgstr "Letöltések létrehozása...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:330
 msgid "Getting file number "
-msgstr "Obtendo arquivo n�mero "
+msgstr "Fájlszám lekérdezése"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:336
 msgid "Error retrieving Metalink data\n"
-msgstr "Erro extraindo dados do arquivo Metalink\n"
+msgstr "Nem sikerült a Metalink adatok lekérdezése\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:355
 msgid "New attempt in "
-msgstr "Nova tentativa em "
+msgstr "Ismételt próbálkozás"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:355
 msgid " seconds\n"
-msgstr " segundos\n"
+msgstr "másodperc múlva \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:369
 msgid "Attempt "
-msgstr "Tentativa "
+msgstr "Próbálkozás"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:369
 msgid " of "
-msgstr " de "
+msgstr "ennyiből"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:390
 msgid "Canceled.\n"
-msgstr "Cancelado.\n"
+msgstr "Megszakítva. \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:412
 msgid "Critical error!! The start point is bigger that the end point!!\n"
-msgstr "Erro cr�tico!! O ponto de inicio � maior que o ponto de t�rmino!!\n"
+msgstr "Kritikus hiba! A kiindulópont nagyobb, mint a végpont! \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:434
 msgid "Error establishing input stream.\n"
-msgstr "Erro estabelecendo canal de entrada.\n"
+msgstr "Nem sikerült létrehozni a bemeneti adatfolyamot. \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:449
 msgid "Copying file...\n"
-msgstr "Copiando arquivo...\n"
+msgstr "Fájl másolása...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:454
 msgid "Error opening file "
-msgstr "Erro abrindo arquivo "
+msgstr "Nem sikerült megnyitni a fájlt"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:548
 msgid "Error copying file.\n"
-msgstr "Erro copiando arquivo.\n"
+msgstr "A fájlmásolás nem sikerült.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:568
 msgid "Error writing file.\n"
-msgstr "Erro gravando arquivo.\n"
+msgstr "Nem sikerült a fájl mentése. \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:639
 msgid "Finished this piece\n"
-msgstr "Esta parte j� foi conclu�da\n"
+msgstr "Szegmens befejezve\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:657
 msgid "Waiting for the others pieces...\n"
-msgstr "Esperando pelas outras partes...\n"
+msgstr "Várakozás a többi szegmensre... \n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:665
 msgid "Putting all the pieces together...\n"
-msgstr "Colocando todas as partes juntas...\n"
+msgstr "Szegmensek összefűzése...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:669
 msgid ""
 "Error joining the pieces.\n"
 "Try restart the download.\n"
 msgstr ""
-"Erro juntando as partes.\n"
-"Tente reiniciar o download.\n"
+"Nem sikerült a szegmenseket összefűzni.\n"
+"Ismételje meg a letöltést.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:675
 msgid "Checking MD5 of the file...\n"
-msgstr "Verificando o MD5 do arquivo...\n"
+msgstr "A fájl MD5 ellenőrzőösszegének kiszámítása...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:676
 msgid "Checking MD5 ... ("
-msgstr "Verificando o MD5... ("
+msgstr "MD5 ellenőrzése... ("
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:684
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:692
 msgid "Comparing expected and calculated MD5...\n"
-msgstr "Comparando o MD5 experado e o calculado...\n"
+msgstr "A várt és a számított MD5 összehasonlítása...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:687
 msgid "File verified successfully\n"
-msgstr "Arquivo verificado com sucesso\n"
+msgstr "A fájl ellenőrzése sikeres volt\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:688
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:698
 msgid "Finished\n"
-msgstr "Conclu�do\n"
+msgstr "Kész\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:724
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:975
 msgid "Resolving host '"
-msgstr "Resolvendo endere�o '"
+msgstr "Számítógép keresése"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:727
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:978
@@ -856,30 +871,30 @@ msgid ""
 "Host not found.\n"
 msgstr ""
 "\n"
-"Endere�o n�o encontrado.\n"
+"A számítógép nem található\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:733
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:984
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:999
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1023
 msgid " OK\n"
-msgstr " OK\n"
+msgstr "Rendben\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:737
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:988
 msgid "Trying to connect in '"
-msgstr "Tentado se conectar em '"
+msgstr "Kapcsolódási kísérlet: "
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:742
 msgid "Connection denied.\n"
-msgstr "Conex�o negada.\n"
+msgstr "Kapcsolódás visszautasítva\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:753
 msgid ""
 "Accessing server...\n"
 "\n"
 msgstr ""
-"Acessando servidor...\n"
+"Hozzáférés a kiszolgálóhoz...\n"
 "\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:853
@@ -888,27 +903,27 @@ msgid ""
 "The file size has changed since the last time.\n"
 "Removing the partial downloaded files...\n"
 msgstr ""
-"O tamanho do arquivo mudou desde a �ltima vez.\n"
-"Removendo os arquivos parciais j� baixados...\n"
+"A fájl mérete megváltozott.\n"
+"A részlegesen letöltött fájlok törlése...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:885
 msgid "This server don't support restart.\n"
-msgstr "Este servidor n�o suporta rein�cios.\n"
+msgstr "A kiszolgáló nem támogatja a megszakadt letöltések folytatását.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:898
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:905
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1072
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1160
 msgid "Impossible to return the file size.\n"
-msgstr "N�o foi poss�vel obter o tamanho do arquivo.\n"
+msgstr "Nem sikerült lekérdezni a fájl méretét.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:929
 msgid "Error requesting file.\n"
-msgstr "Erro requisitando arquivo.\n"
+msgstr "Hiba a fájl kérése közben.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:937
 msgid "The Server stayed a lot of time without answering.\n"
-msgstr "O servidor ficou muito tempo sem responder.\n"
+msgstr "A kiszolgáló régóta nem válaszol.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:993
 msgid ""
@@ -916,15 +931,15 @@ msgid ""
 "Connection denied.\n"
 msgstr ""
 "\n"
-"Conex�o negada.\n"
+"Kapcsolat elutasítva.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1003
 msgid "Waiting for welcome message.\n"
-msgstr "Esperando pela mensagem de boas vindas.\n"
+msgstr "Várakozás az üdvözlő üzenetre.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1008
 msgid "Verifying if the server supports restarts..."
-msgstr "Verificando se o servidor suporta rein�cios..."
+msgstr "Ellenőrzöm, hogy kiszolgáló támogatja-e a megszakadt letöltések folytatását..."
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1011
 msgid ""
@@ -932,301 +947,302 @@ msgid ""
 "This server don't support restart.\n"
 msgstr ""
 "\n"
-"Este servidor n�o suporta rein�cios.\n"
+"Ez a kiszolgáló nem támogatja a megszakadt letöltések folytatását.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1030
 msgid "Changing to directory "
-msgstr "Mudando para o diret�rio "
+msgstr "Könyvtárváltás"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1033
 msgid "Invalid directory.\n"
-msgstr "Diret�rio inv�lido.\n"
+msgstr "Érvénytelen könyvtár.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1042
 msgid "Changing to binary mode...\n"
-msgstr "Mudando para o modo bin�rio...\n"
+msgstr "Váltás bináris módba...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1045
 msgid "Impossible to change to binary mode.\n"
-msgstr "Imposs�vel mudar para o modo bin�rio.\n"
+msgstr "Nem sikerült bináris módba váltani.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1054
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1157
 msgid "Verifying the size of the "
-msgstr "Verificando o tamanho de "
+msgstr "Méret ellenőrzése: "
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1080
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1177
 msgid "File size: "
-msgstr "Tamanho do arquivo: "
+msgstr "Fájlméret:"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1125
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1185
 msgid "Requesting file...\n"
-msgstr "Requisitando o arquivo...\n"
+msgstr "Fájl kérése...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1149
 msgid "Looking for file "
-msgstr "Procurando pelo arquivo "
+msgstr "Fájl keresése"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1152
 msgid "File not found.\n"
-msgstr "Arquivo n�o encontrado.\n"
+msgstr "A fájl nem található.\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:1258
 msgid "There isn't enought disk space to join the file parts.\n"
-msgstr "N�o h� espa�o suficiente em disco para juntar as partes do arquivo.\n"
+msgstr "Nincs elegendő lemezterület a fájlszegmensek összefűzéséhez.\n"
 
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:62
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:69
 msgid "Choose a file..."
-msgstr "Selecione um arquivo..."
+msgstr "Fájl kiválasztása..."
 
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:135
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:142
 msgid "Select the date..."
-msgstr "Selecione a data..."
+msgstr "Dátum kiválasztása..."
 
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:158
 msgid "Remove some item before add a new one."
-msgstr "Remova algum item antes de adicionar um novo."
+msgstr "Töröljön néhány elemet, mielőtt újat adna hozzá."
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:238
 msgid "Sundays"
-msgstr "Domingos"
+msgstr "Vasárnap"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:238
 msgid "Mondays"
-msgstr "Segundas"
+msgstr "Hétfő"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:238
 msgid "Tuesdays"
-msgstr "Ter�as"
+msgstr "Kedd"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:239
 msgid "Wednesdays"
-msgstr "Quartas"
+msgstr "Szerda"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:239
 msgid "Thursdays"
-msgstr "Quintas"
+msgstr "Csütörtök"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:239
 msgid "Fridays"
-msgstr "Sextas"
+msgstr "Péntek"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:240
 msgid "Saturdays"
-msgstr "Sabados"
+msgstr "Szombat"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:739
 msgid "Ok"
-msgstr "Ok"
+msgstr "Rendben"
 
 #: /tmp/dummy:1
 msgid "About..."
-msgstr "Sobre..."
+msgstr "Névjegy..."
 
 #: /tmp/dummy:2
+#, fuzzy
 msgid "Close"
-msgstr "Fechar"
+msgstr "Bezárás..."
 
 #: /tmp/dummy:3
 msgid "New"
-msgstr "Novo"
+msgstr "Új"
 
 #: /tmp/dummy:5
 #: /tmp/dummy:164
 msgid "Remove"
-msgstr "Remover"
+msgstr "Törlés"
 
 #: /tmp/dummy:7
 #: /tmp/dummy:92
 msgid "Schedule"
-msgstr "Agendar"
+msgstr "Ütemezés"
 
 #: /tmp/dummy:11
 msgid "Stop"
-msgstr "Parar"
+msgstr "Leállítás"
 
 #: /tmp/dummy:13
 msgid "Start All"
-msgstr "Iniciar Todos"
+msgstr "Összes elindítása"
 
 #: /tmp/dummy:15
 msgid "Stop All"
-msgstr "Parar Todos"
+msgstr "Összes leállítása"
 
 #: /tmp/dummy:17
 msgid "Up"
-msgstr "Acima"
+msgstr "Fel"
 
 #: /tmp/dummy:19
 msgid "Down"
-msgstr "Abaixo"
+msgstr "Le"
 
 #: /tmp/dummy:21
 msgid "Properties"
-msgstr "Propriedades"
+msgstr "Jellemzők"
 
 #: /tmp/dummy:23
 msgid "&File"
-msgstr "&Arquivo"
+msgstr "&Fájl"
 
 #: /tmp/dummy:24
 msgid "New Download"
-msgstr "Novo Download"
+msgstr "Új letöltés"
 
 #: /tmp/dummy:31
 msgid "Exit"
-msgstr "Sair"
+msgstr "Kilépés"
 
 #: /tmp/dummy:32
 #: /tmp/dummy:81
 msgid "&Edit"
-msgstr "&Editar"
+msgstr "&Szerkesztés"
 
 #: /tmp/dummy:33
 msgid "Paste URL"
-msgstr "Colar URL"
+msgstr "URL beillesztése"
 
 #: /tmp/dummy:36
 msgid "Select All"
-msgstr "Selecionar Todos"
+msgstr "Összes kijelölése"
 
 #: /tmp/dummy:37
 msgid "Invert Selection"
-msgstr "Inverter Sele��o"
+msgstr "Kijelölés megfordítása"
 
 #: /tmp/dummy:38
 msgid "Find Download"
-msgstr "Localizar Download"
+msgstr "Letöltés keresése"
 
 #: /tmp/dummy:39
 msgid "&View"
-msgstr "Exi&bir"
+msgstr "&Nézet"
 
 #: /tmp/dummy:40
 msgid "Show/Hide Graph"
-msgstr "Mostrar/Esconder Gr�fico"
+msgstr "Grafikon megjelenítése/elrejtése"
 
 #: /tmp/dummy:41
 msgid "Show/Hide Progress Bar"
-msgstr "Mostrar/Esconder Barra de Progresso"
+msgstr "Eredményjelző megjelenítése/elrejtése"
 
 #: /tmp/dummy:42
 msgid "Show/Hide Details"
-msgstr "Mostrar/Esconder Detalhes"
+msgstr "Részletek megjelenítése/elrejtése"
 
 #: /tmp/dummy:43
 msgid "Language"
-msgstr "Idioma"
+msgstr "Nyelv"
 
 #: /tmp/dummy:44
 msgid "(Default)"
-msgstr "(Padr�o)"
+msgstr "(Alapértelmezett)"
 
 #: /tmp/dummy:45
 msgid "English"
-msgstr "Ingl�s"
+msgstr "Angol"
 
 #: /tmp/dummy:46
 msgid "Portuguese"
-msgstr "Portugu�s"
+msgstr "Portugál"
 
 #: /tmp/dummy:47
 msgid "Portuguese(Brazil)"
-msgstr "Portugu�s(Brasil)"
+msgstr "Portugál(Brazil)"
 
 #: /tmp/dummy:48
 msgid "German"
-msgstr "Alem�o"
+msgstr "Német"
 
 #: /tmp/dummy:49
 msgid "Spanish"
-msgstr "Espanhol"
+msgstr "Spanyol"
 
 #: /tmp/dummy:50
 msgid "Czech"
-msgstr "Tcheco"
+msgstr ""
 
 #: /tmp/dummy:51
 msgid "Russian"
-msgstr "Russo"
+msgstr ""
 
 #: /tmp/dummy:52
 msgid "Hungarian"
-msgstr "H�ngaro"
+msgstr ""
 
 #: /tmp/dummy:53
 msgid "Indonesian"
-msgstr "Indonesio"
+msgstr ""
 
 #: /tmp/dummy:54
 msgid "Armenian"
-msgstr "Armenio"
+msgstr ""
 
 #: /tmp/dummy:55
 msgid "&Tools"
-msgstr "&Ferramentas"
+msgstr "&Eszközök"
 
 #: /tmp/dummy:61
 msgid "Export Configurations"
-msgstr "Exportar Configura��es"
+msgstr "Beállítások exportálása"
 
 #: /tmp/dummy:62
 msgid "Import Configurations"
-msgstr "Importar Configura��es"
+msgstr "Beállítások importálása"
 
 #: /tmp/dummy:63
 msgid "Shutdown when finished"
-msgstr "Desligar quando terminar"
+msgstr "Leállítás a letöltések befejezése után"
 
 #: /tmp/dummy:64
 #: /tmp/dummy:66
 msgid "This option is only valid in this session of the program"
-msgstr "Esta op��o s� � v�lida nesta sess�o do programa"
+msgstr "Ez a beállítás csak a program jelenlegi munkamenetére érvényes"
 
 #: /tmp/dummy:65
 msgid "Disconnect when finished"
-msgstr "Desconectar quando terminar"
+msgstr "Kapcsolat bontása a letöltések befejezése után"
 
 #: /tmp/dummy:67
 #: /tmp/dummy:102
 msgid "Options"
-msgstr "Op��es"
+msgstr "Beállítások"
 
 #: /tmp/dummy:68
 msgid "&Help"
-msgstr "A&juda"
+msgstr "&Súgó"
 
 #: /tmp/dummy:69
 msgid "wxDownload Fast Site"
-msgstr "Site do wxDownload Fast"
+msgstr "wxDownload Fast weboldal"
 
 #: /tmp/dummy:70
 msgid "Report Bugs..."
-msgstr "Relate Erros..."
+msgstr "Hibajelentés..."
 
 #: /tmp/dummy:71
 msgid "Donate..."
-msgstr "Doa��es..."
+msgstr "Támogatás..."
 
 #: /tmp/dummy:72
 msgid "About"
-msgstr "Sobre"
+msgstr "Névjegy"
 
 #: /tmp/dummy:74
 msgid "Save in:"
-msgstr "Salvar em:"
+msgstr "Mentés ide:"
 
 #: /tmp/dummy:75
 msgid "Directory"
-msgstr "Diret�rio"
+msgstr "Alkönyvtár"
 
 #: /tmp/dummy:76
 msgid "Address:"
-msgstr "Endere�o:"
+msgstr "Cím:"
 
 #: /tmp/dummy:77
 msgid ""
@@ -1235,141 +1251,141 @@ msgid ""
 "Example: http://www.foo.com:80/foo.exe\n"
 "Example: ftp://ftp.foo.com:21/foo.exe"
 msgstr ""
-"URL para download\n"
-"Exemplo: http://www.foo.com/foo.exe\n"
-"Exemplo: http://www.foo.com:80/foo.exe\n"
-"Exemplo: ftp://ftp.foo.com:21/foo.exe"
+"Letöltési URL\n"
+"Példa: http://www.foo.com/foo.exe\n"
+"Példa:http://www.foo.com:80/foo.exe\n"
+"Példa: ftp://ftp.foo.com:21/foo.exe"
 
 #: /tmp/dummy:78
 #: /tmp/dummy:162
 msgid "Add"
-msgstr "Adicionar"
+msgstr "Hozzáadás"
 
 #: /tmp/dummy:79
 msgid "Address List:"
-msgstr "Lista de Endere�os:"
+msgstr "Címlista:"
 
 #: /tmp/dummy:80
 msgid "Just the marked addresses will be considered"
-msgstr "Apenas os endere�os marcados ser�o considerados"
+msgstr "Csak a megjelölt címek lesznek figyelembe véve"
 
 #: /tmp/dummy:82
 msgid "Server Permission"
-msgstr "Permiss�o no Servidor"
+msgstr "Kiszolgáló beállításai"
 
 #: /tmp/dummy:83
 msgid "User:"
-msgstr "Usu�rio:"
+msgstr "Felhasználó:"
 
 #: /tmp/dummy:84
 msgid "Password:"
-msgstr "Senha:"
+msgstr "Jelszó:"
 
 #: /tmp/dummy:85
 msgid "Segmented download"
-msgstr "Download Segmentado"
+msgstr "Szegmentált letöltés"
 
 #: /tmp/dummy:86
 msgid ""
 "Split download into how many\n"
 "pieces?"
 msgstr ""
-"Separar o arquivo em quantos       \n"
-"peda�os?"
+"Hány szegmensre osszam\n"
+"a letöltést?"
 
 #: /tmp/dummy:87
 msgid "Download band width (in Kb/s)"
-msgstr "Banda para o download (em Kb/s)"
+msgstr "Letöltés sávszélessége (Kb/s)"
 
 #: /tmp/dummy:88
 msgid ""
 "Set the band width that will be used for this download.\n"
 "Set \"0\" to unlimited."
 msgstr ""
-"Define a largura de banda que ser� usada por este download.\n"
-"Defina \"0\" para ilimitado."
+"Adja meg a letöltéshez használt sávszélességet\n"
+"Ha nem akarja korlátozni a letöltést, állítsa a mezőt \"0\" értékre."
 
 #: /tmp/dummy:90
 msgid "Manual"
-msgstr "Manual"
+msgstr "Kézi"
 
 #: /tmp/dummy:91
 msgid "Now"
-msgstr "Agora"
+msgstr "Most"
 
 #: /tmp/dummy:96
 #: /tmp/dummy:97
 msgid "Execute the follow command when the download finish"
-msgstr "Executar o seguinte comando quando este download terminar"
+msgstr "A letöltés befejezésekor hajtsa végre a következ? parancsot"
 
 #: /tmp/dummy:98
 msgid "&Ok"
-msgstr "&Ok"
+msgstr "&Rendben"
 
 #: /tmp/dummy:99
 #: /tmp/dummy:177
 msgid "&Cancel"
-msgstr "&Cancelar"
+msgstr "&Mégsem"
 
 #: /tmp/dummy:103
 msgid "General"
-msgstr "Geral"
+msgstr "Általános"
 
 #: /tmp/dummy:104
 msgid "Number of attempts:"
-msgstr "N�mero de tentativas:"
+msgstr "Próbálkozások száma:"
 
 #: /tmp/dummy:105
 msgid "Number of attempts"
-msgstr "N�mero de tentativas"
+msgstr "Próbálkozások száma"
 
 #: /tmp/dummy:106
 msgid "Time between the attempts in seconds:"
-msgstr "Tempo entre as tentativas em segundos:"
+msgstr "Várakozás a probálkozások között (másodperc):"
 
 #: /tmp/dummy:107
 msgid "Number of simultaneous downloads:"
-msgstr "N�mero de downloads simult�neos:"
+msgstr "Egyidejű letöltések száma:"
 
 #: /tmp/dummy:108
 msgid "Remember the last settings on the New Download box"
-msgstr "Lembrar as �ltimas configura��es na caixa Novo Download"
+msgstr "Az \"Új letöltés\" párbeszédablak beállításainak megjegyzése"
 
 #: /tmp/dummy:109
 msgid "Always shutdown when all downloads finish"
-msgstr "Sempre desligar quando todos os downloads terminarem"
+msgstr "Mindig állítsa le a számítógépet a betöltések befejezése után"
 
 #: /tmp/dummy:110
 msgid "Always disconnect when all downloads finish"
-msgstr "Sempre desconectar quando todos os downloads terminarem"
+msgstr "Mindig bontsa a kapcsolatot a betöltések befejezése után"
 
 #: /tmp/dummy:111
 msgid "Show dialog box when program closes"
-msgstr "Mostrar caixa de di�logo quando fechar o programa"
+msgstr "Párbeszédablak megjelenítése kilépéskor"
 
 #: /tmp/dummy:112
 msgid "Refresh rate of the download list (millisecs):"
-msgstr "Taxa de atualiza��o da lista de downloads (miliseg):"
+msgstr "A letöltési lista frissítési időköze (ezredmásodperc):"
 
 #: /tmp/dummy:113
 msgid "Download Read Buffer size(in Bytes):"
-msgstr "Tamanho do Buffer de leitura(em Bytes):"
+msgstr "Letöltési puffer az olvasáshoz (bájt):"
 
 #: /tmp/dummy:114
 msgid "Restore the main window when all downloads finish"
-msgstr "Restaurar a janela principal quando todos os download terminarem"
+msgstr "Főablak helyreállítása a letöltések befejezése után"
 
 #: /tmp/dummy:115
 msgid "Hide the main window when you start a download"
-msgstr "Esconder a janela principal quando voc� iniciar um download"
+msgstr "Főablak elrejtése a letöltés megkezdése után"
 
 #: /tmp/dummy:116
 msgid "Paths"
-msgstr "Caminhos"
+msgstr "Elérési utak"
 
 #: /tmp/dummy:117
 msgid "Default destination:"
-msgstr "Destino padr�o:"
+msgstr "Alapértelmezett cél:"
 
 #: /tmp/dummy:118
 #: /tmp/dummy:120
@@ -1386,121 +1402,121 @@ msgstr "..."
 
 #: /tmp/dummy:119
 msgid "Browser path:"
-msgstr "Navegador internet:"
+msgstr "Böngésző elérési útvonala:"
 
 #: /tmp/dummy:121
 msgid "File manager path:"
-msgstr "Gerenciador de Arquivos:"
+msgstr "Fájlkezelő elérési útvonala:"
 
 #: /tmp/dummy:123
 msgid "Shutdown command:"
-msgstr "Comando para desligar:"
+msgstr "Leállítási parancs..."
 
 #: /tmp/dummy:124
 msgid "Disconnect command:"
-msgstr "Comando para desconectar:"
+msgstr "Kapcsolatbontási parancs..."
 
 #: /tmp/dummy:125
 msgid "Partial Temporary Files Path"
-msgstr "Caminho dos Arquivos tempor�rios"
+msgstr "Ideiglenes fájlok elérési útja"
 
 #: /tmp/dummy:126
 msgid "Use the destination directory"
-msgstr "Use o diret�rio de destino"
+msgstr "Használja a célkönyvtárat"
 
 #: /tmp/dummy:128
 msgid "Graph"
-msgstr "Gr�fico"
+msgstr "Grafikon"
 
 #: /tmp/dummy:129
 msgid "Show Graph"
-msgstr "Mostrar Gr�fico"
+msgstr "Grafikon megjelenítése"
 
 #: /tmp/dummy:130
 msgid "Save how many points to graph?"
-msgstr "Salvar quantos pontos para o gr�fico?"
+msgstr "Hány pont legyen a grafikonon?"
 
 #: /tmp/dummy:131
 msgid "Graph refresh rate (millisecs):"
-msgstr "Taxa de atualiza��o do gr�fico (miliseg):"
+msgstr "Grafikon frissítési intervalluma (ezredmásodperc):"
 
 #: /tmp/dummy:132
 msgid "Graph maximum value (kb/s):"
-msgstr "Valor m�ximo do gr�fico (kb/s):"
+msgstr "Grafikon maximális értéke (kb/s):"
 
 #: /tmp/dummy:133
 msgid "The text area Width (pixels):"
-msgstr "Largura da �rea do texto:"
+msgstr "Szövegmező szélessége (pixelek):"
 
 #: /tmp/dummy:134
 msgid "Graph height:"
-msgstr "Altura do gr�fico:"
+msgstr "Grafikon magassága:"
 
 #: /tmp/dummy:135
 msgid "Text font size (points):"
-msgstr "Tamanho da fonte do texto:"
+msgstr "Szöveg betümérete (pont):"
 
 #: /tmp/dummy:136
 msgid "Main line width:"
-msgstr "Largura da linha principal:"
+msgstr "Fősor szélessége:"
 
 #: /tmp/dummy:137
 msgid "Background colour:"
-msgstr "Cor de fundo:"
+msgstr "Háttérszín:"
 
 #: /tmp/dummy:139
 msgid "Graph grid colour:"
-msgstr "Cor da grade do gr�fico:"
+msgstr "Grafikon rács színe:"
 
 #: /tmp/dummy:141
 msgid "Main line colour:"
-msgstr "Cor da linha principal:"
+msgstr "Fősor színe:"
 
 #: /tmp/dummy:143
 msgid "Speed font colour:"
-msgstr "Cor da fonte da velocidade:"
+msgstr "Sebességjelző betütípus színe:"
 
 #: /tmp/dummy:145
 msgid "Scheduling"
-msgstr "Agendamento"
+msgstr "Ütemezés"
 
 #: /tmp/dummy:146
 msgid "Activate scheduling"
-msgstr "Ativar o agendamento"
+msgstr "Ütemezés engedélyezése"
 
 #: /tmp/dummy:147
 msgid "Start Date:"
-msgstr "Data de In�cio:"
+msgstr "Kezdés dátuma:"
 
 #: /tmp/dummy:148
 msgid "Start Time:"
-msgstr "Hora de In�cio:"
+msgstr "Kezdés ideje:"
 
 #: /tmp/dummy:150
 #: /tmp/dummy:155
 msgid "hours"
-msgstr "horas"
+msgstr "óra"
 
 #: /tmp/dummy:151
 #: /tmp/dummy:156
 msgid "minutes"
-msgstr "minutos"
+msgstr "perc"
 
 #: /tmp/dummy:152
 msgid "Finish Date:"
-msgstr "Data de Conclus�o:"
+msgstr "Befejezés dátuma:"
 
 #: /tmp/dummy:153
 msgid "Finish Time:"
-msgstr "Hora de Conclus�o:"
+msgstr "Befejezés ideje:"
 
 #: /tmp/dummy:157
 msgid "Deactivate downloads on:"
-msgstr "Desative os downloads em:"
+msgstr "Letöltések kikapcsolása:"
 
 #: /tmp/dummy:158
 msgid "Between"
-msgstr "Entre"
+msgstr "között"
 
 #: /tmp/dummy:159
 #: /tmp/dummy:161
@@ -1509,43 +1525,43 @@ msgstr ":"
 
 #: /tmp/dummy:160
 msgid "and"
-msgstr "e"
+msgstr "és"
 
 #: /tmp/dummy:163
 msgid "Exceptions List:"
-msgstr "Lista de Exce��es:"
+msgstr "Kivételek listája"
 
 #: /tmp/dummy:165
 msgid "Band width"
-msgstr "Largura de Banda"
+msgstr "Sávszélesség"
 
 #: /tmp/dummy:166
 msgid "Band width Control"
-msgstr "Controle de banda"
+msgstr "Sávszélesség beállítása"
 
 #: /tmp/dummy:167
 msgid "Unlimited band width"
-msgstr "Largura de Banda ilimitada"
+msgstr "Korlátlan sávszélesség"
 
 #: /tmp/dummy:168
 msgid "Band width independently for each download"
-msgstr "Banda independente para cada download"
+msgstr "Sávszélesség minden letöltéshez külön"
 
 #: /tmp/dummy:169
 msgid "Band width for the program (in Kb/s):"
-msgstr "Banda para o programa (em Kb/s):"
+msgstr "Program által használható sávszélesség (Kb/s):"
 
 #: /tmp/dummy:170
 msgid "Set the maximum bandwidth in Kb/s to be used by the program"
-msgstr "Define a banda m�xima em Kb/s que ser� usada pelo programa"
+msgstr "Beállítja a program által maximálisan használható sávszélességet"
 
 #: /tmp/dummy:171
 msgid "Browser Integration"
-msgstr "Integra��o"
+msgstr "Beépülés a böngészőbe"
 
 #: /tmp/dummy:172
 msgid "Firefox Integration"
-msgstr "Integra��o com o Firefox"
+msgstr "Beépülés a Firefox böngészőbe"
 
 #: /tmp/dummy:173
 msgid ""
@@ -1556,18 +1572,18 @@ msgid ""
 "     Tools -> FlashGot -> More Options\n"
 "3)Now select the wxDownload Fast on the Download Manager's List"
 msgstr ""
-"Para ativar a integra��o com o Firefox fa�a o seguinte:\n"
+"A Firefox böngészőbe való integrációhoz tegye a következőket\n"
 "\n"
-"1) Instale a exten��o FlashGot para o Firefox(www.flashgot.org/getit)\n"
-"2) Ap�s reiniciar o Firefox v� em:\n"
-"     Ferramentas -> FlashGot -> Mais op��es\n"
-"3) Agora selecione o wxDownload Fast na lista de Gerenciadores de Download"
+"1)Telepítse a FlashGot bővítmény a Firefoxhoz (www.flashgot.org/getit)\n"
+"2) A Firefox újraindítása után a menüben válassza a következőt:\n"
+"     Eszközök -> FlashGot -> További Beállítások\n"
+"3)Jelölje ki a wxDownload Fast-ot a Letöltéskezelők listájában"
 
 #: /tmp/dummy:174
 msgid "Internet Explorer Integration"
-msgstr "Integra��o com o Internet Explorer"
+msgstr "Beépülés az Internet Explorer böngészőbe"
 
 #: /tmp/dummy:176
 msgid "&Save"
-msgstr "&Salvar"
+msgstr "&Mentés"
 

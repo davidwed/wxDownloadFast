@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.3
+VERSION = 0.6.0
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -186,17 +186,19 @@ endif
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/readme.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/licence.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/png/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png/
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/svg/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/*.ico $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/svg
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/svg/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/svg/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/logo
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.svg $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/logo/*.ico $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/menubar
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/menubar/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/menubar/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/toolbar
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/toolbar/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/toolbar/
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/preview
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/preview/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/preview/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
@@ -205,6 +207,14 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)de/wxDFast.mo $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)cs/wxDFast.mo $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)ru/wxDFast.mo $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)hu/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)id/wxDFast.mo $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)hy/wxDFast.mo $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_FILE) $(MANPAGE_DIR)man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt_BR/man1
@@ -233,15 +243,19 @@ endif
 	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/*.xpm
 	rm -f $(DESTDIR)/usr/share/$(BIN)/xpm/*.ico
 	rmdir $(DESTDIR)/usr/share/$(BIN)/xpm
-	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png/*.png
-	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/png
-	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg/*.svg
-	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/svg
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/*.png
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/icon/*.ico
 	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
 	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.png
-	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.svg
-	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/logo/*.ico
 	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/logo
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/menubar/*.png
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/menubar
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/preview/*.png
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/preview
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/toolbar/*.png
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/toolbar
+	rm -f $(DESTDIR)/usr/share/$(BIN)/RipStop/svg/*.svg
+	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop/svg
 	rmdir $(DESTDIR)/usr/share/$(BIN)/RipStop
 	rm -f $(DESTDIR)/usr/share/$(BIN)/*.xrc
 	rmdir $(DESTDIR)/usr/share/$(BIN)
@@ -250,6 +264,10 @@ endif
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt_BR/man1/wxdfast.1.gz
@@ -284,6 +302,18 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
 	cp $(LANGUAGE_DIR)cs/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
 	cp $(LANGUAGE_DIR)cs/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)cs
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
+	cp $(LANGUAGE_DIR)ru/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
+	cp $(LANGUAGE_DIR)ru/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
+	cp $(LANGUAGE_DIR)hu/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
+	cp $(LANGUAGE_DIR)hu/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	cp $(LANGUAGE_DIR)id/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	cp $(LANGUAGE_DIR)id/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
+	cp $(LANGUAGE_DIR)hy/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
+	cp $(LANGUAGE_DIR)hy/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	cp $(MANPAGE_DIR)Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1
@@ -316,21 +346,25 @@ source:
 	cp $(RESOURCE_DIR)RipStop/licence.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/readme.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
-	cp $(RESOURCE_DIR)RipStop/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
-	cp $(RESOURCE_DIR)RipStop/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
 	cp $(RESOURCE_DIR)RipStop/icon/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
-	cp $(RESOURCE_DIR)RipStop/icon/png/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
-	cp $(RESOURCE_DIR)RipStop/icon/png/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/png
-	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
-	cp $(RESOURCE_DIR)RipStop/icon/svg/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
-	cp $(RESOURCE_DIR)RipStop/icon/svg/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon/svg
+	cp $(RESOURCE_DIR)RipStop/icon/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
+	cp $(RESOURCE_DIR)RipStop/icon/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
 	cp $(RESOURCE_DIR)RipStop/logo/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
-	cp $(RESOURCE_DIR)RipStop/logo/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
-	cp $(RESOURCE_DIR)RipStop/logo/*.ico $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
 	cp $(RESOURCE_DIR)RipStop/logo/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/logo
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/menubar
+	cp $(RESOURCE_DIR)RipStop/menubar/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/menubar
+	cp $(RESOURCE_DIR)RipStop/menubar/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/menubar
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/preview
+	cp $(RESOURCE_DIR)RipStop/preview/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/preview
+	cp $(RESOURCE_DIR)RipStop/preview/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/preview
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/svg
+	cp $(RESOURCE_DIR)RipStop/svg/*.svg $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/svg
+	cp $(RESOURCE_DIR)RipStop/svg/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/svg
+	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/toolbar
+	cp $(RESOURCE_DIR)RipStop/toolbar/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/toolbar
+	cp $(RESOURCE_DIR)RipStop/toolbar/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/toolbar
 	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	mkdir $(BIN)-$(VERSION)/src/wxMD5
 	cp $(SOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(SOURCE_DIR)
