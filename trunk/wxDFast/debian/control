@@ -8,5 +8,12 @@ Standards-Version: 3.6.2
 Package: wxdfast
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Multithread download manager
+Description: Multithread download manager created using the wxWidgets library.
  Multithread download manager created using the wxWidgets library.
+ wxDownload Fast (also known as wxDFast) is an open source
+ download manager. It is multi-platform and builds on Linux
+ Windows(2k,XP) and Mac OS X. Besides that, it is a multi-
+ threaded download manager. This means that it can split a file
+ into several pieces and download the pieces simultaneously.
+ 
+ Created in C++ using the wxWidgets(wxWindows)library.

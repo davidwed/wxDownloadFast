@@ -148,7 +148,7 @@
             <label>_Tools</label>
             <accel>ALT-T</accel>
             <object class="wxMenuItem" name="menuproperties">
-                <label>Properties of Download</label>
+                <label>Download Properties</label>
                 <accel>CTRL-P</accel>
                 <bitmap>RipStop/menubar/properties.png</bitmap>
             </object>

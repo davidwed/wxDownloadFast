@@ -446,18 +446,18 @@ mMainFrame::mMainFrame()
         this->defaultstatusbarmessage = wxEmptyString;
         wxStringTokenizer newrelease(programoptions.currentrelease,wxT("."));
         wxStringTokenizer currentrelease(VERSION,wxT("."));
-        long val01,val02;
-        for (int i=0;i<3;i++)
+        long old01,old02,old03,new01,new02,new03;
+        newrelease.GetNextToken().ToLong(&new01);
+        currentrelease.GetNextToken().ToLong(&old01);
+        newrelease.GetNextToken().ToLong(&new02);
+        currentrelease.GetNextToken().ToLong(&old02);
+        newrelease.GetNextToken().ToLong(&new03);
+        currentrelease.GetNextToken().ToLong(&old03);
+        if ((new01*100)+(new02*10)+(new03) > (old01*100)+(old02*10)+(old03))
         {
-            newrelease.GetNextToken().ToLong(&val01);
-            currentrelease.GetNextToken().ToLong(&val02);
-            if (val01 > val02)
-            {
-                this->defaultstatusbarmessage = _("NEW RELEASE: ");
-                this->defaultstatusbarmessage += wxT("wxDownload Fast ");
-                this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
-                break;
-            }
+            this->defaultstatusbarmessage = _("NEW RELEASE: ");
+            this->defaultstatusbarmessage += wxT("wxDownload Fast ");
+            this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
         }
         statusbar->SetStatusText(this->defaultstatusbarmessage);
         if (programoptions.bandwidthoption == 1)
@@ -1769,18 +1769,18 @@ void mMainFrame::SetLanguage(int language)
         this->defaultstatusbarmessage = wxEmptyString;
         wxStringTokenizer newrelease(programoptions.currentrelease,wxT("."));
         wxStringTokenizer currentrelease(VERSION,wxT("."));
-        long val01,val02;
-        for (int i=0;i<3;i++)
+        long old01,old02,old03,new01,new02,new03;
+        newrelease.GetNextToken().ToLong(&new01);
+        currentrelease.GetNextToken().ToLong(&old01);
+        newrelease.GetNextToken().ToLong(&new02);
+        currentrelease.GetNextToken().ToLong(&old02);
+        newrelease.GetNextToken().ToLong(&new03);
+        currentrelease.GetNextToken().ToLong(&old03);
+        if ((new01*100)+(new02*10)+(new03) > (old01*100)+(old02*10)+(old03))
         {
-            newrelease.GetNextToken().ToLong(&val01);
-            currentrelease.GetNextToken().ToLong(&val02);
-            if (val01 > val02)
-            {
-                this->defaultstatusbarmessage = _("NEW RELEASE: ");
-                this->defaultstatusbarmessage += wxT("wxDownload Fast ");
-                this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
-                break;
-            }
+            this->defaultstatusbarmessage = _("NEW RELEASE: ");
+            this->defaultstatusbarmessage += wxT("wxDownload Fast ");
+            this->defaultstatusbarmessage += programoptions.currentrelease + _(" is available.");
         }
         statusbar->SetStatusText(this->defaultstatusbarmessage);
         if (programoptions.bandwidthoption == 1)
