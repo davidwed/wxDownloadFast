@@ -31,7 +31,7 @@ void *mCheckNewReleaseThread::Entry()
             int read = in_stream->LastRead();
             if (read > 0)
             {
-                long val01,val02;
+                long old01,old02,old03,new01,new02,new03;
                 data[read] = '\0';
                 wxString strnewrelease = MyUtilFunctions::str2wxstr(data);
                 int pos1, pos2;
@@ -50,17 +50,19 @@ void *mCheckNewReleaseThread::Entry()
                     strnewrelease = strnewrelease.Mid(pos1,pos2-pos1);
                     wxStringTokenizer newrelease(strnewrelease,wxT("."));
                     wxStringTokenizer currentrelease(VERSION,wxT("."));
-                    for (int i=0;i<3;i++)
+
+                    newrelease.GetNextToken().ToLong(&new01);
+                    currentrelease.GetNextToken().ToLong(&old01);
+                    newrelease.GetNextToken().ToLong(&new02);
+                    currentrelease.GetNextToken().ToLong(&old02);
+                    newrelease.GetNextToken().ToLong(&new03);
+                    currentrelease.GetNextToken().ToLong(&old03);
+
+                    if ((new01*100)+(new02*10)+(new03) > (old01*100)+(old02*10)+(old03))
                     {
-                        newrelease.GetNextToken().ToLong(&val01);
-                        currentrelease.GetNextToken().ToLong(&val02);
-                        if (val01 > val02)
-                        {
-                            wxCommandEvent newversionevent(wxEVT_NEW_RELEASE);
-                            newversionevent.SetString(strnewrelease);
-                            wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(newversionevent);
-                            break;
-                        }
+                        wxCommandEvent newversionevent(wxEVT_NEW_RELEASE);
+                        newversionevent.SetString(strnewrelease);
+                        wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(newversionevent);
                     }
                 }
             }

@@ -139,6 +139,14 @@ void mInProgressList::SelectUnselect(bool selected,int selection)
         mainframe->menubar->GetMenu(0)->Enable(XRCID("menuschedule"),selected);
         mainframe->menubar->GetMenu(0)->Enable(XRCID("menustart"),selected);
         mainframe->menubar->GetMenu(0)->Enable(XRCID("menustop"),selected);
+        if (this->GetItemCount() == 0)
+        {
+            mainframe->menubar->GetMenu(0)->Enable(XRCID("menustartall"),FALSE);
+            mainframe->menubar->GetMenu(0)->Enable(XRCID("menustopall"),FALSE);
+        }
+        else
+            mainframe->menubar->GetMenu(0)->Enable(XRCID("menustartall"),TRUE);
+            mainframe->menubar->GetMenu(0)->Enable(XRCID("menustopall"),TRUE);
         mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopyurl"),selected);
         mainframe->menubar->GetMenu(1)->Enable(XRCID("menucopydownloaddata"),selected);
         mainframe->menubar->GetMenu(3)->Enable(XRCID("menuproperties"),selected);
@@ -153,6 +161,16 @@ void mInProgressList::SelectUnselect(bool selected,int selection)
         mainframe->toolbar-> EnableTool(XRCID("toolschedule"),selected);
         mainframe->toolbar-> EnableTool(XRCID("toolstart"),selected);
         mainframe->toolbar-> EnableTool(XRCID("toolstop"),selected);
+        if (this->GetItemCount() == 0)
+        {
+            mainframe->toolbar->EnableTool(XRCID("toolstartall"),FALSE);
+            mainframe->toolbar->EnableTool(XRCID("toolstopall"),FALSE);
+        }
+        else
+        {
+            mainframe->toolbar->EnableTool(XRCID("toolstartall"),TRUE);
+            mainframe->toolbar->EnableTool(XRCID("toolstopall"),TRUE);
+        }
         mainframe->toolbar-> EnableTool(XRCID("toolup"),selected);
         mainframe->toolbar-> EnableTool(XRCID("tooldown"),selected);
         mainframe->toolbar-> EnableTool(XRCID("toolproperties"),selected);

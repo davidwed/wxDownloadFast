@@ -252,7 +252,7 @@
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
                                             <orient>wxHORIZONTAL</orient>
-                                            <label>Download band width (in Kb/s)</label>
+                                            <label>Download bandwidth (in Kb/s)</label>
                                             <object class="sizeritem">
                                                 <option>1</option>
                                                 <flag>wxEXPAND</flag>
@@ -267,7 +267,7 @@
                                                             <min>0</min>
                                                             <max>100</max>
                                                             <value>0</value>
-                                                            <tooltip>Set the band width that will be used for this download.\nSet "0" to unlimited.</tooltip>
+                                                            <tooltip>Set the bandwidth that will be used for this download.\nSet "0" to unlimited.</tooltip>
                                                         </object>
                                                     </object>
                                                 </object>
