@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-11-04 19:48-0300\n"
+"PO-Revision-Date: 2006-11-06 11:08-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Ruslan Fedyarov <fedyarov@mail.ru>\n"
 "MIME-Version: 1.0\n"
@@ -10,9 +10,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Country: Russia\n"
 "X-Poedit-SourceCharset: cp1251\n"
-"X-Poedit-Basepath: /home/max/Projetos/wxDFast/src\n"
-"X-Poedit-SearchPath-0: /home/max/Projetos/wxDFast/resources\n"
-"X-Poedit-SearchPath-1: /home/max/Projetos/wxDFast/src\n"
+"X-Poedit-Basepath: /home/max/Projetos/wxDFast\n"
+"X-Poedit-SearchPath-0: /home/max/Projetos/wxDFast/src\n"
+"X-Poedit-SearchPath-1: /home/max/Projetos/wxDFast/resources\n"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:63
 #, c-format
@@ -55,24 +55,22 @@ msgstr "Закрыть программу"
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2414
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2426
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2438
-#, fuzzy
 msgid "Band control"
-msgstr "Управление скоростью"
+msgstr "Предел ск-ти"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:86
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:162
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:482
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1805
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2440
-#, fuzzy
 msgid "Unlimited"
-msgstr "Неограниченная скорость"
+msgstr "нет"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:86
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:88
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:89
 msgid "Just for this session. To change definitely go to \"Options\""
-msgstr ""
+msgstr "Только для этой сессии. Для задания зайдите в  \"Параметры\""
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:87
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:179
@@ -80,16 +78,15 @@ msgstr ""
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1797
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2428
 msgid "Active"
-msgstr ""
+msgstr "есть"
 
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:89
 #: /home/max/Projetos/wxDFast/src/TaskBarIcon.cpp:197
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:467
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1790
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2416
-#, fuzzy
 msgid "Per Download"
-msgstr "Новая загрузка"
+msgstr "по отдельности"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:143
 msgid "Downloads in Progress"
@@ -121,7 +118,6 @@ msgid "Remove Download"
 msgstr "Удалить загрузку"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:381
-#: /tmp/dummy:56
 msgid "Properties of Download"
 msgstr "Свойства загрузки"
 
@@ -155,14 +151,14 @@ msgstr "Копировать данные загрузки"
 msgid "Open Destination Directory"
 msgstr "Открыть папку сохранения"
 
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:456
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1779
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:458
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1781
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2859
 msgid "NEW RELEASE: "
 msgstr "Новый релиз:"
 
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:458
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1781
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:460
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1783
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2861
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2863
 msgid " is available."
@@ -273,7 +269,7 @@ msgid "Name"
 msgstr "Имя"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1431
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:234
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:252
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:144
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:271
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:285
@@ -323,6 +319,7 @@ msgid "Find file..."
 msgstr "Найти файл"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1885
+#: /tmp/dummy:56
 msgid "Download Properties"
 msgstr "Свойства загрузки"
 
@@ -651,48 +648,48 @@ msgstr "Редактировать адрес"
 msgid "Double-click on the item Start/Stop the download"
 msgstr "Дважды щелкните на пункте для запуска/остановки загрузки"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:190
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:208
 msgid "   [ Yes ]"
 msgstr "   [ Да ]"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:192
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:210
 msgid "   [ No  ]"
 msgstr "   [ Нет ]"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:228
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:246
 msgid "Restart"
 msgstr "Перезапустить"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:231
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:249
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:269
 msgid "Filename"
 msgstr "Имя файла"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:237
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:255
 msgid "Completed"
 msgstr "Загружено"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:240
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:258
 msgid "Percentual"
 msgstr "Процент"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:243
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:261
 msgid "Time Passed"
 msgstr "Время"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:246
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:264
 msgid "Remaining"
 msgstr "Осталось"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:249
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:267
 msgid "Speed"
 msgstr "Скорость"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:252
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:270
 msgid "Attempts"
 msgstr "Попыток"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:255
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:273
 msgid "URL"
 msgstr "Адрес"
 
@@ -1284,12 +1281,14 @@ msgstr ""
 " загрузку?"
 
 #: /tmp/dummy:87
-msgid "Download band width (in Kb/s)"
+#, fuzzy
+msgid "Download bandwidth (in Kb/s)"
 msgstr "Скорость загрузки (Кб/с)"
 
 #: /tmp/dummy:88
+#, fuzzy
 msgid ""
-"Set the band width that will be used for this download.\n"
+"Set the bandwidth that will be used for this download.\n"
 "Set \"0\" to unlimited."
 msgstr ""
 "Укажите скорость для данной загрузки.\n"
@@ -1305,9 +1304,8 @@ msgstr "Сейчас"
 
 #: /tmp/dummy:96
 #: /tmp/dummy:97
-#, fuzzy
 msgid "Execute the follow command when the download finish"
-msgstr "Восстанавливать главное окно по завершении всех загрузок"
+msgstr "Выполнить команду по окончании загрузкиr"
 
 #: /tmp/dummy:98
 msgid "&Ok"
@@ -1523,23 +1521,28 @@ msgid "Exceptions List:"
 msgstr "Список исключений:"
 
 #: /tmp/dummy:165
-msgid "Band width"
+#, fuzzy
+msgid "Bandwidth"
 msgstr "Скорость:"
 
 #: /tmp/dummy:166
-msgid "Band width Control"
+#, fuzzy
+msgid "Bandwidth Control"
 msgstr "Управление скоростью"
 
 #: /tmp/dummy:167
-msgid "Unlimited band width"
+#, fuzzy
+msgid "Unlimited bandwidth"
 msgstr "Неограниченная скорость"
 
 #: /tmp/dummy:168
-msgid "Band width independently for each download"
+#, fuzzy
+msgid "Bandwidth independently for each download"
 msgstr "Независимая скорость у каждой загрузки"
 
 #: /tmp/dummy:169
-msgid "Band width for the program (in Kb/s):"
+#, fuzzy
+msgid "Bandwidth for the program (in Kb/s):"
 msgstr "Скорость для программы (Кб/с):"
 
 #: /tmp/dummy:170
