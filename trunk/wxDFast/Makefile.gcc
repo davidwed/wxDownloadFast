@@ -83,11 +83,11 @@ $(BIN): $(LINKOBJ) $(WXMD5)
 #	$(STRIP) $(BIN)
 endif
 
-$(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.xrc $(RESOURCE_DIR)mainwindow.xrc $(RESOURCE_DIR)menubar.xrc $(RESOURCE_DIR)toolbar.xrc $(RESOURCE_DIR)boxabout.xrc
+$(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.xrc $(RESOURCE_DIR)mainwindow.xrc $(RESOURCE_DIR)menubar.xrc $(RESOURCE_DIR)toolbar.xrc $(RESOURCE_DIR)boxabout.xrc $(RESOURCE_DIR)images.xrc
 ifeq ($(XRC), 1)
 	
 else
-	$(WXRC) -c -o $(BUILD_DIR)Resources.cpp resources/*.xrc
+	$(WXRC) -v -c -o $(BUILD_DIR)Resources.cpp resources/*.xrc
 endif
 
 criardir:

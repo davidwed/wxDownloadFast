@@ -16,7 +16,7 @@ IMPLEMENT_DYNAMIC_CLASS(mNotebook, wxNotebook)
 IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
 
 ////////////////////////XPM IMAGES////////////////////////////////
-#ifndef __WXMSW__
+/*#ifndef __WXMSW__
 #include "../resources/xpm/wxdfast.xpm"
 #endif
 #include "../resources/xpm/small/stop.xpm"
@@ -26,7 +26,7 @@ IMPLEMENT_DYNAMIC_CLASS(mBoxOptionsColorPanel, wxPanel)
 #include "../resources/xpm/small/queue.xpm"
 #include "../resources/xpm/small/schedule.xpm"
 #include "../resources/xpm/small/new.xpm"
-#include "../resources/xpm/small/exit.xpm"
+#include "../resources/xpm/small/exit.xpm"*/
 
 const wxEventType wxEVT_OPEN_URL = wxNewEventType();
 #define wxEVT_OPEN_URL(id, fn) \
@@ -171,35 +171,12 @@ mMainFrame::mMainFrame()
     int i,timerupdateinterval;
 
     wxString iconpath = wxGetApp().themepath;
-    if (wxFileName::FileExists(iconpath + wxT("menubar/stop.png")))
-        image[0] = wxBitmap(iconpath + wxT("menubar/stop.png"));
-    else
-        image[0] = wxXPM(stop_xpm);
-
-    if (wxFileName::FileExists(iconpath + wxT("menubar/start.png")))
-        image[1] = wxBitmap(iconpath + wxT("menubar/start.png"));
-    else
-        image[1] = wxXPM(start_xpm);
-
-    if (wxFileName::FileExists(iconpath + wxT("menubar/completed.png")))
-        image[2] = wxBitmap(iconpath + wxT("menubar/completed.png"));
-    else
-        image[2] = wxXPM(ok_xpm);
-
-    if (wxFileName::FileExists(iconpath + wxT("menubar/error.png")))
-        image[3] = wxBitmap(iconpath + wxT("menubar/error.png"));
-    else
-        image[3] = wxXPM(error_xpm);
-
-    if (wxFileName::FileExists(iconpath + wxT("menubar/scheduled.png")))
-        image[4] = wxBitmap(iconpath + wxT("menubar/scheduled.png"));
-    else
-        image[4] = wxXPM(queue_xpm);
-
-    if (wxFileName::FileExists(iconpath + wxT("menubar/schedule.png")))
-        image[5] = wxBitmap(iconpath + wxT("menubar/schedule.png"));
-    else
-        image[5] = wxXPM(schedule_xpm);
+    image[0] = wxXmlResource::Get()->LoadBitmap(wxT("stop_png"));
+    image[1] = wxXmlResource::Get()->LoadBitmap(wxT("start_png"));
+    image[2] = wxXmlResource::Get()->LoadBitmap(wxT("completed_png"));
+    image[3] = wxXmlResource::Get()->LoadBitmap(wxT("error_png"));
+    image[4] = wxXmlResource::Get()->LoadBitmap(wxT("scheduled_png"));
+    image[5] = wxXmlResource::Get()->LoadBitmap(wxT("schedule_png"));
 
     for (i=0;i<=5;i++)
        imageslist->Add(image[i]);
@@ -310,20 +287,9 @@ mMainFrame::mMainFrame()
     programoptions.taskbariconsize = mApplication::Configurations(READ,OPT_TASKBAR_ICON_SIZE_REG,32);
 
    //LOAD THE PROGRAM ICON
-    if (wxFileName::FileExists(iconpath + wxT("icon/wxdfast.png")))
-    {
-        wxBitmap tmpicon = wxBitmap(iconpath + wxT("icon/wxdfast.png"));
-        //wxBitmap tmpicon = wxBitmap(wxBitmap(iconpath).ConvertToImage().Rescale(32,32));
-        wxGetApp().appicon.CopyFromBitmap(tmpicon);
-    }
-    else
-    {
-        #ifdef __WXMSW__
-        wxGetApp().appicon = wxICON(wxdfast_ico);
-        #else
-        wxGetApp().appicon = wxICON(wxdfast);
-        #endif
-    }
+    wxBitmap tmpicon = wxXmlResource::Get()->LoadBitmap(wxT("wxdfast_png"));
+    wxGetApp().appicon.CopyFromBitmap(tmpicon);
+  
     SetIcon(wxGetApp().appicon);
 
     //LOAD THE MENU BAR
@@ -389,14 +355,10 @@ mMainFrame::mMainFrame()
     start->SetBitmap(image[1]);
     stop->SetBitmap(image[0]);
     schedule->SetBitmap(image[5]);
-    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/remove.png")))
-        remove->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/remove.png")));
-    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/properties.png")))
-        properties->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/properties.png")));
-    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/copyurl.png")))
-        copyurl->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/copyurl.png")));
-    if (wxFileName::FileExists(wxGetApp().themepath + wxT("menubar/copydata.png")))
-        copydownloaddata->SetBitmap(wxBitmap(wxGetApp().themepath + wxT("menubar/copydata.png")));
+    remove->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("remove_png")));
+    properties->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("properties_png")));
+    copyurl->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("copyurl_png")));
+    copydownloaddata->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("copydata_png")));
     menupopup->Append(schedule);
     menupopup->Append(start);
     menupopup->Append(stop);
@@ -419,14 +381,8 @@ mMainFrame::mMainFrame()
     if (!(wxGetApp().parameters->Found(wxT("notray"))))
         taskbaricon->SetIcon(wxGetApp().appicon,PROGRAM_NAME);
     taskbaricon->restoring = FALSE;
-    if (wxFileName::FileExists(iconpath + wxT("menubar/new.png")))
-        taskbaricon->NewDownload = wxBitmap(iconpath + wxT("menubar/new.png"));
-    else
-        taskbaricon->NewDownload = wxXPM(new_xpm);
-    if (wxFileName::FileExists(iconpath + wxT("menubar/quit.png")))
-        taskbaricon->Quit = wxBitmap(iconpath + wxT("menubar/quit.png"));
-    else
-        taskbaricon->Quit = wxXPM(exit_xpm);
+    taskbaricon->NewDownload = wxXmlResource::Get()->LoadBitmap(wxT("new_png"));
+    taskbaricon->Quit = wxXmlResource::Get()->LoadBitmap(wxT("quit_png"));
 
     //HIDE OR SHOW THE SPEED GRAPH
     if (!programoptions.graphshow)
