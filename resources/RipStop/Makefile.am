@@ -5,5 +5,5 @@ SUBDIRS = icon logo menubar preview svg toolbar
 pkgdatadir = $(datadir)/@PACKAGE@/RipStop
 
 dist_pkgdata_DATA = \
- 	licence.txt \
+ 	license.txt \
 	readme.txt

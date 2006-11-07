@@ -10,4 +10,4 @@ dist_pixmap_DATA = \
 dist_pkgdata_DATA = \
 	wxdfast.ico \
  	wxdfast.png \
- 	wxdfast48x48.png
+ 	dfast48x48.png

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-11-04 19:42-0300\n"
+"PO-Revision-Date: 2006-11-06 19:05-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Stefan Westermann <raskolnikow83@gmx.de>\n"
 "MIME-Version: 1.0\n"
@@ -120,7 +120,6 @@ msgid "Remove Download"
 msgstr "Download entferen"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:381
-#: /tmp/dummy:56
 msgid "Properties of Download"
 msgstr "Einstellungen des Downloads"
 
@@ -154,14 +153,14 @@ msgstr ""
 msgid "Open Destination Directory"
 msgstr ""
 
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:456
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1779
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:458
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1781
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2859
 msgid "NEW RELEASE: "
 msgstr ""
 
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:458
-#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1781
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:460
+#: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1783
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2861
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2863
 msgid " is available."
@@ -272,7 +271,7 @@ msgid "Name"
 msgstr "Name"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1431
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:234
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:252
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:144
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:271
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:285
@@ -322,6 +321,7 @@ msgid "Find file..."
 msgstr "Finde Datei..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:1885
+#: /tmp/dummy:56
 msgid "Download Properties"
 msgstr "Download-Eigenschaften"
 
@@ -644,48 +644,48 @@ msgstr ""
 msgid "Double-click on the item Start/Stop the download"
 msgstr ""
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:190
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:208
 msgid "   [ Yes ]"
 msgstr "   [ Ja ]"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:192
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:210
 msgid "   [ No  ]"
 msgstr "   [ Nein ]"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:228
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:246
 msgid "Restart"
 msgstr "Neustarten"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:231
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:249
 #: /home/max/Projetos/wxDFast/src/FinishedList.cpp:269
 msgid "Filename"
 msgstr "Dateiname"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:237
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:255
 msgid "Completed"
 msgstr "Fertig"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:240
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:258
 msgid "Percentual"
 msgstr "Prozentual"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:243
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:261
 msgid "Time Passed"
 msgstr "Vergangene Zeit"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:246
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:264
 msgid "Remaining"
 msgstr "Verbleibend"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:249
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:267
 msgid "Speed"
 msgstr "Gewschwindigkeit"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:252
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:270
 msgid "Attempts"
 msgstr "Versuche"
 
-#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:255
+#: /home/max/Projetos/wxDFast/src/InProgressList.cpp:273
 msgid "URL"
 msgstr "URL"
 
@@ -1273,12 +1273,12 @@ msgid ""
 msgstr "Datei in wie viele Teile aufspalten?"
 
 #: /tmp/dummy:87
-msgid "Download band width (in Kb/s)"
+msgid "Download bandwidth (in Kb/s)"
 msgstr ""
 
 #: /tmp/dummy:88
 msgid ""
-"Set the band width that will be used for this download.\n"
+"Set the bandwidth that will be used for this download.\n"
 "Set \"0\" to unlimited."
 msgstr ""
 
@@ -1513,23 +1513,24 @@ msgstr "Ausnahme-Liste:"
 
 #: /tmp/dummy:165
 #, fuzzy
-msgid "Band width"
+msgid "Bandwidth"
 msgstr "Hauptlinien Breite:"
 
 #: /tmp/dummy:166
-msgid "Band width Control"
-msgstr ""
+#, fuzzy
+msgid "Bandwidth Control"
+msgstr "Hauptlinien Breite:"
 
 #: /tmp/dummy:167
-msgid "Unlimited band width"
+msgid "Unlimited bandwidth"
 msgstr ""
 
 #: /tmp/dummy:168
-msgid "Band width independently for each download"
+msgid "Bandwidth independently for each download"
 msgstr ""
 
 #: /tmp/dummy:169
-msgid "Band width for the program (in Kb/s):"
+msgid "Bandwidth for the program (in Kb/s):"
 msgstr ""
 
 #: /tmp/dummy:170
