@@ -43,7 +43,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         }
         else
         {
-            wxMessageBox(_("The follow URL is invalid:\n") + textctrlurl.GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
+            wxMessageBox(_("The following URL is invalid:\n") + textctrlurl.GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
             return;
         }
     }
@@ -76,7 +76,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         urltmp = new mUrlName(url);
         if (!urltmp->IsComplete())
         {
-            wxMessageBox(_("The follow URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
+            wxMessageBox(_("The following URL is invalid:\n") + url,_("Error..."),wxOK | wxICON_ERROR,this);
             delete urltmp;
             return;
         }
@@ -88,7 +88,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
         {
             if (name != urltmp->GetFullName())
             {
-                wxMessageBox(_("The follow URL has a different filename:\n") + urltmp->GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
+                wxMessageBox(_("The following URL has a different filename:\n") + urltmp->GetFullPath(),_("Error..."),wxOK | wxICON_ERROR,this);
                 return;
             }
         }
@@ -105,7 +105,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     wxFileName *desttmp = new wxFileName(destination);
     if (!desttmp->DirExists())
     {
-        if (wxMessageBox(_("The destination directory don't exists!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
+        if (wxMessageBox(_("The destination directory doos not exist!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
         {
             wxLogNull nolog;
             if (!desttmp->Mkdir(0777,wxPATH_MKDIR_FULL))

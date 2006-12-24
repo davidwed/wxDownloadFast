@@ -6,6 +6,9 @@ Add mirror automatic search				| Low
 Add HTTPS support					| Low
 Add Proxy support					| Low
 Add progress bar for each download on the List		| Low
+Check for the wxDownloadFast.ini on the program dir	| Done
+Add download status auto save every 10 sec		| Done 
+Add Polish language					| Done
 Add generic bandwidth control				| Done
 Add bandwidth control for each download			| Done
 Add Zip Preview window					| Done

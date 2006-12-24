@@ -1,10 +1,14 @@
-0.6.0
+0.5.4
 ===================================================
 - The new RipStop theme now is complete
 - Added Russian language(by Ruslan Fedyarov)
 - Added Hungarian language(by Erno Szabados)
-- Added Armenian language(by Erno Szabados)
-- Added Indonesian language(by Arif Rahman)
+- Added Polish language(by Marcin Trybus)
+- Added download status auto save every 10 seconds
+- Added checking for the wxDownloadFast.ini on the
+  program dir before to look in the user home dir
+  (just on windows systems)
+- Fixed several bugs
 
 0.5.3
 ===================================================

@@ -90,7 +90,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.6.0");
+    const wxString VERSION = wxT("0.5.4");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -584,6 +584,7 @@
         void OnRussian(wxCommandEvent& event);
         void OnIndonesian(wxCommandEvent& event);
         void OnArmenian(wxCommandEvent& event);
+        void OnPolish(wxCommandEvent& event);
 
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);
@@ -627,6 +628,7 @@
         wxMutex *mutex_programoptions;
         mGraphPoints graphpoints;
         int timerinterval;
+        int writetimerinterval;
         bool active;
         wxString defaultstatusbarmessage;
     private:

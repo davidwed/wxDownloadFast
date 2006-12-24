@@ -142,6 +142,10 @@
                     <label>Armenian</label>
                     <checkable>1</checkable>
                 </object>
+                <object class="wxMenuItem" name="menulang_pl">
+                    <label>Polish</label>
+                    <checkable>1</checkable>
+                </object>
             </object>
         </object>
         <object class="wxMenu" name="menutools">

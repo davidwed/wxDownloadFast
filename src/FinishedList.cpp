@@ -36,7 +36,7 @@ int wxCALLBACK mFinishedList::CompareDates(long item1, long item2, long WXUNUSED
 void mFinishedList::OnEnterWindow(wxMouseEvent& event)
 {
     if (mainframe->statusbar)
-        mainframe->statusbar->SetStatusText(_("Double-click on the item opens the destination directory"));
+        mainframe->statusbar->SetStatusText(_("Double-click on the item to open the destination directory"));
 }
 
 void mFinishedList::OnLeaveWindow(wxMouseEvent& event)
@@ -285,7 +285,7 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
     infolist->InsertItem(2, _("Size"));
     infolist->InsertItem(3, _("Time"));
     infolist->InsertItem(4, _("Destination"));
-    infolist->InsertItem(5, _("Start"));
+    infolist->InsertItem(5, _("Started (on)"));
     infolist->InsertItem(6, _("Finished"));
     infolist->InsertItem(7, _("MD5"));
     infolist->InsertItem(8, _("Comments"));

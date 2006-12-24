@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxDownload Fast
-AppVerName=wxDownload Fast 0.6.0
+AppVerName=wxDownload Fast 0.5.4
 AppPublisher=Max Velasques
 AppPublisherURL=http://dfast.sourceforge.net
 AppSupportURL=http://dfast.sourceforge.net
@@ -25,7 +25,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\src\mingwm10.dll"; DestDir: "{sys}";
+Source: "..\src\mingwm10.dll"; DestDir: "{app}";
 Source: "..\src\wxDFast.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.br"; DestDir: "{app}"; Flags: ignoreversion
@@ -39,8 +39,14 @@ Source: "..\languages\de\wxDFast.mo"; DestDir: "{app}\languages\de"; Flags: igno
 Source: "..\languages\de\wxDFast.po"; DestDir: "{app}\languages\de"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.mo"; DestDir: "{app}\languages\es"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.po"; DestDir: "{app}\languages\es"; Flags: ignoreversion
+Source: "..\languages\hu\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\hu\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\pl\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\pl\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\ru\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\ru\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\resources\RipStop\logo\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\resources\RipStop\logo\logo_3d.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
 Source: "..\resources\RipStop\logo\wxdfast.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion

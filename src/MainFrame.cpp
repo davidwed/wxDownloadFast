@@ -100,6 +100,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_ru"), mMainFrame::OnRussian)
     EVT_MENU(XRCID("menulang_id"), mMainFrame::OnIndonesian)
     EVT_MENU(XRCID("menulang_hy"), mMainFrame::OnArmenian)
+    EVT_MENU(XRCID("menulang_pl"), mMainFrame::OnPolish)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
@@ -289,7 +290,7 @@ mMainFrame::mMainFrame()
    //LOAD THE PROGRAM ICON
     wxBitmap tmpicon = wxXmlResource::Get()->LoadBitmap(wxT("wxdfast_png"));
     wxGetApp().appicon.CopyFromBitmap(tmpicon);
-  
+
     SetIcon(wxGetApp().appicon);
 
     //LOAD THE MENU BAR
@@ -428,7 +429,7 @@ mMainFrame::mMainFrame()
             wxString temp = _("Band control");
             temp += wxT(": ");
             temp += _("Active");
-            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" kB/s)");
             statusbar->SetStatusText(temp,2);
         }
         else
@@ -450,6 +451,7 @@ mMainFrame::mMainFrame()
 
     mtimer = new wxTimer(this, TIMER_ID);
     timerinterval = 0;
+    writetimerinterval = 0;
 
     mtimer->Start(timerupdateinterval);
 }
@@ -513,7 +515,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mFinishedList* list02 = XRCCTRL(*this, "finishedlist",mFinishedList );
     int selection = list01->GetCurrentLastSelection();
     int simultaneous = programoptions.simultaneous;
-    bool somedownloadfinishednow = FALSE;
+    bool somedownloadfinishednow = FALSE,writeondisk = FALSE;
     long currentspeed = 0;
     int numberofactivedownloads = 0;
     mDownloadFile *current;
@@ -528,6 +530,13 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         XRCCTRL(*(this), "treemessages",wxTreeCtrl)->DeleteAllItems();
     if ((selection < 0) && (programoptions.progressbarshow))
         progressbar->SetParams(0,NULL);
+    writetimerinterval += mtimer->GetInterval();
+    if (writetimerinterval > 10000) //SAVE ALL DOWNLOAD STATUS ON DISK EVERY 10 SECONDS
+    {
+        writeondisk = TRUE;
+        writetimerinterval = 0;
+    }
+
     for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
     {
         current = node->GetData();
@@ -579,7 +588,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
             if (current->IsSplitted())
                 parts = current->GetNumberofParts();
 
-            if (current->WriteIsPending())
+            if ((current->WriteIsPending()) || (writeondisk))
                 current->RegisterListItemOnDisk();
 
             //REFRESH THE LISTCTRL
@@ -796,11 +805,13 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     if (timerinterval >= (programoptions.graphrefreshtime))
     {
         float *value = new float();
-        wxString temp;
+        wxString msg,temp;
         *value = ((float)currentspeed) / 1024.0;
         graphpoints.Append(value);
 
-        temp.Printf(_("Total Speed: %0.1f kb/s"), *value);
+        msg = _("Total Speed:");
+        msg += wxT(" %0.1f kB/s");
+        temp.Printf(msg, *value);
         temp.Replace(wxT(","),wxT("."));
         if (statusbar)
             statusbar->SetStatusText(temp,1);
@@ -986,7 +997,7 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
         int nselection = currentselectionlist.GetCount();
         mDownloadFile *currentfile;
 
-        wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before remove..."));
+        wxProgressDialog *waitbox = new wxProgressDialog(_("Stopping the download..."),_("Stopping the current download before removing..."));
         for (int i = 0; i < nselection;i++)
         {
             currentfile = wxGetApp().downloadlist.Item(currentselectionlist.Item(i))->GetData();
@@ -998,7 +1009,7 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
         waitbox->Update(100);
         delete waitbox;
 
-        wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want remove the item from the list and the file from the disk?"),_("Remove..."),
+        wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you also want to remove the partial downloaded file from the disk?"),_("Remove..."),
                     wxYES_NO | wxCANCEL | wxICON_QUESTION);
 
         if (dlg)
@@ -1036,7 +1047,7 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
     mFinishedList *finishedlist = XRCCTRL(*this, "finishedlist",mFinishedList );
     if (finishedlist->GetCurrentSelection().GetCount() > 0)
     {
-        wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you want remove the item(s) from the list and the file(s) from the disk?"),_("Remove..."),
+        wxMessageDialog *dlg = new wxMessageDialog(this, _("Do you also want to remove downloaded file(s) from the disk?"),_("Remove..."),
                     wxYES_NO | wxCANCEL | wxICON_QUESTION);
         if (dlg)
         {
@@ -1326,7 +1337,7 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
         delete config;
     }
     else
-        wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+        wxMessageBox(_("Unable to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
 }
 
 void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
@@ -1438,7 +1449,7 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
         delete config;
     }
     else
-        wxMessageBox(_("It was impossible to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+        wxMessageBox(_("Unable to open the clipboard!"),_("Error...") ,wxOK | wxICON_ERROR,this);
 }
 void mMainFrame::OnSelectAll(wxCommandEvent& event)
 {
@@ -1672,6 +1683,11 @@ void mMainFrame::MarkCurrentLanguageMenu(int language)
     else
         menubar->GetMenu(2)->Check(XRCID("menulang_hy"),TRUE);
 
+    if (language != wxLANGUAGE_POLISH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_pl"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_pl"),TRUE);
+
 }
 
 void mMainFrame::SetLanguage(int language)
@@ -1751,7 +1767,7 @@ void mMainFrame::SetLanguage(int language)
             wxString temp = _("Band control");
             temp += wxT(": ");
             temp += _("Active");
-            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" kB/s)");
             statusbar->SetStatusText(temp,2);
         }
         else
@@ -1823,6 +1839,11 @@ void mMainFrame::OnArmenian(wxCommandEvent& event)
 void mMainFrame::OnIndonesian(wxCommandEvent& event)
 {
     SetLanguage(wxLANGUAGE_INDONESIAN);
+}
+
+void mMainFrame::OnPolish(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_POLISH);
 }
 
 void mMainFrame::OnProperties(wxCommandEvent& event)
@@ -2113,7 +2134,7 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
             else
             {
                 wxString msg;
-                msg = _("The MD5 calculated previously is different of the current one.");
+                msg = _("The MD5 calculated previously is different from the current one.");
                 msg = msg + _("\nOld MD5 =\t\t") + md5old;
                 msg = msg + _("\nCurrent MD5 =\t") + md5new;
                 wxMessageBox(msg, _("Error..."), wxOK | wxICON_ERROR,this);
@@ -2178,7 +2199,7 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
         wxLogNull noLog;
         if (::wxCopyFile(source,destination,TRUE))
         {
-            wxMessageBox(_("The configurations were imported successfully.\nThe program will be restated now to the alterations have effect."), _("Success..."),wxOK|wxICON_INFORMATION,this);
+            wxMessageBox(_("The configurations were imported successfully.\nThe program will be restated now for the changes to take effect."), _("Success..."),wxOK|wxICON_INFORMATION,this);
             Iconize(TRUE);
             Close(TRUE);
         }
@@ -2298,7 +2319,11 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         programoptions.alwaysshutdown = XRCCTRL(dlg, "chkshutdown",wxCheckBox)->GetValue();
         programoptions.alwaysdisconnect = XRCCTRL(dlg, "chkdisconnect",wxCheckBox)->GetValue();
         programoptions.rememberboxnewoptions = XRCCTRL(dlg, "chkrememberboxnewoptions",wxCheckBox)->GetValue();
-        programoptions.destination = XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue();
+        if (programoptions.destination != XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue())
+        {
+            programoptions.destination = XRCCTRL(dlg, "edtdestination",wxTextCtrl)->GetValue();
+            programoptions.lastdestination = programoptions.destination;
+        }
         programoptions.browserpath = XRCCTRL(dlg, "edtbrowserpath",wxTextCtrl)->GetValue();
         programoptions.filemanagerpath = XRCCTRL(dlg, "edtfilemanagerpath",wxTextCtrl)->GetValue();
 
@@ -2382,7 +2407,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
                 wxString temp = _("Band control");
                 temp += wxT(": ");
                 temp += _("Active");
-                temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" Kb/s)");
+                temp += wxT(" (") + MyUtilFunctions::int2wxstr(programoptions.bandwidth) + wxT(" kB/s)");
                 statusbar->SetStatusText(temp,2);
             }
         }
@@ -2475,7 +2500,7 @@ void mMainFrame::OnSite(wxCommandEvent& event)
         ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net\""));
     else
     {
-        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+        wxMessageBox(_("Unable to find the browser.\nGo to \"Options\" and specify a valid one."),
                 _("Error..."),wxOK | wxICON_ERROR, this);
     }
 }
@@ -2486,7 +2511,7 @@ void mMainFrame::OnBug(wxCommandEvent& event)
         ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net/reportbugs.php\""));
     else
     {
-        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+        wxMessageBox(_("Unable to find the browser.\nGo to \"Options\" and specify a valid one."),
                 _("Error..."),wxOK | wxICON_ERROR, this);
     }
 }
@@ -2497,7 +2522,7 @@ void mMainFrame::OnDonate(wxCommandEvent& event)
         ::wxExecute(programoptions.browserpath + wxT(" \"http://dfast.sourceforge.net/donate.php\""));
     else
     {
-        wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+        wxMessageBox(_("Unable to find the browser.\nGo to \"Options\" and specify a valid one."),
                 _("Error..."),wxOK | wxICON_ERROR, this);
     }
 }
@@ -2700,14 +2725,14 @@ void mMainFrame::BrowserFile()
 
 void mMainFrame::OnOpenURL(wxCommandEvent& event)
 {
-    if (wxMessageBox(_("A HTML file was detected on the current downloads.\nDo you want to open this file on the browser?"),
+    if (wxMessageBox(_("You have downloaded a HTML file.\nOpen this file in your browser?"),
                     _("Continue..."),wxYES | wxNO | wxICON_QUESTION, this) == wxYES)
     {
         if (::wxFileExists(programoptions.browserpath))
             ::wxExecute(programoptions.browserpath + wxT(" \"") + event.GetString() + wxT("\""));
         else
         {
-            wxMessageBox(_("Impossible to find the browser.\nGo to \"Options\" and define a valid one."),
+            wxMessageBox(_("Unable to find the browser.\nGo to \"Options\" and specify a valid one."),
                     _("Error..."),wxOK | wxICON_ERROR, this);
         }
     }
@@ -2717,7 +2742,7 @@ void mMainFrame::OnShutdownEvent(wxCommandEvent& event)
 {
     wxStopWatch waittime;
     waittime.Start();
-    wxProgressDialog *waitbox = new wxProgressDialog(_("Shutdown the computer..."),_("The computer will be shutdown in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
+    wxProgressDialog *waitbox = new wxProgressDialog(_("Shutting down the computer..."),_("The computer will be shutdown in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
     while ((waittime.Time() < 30000) && (waitbox->Update(waittime.Time())))
         wxMilliSleep(200);
     delete waitbox;
@@ -2858,10 +2883,10 @@ void mMainFrame::OnFilePreview(wxCommandEvent& event)
                     dlg.ShowModal();
                 }
                 else
-                    wxMessageBox(_("It was impossible to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+                    wxMessageBox(_("Unable to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
             }
             else
-                wxMessageBox(_("It was impossible to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
+                wxMessageBox(_("Unable to extract zip file content!"),_("Error...") ,wxOK | wxICON_ERROR,this);
         }
         else
             wxMessageBox(_("File not found."),_("Error...") ,wxOK | wxICON_ERROR,this);

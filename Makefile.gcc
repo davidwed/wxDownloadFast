@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.6.0
+VERSION = 0.5.4
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -211,10 +211,12 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)ru/wxDFast.mo $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)hu/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
-	$(INSTALL_FILE) $(LANGUAGE_DIR)id/wxDFast.mo $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
-	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
-	$(INSTALL_FILE) $(LANGUAGE_DIR)hy/wxDFast.mo $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)pl/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
+#	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+#	$(INSTALL_FILE) $(LANGUAGE_DIR)id/wxDFast.mo $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+#	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
+#	$(INSTALL_FILE) $(LANGUAGE_DIR)hy/wxDFast.mo $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_FILE) $(MANPAGE_DIR)man1/wxdfast.1.gz $(DESTDIR)/usr/share/man/man1
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/pt_BR/man1
@@ -266,8 +268,9 @@ endif
 	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES/wxDFast.mo
-	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
-	rm -f $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES/wxDFast.mo
+#	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
+#	rm -f $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt_BR/man1/wxdfast.1.gz
@@ -308,12 +311,15 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
 	cp $(LANGUAGE_DIR)hu/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
 	cp $(LANGUAGE_DIR)hu/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
-	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
-	cp $(LANGUAGE_DIR)id/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
-	cp $(LANGUAGE_DIR)id/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
-	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
-	cp $(LANGUAGE_DIR)hy/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
-	cp $(LANGUAGE_DIR)hy/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
+	cp $(LANGUAGE_DIR)pl/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
+	cp $(LANGUAGE_DIR)pl/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
+#	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+#	cp $(LANGUAGE_DIR)id/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+#	cp $(LANGUAGE_DIR)id/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+#	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
+#	cp $(LANGUAGE_DIR)hy/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
+#	cp $(LANGUAGE_DIR)hy/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	cp $(MANPAGE_DIR)Makefile.am $(BIN)-$(VERSION)/$(MANPAGE_DIR)
 	mkdir $(BIN)-$(VERSION)/$(MANPAGE_DIR)man1

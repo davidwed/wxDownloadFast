@@ -14,7 +14,7 @@
 
 BEGIN_EVENT_TABLE(mBoxFind, wxFindReplaceDialog)
     EVT_FIND(-1, mBoxFind::OnFind)
-    EVT_FIND_NEXT(-1, mBoxFind::OnFind) 
+    EVT_FIND_NEXT(-1, mBoxFind::OnFind)
     EVT_FIND_CLOSE(-1, mBoxFind::OnClose)
 END_EVENT_TABLE()
 
@@ -25,7 +25,7 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
     bool found = FALSE;
     wxListCtrl *list;
     mInProgressList *list01 = XRCCTRL(*(wxGetApp().mainframe), "inprogresslist",mInProgressList );
-    mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);    
+    mFinishedList *list02 = XRCCTRL(*(wxGetApp().mainframe), "finishedlist",mFinishedList);
     wxNotebook *notebook = XRCCTRL(*(wxGetApp().mainframe), "notebook01",wxNotebook );
     if (notebook->GetSelection() == 0) //DOWNLOADS IN PROGRESS
 
@@ -42,8 +42,8 @@ void mBoxFind::OnFind(wxFindDialogEvent& event)
     }
     else
     {
-        wxMessageBox(_("Impossible to search in this page.\nChange to another page and try again"),_("Error..."),wxOK | wxICON_ERROR, this);
-        return ; 
+        wxMessageBox(_("Unable to search in this page.\nChange to another page and try again"),_("Error..."),wxOK | wxICON_ERROR, this);
+        return ;
     }
 
     flags = event.GetFlags();
