@@ -22,8 +22,8 @@ completo possível.
 * Organiza os arquivos que você já baixou
 * Visualização de messagens do servidor (HTTP, FTP, file://). Sem suporte HTTPS.
 * Disponível em vários idiomas e facilmente traduzível. Disponível agora
-  em Português [Brasil], Espanhol, Inglês, Alemão, Russo, Húngaro, Indonésio e
-  Armenio
+  em Português [Brasil], Espanhol, Inglês, Alemão, Russo, Húngaro, Polonês,
+  Indonésio e Armenio
 * Conexão com servidores FTP que necessitam de senhas
 * Calcula o código de verificação MD5 dos arquivos baixados, de modo que possam ser verificados facilmente
 
@@ -132,10 +132,10 @@ biblioteca wxWidgets com o seguinte comando:
 Onde "/usr/i586-mingw32msvc" é o diretório onde o MinGW foi instalado.
 
 Agora para compilar o wxDownload Fast faça:
-# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.7.0
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.8.0
 # make
 
-Onde "/home/user/wxWidgets-2.7.0" é o diretório onde a biblioteca wxWidgets foi compilada.
+Onde "/home/user/wxWidgets-2.8.0" é o diretório onde a biblioteca wxWidgets foi compilada.
 
 5.3) MacOS
 ----------

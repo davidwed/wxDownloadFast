@@ -42,7 +42,7 @@
                             </object>
                             <object class="sizeritem">
                                 <object class="wxButton" name="btndir">
-                                    <size>70, 23</size>
+                                    <size>70, 30</size>
                                     <label>Directory</label>
                                 </object>
                             </object>
@@ -87,7 +87,7 @@
                             <object class="sizeritem">
                                 <option>1</option>
                                 <object class="wxCheckListBox" name="lstaddresslist">
-                                    <tooltip>Just the marked addresses will be considered</tooltip>
+                                    <tooltip>Only the selected addresses will be downloaded</tooltip>
                                     <style>wxLB_SINGLE</style>
                                     <size>420,100</size>
                                 </object>
@@ -252,7 +252,7 @@
                                         <option>1</option>
                                         <object class="wxStaticBoxSizer">
                                             <orient>wxHORIZONTAL</orient>
-                                            <label>Download bandwidth (in Kb/s)</label>
+                                            <label>Download bandwidth (in kB/s)</label>
                                             <object class="sizeritem">
                                                 <option>1</option>
                                                 <flag>wxEXPAND</flag>
@@ -267,7 +267,7 @@
                                                             <min>0</min>
                                                             <max>100</max>
                                                             <value>0</value>
-                                                            <tooltip>Set the bandwidth that will be used for this download.\nSet "0" to unlimited.</tooltip>
+                                                            <tooltip>Set band width limit for this download.\nSet "0" to unlimited.</tooltip>
                                                         </object>
                                                     </object>
                                                 </object>
@@ -406,7 +406,7 @@
                         <option>1</option>
                         <object class="wxStaticBoxSizer">
                             <orient>wxHORIZONTAL</orient>
-                            <label>Execute the follow command when the download finish</label>
+                            <label>Execute the following command after download completes</label>
                             <object class="sizeritem">
                                 <option>1</option>
                                 <flag>wxEXPAND</flag>
@@ -414,7 +414,7 @@
                                     <orient>wxVERTICAL</orient>
                                     <object class="sizeritem">
                                         <object class="wxTextCtrl" name="edtcommand">
-                                            <tooltip>Execute the follow command when the download finish</tooltip>
+                                            <tooltip>Execute the following command after download completes</tooltip>
                                             <size>415, 23</size>
                                         </object>
                                     </object>

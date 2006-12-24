@@ -113,7 +113,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.SetFont(bigfont);
         dc.DrawText(temp,5,5);
         dc.SetFont(smallfont);
-        dc.DrawText(wxT("kb/s"),5,programoptions->graphspeedfontsize + 10);
+        dc.DrawText(wxT("kB/s"),5,programoptions->graphspeedfontsize + 10);
     }
     else
     {
@@ -122,7 +122,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.SetFont(bigfont);
         dc.DrawText(wxT("0.0"),5,5);
         dc.SetFont(smallfont);
-        dc.DrawText(wxT("kb/s"),5,programoptions->graphspeedfontsize + 10);
+        dc.DrawText(wxT("kB/s"),5,programoptions->graphspeedfontsize + 10);
     }
     wxGetApp().mainframe->mutex_programoptions->Unlock();
 }

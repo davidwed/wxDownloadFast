@@ -1,10 +1,16 @@
-0.6.0
+0.5.4
 ===================================================
 - O novo tema RipStop agora está concluído
 - Adicionado idioma Russo(por Ruslan Fedyarov)
 - Adicionado idioma Hungaro(por Erno Szabados)
-- Adicionado idioma Armenio(por Erno Szabados)
-- Adicionado idioma Indonesio(por Arif Rahman)
+- Adicionado idioma Polonês(por Marcin Trybus)
+- Adicionado gravação automática(a cada 10s) dos
+  status dos downloads
+- Adicionado verificação pelo arquivo
+  wxDownloadFast.ini na pasta do programa antes
+  de procurar na pasta do usuário (apenas em
+  sistemas windows)
+- Corrigidos vários bugs
 
 0.5.3
 ===================================================

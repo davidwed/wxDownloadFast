@@ -32,7 +32,7 @@ mInProgressList::mInProgressList()
 void mInProgressList::OnEnterWindow(wxMouseEvent& event)
 {
     if (mainframe->statusbar)
-        mainframe->statusbar->SetStatusText(_("Double-click on the item Start/Stop the download"));
+        mainframe->statusbar->SetStatusText(_("Double-click on the item to Start/Stop the download"));
 }
 
 void mInProgressList::OnLeaveWindow(wxMouseEvent& event)

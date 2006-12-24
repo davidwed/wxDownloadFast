@@ -59,8 +59,15 @@ void mTaskBarIcon::OnMouseMove(wxTaskBarIconEvent&)
         }
         if (count > 0)
         {
+            wxString msg;
+            msg = _("Total Speed:");
+            msg += wxT(" %.2fkB/s\n");
+            msg += _("Total Complete:");
+            msg += wxT(" %d%%\n");
+            msg += _("Downloads in progress:");
+            msg += wxT(" %d");
             taskTip.Clear();
-            taskTip.Printf(_("Total Speed: %.2fKb/s\nTotal Complete: %d%%\nDownloads in progress: %d"), totalspeed/1024.0, totalpercentual/count,count);
+            taskTip.Printf(msg, totalspeed/1024.0, totalpercentual/count,count);
         }
     }
     SetIcon(wxGetApp().appicon,taskTip);
@@ -84,7 +91,7 @@ wxMenu *mTaskBarIcon::CreatePopupMenu()
         wxMenuItem *mnuband = new wxMenuItem(traymenu,BAND,_("Band control"));
 
         wxMenuItem *mnuoff = new wxMenuItem(mnusubband,OFF, _("Unlimited"),_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
-        wxString temp; temp = _("Active"); temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" Kb/s)");
+        wxString temp; temp = _("Active"); temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" kB/s)");
         wxMenuItem *mnuon = new wxMenuItem(mnusubband,ON, temp,_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
         wxMenuItem *mnuperdownload = new wxMenuItem(mnusubband,PERDOWNLOAD, _("Per Download"),_("Just for this session. To change definitely go to \"Options\""),wxITEM_RADIO);
 
@@ -177,7 +184,7 @@ void mTaskBarIcon::OnBandControlOn(wxCommandEvent& event)
             wxString temp = _("Band control");
             temp += wxT(": ");
             temp += _("Active");
-            temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" Kb/s)");
+            temp += wxT(" (") + MyUtilFunctions::int2wxstr(mainframe->programoptions.bandwidth) + wxT(" kB/s)");
             mainframe->statusbar->SetStatusText(temp,2);
         }
     }

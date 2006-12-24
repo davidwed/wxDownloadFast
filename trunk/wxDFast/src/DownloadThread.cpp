@@ -64,7 +64,7 @@ mUrlName mDownloadThread::CheckHtmlFile(bool downloaded)
     }
     if (!returnurl.IsComplete())
     {
-        PrintMessage( _("This is a HTML file\nOpening in the default browser.\n"),HTMLERROR);
+        PrintMessage( _("You have downloaded a HTML file.\nOpening this file in your browser.\n"),HTMLERROR);
         wxCommandEvent openurl(wxEVT_OPEN_URL);
         openurl.SetString(currenturl.GetFullPath());
         wxGetApp().mainframe->GetEventHandler()->AddPendingEvent(openurl);
@@ -317,7 +317,7 @@ void *mDownloadThread::Entry()
                             PrintMessage( _("This Metalink file contains multiples files.\n"),HTMLSERVER);
                             if (currentmetalinkindex < 0)
                             {
-                                PrintMessage( _("Creating all downloads....\n"),HTMLSERVER);
+                                PrintMessage( _("Creating all downloads...\n"),HTMLSERVER);
                                 for (int i = 1 ; i<count ; i++)
                                 {
                                     wxCommandEvent newdownload(wxEVT_NEW_DOWNLOAD);
@@ -603,7 +603,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     downloadfile->timepassed = timepassed + time.Time();
                     if (downloadfile->delta_size[downloadpartindex] > 20*readbuffersize)
                     {
-                        if ((timepassed + time.Time() - lasttime).ToLong() > 0)
+                        if ((timepassed + time.Time() - lasttime).ToLong() > 2000)
                             SpeedCalculation((timepassed + time.Time() - lasttime).ToLong());
                         downloadfile->speedpoint = FALSE;
                         if (time.Time() > 2000000000l) //I DID THIS BECAUSE Time() RETURN A LONG AND NOT LONGLONG;
@@ -654,7 +654,7 @@ int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdesti
     int resp = 0;
     if (downloadfile->IsSplitted())
     {
-        PrintMessage( _("Waiting for the others pieces...\n"));
+        PrintMessage( _("Waiting for the other pieces...\n"));
         WaitUntilAllFinished(TRUE);
     }
     if (downloadfile->GetStatus() == STATUS_STOPED)
@@ -672,7 +672,7 @@ int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdesti
         }
         else
         {
-            PrintMessage( _("Checking MD5 of the file...\n"));
+            PrintMessage( _("Checking MD5...\n"));
             downloadfile->SetExposedName(_("Checking MD5 ... (") + downloadfile->GetName() + wxT(")"));
             wxFileName filemd5 = wxFileName(destination->GetFullPath());
             wxMD5 md5(filemd5);
@@ -689,7 +689,7 @@ int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdesti
                 }
                 else
                 {
-                    PrintMessage( _("Comparing expected and calculated MD5...\n"),HTMLERROR);
+                    PrintMessage( _("Error comparing MD5.\n"),HTMLERROR);
                     resp = -1;
                     downloadfile->criticalerror = TRUE;
                 }
@@ -850,7 +850,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                             if (partialfile.Mid(partialfile.Length()-1,1) != SEPARATOR_DIR)
                                 partialfile += SEPARATOR_DIR;
                             partialfile += PREFIX + downloadfile->GetName() + EXT;
-                            PrintMessage( _("The file size has changed since the last time.\nRemoving the partial downloaded files...\n"),HTMLERROR);
+                            PrintMessage( _("The file size has changed since the last time.\nRemoving the partially downloaded files...\n"),HTMLERROR);
                             for (int i = 0;i < downloadfile->GetNumberofParts();i++)
                             {
                                 ::wxRemoveFile(partialfile + MyUtilFunctions::int2wxstr(i));
@@ -882,7 +882,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                         {
                             downloadfile->totalsize =  sizetmp;
                             downloadfile->sizecompleted[downloadpartindex] = 0;
-                            PrintMessage( _("This server don't support restart.\n"),HTMLERROR);
+                            PrintMessage( _("This server does not support restart.\n"),HTMLERROR);
                             if (downloadpartindex == 0)
                                 downloadfile->SetRestartSupport(FALSE);
                             else
@@ -895,14 +895,14 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
                         {
                             downloadfile->totalsize =  0;
                             downloadfile->sizecompleted[downloadpartindex] = 0;
-                            PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+                            PrintMessage( _("Unable to return the file size.\n"),HTMLERROR);
                             client->Close(); delete client;
                             return NULL;
                         }
                     }
                     else
                     {
-                        PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+                        PrintMessage( _("Unable to return the file size.\n"),HTMLERROR);
                         //downloadfile->criticalerror = TRUE;
                         client->Close(); delete client;
                         return NULL;
@@ -934,7 +934,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
         }
         else
         {
-            PrintMessage( _("The Server stayed a lot of time without answering.\n"),HTMLERROR);
+            PrintMessage( _("The server timed out.\n"),HTMLERROR);
             client->Close(); delete client;
             return NULL;
         }
@@ -1005,10 +1005,10 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    PrintMessage( _("Verifying if the server supports restarts..."));
+    PrintMessage( _("Verifying if the server supports restarting..."));
     if (client->SendCommand(wxT("REST ") + start->ToString())!= '3')
     {
-        PrintMessage( _("\nThis server don't support restart.\n"),HTMLERROR);
+        PrintMessage( _("\nThis server does not support restart.\n"),HTMLERROR);
         if (downloadpartindex == 0)
             downloadfile->SetRestartSupport(FALSE);
         else
@@ -1042,7 +1042,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     PrintMessage( _("Changing to binary mode...\n"));
     if (client->SendCommand(wxT("TYPE I"))!='2')
     {
-        PrintMessage( _("Impossible to change to binary mode.\n"),HTMLERROR);
+        PrintMessage( _("Unable to change to binary mode.\n"),HTMLERROR);
         client->Close();
         delete client;
         return NULL;
@@ -1069,7 +1069,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
     }
     if (sizetmp == -1)
     {
-        PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+        PrintMessage( _("Unable to return the file size.\n"),HTMLERROR);
         downloadfile->criticalerror = TRUE;
         client->Close();
         delete client;
@@ -1101,7 +1101,7 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
                 if (partialfile.Mid(partialfile.Length()-1,1) != SEPARATOR_DIR)
                     partialfile += SEPARATOR_DIR;
                 partialfile += PREFIX + downloadfile->GetName() + EXT;
-                PrintMessage( _("The file size has changed since the last time.\nRemoving the partial downloaded files...\n"),HTMLERROR);
+                PrintMessage( _("The file size has changed since the last time.\nRemoving the partially downloaded files...\n"),HTMLERROR);
                 for (int i = 0;i < downloadfile->GetNumberofParts();i++)
                 {
                     ::wxRemoveFile(partialfile + MyUtilFunctions::int2wxstr(i));
@@ -1157,7 +1157,7 @@ wxInputStream *mDownloadThread::ConnectLOCAL_FILE(wxLongLong start)
     PrintMessage( _("Verifying the size of the ") + currenturl.GetFullRealName() + wxT("...\n"));
     if (!file)
     {
-        PrintMessage( _("Impossible to return the file size.\n"),HTMLERROR);
+        PrintMessage( _("Unable to return the file size.\n"),HTMLERROR);
         return NULL;
     }
     else
@@ -1255,7 +1255,7 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
 		wxGetDiskSpace(destination->GetPath(),NULL,&freespace);
 		if (freespace < downloadfile->size[downloadfile->GetNumberofParts()-1])
 		{
-			PrintMessage(_("There isn't enought disk space to join the file parts.\n"),HTMLERROR);
+			PrintMessage(_("There isn't enough disk space to join the file parts.\n"),HTMLERROR);
 			return FALSE;
 		}
 	}

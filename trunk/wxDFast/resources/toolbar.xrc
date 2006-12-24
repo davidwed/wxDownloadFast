@@ -45,12 +45,12 @@
         <object class="tool"  name="toolup">
             <label>Up</label>
             <bitmap>RipStop/toolbar/download_move_up.png</bitmap>
-            <tooltip>Raise in one level the selected download in the queue</tooltip>
+            <tooltip>Push download higher up the queue</tooltip>
         </object>
         <object class="tool"  name="tooldown">
             <label>Down</label>
             <bitmap>RipStop/toolbar/download_move_down.png</bitmap>
-            <tooltip>Lower in one level the selected download in the queue</tooltip>
+            <tooltip>Push download lower down the queue</tooltip>
         </object>
             <object class="separator"/>
         <object class="tool"  name="toolproperties">
