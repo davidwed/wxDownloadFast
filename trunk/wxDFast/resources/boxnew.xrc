@@ -32,7 +32,7 @@
                             <vgap>5</vgap>
                             <object class="sizeritem">
                                 <object class="wxStaticText" name="lbldestination">
-                                    <label>Save in:</label>
+                                    <label>Save to:</label>
                                 </object>
                             </object>
                             <object class="sizeritem">
@@ -446,7 +446,7 @@
                                     </object>
                                     <object class="sizeritem">
                                         <object class="wxButton" name="btnok">
-                                            <label>_Ok</label>
+                                            <label>_OK</label>
                                         </object>
                                     </object>
                                     <object class="spacer">

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDFast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-23 22:16-0300\n"
+"PO-Revision-Date: 2006-12-25 16:38-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -415,11 +415,13 @@ msgid "File not found."
 msgstr "Nem találom a fájlt."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2176
-msgid "The configurations were exported successfully."
+#, fuzzy
+msgid "The configuration was exported successfully."
 msgstr "A beállítások exportálása sikeresen megtörtént."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2178
-msgid "Error exporting configurations."
+#, fuzzy
+msgid "Error exporting configuration."
 msgstr "Hiba történt a beállítások exportálása közben."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2185
@@ -429,14 +431,15 @@ msgstr "Fájl kiválasztása..."
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2202
 #, fuzzy
 msgid ""
-"The configurations were imported successfully.\n"
+"The configuration was imported successfully.\n"
 "The program will be restated now for the changes to take effect."
 msgstr ""
 "A beállítások importálása sikeresen megtörtént. \n"
 "A változások érvényesítéséhez a program most újraindul."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2207
-msgid "Error importing configurations."
+#, fuzzy
+msgid "Error importing configuration."
 msgstr "Hiba történt a beállítások importálása közben."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2217
@@ -453,11 +456,13 @@ msgid "Disconnect Command..."
 msgstr "Kapcsolatbontási parancs..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2309
-msgid "Updating the configurations..."
+#, fuzzy
+msgid "Updating the configuration..."
 msgstr "Beállítások frissítése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2309
-msgid "Updating and saving the configurations..."
+#, fuzzy
+msgid "Updating and saving the configuration..."
 msgstr "Beállítások frissítése és mentése..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2503
@@ -476,12 +481,11 @@ msgid "Version: "
 msgstr "Verzió:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2536
-#, fuzzy
-msgid "Creator: "
-msgstr "Készítõ:"
+msgid "Author: "
+msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2538
-msgid "I'd like to thank for the next contributors for their help:\n"
+msgid "I'd like to thank the following contributors for their help:\n"
 msgstr ""
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2540
@@ -583,15 +587,18 @@ msgid "Shutting down the computer..."
 msgstr "Számítógép leállítása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2745
-msgid "The computer will be shutdown in seconds..."
+#, fuzzy
+msgid "The computer will shut down in seconds..."
 msgstr "A számítógép hamarosan leáll..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2757
-msgid "Disconnecting from the internet..."
+#, fuzzy
+msgid "Disconnecting from the Internet..."
 msgstr "Internet-kapcsolat bontása..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2757
-msgid "The internet connection will be closed in seconds..."
+#, fuzzy
+msgid "The Internet connection will be closed in seconds..."
 msgstr "Az Internet-kapcsolat hamarosan véget ér..."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2844
@@ -599,7 +606,8 @@ msgid "Visit http://dfast.sourceforge.net for more informations."
 msgstr "További információkért látogassa meg a http://dfast.sourceforge.net oldalt."
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2882
-msgid "List os files inside Zip archive:"
+#, fuzzy
+msgid "List of files in Zip archive:"
 msgstr "Zip archívumban található fájlok listája:"
 
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2882
@@ -650,7 +658,7 @@ msgstr "Jelöljön ki legalább egy elemet a címlistáról!\n"
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:108
 #, fuzzy
 msgid ""
-"The destination directory doos not exist!\n"
+"The destination directory does not exist!\n"
 "Do you want to create it?"
 msgstr ""
 "A célkönyvtár nem létezik.\n"
@@ -661,7 +669,8 @@ msgid "You don't have permission to create the directory!"
 msgstr "Nem jogosult a könyvtár létrehozására."
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:126
-msgid "I can't split the file in so many pieces!"
+#, fuzzy
+msgid "I can't split the file into so many pieces!"
 msgstr "Nem lehet ennyi szegmensre osztani a fájlt!"
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:177
@@ -695,7 +704,8 @@ msgid "Completed"
 msgstr "Befejezve"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:258
-msgid "Percentual"
+#, fuzzy
+msgid "Percentage"
 msgstr "Százalék"
 
 #: /home/max/Projetos/wxDFast/src/InProgressList.cpp:261
@@ -848,9 +858,10 @@ msgid "Putting all the pieces together...\n"
 msgstr "Szegmensek összefûzése...\n"
 
 #: /home/max/Projetos/wxDFast/src/DownloadThread.cpp:669
+#, fuzzy
 msgid ""
 "Error joining the pieces.\n"
-"Try restart the download.\n"
+"Try to restart the download.\n"
 msgstr ""
 "Nem sikerült a szegmenseket összefûzni.\n"
 "Ismételje meg a letöltést.\n"
@@ -1034,7 +1045,7 @@ msgstr "Dátum kiválasztása..."
 
 #: /home/max/Projetos/wxDFast/src/BoxOptions.cpp:158
 #, fuzzy
-msgid "Remove some items before adding a new one.."
+msgid "Remove some items before adding a new one."
 msgstr "Töröljön néhány elemet, mielõtt újat adna hozzá."
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:238
@@ -1066,8 +1077,9 @@ msgid "Saturdays"
 msgstr "Szombat"
 
 #: /home/max/Projetos/wxDFast/src/wxDFast.h:741
-msgid "Ok"
-msgstr "Rendben"
+#, fuzzy
+msgid "OK"
+msgstr "Rendben\n"
 
 #: /tmp/dummy:1
 msgid "About..."
@@ -1226,11 +1238,13 @@ msgid "&Tools"
 msgstr "&Eszközök"
 
 #: /tmp/dummy:61
-msgid "Export Configurations"
+#, fuzzy
+msgid "Export Configuration"
 msgstr "Beállítások exportálása"
 
 #: /tmp/dummy:62
-msgid "Import Configurations"
+#, fuzzy
+msgid "Import Configuration"
 msgstr "Beállítások importálása"
 
 #: /tmp/dummy:63
@@ -1272,7 +1286,8 @@ msgid "About"
 msgstr "Névjegy"
 
 #: /tmp/dummy:74
-msgid "Save in:"
+#, fuzzy
+msgid "Save to:"
 msgstr "Mentés ide:"
 
 #: /tmp/dummy:75
@@ -1362,7 +1377,8 @@ msgid "Execute the following command after download completes"
 msgstr "A letöltés befejezésekor hajtsa végre a következ? parancsot"
 
 #: /tmp/dummy:98
-msgid "&Ok"
+#, fuzzy
+msgid "&OK"
 msgstr "&Rendben"
 
 #: /tmp/dummy:99
@@ -1617,11 +1633,12 @@ msgid "Firefox Integration"
 msgstr "Beépülés a Firefox böngészõbe"
 
 #: /tmp/dummy:173
+#, fuzzy
 msgid ""
 "To integrate with Firefox, do the following:\n"
 "\n"
 "1) Install the FlashGot extension for Firefox (www.flashgot.org/getit)\n"
-"2) After restart the Firefox, go to:\n"
+"2) Then restart Firefox and go to:\n"
 "     Tools -> FlashGot -> More Options\n"
 "3)Now select the wxDownload Fast on the Download Manager's List"
 msgstr ""

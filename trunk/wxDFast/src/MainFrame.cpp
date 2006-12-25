@@ -2173,9 +2173,9 @@ void mMainFrame::OnExportConf(wxCommandEvent& event)
         destination = dir + DFAST_REG + wxT(".conf");
         wxLogNull noLog;
         if (::wxCopyFile(source,destination,TRUE))
-            wxMessageBox(_("The configurations were exported successfully."), _("Success..."),wxOK|wxICON_INFORMATION,this);
+            wxMessageBox(_("The configuration was exported successfully."), _("Success..."),wxOK|wxICON_INFORMATION,this);
         else
-            wxMessageBox(_("Error exporting configurations."), _("Error..."),wxOK|wxICON_ERROR,this);
+            wxMessageBox(_("Error exporting configuration."), _("Error..."),wxOK|wxICON_ERROR,this);
     }
 }
 
@@ -2199,12 +2199,12 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
         wxLogNull noLog;
         if (::wxCopyFile(source,destination,TRUE))
         {
-            wxMessageBox(_("The configurations were imported successfully.\nThe program will be restated now for the changes to take effect."), _("Success..."),wxOK|wxICON_INFORMATION,this);
+            wxMessageBox(_("The configuration was imported successfully.\nThe program will be restated now for the changes to take effect."), _("Success..."),wxOK|wxICON_INFORMATION,this);
             Iconize(TRUE);
             Close(TRUE);
         }
         else
-            wxMessageBox(_("Error importing configurations."), _("Error..."),wxOK|wxICON_ERROR,this);
+            wxMessageBox(_("Error importing configuration."), _("Error..."),wxOK|wxICON_ERROR,this);
     }
     this->active = TRUE;
 }
@@ -2306,7 +2306,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     this->active = FALSE;
     if (dlg.ShowModal() == XRCID("btnoptionsave"))
     {
-        wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configurations..."),_("Updating and saving the configurations..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
+        wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configuration..."),_("Updating and saving the configuration..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
         waitbox->Update(0);
         mutex_programoptions->Lock();
 
@@ -2533,9 +2533,9 @@ void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxabout"));
     wxString aboutstring;
     aboutstring  = _("Version: ") + VERSION + wxT("\n");
-    aboutstring += _("Creator: ");
+    aboutstring += _("Author: ");
     aboutstring += wxT("Max Magalhães Velasques\n\n");
-    aboutstring += _("I'd like to thank for the next contributors for their help:\n");
+    aboutstring += _("I'd like to thank the following contributors for their help:\n");
     aboutstring += wxT("Anthony Brian");
     aboutstring += _(" - several tips and donations\n");
     aboutstring += wxT("Erno Szabados");
@@ -2742,7 +2742,7 @@ void mMainFrame::OnShutdownEvent(wxCommandEvent& event)
 {
     wxStopWatch waittime;
     waittime.Start();
-    wxProgressDialog *waitbox = new wxProgressDialog(_("Shutting down the computer..."),_("The computer will be shutdown in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
+    wxProgressDialog *waitbox = new wxProgressDialog(_("Shutting down the computer..."),_("The computer will shut down in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
     while ((waittime.Time() < 30000) && (waitbox->Update(waittime.Time())))
         wxMilliSleep(200);
     delete waitbox;
@@ -2754,7 +2754,7 @@ void mMainFrame::OnDisconnectEvent(wxCommandEvent& event)
 {
     wxStopWatch waittime;
     waittime.Start();
-    wxProgressDialog *waitbox = new wxProgressDialog(_("Disconnecting from the internet..."),_("The internet connection will be closed in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
+    wxProgressDialog *waitbox = new wxProgressDialog(_("Disconnecting from the Internet..."),_("The Internet connection will be closed in seconds..."),30000,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_REMAINING_TIME);
     while ((waitbox->Update(waittime.Time())) && (waittime.Time() < 30000))
         wxMilliSleep(200);
     delete waitbox;
@@ -2879,7 +2879,7 @@ void mMainFrame::OnFilePreview(wxCommandEvent& event)
                             array.Add(currentzipentry->GetName());
                     }while ((currentzipentry = zip->GetNextEntry()));
                     array.Sort();
-                    wxSingleChoiceDialog dlg(this,_("List os files inside Zip archive:"),_("Zip Preview"),array);
+                    wxSingleChoiceDialog dlg(this,_("List of files in Zip archive:"),_("Zip Preview"),array);
                     dlg.ShowModal();
                 }
                 else

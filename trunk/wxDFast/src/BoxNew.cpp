@@ -105,7 +105,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     wxFileName *desttmp = new wxFileName(destination);
     if (!desttmp->DirExists())
     {
-        if (wxMessageBox(_("The destination directory doos not exist!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
+        if (wxMessageBox(_("The destination directory does not exist!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
         {
             wxLogNull nolog;
             if (!desttmp->Mkdir(0777,wxPATH_MKDIR_FULL))
@@ -123,7 +123,7 @@ void mBoxNew::OnOk(wxCommandEvent& event)
     }
     if (XRCCTRL(*this, "spinsplit",wxSpinCtrl)->GetValue() > MAX_NUM_PARTS)
     {
-        wxMessageBox(_("I can't split the file in so many pieces!"),_("Error..."),wxOK | wxICON_ERROR,this);
+        wxMessageBox(_("I can't split the file into so many pieces!"),_("Error..."),wxOK | wxICON_ERROR,this);
         return;
     }
     delete desttmp;

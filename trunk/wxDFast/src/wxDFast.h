@@ -738,7 +738,7 @@
             wxDateTime tmpdate;
             tmpdate.ParseDate(date);
             m_datepicker = new wxCalendarCtrl(this,0,tmpdate,wxPoint(0,0),wxDefaultSize);
-            m_btnok = new wxButton(this,wxID_OK,_("Ok"));
+            m_btnok = new wxButton(this,wxID_OK,_("OK"));
 
             grid_sizer = new wxFlexGridSizer(2, 1, 0, 0);
             grid_sizer->Add(m_datepicker, 1, wxEXPAND, 0);
