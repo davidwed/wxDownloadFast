@@ -171,10 +171,10 @@
             </object>
             <object class="separator" />
             <object class="wxMenuItem" name="menuexport">
-                <label>Export Configurations</label>
+                <label>Export Configuration</label>
             </object>
             <object class="wxMenuItem" name="menuimport">
-                <label>Import Configurations</label>
+                <label>Import Configuration</label>
             </object>
             <object class="separator" />
             <object class="wxMenuItem" name="menushutdown">

@@ -255,7 +255,7 @@ void mInProgressList::GenerateList(wxImageList *imageslist)
     itemCol.m_text = _("Completed");
     this->InsertColumn(INPROGRESS_COMPLETED, itemCol);
 
-    itemCol.m_text = _("Percentual");
+    itemCol.m_text = _("Percentage");
     this->InsertColumn(INPROGRESS_PERCENTUAL, itemCol);
 
     itemCol.m_text = _("Time Passed");

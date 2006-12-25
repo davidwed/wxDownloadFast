@@ -155,7 +155,7 @@ void mBoxOptions::OnAdd(wxCommandEvent& event)
         XRCCTRL(*this, "lstexceptionlist",wxListBox)->InsertItems(1,&string,0);
     }
     else
-        wxMessageBox(_("Remove some items before adding a new one.."));
+        wxMessageBox(_("Remove some items before adding a new one."));
 }
 
 void mBoxOptions::OnRemove(wxCommandEvent& event)

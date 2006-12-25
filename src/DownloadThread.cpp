@@ -666,7 +666,7 @@ int mDownloadThread::FinishDownload(wxFileName *destination,wxFileName tempdesti
         downloadfile->SetFinishedDateTime(wxDateTime::Now());
         if (!JoinFiles(destination,tempdestination))
         {
-            PrintMessage( _("Error joining the pieces.\nTry restart the download.\n"),HTMLERROR);
+            PrintMessage( _("Error joining the pieces.\nTry to restart the download.\n"),HTMLERROR);
             resp = -1;
             downloadfile->criticalerror = TRUE;
         }
