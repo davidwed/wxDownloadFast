@@ -285,7 +285,7 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
     infolist->InsertItem(2, _("Size"));
     infolist->InsertItem(3, _("Time"));
     infolist->InsertItem(4, _("Destination"));
-    infolist->InsertItem(5, _("Started (on)"));
+    infolist->InsertItem(5, _("Started"));
     infolist->InsertItem(6, _("Finished"));
     infolist->InsertItem(7, _("MD5"));
     infolist->InsertItem(8, _("Comments"));

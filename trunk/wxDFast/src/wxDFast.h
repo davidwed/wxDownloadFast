@@ -181,6 +181,7 @@
     const wxString OPT_READBUFFERSIZE_REG = wxT("readbuffersize");
     const wxString OPT_RESTORE_MAINFRAME_REG = wxT("restoremainframe");
     const wxString OPT_HIDE_MAINFRAME_REG = wxT("hidemainframe");
+    const wxString OPT_CHECK_FOR_UPDATES_REG = wxT("checkforupdates");
     const wxString OPT_PROGRESS_BAR_SHOW_REG = wxT("progressbarshow");
     const wxString OPT_GRAPH_SHOW_REG = wxT("graphshow");
     const wxString OPT_GRAPH_HOWMANYVALUES_REG = wxT("graphhowmanyvalues");
@@ -478,6 +479,7 @@
         long readbuffersize;
         bool restoremainframe;   //Restore the mainframe when all downloads are finished
         bool hidemainframe;      //Hide the mainframe when the user start a download
+        bool checkforupdates;
         bool progressbarshow;
         bool graphshow;
         int graphhowmanyvalues;
@@ -594,6 +596,8 @@
         void OnCopyDownloadData(wxCommandEvent& event);
         void OnExportConf(wxCommandEvent& event);
         void OnImportConf(wxCommandEvent& event);
+        bool ImportConf(wxString path);
+        bool ExportConf(wxString dir);
         void OnShutdown(wxCommandEvent& event);
         void OnDisconnect(wxCommandEvent& event);
         void OnOptions(wxCommandEvent& event);

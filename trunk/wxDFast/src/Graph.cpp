@@ -22,8 +22,10 @@ END_EVENT_TABLE()
 void mGraph::OnPaint(wxPaintEvent &event)
 {
     wxBufferedPaintDC dc(this);
+    #ifndef __WXMAC__
     if (mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
+    #endif
     if (!programoptions)
         return;
     if (!programoptions->graphshow)
@@ -32,7 +34,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     float dx, dy;
 
     //DEFINE DE PARAMETERS
-    int scale = programoptions->graphscale;
+    int newscale = 0, scale = programoptions->graphscale;
     int textarea = programoptions->graphtextarea;
     wxFont smallfont,bigfont;
     bigfont.SetPointSize(programoptions->graphspeedfontsize);
@@ -89,8 +91,13 @@ void mGraph::OnPaint(wxPaintEvent &event)
         for (node = node->GetNext() ; node; node = node->GetNext() )
         {
             current = node->GetData();
-            if (*current > ((double)programoptions->graphscale))
+            if (*current > ((double)scale))
+            {
+                if (((*current)*1.4) > ((double)scale))
+                    newscale = (int)((*current)*1.4);
+
                 *current = last;
+            }
             else
                 last = *current;
             count++;
@@ -124,7 +131,14 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.SetFont(smallfont);
         dc.DrawText(wxT("kB/s"),5,programoptions->graphspeedfontsize + 10);
     }
+    if (newscale > 0)
+    {
+        programoptions->graphscale = newscale;
+        mApplication::Configurations(WRITE,OPT_GRAPH_SCALE_REG, programoptions->graphscale);
+    }
+    #ifndef __WXMAC__
     wxGetApp().mainframe->mutex_programoptions->Unlock();
+    #endif
 }
 
 bool mGraph::Hide()

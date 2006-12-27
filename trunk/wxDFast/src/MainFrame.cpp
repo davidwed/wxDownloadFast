@@ -218,6 +218,7 @@ mMainFrame::mMainFrame()
     #endif
     programoptions.restoremainframe = mApplication::Configurations(READ,OPT_RESTORE_MAINFRAME_REG, 1);
     programoptions.hidemainframe = mApplication::Configurations(READ,OPT_HIDE_MAINFRAME_REG, 0);
+    programoptions.checkforupdates = mApplication::Configurations(READ,OPT_CHECK_FOR_UPDATES_REG, 1);
     programoptions.progressbarshow = mApplication::Configurations(READ,OPT_PROGRESS_BAR_SHOW_REG, 1);
     programoptions.graphshow = mApplication::Configurations(READ,OPT_GRAPH_SHOW_REG, 1);
     programoptions.graphhowmanyvalues = mApplication::Configurations(READ,OPT_GRAPH_HOWMANYVALUES_REG, 300);
@@ -1150,11 +1151,11 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
 {
     if (downloadfile->IsFree())
     {
-        if ((wxDateTime::Now()-programoptions.lastnewreleasecheck).GetDays() >= 10)
+        if ((programoptions.checkforupdates) && ((wxDateTime::Now()-programoptions.lastnewreleasecheck).GetDays() >= 10))
         {
             programoptions.lastnewreleasecheck = wxDateTime::Now();
             mApplication::Configurations(WRITE,OPT_LAST_NEW_RELEASE_CHECK,programoptions.lastnewreleasecheck.GetTicks());
-            this->CheckNewRelease();
+            CheckNewRelease();
         }
         downloadfile->SetFree(FALSE);
         downloadfile->WaitSplit();
@@ -2159,24 +2160,32 @@ void mMainFrame::OnExportConf(wxCommandEvent& event)
     dir = wxDirSelector(_("Select the directory:"));
     if (dir != wxEmptyString)
     {
-        if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
-            dir = dir + SEPARATOR_DIR;
-        wxString source, destination;
-        source = wxGetHomeDir();
-        if (source.Mid(source.Length()-1,1) != SEPARATOR_DIR)
-            source = source + SEPARATOR_DIR;
-        #ifdef __WXMSW__
-        source = source + DFAST_REG + wxT(".ini");
-        #else
-        source = source + wxT(".") + DFAST_REG;
-        #endif
-        destination = dir + DFAST_REG + wxT(".conf");
-        wxLogNull noLog;
-        if (::wxCopyFile(source,destination,TRUE))
+
+        if (ExportConf(dir))
             wxMessageBox(_("The configuration was exported successfully."), _("Success..."),wxOK|wxICON_INFORMATION,this);
         else
             wxMessageBox(_("Error exporting configuration."), _("Error..."),wxOK|wxICON_ERROR,this);
     }
+}
+
+bool mMainFrame::ExportConf(wxString dir)
+{
+    bool result;
+    if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
+        dir = dir + SEPARATOR_DIR;
+    wxString source, destination;
+    source = wxGetHomeDir();
+    if (source.Mid(source.Length()-1,1) != SEPARATOR_DIR)
+        source = source + SEPARATOR_DIR;
+    #ifdef __WXMSW__
+    source = source + DFAST_REG + wxT(".ini");
+    #else
+    source = source + wxT(".") + DFAST_REG;
+    #endif
+    destination = dir + DFAST_REG + wxT(".conf");
+    wxLogNull noLog;
+    result = ::wxCopyFile(source,destination,TRUE);
+    return result;
 }
 
 void mMainFrame::OnImportConf(wxCommandEvent& event)
@@ -2186,18 +2195,7 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
     this->active = FALSE;
     if (dlg->ShowModal() == wxID_OK)
     {
-        wxString source, destination;
-        source = dlg->GetPath();
-        destination = wxGetHomeDir();
-        if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-            destination = destination + SEPARATOR_DIR;
-        #ifdef __WXMSW__
-        destination = destination + DFAST_REG + wxT(".ini");
-        #else
-        destination = destination + wxT(".") + DFAST_REG;
-        #endif
-        wxLogNull noLog;
-        if (::wxCopyFile(source,destination,TRUE))
+        if (ImportConf(dlg->GetPath()))
         {
             wxMessageBox(_("The configuration was imported successfully.\nThe program will be restated now for the changes to take effect."), _("Success..."),wxOK|wxICON_INFORMATION,this);
             Iconize(TRUE);
@@ -2207,6 +2205,26 @@ void mMainFrame::OnImportConf(wxCommandEvent& event)
             wxMessageBox(_("Error importing configuration."), _("Error..."),wxOK|wxICON_ERROR,this);
     }
     this->active = TRUE;
+}
+
+bool mMainFrame::ImportConf(wxString path)
+{
+    wxString source, destination;
+    bool result;
+    source = path;
+    destination = wxGetHomeDir();
+    if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+        destination = destination + SEPARATOR_DIR;
+    #ifdef __WXMSW__
+    destination = destination + DFAST_REG + wxT(".ini");
+    #else
+    destination = destination + wxT(".") + DFAST_REG;
+    #endif
+    wxLogNull noLog;
+    if (::wxFileExists(destination))
+        ::wxCopyFile(destination,destination + wxT(".bak"),TRUE);
+    result = ::wxCopyFile(source,destination,TRUE);
+    return result;
 }
 
 void mMainFrame::OnShutdown(wxCommandEvent& event)
@@ -2269,6 +2287,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "spingraphlinewidth",wxSpinCtrl)->SetValue(programoptions.graphlinewidth);
     XRCCTRL(dlg, "chkrestoremainframe",wxCheckBox)->SetValue(programoptions.restoremainframe);
     XRCCTRL(dlg, "chkhidemainframe",wxCheckBox)->SetValue(programoptions.hidemainframe);
+    XRCCTRL(dlg, "chkcheckforupdates",wxCheckBox)->SetValue(programoptions.checkforupdates);
     XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->SetValue(programoptions.graphshow);
     XRCCTRL(dlg, "graphpanelback", mBoxOptionsColorPanel)->colour = programoptions.graphbackcolor;
     XRCCTRL(dlg, "graphpanelgrid", mBoxOptionsColorPanel)->colour = programoptions.graphgridcolor;
@@ -2336,6 +2355,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         programoptions.readbuffersize = XRCCTRL(dlg, "spinreadbuffersize",wxSpinCtrl)->GetValue();
         programoptions.restoremainframe = XRCCTRL(dlg, "chkrestoremainframe",wxCheckBox)->GetValue();
         programoptions.hidemainframe = XRCCTRL(dlg, "chkhidemainframe",wxCheckBox)->GetValue();
+        programoptions.checkforupdates = XRCCTRL(dlg, "chkcheckforupdates",wxCheckBox)->GetValue();
         programoptions.graphshow = XRCCTRL(dlg, "chkgraphshow",wxCheckBox)->GetValue();
         programoptions.graphhowmanyvalues = XRCCTRL(dlg, "spingraphpoints",wxSpinCtrl)->GetValue();
         programoptions.graphrefreshtime = XRCCTRL(dlg, "spingraphrefreshrate",wxSpinCtrl)->GetValue();
@@ -2441,6 +2461,7 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         mApplication::Configurations(WRITE,OPT_READBUFFERSIZE_REG,programoptions.readbuffersize);
         mApplication::Configurations(WRITE,OPT_RESTORE_MAINFRAME_REG, programoptions.restoremainframe);
         mApplication::Configurations(WRITE,OPT_HIDE_MAINFRAME_REG, programoptions.hidemainframe);
+        mApplication::Configurations(WRITE,OPT_CHECK_FOR_UPDATES_REG, programoptions.checkforupdates);
         mApplication::Configurations(WRITE,OPT_GRAPH_SHOW_REG,programoptions.graphshow);
         mApplication::Configurations(WRITE,OPT_GRAPH_HOWMANYVALUES_REG, programoptions.graphhowmanyvalues);
         mApplication::Configurations(WRITE,OPT_GRAPH_REFRESHTIME_REG, programoptions.graphrefreshtime);
@@ -2549,7 +2570,8 @@ void mMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     XRCCTRL(dlg, "wxdfastabouttext",wxTextCtrl)->SetValue(aboutstring);
 
     dlg.ShowModal();
-    CheckNewRelease();
+    if (programoptions.checkforupdates)
+        CheckNewRelease();
 }
 
 void mMainFrame::OnExit(wxCommandEvent& event)

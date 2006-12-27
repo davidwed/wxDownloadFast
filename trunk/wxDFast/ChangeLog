@@ -5,9 +5,10 @@
 - Added Hungarian language(by Erno Szabados)
 - Added Polish language(by Marcin Trybus)
 - Added download status auto save every 10 seconds
-- Added checking for the wxDownloadFast.ini on the
-  program dir before to look in the user home dir
-  (just on windows systems)
+- Added option to enable/disable checking for new
+  releases
+- Fixed problem when the current speed is bigger
+  than graph scale
 - Fixed several bugs
 
 0.5.3
