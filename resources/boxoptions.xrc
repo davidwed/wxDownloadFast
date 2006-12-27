@@ -24,7 +24,7 @@
                                 <option>1</option>
                                 <object class="wxFlexGridSizer">
                                     <hgap>0</hgap>
-                                    <rows>12</rows>
+                                    <rows>13</rows>
                                     <cols>1</cols>
                                     <vgap>10</vgap>
                                     <object class="spacer">
@@ -199,6 +199,19 @@
                                             <object class="sizeritem">
                                                 <object class="wxCheckBox" name="chkhidemainframe">
                                                     <label>Hide the main window when you start a download</label>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>20</hgap>
+                                            <rows>1</rows>
+                                            <cols>2</cols>
+                                            <vgap>0</vgap>
+                                            <object class="sizeritem">
+                                                <object class="wxCheckBox" name="chkcheckforupdates">
+                                                    <label>Check for updates automatically</label>
                                                 </object>
                                             </object>
                                         </object>
@@ -1107,7 +1120,7 @@
                                             <object class="sizeritem">
                                                 <object class="wxStaticText" name="lbliexplorer">
                                                     <label>Not available</label>
-                                                    <size>400, 40</size>
+                                                    <size>400, 60</size>
                                                 </object>
                                             </object>
                                         </object>

@@ -6,10 +6,10 @@
 - Adicionado idioma Polonês(por Marcin Trybus)
 - Adicionado gravação automática(a cada 10s) dos
   status dos downloads
-- Adicionado verificação pelo arquivo
-  wxDownloadFast.ini na pasta do programa antes
-  de procurar na pasta do usuário (apenas em
-  sistemas windows)
+- Adicionada opção para ativar/desativar verificação
+  por novas versões
+- Corrigido bug de quando a velocidade atual é
+  maior que a escala do gráfico
 - Corrigidos vários bugs
 
 0.5.3

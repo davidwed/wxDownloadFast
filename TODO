@@ -1,12 +1,11 @@
 Features						| Priority
 ========================================================|==========
-Option to Enable/disable check for new releases		| Normal
 Log program messages					| Normal
 Add mirror automatic search				| Low
 Add HTTPS support					| Low
 Add Proxy support					| Low
 Add progress bar for each download on the List		| Low
-Check for the wxDownloadFast.ini on the program dir	| Done
+Option to Enable/disable check for new releases		| Done
 Add download status auto save every 10 sec		| Done 
 Add Polish language					| Done
 Add generic bandwidth control				| Done
