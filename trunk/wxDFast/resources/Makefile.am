@@ -18,7 +18,8 @@ wxdfast_XRC = \
 	boxoptions.xrc\
 	mainwindow.xrc\
 	menubar.xrc\
-	toolbar.xrc
+	toolbar.xrc\
+	images.xrc
 
 if NOXRCMODE
 dist_noinst_DATA = Resources.cpp

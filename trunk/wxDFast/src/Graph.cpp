@@ -153,7 +153,11 @@ bool mGraph::Show(bool show)
     bool value = FALSE;
     if (show)
     {
+        #if wxCHECK_VERSION(2, 8, 0)
+        this->SetInitialSize(wxSize(200,programoptions->graphheight));
+        #else
         this->SetBestFittingSize(wxSize(200,programoptions->graphheight));
+        #endif
         splitter->GetPosition(&x,&y);
         splitter->GetSize(&width,&height);
         this->SetSize(wxSize(width,programoptions->graphheight));
@@ -166,7 +170,11 @@ bool mGraph::Show(bool show)
     else if (IsShown())
     {
         value = wxPanel::Show(FALSE);
+        #if wxCHECK_VERSION(2, 8, 0)
+        this->SetInitialSize(wxSize(200,0));
+        #else
         this->SetBestFittingSize(wxSize(200,0));
+        #endif
         splitter->GetPosition(&x,&y);
         splitter->GetSize(&width,&height);
         splitter->SetSize(x,y-programoptions->graphheight-5,width,height+programoptions->graphheight+5);

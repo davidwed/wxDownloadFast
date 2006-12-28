@@ -185,7 +185,7 @@ endif
 	$(INSTALL_FILE) $(RESOURCE_DIR)xpm/small/*.xpm $(DESTDIR)/usr/share/$(BIN)/xpm/small/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/readme.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
-	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/licence.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
+	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/license.txt $(DESTDIR)/usr/share/$(BIN)/RipStop/
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/*.png $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
 	$(INSTALL_FILE) $(RESOURCE_DIR)RipStop/icon/*.ico $(DESTDIR)/usr/share/$(BIN)/RipStop/icon
@@ -349,7 +349,7 @@ source:
 	cp $(RESOURCE_DIR)xpm/big/*.xpm $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/big
 	cp $(RESOURCE_DIR)xpm/big/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)xpm/big
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
-	cp $(RESOURCE_DIR)RipStop/licence.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
+	cp $(RESOURCE_DIR)RipStop/license.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/readme.txt $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	cp $(RESOURCE_DIR)RipStop/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop
 	mkdir $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/icon

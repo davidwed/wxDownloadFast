@@ -15,5 +15,4 @@ Description: Multithread download manager created using the wxWidgets library.
  Windows(2k,XP) and Mac OS X. Besides that, it is a multi-
  threaded download manager. This means that it can split a file
  into several pieces and download the pieces simultaneously.
- 
  Created in C++ using the wxWidgets(wxWindows)library.

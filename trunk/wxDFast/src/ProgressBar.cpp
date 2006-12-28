@@ -100,7 +100,11 @@ bool mProgressBar::Show(bool show)
     bool value = FALSE;
     if (show)
     {
+        #if wxCHECK_VERSION(2, 8, 0)
+        this->SetInitialSize(wxSize(200,30));
+        #else
         this->SetBestFittingSize(wxSize(200,30));
+        #endif
         splitter->GetSize(&width,&height);
         this->SetSize(wxSize(width,30));
         if (!IsShown())
@@ -113,7 +117,11 @@ bool mProgressBar::Show(bool show)
     else if (IsShown())
     {
         value = wxPanel::Show(FALSE);
+        #if wxCHECK_VERSION(2, 8, 0)
+        this->SetInitialSize(wxSize(200,0));
+        #else
         this->SetBestFittingSize(wxSize(200,0));
+        #endif
         splitter->GetSize(&width,&height);
         splitter->SetSize(wxSize(width,height+30+5));
     }
