@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2006-12-27 17:24-0300\n"
+"PO-Revision-Date: 2006-12-27 19:12-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
 "Language-Team: Max Velasques <maxvelasques@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -231,6 +231,7 @@ msgstr "Erro criando thread!"
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2911
 #: /home/max/Projetos/wxDFast/src/MainFrame.cpp:2914
 #: /home/max/Projetos/wxDFast/src/BoxFind.cpp:45
+#: /home/max/Projetos/wxDFast/src/wxDFast.cpp:338
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:46
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:61
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:79
@@ -599,6 +600,14 @@ msgstr ""
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:99
 msgid "Information..."
 msgstr "Informação..."
+
+#: /home/max/Projetos/wxDFast/src/wxDFast.cpp:327
+msgid "Cannot set locale to"
+msgstr "Impossível definir idioma para"
+
+#: /home/max/Projetos/wxDFast/src/wxDFast.cpp:329
+msgid "This language is not supported by your system."
+msgstr "Este idioma não é suportado por seu sistema."
 
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:46
 #: /home/max/Projetos/wxDFast/src/BoxNew.cpp:79

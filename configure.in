@@ -76,8 +76,6 @@ languages/pl/Makefile
 languages/pt_BR/Makefile
 languages/ru/Makefile
 languages/hu/Makefile
-#languages/id/Makefile
-#languages/hy/Makefile
 man/Makefile
 man/man1/Makefile
 man/pt_BR/Makefile

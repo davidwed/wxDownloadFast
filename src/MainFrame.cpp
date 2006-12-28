@@ -871,8 +871,11 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         for (unsigned int i = 0; i < lstaddresslist->GetCount() ;i++)
             lstaddresslist->Check(i);
     }
-
+    #if wxCHECK_VERSION(2, 8, 0)
+    dlg.SetInitialSize();
+    #else
     dlg.SetBestFittingSize();
+    #endif
     dlg.SetDifferentNamesPermition(permitdifferentnames);
     edtdestination->SetValue(destination);
     if (user == ANONYMOUS_USER)
@@ -1905,7 +1908,11 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 
+        #if wxCHECK_VERSION(2, 8, 0)
+        dlg.SetInitialSize();
+        #else
         dlg.SetBestFittingSize();
+        #endif
         dlg.SetDifferentNamesPermition(FALSE);
 
         this->active = FALSE;

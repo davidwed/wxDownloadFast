@@ -323,10 +323,25 @@ long mApplication::Configurations(int operation, wxString option,long value)
 
 void mApplication::SetLanguage(int language)
 {
+    wxString msg;
+    msg = _("Cannot set locale to");
+    msg += wxT(" '") + m_locale->GetLanguageName(language) + wxT("'.\n");
+    msg += _("This language is not supported by your system.");
+
     if (m_locale)
         delete m_locale;
     m_locale = new wxLocale();
+    #if wxCHECK_VERSION(2, 8, 0)
+    if (m_locale->IsAvailable(language))
+        m_locale->Init(language);
+    else
+    {
+        wxMessageBox(msg,_("Error...") ,wxOK | wxICON_ERROR,NULL);
+        m_locale->Init(wxLANGUAGE_UNKNOWN);
+    }
+    #else
     m_locale->Init(language);
+    #endif
     m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
     m_locale->AddCatalog(wxT("wxDFast"));
 }

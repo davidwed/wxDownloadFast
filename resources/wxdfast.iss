@@ -39,18 +39,19 @@ Source: "..\languages\de\wxDFast.mo"; DestDir: "{app}\languages\de"; Flags: igno
 Source: "..\languages\de\wxDFast.po"; DestDir: "{app}\languages\de"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.mo"; DestDir: "{app}\languages\es"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.po"; DestDir: "{app}\languages\es"; Flags: ignoreversion
-Source: "..\languages\hu\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\languages\hu\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\languages\pl\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\languages\pl\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
+Source: "..\languages\hu\wxDFast.mo"; DestDir: "{app}\languages\hu"; Flags: ignoreversion
+Source: "..\languages\hu\wxDFast.po"; DestDir: "{app}\languages\hu"; Flags: ignoreversion
+Source: "..\languages\pl\wxDFast.mo"; DestDir: "{app}\languages\pl"; Flags: ignoreversion
+Source: "..\languages\pl\wxDFast.po"; DestDir: "{app}\languages\pl"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\languages\ru\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\languages\ru\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
-Source: "..\resources\RipStop\logo\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\resources\RipStop\logo\logo_3d.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
-Source: "..\resources\RipStop\logo\wxdfast.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
-Source: "..\resources\RipStop\icon\png\*.png"; DestDir: "{app}\resources\RipStop\icon\png"; Flags: ignoreversion
+Source: "..\languages\ru\wxDFast.mo"; DestDir: "{app}\languages\ru"; Flags: ignoreversion
+Source: "..\languages\ru\wxDFast.po"; DestDir: "{app}\languages\ru"; Flags: ignoreversion
+Source: "..\resources\RipStop\icon\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\resources\RipStop\logo\about.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
+Source: "..\resources\RipStop\icon\wxdfast.png"; DestDir: "{app}\resources\RipStop\icon"; Flags: ignoreversion
+Source: "..\resources\RipStop\menubar\*.png"; DestDir: "{app}\resources\RipStop\menubar"; Flags: ignoreversion
+Source: "..\resources\RipStop\toolbar\*.png"; DestDir: "{app}\resources\RipStop\toolbar"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [REGISTRY]

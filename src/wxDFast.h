@@ -752,7 +752,6 @@
             grid_sizer->Fit(this);
             grid_sizer->SetSizeHints(this);
             Layout();
-            //this->SetBestFittingSize();
             this->CentreOnParent();
         };
         ~mDatePicker()
