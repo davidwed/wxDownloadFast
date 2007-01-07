@@ -107,9 +107,9 @@ wxString MyUtilFunctions::ByteString(wxLongLong size)
     wxString str;
     if ( size < 1024)
 //        str.Printf(wxT("%0.1f Bytes"),(double) size);
-        str.Printf(wxT("0.0 KB"));
+        str.Printf(wxT("0.0 kB"));
     if (( size >= 1024) && (size < 1048576))
-        str.Printf(wxT("%0.1f KB"),( wxlonglongtodouble(size)) /((double)1024));
+        str.Printf(wxT("%0.1f kB"),( wxlonglongtodouble(size)) /((double)1024));
     if ( size >= 1048576)
         str.Printf(wxT("%0.1f MB"),( wxlonglongtodouble(size))/((double)1048576));
     return(str);

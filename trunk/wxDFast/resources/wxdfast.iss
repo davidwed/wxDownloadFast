@@ -27,7 +27,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: "..\src\mingwm10.dll"; DestDir: "{app}";
 Source: "..\src\wxDFast.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\README"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\README"; DestDir: "{app}"; Flags: isreadme
 Source: "..\README.br"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\ChangeLog"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\ChangeLog.br"; DestDir: "{app}"; Flags: ignoreversion
@@ -39,8 +39,12 @@ Source: "..\languages\de\wxDFast.mo"; DestDir: "{app}\languages\de"; Flags: igno
 Source: "..\languages\de\wxDFast.po"; DestDir: "{app}\languages\de"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.mo"; DestDir: "{app}\languages\es"; Flags: ignoreversion
 Source: "..\languages\es\wxDFast.po"; DestDir: "{app}\languages\es"; Flags: ignoreversion
+Source: "..\languages\fr\wxDFast.mo"; DestDir: "{app}\languages\fr"; Flags: ignoreversion
+Source: "..\languages\fr\wxDFast.po"; DestDir: "{app}\languages\fr"; Flags: ignoreversion
 Source: "..\languages\hu\wxDFast.mo"; DestDir: "{app}\languages\hu"; Flags: ignoreversion
 Source: "..\languages\hu\wxDFast.po"; DestDir: "{app}\languages\hu"; Flags: ignoreversion
+Source: "..\languages\id\wxDFast.mo"; DestDir: "{app}\languages\id"; Flags: ignoreversion
+Source: "..\languages\id\wxDFast.po"; DestDir: "{app}\languages\id"; Flags: ignoreversion
 Source: "..\languages\pl\wxDFast.mo"; DestDir: "{app}\languages\pl"; Flags: ignoreversion
 Source: "..\languages\pl\wxDFast.po"; DestDir: "{app}\languages\pl"; Flags: ignoreversion
 Source: "..\languages\pt_BR\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion

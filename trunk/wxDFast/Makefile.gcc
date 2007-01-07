@@ -203,6 +203,8 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pt_BR/wxDFast.mo $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)es/wxDFast.mo $(DESTDIR)/usr/share/locale/es/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)fr/wxDFast.mo $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)de/wxDFast.mo $(DESTDIR)/usr/share/locale/de/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
@@ -213,8 +215,8 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)hu/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)pl/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
-#	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
-#	$(INSTALL_FILE) $(LANGUAGE_DIR)id/wxDFast.mo $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)id/wxDFast.mo $(DESTDIR)/usr/share/locale/id/LC_MESSAGES
 #	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
 #	$(INSTALL_FILE) $(LANGUAGE_DIR)hy/wxDFast.mo $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/man/man1
@@ -264,12 +266,13 @@ endif
 	rm -f $(DESTDIR)/usr/share/pixmaps/wxdfast.xpm
 	rm -f $(DESTDIR)/usr/share/locale/pt_BR/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/es/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/fr/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES/wxDFast.mo
-#	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
 #	rm -f $(DESTDIR)/usr/share/locale/hy/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/man/man1/wxdfast.1.gz
 	rm -f $(DESTDIR)/usr/share/man/pt/man1/wxdfast.1.gz
@@ -299,6 +302,9 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
 	cp $(LANGUAGE_DIR)es/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
 	cp $(LANGUAGE_DIR)es/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)es
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)fr
+	cp $(LANGUAGE_DIR)fr/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)fr
+	cp $(LANGUAGE_DIR)fr/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)fr
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	cp $(LANGUAGE_DIR)de/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
 	cp $(LANGUAGE_DIR)de/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)de
@@ -314,9 +320,9 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
 	cp $(LANGUAGE_DIR)pl/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
 	cp $(LANGUAGE_DIR)pl/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)pl
-#	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
-#	cp $(LANGUAGE_DIR)id/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
-#	cp $(LANGUAGE_DIR)id/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	cp $(LANGUAGE_DIR)id/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
+	cp $(LANGUAGE_DIR)id/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)id
 #	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
 #	cp $(LANGUAGE_DIR)hy/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy
 #	cp $(LANGUAGE_DIR)hy/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hy

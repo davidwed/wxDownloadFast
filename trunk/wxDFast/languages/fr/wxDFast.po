@@ -1,18 +1,15 @@
-# translation of wxDFast.po to Polish
-# Marcin Trybus <mtrybus@o2.pl>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: wxDownload Fast 0.5.4\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: wxDownload Fast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-01-07 17:52-0300\n"
-"Original-Translator: Marcin Trybus <mtrybus@o2.pl>\n"
+"PO-Revision-Date: 2007-01-06 19:22-0300\n"
 "Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
-"Language-Team: Marcin Trybus <mtrybus@o2.pl>\n"
+"Language-Team: Lord Nogard <lord.nogard@gmail.com>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Country: POLAND\n"
+"X-Poedit-Country: FRANCE\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Poedit-Basepath: /home/max/Projetos/wxDFast\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: resources\n"
@@ -20,32 +17,32 @@ msgstr ""
 #: src/TaskBarIcon.cpp:63
 #: src/MainFrame.cpp:813
 msgid "Total Speed:"
-msgstr "Ca³kowita prêdko¶æ:"
+msgstr "Vitesse totale : %0.1f kb/s"
 
 #: src/TaskBarIcon.cpp:65
 msgid "Total Complete:"
-msgstr "£±cznie pobrano:"
+msgstr "Vitesse totale : %0.1f kb/s"
 
 #: src/TaskBarIcon.cpp:67
 msgid "Downloads in progress:"
-msgstr "Pobierania w toku:"
+msgstr "Téléchargements en cours :"
 
 #: src/TaskBarIcon.cpp:84
 msgid "Hide the main window"
-msgstr "Ukryj g³ówne okno"
+msgstr "Cacher la fenêtre principale"
 
 #: src/TaskBarIcon.cpp:86
 msgid "Show the main window"
-msgstr "Poka¿ g³ówne okno"
+msgstr "Afficher la fenêtre principale"
 
 #: src/TaskBarIcon.cpp:87
 msgid "New download"
-msgstr "Dodaj nowe pobieranie"
+msgstr "Nouveau téléchargement"
 
 #: src/TaskBarIcon.cpp:88
-#: src/MainFrame.cpp:2719
+#: src/MainFrame.cpp:2726
 msgid "Close the program"
-msgstr "Zakoñcz program"
+msgstr "Quitter le programme"
 
 #: src/TaskBarIcon.cpp:91
 #: src/TaskBarIcon.cpp:167
@@ -54,185 +51,186 @@ msgstr "Zakoñcz program"
 #: src/MainFrame.cpp:423
 #: src/MainFrame.cpp:430
 #: src/MainFrame.cpp:438
-#: src/MainFrame.cpp:1761
-#: src/MainFrame.cpp:1768
-#: src/MainFrame.cpp:1776
-#: src/MainFrame.cpp:2415
-#: src/MainFrame.cpp:2427
-#: src/MainFrame.cpp:2439
+#: src/MainFrame.cpp:1764
+#: src/MainFrame.cpp:1771
+#: src/MainFrame.cpp:1779
+#: src/MainFrame.cpp:2422
+#: src/MainFrame.cpp:2434
+#: src/MainFrame.cpp:2446
 msgid "Band control"
-msgstr "Limit prêdko¶ci"
+msgstr "Limitation du débit"
 
 #: src/TaskBarIcon.cpp:93
 #: src/TaskBarIcon.cpp:169
 #: src/MainFrame.cpp:440
-#: src/MainFrame.cpp:1778
-#: src/MainFrame.cpp:2441
+#: src/MainFrame.cpp:1781
+#: src/MainFrame.cpp:2448
 msgid "Unlimited"
-msgstr "Bez limitu"
+msgstr "Illimité"
 
 #: src/TaskBarIcon.cpp:93
 #: src/TaskBarIcon.cpp:95
 #: src/TaskBarIcon.cpp:96
 msgid "Just for this session. To change definitely go to \"Options\""
-msgstr "Na czas trwania sesji. Trwa³e zmiany w menu \"Opcje\""
+msgstr "Uniquement pour cette session. Pour le modifier définitivement, aller dans les \"Options\""
 
 #: src/TaskBarIcon.cpp:94
 #: src/TaskBarIcon.cpp:186
 #: src/MainFrame.cpp:432
-#: src/MainFrame.cpp:1770
-#: src/MainFrame.cpp:2429
+#: src/MainFrame.cpp:1773
+#: src/MainFrame.cpp:2436
 msgid "Active"
-msgstr "Aktywny"
+msgstr "Actif"
 
 #: src/TaskBarIcon.cpp:96
 #: src/TaskBarIcon.cpp:204
 #: src/MainFrame.cpp:425
-#: src/MainFrame.cpp:1763
-#: src/MainFrame.cpp:2417
+#: src/MainFrame.cpp:1766
+#: src/MainFrame.cpp:2424
 msgid "Per Download"
-msgstr "Na ka¿de pobieranie"
+msgstr "Par téléchargement"
 
 #: src/MainFrame.cpp:144
 msgid "Downloads in Progress"
-msgstr "Pobierania w toku"
+msgstr "Téléchargements en cours"
 
 #: src/MainFrame.cpp:145
 msgid "Finished Downloads"
-msgstr "Pobrane pliki"
+msgstr "Téléchargements terminés"
 
 #: src/MainFrame.cpp:345
 #: /tmp/dummy:25
 msgid "Schedule Download"
-msgstr "Planowanie pobierania"
+msgstr "Téléchargement planifié"
 
 #: src/MainFrame.cpp:346
 #: /tmp/dummy:26
 #: /tmp/dummy:89
 msgid "Start Download"
-msgstr "Rozpocznij pobieranie"
+msgstr "Démarrer le téléchargement"
 
 #: src/MainFrame.cpp:347
 #: /tmp/dummy:27
 msgid "Stop Download"
-msgstr "Zatrzymaj pobieranie"
+msgstr "Arrêter le téléchargement"
 
 #: src/MainFrame.cpp:348
 #: /tmp/dummy:24
 msgid "Remove Download"
-msgstr "Usuñ z listy"
+msgstr "Supprimer le téléchargement"
 
 #: src/MainFrame.cpp:349
 msgid "Properties of Download"
-msgstr "W³a¶ciwo¶ci pobierania"
+msgstr "Propriétés du téléchargement"
 
 #: src/MainFrame.cpp:350
 #: /tmp/dummy:60
 msgid "Download File Again"
-msgstr "Pobierz ponownie"
+msgstr "Retélécharger le fichier"
 
 #: src/MainFrame.cpp:351
 #: /tmp/dummy:57
 msgid "Move File"
-msgstr "Przenie¶ plik"
+msgstr "Déplacer le fichier"
 
 #: src/MainFrame.cpp:352
 #: /tmp/dummy:58
 msgid "Check Integrity"
-msgstr "Sprawd¼ spójno¶æ"
+msgstr "Verifier l'intégrité"
 
 #: src/MainFrame.cpp:353
 #: /tmp/dummy:33
 msgid "Copy URL"
-msgstr "Kopiuj adres odno¶nika"
+msgstr "Copier l'URL"
 
 #: src/MainFrame.cpp:354
 #: /tmp/dummy:34
 msgid "Copy Download Data"
-msgstr "Kopiuj dane o pobraniu"
+msgstr "Copier les détails du téléchargement"
 
 #: src/MainFrame.cpp:355
 #: /tmp/dummy:59
 msgid "Open Destination Directory"
-msgstr "Otwórz katalog docelowy"
+msgstr "Ouvrir le dossier de destination"
 
 #: src/MainFrame.cpp:416
-#: src/MainFrame.cpp:1754
-#: src/MainFrame.cpp:2862
+#: src/MainFrame.cpp:1757
+#: src/MainFrame.cpp:2869
 msgid "NEW RELEASE: "
-msgstr "Nowe wydanie "
+msgstr "NOUVELLE VERSION : "
 
 #: src/MainFrame.cpp:418
-#: src/MainFrame.cpp:1756
-#: src/MainFrame.cpp:2864
-#: src/MainFrame.cpp:2866
+#: src/MainFrame.cpp:1759
+#: src/MainFrame.cpp:2871
+#: src/MainFrame.cpp:2873
 msgid " is available."
-msgstr " jest dostêpne."
+msgstr " est disponible."
 
 #: src/MainFrame.cpp:447
 #: src/MainFrame.cpp:610
-#: src/MainFrame.cpp:1394
-#: src/MainFrame.cpp:1733
+#: src/MainFrame.cpp:1397
+#: src/MainFrame.cpp:1736
 #: src/InProgressList.cpp:129
 #: src/FinishedList.cpp:143
 #: src/FinishedList.cpp:284
 #: /tmp/dummy:100
 msgid "File type"
-msgstr "Typ pliku"
+msgstr "Type de fichier"
 
 #: src/MainFrame.cpp:450
-#: src/MainFrame.cpp:1736
+#: src/MainFrame.cpp:1739
 #: /tmp/dummy:101
 msgid "Preview"
-msgstr "Podgl±d"
+msgstr "Aperçu"
 
 #: src/MainFrame.cpp:624
 msgid "Piece "
-msgstr "Czê¶æ"
+msgstr "Partie "
 
-#: src/MainFrame.cpp:1001
+#: src/MainFrame.cpp:1004
 msgid "Stopping the download..."
-msgstr "Zatrzymywanie pobierania..."
+msgstr "Arrêter le téléchargement..."
 
-#: src/MainFrame.cpp:1001
+#: src/MainFrame.cpp:1004
 msgid "Stopping the current download before removing..."
-msgstr "Zatrzymywanie pobierania przed usuniêciem..."
+msgstr "Stopper le téléchargement avant de le supprimer..."
 
-#: src/MainFrame.cpp:1013
+#: src/MainFrame.cpp:1016
 msgid "Do you also want to remove the partial downloaded file from the disk?"
-msgstr "Czy chcesz równie¿ usun±æ z dysku pobrane fragmenty?"
+msgstr "Souhaitez-vous également supprimer les fichiers des téléchargements partiels ?"
 
-#: src/MainFrame.cpp:1013
-#: src/MainFrame.cpp:1051
+#: src/MainFrame.cpp:1016
+#: src/MainFrame.cpp:1054
 msgid "Remove..."
-msgstr "Usuñ"
+msgstr "Supprimer..."
 
-#: src/MainFrame.cpp:1051
+#: src/MainFrame.cpp:1054
 msgid "Do you also want to remove downloaded file(s) from the disk?"
-msgstr "Czy chcesz równie¿ usun±æ z dysku pobrane pliki?"
+msgstr "Souhaitez-vous également supprimer le(s) fichier(s) du disque dur ?"
 
-#: src/MainFrame.cpp:1168
-#: src/MainFrame.cpp:2846
+#: src/MainFrame.cpp:1171
+#: src/MainFrame.cpp:2853
 msgid "Error creating thread!"
-msgstr "B³±d tworzenia w±tku!"
+msgstr "Erreur lors de la création du thread !"
 
-#: src/MainFrame.cpp:1168
-#: src/MainFrame.cpp:1176
-#: src/MainFrame.cpp:1341
-#: src/MainFrame.cpp:1453
-#: src/MainFrame.cpp:2074
-#: src/MainFrame.cpp:2141
-#: src/MainFrame.cpp:2147
-#: src/MainFrame.cpp:2167
-#: src/MainFrame.cpp:2205
-#: src/MainFrame.cpp:2525
-#: src/MainFrame.cpp:2536
-#: src/MainFrame.cpp:2547
-#: src/MainFrame.cpp:2758
-#: src/MainFrame.cpp:2908
-#: src/MainFrame.cpp:2911
-#: src/MainFrame.cpp:2914
+#: src/MainFrame.cpp:1171
+#: src/MainFrame.cpp:1179
+#: src/MainFrame.cpp:1344
+#: src/MainFrame.cpp:1456
+#: src/MainFrame.cpp:2081
+#: src/MainFrame.cpp:2148
+#: src/MainFrame.cpp:2154
+#: src/MainFrame.cpp:2174
+#: src/MainFrame.cpp:2212
+#: src/MainFrame.cpp:2532
+#: src/MainFrame.cpp:2543
+#: src/MainFrame.cpp:2554
+#: src/MainFrame.cpp:2765
+#: src/MainFrame.cpp:2915
+#: src/MainFrame.cpp:2918
+#: src/MainFrame.cpp:2921
 #: src/BoxFind.cpp:45
+#: src/wxDFast.cpp:339
 #: src/BoxNew.cpp:46
 #: src/BoxNew.cpp:61
 #: src/BoxNew.cpp:79
@@ -242,497 +240,505 @@ msgstr "B³±d tworzenia w±tku!"
 #: src/BoxNew.cpp:163
 #: src/BoxNew.cpp:195
 msgid "Error..."
-msgstr "B³±d"
+msgstr "Erreur..."
 
-#: src/MainFrame.cpp:1176
-#: src/MainFrame.cpp:2852
+#: src/MainFrame.cpp:1179
+#: src/MainFrame.cpp:2859
 msgid "Error starting thread!"
-msgstr "B³±d uruchomienia w±tku!"
+msgstr "Erreur lors du démarrage du thread !"
 
-#: src/MainFrame.cpp:1215
+#: src/MainFrame.cpp:1218
 msgid "Starting the downloads..."
-msgstr "Rozpoczynanie pobierania..."
+msgstr "Démarrer les téléchargements..."
 
-#: src/MainFrame.cpp:1232
+#: src/MainFrame.cpp:1235
 msgid "Stopping the downloads..."
-msgstr "Zatrzymywanie pobierania..."
+msgstr "Arrêter les téléchargements..."
 
-#: src/MainFrame.cpp:1341
-#: src/MainFrame.cpp:1453
+#: src/MainFrame.cpp:1344
+#: src/MainFrame.cpp:1456
 msgid "Unable to open the clipboard!"
-msgstr "Brak dostêpu do schowka!"
+msgstr "Il est impossible d'ouvrir le presse-papier !"
 
-#: src/MainFrame.cpp:1389
+#: src/MainFrame.cpp:1392
 #: src/FinishedList.cpp:142
 #: src/FinishedList.cpp:283
 msgid "Name"
-msgstr "Nazwa"
+msgstr "Nom"
 
-#: src/MainFrame.cpp:1399
+#: src/MainFrame.cpp:1402
 #: src/InProgressList.cpp:252
 #: src/FinishedList.cpp:144
 #: src/FinishedList.cpp:271
 #: src/FinishedList.cpp:285
 msgid "Size"
-msgstr "Rozmiar"
+msgstr "Taille"
 
-#: src/MainFrame.cpp:1404
+#: src/MainFrame.cpp:1407
 #: src/FinishedList.cpp:145
 #: src/FinishedList.cpp:286
 msgid "Time"
-msgstr "Czas"
+msgstr "Durée"
 
-#: src/MainFrame.cpp:1409
+#: src/MainFrame.cpp:1412
 #: src/FinishedList.cpp:146
 #: src/FinishedList.cpp:287
 msgid "Destination"
-msgstr "Po³o¿enie"
+msgstr "Destination"
 
-#: src/MainFrame.cpp:1416
+#: src/MainFrame.cpp:1419
 #: src/FinishedList.cpp:149
 #: src/FinishedList.cpp:290
 msgid "MD5"
 msgstr "MD5"
 
-#: src/MainFrame.cpp:1422
+#: src/MainFrame.cpp:1425
 #: src/FinishedList.cpp:150
 #: /tmp/dummy:94
 #: /tmp/dummy:95
 msgid "Reference URL"
-msgstr "Adres odsy³aj±cy (referrer)"
+msgstr "URL d'origine"
 
-#: src/MainFrame.cpp:1427
+#: src/MainFrame.cpp:1430
 #: src/FinishedList.cpp:151
 #: src/FinishedList.cpp:291
 #: /tmp/dummy:93
 msgid "Comments"
-msgstr "Komentarz"
+msgstr "Commentaires"
 
-#: src/MainFrame.cpp:1432
+#: src/MainFrame.cpp:1435
 #: src/FinishedList.cpp:152
 #: src/FinishedList.cpp:292
 msgid "URLs"
-msgstr "Adresy odno¶ników"
+msgstr "URLs"
 
-#: src/MainFrame.cpp:1534
+#: src/MainFrame.cpp:1537
 msgid "Find file..."
-msgstr "Znajd¼ plik"
+msgstr "Rechercher un fichier..."
 
-#: src/MainFrame.cpp:1863
+#: src/MainFrame.cpp:1866
 #: /tmp/dummy:56
 msgid "Download Properties"
-msgstr "W³a¶ciwo¶ci pobierania"
+msgstr "Propriétés du téléchargement"
 
-#: src/MainFrame.cpp:2030
-#: src/MainFrame.cpp:2160
+#: src/MainFrame.cpp:2037
+#: src/MainFrame.cpp:2167
 #: src/BoxNew.cpp:141
 #: src/BoxOptions.cpp:55
 #: src/BoxOptions.cpp:77
 msgid "Select the directory:"
-msgstr "Wybierz katalog"
+msgstr "Sélectionner le dossier :"
 
-#: src/MainFrame.cpp:2065
+#: src/MainFrame.cpp:2072
 msgid "Moving..."
-msgstr "Przenoszenie..."
+msgstr "Déplacement..."
 
-#: src/MainFrame.cpp:2065
+#: src/MainFrame.cpp:2072
 msgid "Moving file..."
-msgstr "Przenoszenie pliku..."
+msgstr "Déplacement du fichier..."
 
-#: src/MainFrame.cpp:2074
+#: src/MainFrame.cpp:2081
 msgid "Error moving file."
-msgstr "B³±d podczas przenoszenia!"
+msgstr "Erreur lors du déplacement du fichier."
 
-#: src/MainFrame.cpp:2080
+#: src/MainFrame.cpp:2087
 msgid ""
 "The file isn't in the path that it was saved initially.\n"
 "Do you want to change only the old path for the current one?"
 msgstr ""
-"Plik nie znajduje siê w katalogu w którym by³ zapisywany.\n"
-"Czy chcesz zmieniæ ¶cie¿kê do pliku na aktualn±?"
+"Le fichier n'est pas dans le chemin où il avait été sauvegardé initiallement.\n"
+"Voulez-vous seulement modifier l'ancien chemin par l'actuel ?"
 
-#: src/MainFrame.cpp:2083
-#: src/MainFrame.cpp:2751
+#: src/MainFrame.cpp:2090
+#: src/MainFrame.cpp:2758
 #: src/BoxNew.cpp:108
 msgid "Continue..."
-msgstr "Kontynuuj..."
+msgstr "Continuer..."
 
-#: src/MainFrame.cpp:2127
+#: src/MainFrame.cpp:2134
 msgid "Checking file's MD5..."
-msgstr "Sprawdzanie sumy MD5..."
+msgstr "Verifier le MD5 du fichier..."
 
-#: src/MainFrame.cpp:2134
+#: src/MainFrame.cpp:2141
 msgid "The file was verified successfully."
-msgstr "Plik zosta³ poprawnie zweryfikowany."
+msgstr "Le fichier a été vérifié avec succès."
 
-#: src/MainFrame.cpp:2134
-#: src/MainFrame.cpp:2165
-#: src/MainFrame.cpp:2200
+#: src/MainFrame.cpp:2141
+#: src/MainFrame.cpp:2172
+#: src/MainFrame.cpp:2207
 msgid "Success..."
-msgstr "Wykonano..."
+msgstr "Succès..."
 
-#: src/MainFrame.cpp:2138
+#: src/MainFrame.cpp:2145
 msgid "The MD5 calculated previously is different from the current one."
-msgstr "Suma kontrolna MD5 obliczona wcze¶niej ró¿ni siê od obecnej!"
+msgstr "Le MD5 calculé précédemment est différent du MD5 actuel."
 
-#: src/MainFrame.cpp:2139
+#: src/MainFrame.cpp:2146
 msgid ""
 "\n"
 "Old MD5 =\t\t"
 msgstr ""
 "\n"
-"MD5 poprzednio =\t\t"
+"Ancien MD5 =\t\t"
 
-#: src/MainFrame.cpp:2140
+#: src/MainFrame.cpp:2147
 msgid ""
 "\n"
 "Current MD5 =\t"
 msgstr ""
 "\n"
-"MD5 obecnie =\t"
+"MD5 atuel =\t"
 
-#: src/MainFrame.cpp:2147
-#: src/MainFrame.cpp:2914
+#: src/MainFrame.cpp:2154
+#: src/MainFrame.cpp:2921
 #: src/BoxFind.cpp:107
 msgid "File not found."
-msgstr "Nie odnaleziono pliku."
+msgstr "Fichier introuvable."
 
-#: src/MainFrame.cpp:2165
+#: src/MainFrame.cpp:2172
 msgid "The configuration was exported successfully."
-msgstr "Eksport ustawieñ zakoñczony."
+msgstr "Les paramètres de configuration ont été exportés avec succès."
 
-#: src/MainFrame.cpp:2167
+#: src/MainFrame.cpp:2174
 msgid "Error exporting configuration."
-msgstr "B³±d eksportu ustawieñ."
+msgstr "Erreur lors de l'exportation des paramètres de configuration."
 
-#: src/MainFrame.cpp:2194
+#: src/MainFrame.cpp:2201
 msgid "Select the file..."
-msgstr "Wybierz plik..."
+msgstr "Sélectionnez le fichier..."
 
-#: src/MainFrame.cpp:2200
+#: src/MainFrame.cpp:2207
 msgid ""
 "The configuration was imported successfully.\n"
 "The program will be restated now for the changes to take effect."
 msgstr ""
-"Import ustawieñ zakoñczony.\n"
-"Program zostanie uruchomiony ponownie by uwzglêdniæ zmiany."
+"Les paramètres de configuration ont été importées avec succès.\n"
+"Le programme va maintenant être redémarré pour prendre en compte les modifications."
 
-#: src/MainFrame.cpp:2205
+#: src/MainFrame.cpp:2212
 msgid "Error importing configuration."
-msgstr "B³±d importu ustawieñ."
+msgstr "Erreur d'importation des paramètres de configuration."
 
-#: src/MainFrame.cpp:2235
-#: src/MainFrame.cpp:2246
+#: src/MainFrame.cpp:2242
+#: src/MainFrame.cpp:2253
 msgid "Command :\t"
-msgstr "Polecenie:\t"
+msgstr "Commandes :\t"
 
-#: src/MainFrame.cpp:2235
+#: src/MainFrame.cpp:2242
 msgid "Shutdown Command..."
-msgstr "Polecenie wy³±czenia komputera..."
+msgstr "Commande d'arrêt..."
 
-#: src/MainFrame.cpp:2246
+#: src/MainFrame.cpp:2253
 msgid "Disconnect Command..."
-msgstr "Polecenie roz³±czenia..."
+msgstr "Commande de déconnection..."
 
-#: src/MainFrame.cpp:2328
+#: src/MainFrame.cpp:2335
 msgid "Updating the configuration..."
-msgstr "Zmiana konfiguracji..."
+msgstr "Actualisation des paramètres de configuration..."
 
-#: src/MainFrame.cpp:2328
+#: src/MainFrame.cpp:2335
 msgid "Updating and saving the configuration..."
-msgstr "Zmiana i zapisywanie konfiguracji..."
+msgstr "Actualisation et sauvegarde des paramètres de configuration..."
 
-#: src/MainFrame.cpp:2524
-#: src/MainFrame.cpp:2535
-#: src/MainFrame.cpp:2546
-#: src/MainFrame.cpp:2757
+#: src/MainFrame.cpp:2531
+#: src/MainFrame.cpp:2542
+#: src/MainFrame.cpp:2553
+#: src/MainFrame.cpp:2764
 msgid ""
 "Unable to find the browser.\n"
 "Go to \"Options\" and specify a valid one."
 msgstr ""
-"Nie mogê znale¼æ przegl±darki.\n"
-"Ustaw ¶cie¿kê w menu \"Narzêdzia -> Opcje\"."
-
-#: src/MainFrame.cpp:2556
-msgid "Version: "
-msgstr "Wersja: "
-
-#: src/MainFrame.cpp:2557
-msgid "Author: "
-msgstr "Autor: "
-
-#: src/MainFrame.cpp:2559
-msgid "I'd like to thank the following contributors for their help:\n"
-msgstr "Osoby, którym chcia³bym podziêkowaæ za ich wk³ad w rozwój programu:\n"
-
-#: src/MainFrame.cpp:2561
-msgid " - several tips and donations\n"
-msgstr " - kilka porad i datków\n"
+"Impossíble de trouver un navigateur.\n"
+"Allez dans les  \"Options\" et définissez un chemin valide."
 
 #: src/MainFrame.cpp:2563
+msgid "Version: "
+msgstr "Version : "
+
+#: src/MainFrame.cpp:2564
+msgid "Author: "
+msgstr "Auteur : "
+
+#: src/MainFrame.cpp:2566
+msgid "I'd like to thank the following contributors for their help:\n"
+msgstr "Je tiens à remercier tout particulièrement les personnes suivantes pour leur aide :\n"
+
+#: src/MainFrame.cpp:2568
+msgid " - several tips and donations\n"
+msgstr " - astuces et donations\n"
+
+#: src/MainFrame.cpp:2570
 msgid ""
 " - Ripstop theme\n"
 "\n"
 msgstr ""
-" - motyw Ripstop\n"
+" - Thème Ripstop\n"
 "\n"
 
-#: src/MainFrame.cpp:2564
+#: src/MainFrame.cpp:2571
 msgid "Visit our website:\n"
-msgstr "Odwied¼ nasz± stronê:\n"
+msgstr "Visitez notre site web : \n"
 
-#: src/MainFrame.cpp:2567
+#: src/MainFrame.cpp:2574
 msgid "Help to improve the program!\n"
-msgstr "Pomó¿ w ulepszaniu programu!\n"
+msgstr "Aidez nous à améliorer ce programme !\n"
 
-#: src/MainFrame.cpp:2568
+#: src/MainFrame.cpp:2575
 msgid "Donate to this project!"
-msgstr "Wesprzyj finansowo projekt!"
+msgstr "Faites un don à ce projet !"
 
-#: src/MainFrame.cpp:2589
+#: src/MainFrame.cpp:2596
 msgid "Do you want to close the program?"
-msgstr "Zakoñczyæ pracê programu?"
+msgstr "Voulez-vous vraiment fermer le programme ?"
 
-#: src/MainFrame.cpp:2589
+#: src/MainFrame.cpp:2596
 msgid "Close..."
-msgstr "Zakoñcz"
+msgstr "Fermer..."
 
-#: src/MainFrame.cpp:2679
+#: src/MainFrame.cpp:2686
 #: /tmp/dummy:3
 #: /tmp/dummy:73
 msgid "Add new download"
-msgstr "Dodaj nowe pobieranie"
+msgstr "Ajouter un nouveau téléchargement"
 
-#: src/MainFrame.cpp:2683
+#: src/MainFrame.cpp:2690
 #: /tmp/dummy:5
 msgid "Remove the selected download"
-msgstr "Usuñ wybrane pobieranie"
+msgstr "Supprimer le téléchargement sélectionné"
 
-#: src/MainFrame.cpp:2687
+#: src/MainFrame.cpp:2694
 #: /tmp/dummy:7
 msgid "Mark the selected download as scheduled"
-msgstr "Zaznacz wybrane pobieranie do wykonania wed³ug planu"
+msgstr "Marquer le téléchargement comme planifié"
 
-#: src/MainFrame.cpp:2691
+#: src/MainFrame.cpp:2698
 #: /tmp/dummy:9
 msgid "Start the selected download"
-msgstr "Rozpocznij wybrane pobieranie"
+msgstr "Démarrer le téléchargement sélectionné"
 
-#: src/MainFrame.cpp:2695
+#: src/MainFrame.cpp:2702
 #: /tmp/dummy:11
 msgid "Stop the selected download"
-msgstr "Zatrzymaj wybrane pobieranie"
+msgstr "Arrêter le téléchargement sélectionné"
 
-#: src/MainFrame.cpp:2699
+#: src/MainFrame.cpp:2706
 #: /tmp/dummy:13
 #: /tmp/dummy:28
 msgid "Start all downloads"
-msgstr "Rozpocznij wszystkie pobierania"
+msgstr "Démarrer tous les téléchargements"
 
-#: src/MainFrame.cpp:2703
+#: src/MainFrame.cpp:2710
 #: /tmp/dummy:15
 #: /tmp/dummy:29
 msgid "Stop all downloads"
-msgstr "Zatrzymaj wszystkie pobierania"
+msgstr "Arrêter tous les téléchargements"
 
-#: src/MainFrame.cpp:2707
+#: src/MainFrame.cpp:2714
 msgid "Raise in one level the selected download in the queue"
-msgstr "Przenie¶ pobieranie o jedno miejsce w górê"
+msgstr "Monter d'une place le téléchargement sélectionné dans la file d'attente"
 
-#: src/MainFrame.cpp:2711
+#: src/MainFrame.cpp:2718
 msgid "Lower in one level the selected download in the queue"
-msgstr "Przenie¶ pobieranie o jedno miejsce w dó³"
+msgstr "Descendre d'une place le téléchargement sélectionné dans la file d'attente"
 
-#: src/MainFrame.cpp:2715
+#: src/MainFrame.cpp:2722
 #: /tmp/dummy:21
 msgid "Show the properties of the selected download"
-msgstr "Poka¿ w³a¶ciwo¶ci wybranego pobierania"
+msgstr "Afficher les propriétés du téléchargement sélectionné"
 
-#: src/MainFrame.cpp:2750
+#: src/MainFrame.cpp:2757
 msgid ""
 "You have downloaded a HTML file.\n"
 "Open this file in your browser?"
 msgstr ""
-"Pobrano plik HTML.\n"
-"Czy otworzyæ go w przegl±darce?"
+"Vous avez téléchargé un fichier HTML.\n"
+"Ouvrir ce fichier dans votre navigateur ?"
 
-#: src/MainFrame.cpp:2767
+#: src/MainFrame.cpp:2774
 msgid "Shutting down the computer..."
-msgstr "Wy³±czam komputer..."
+msgstr "Extinction de l'ordinateur..."
 
-#: src/MainFrame.cpp:2767
+#: src/MainFrame.cpp:2774
 msgid "The computer will shut down in seconds..."
-msgstr "Komputer zostanie za chwilê wy³±czony..."
+msgstr "L'ordinateur va s'éteindre dans quelques secondes..."
 
-#: src/MainFrame.cpp:2779
+#: src/MainFrame.cpp:2786
 msgid "Disconnecting from the Internet..."
-msgstr "Roz³±czanie po³±czenia internetowego..."
+msgstr "Déconnection d'internet..."
 
-#: src/MainFrame.cpp:2779
+#: src/MainFrame.cpp:2786
 msgid "The Internet connection will be closed in seconds..."
-msgstr "Komputer zostanie od³±czony od Internetu..."
+msgstr "La connection à internet va être coupée dans quelques secondes..."
 
-#: src/MainFrame.cpp:2866
+#: src/MainFrame.cpp:2873
 msgid "Visit http://dfast.sourceforge.net for more informations."
-msgstr "Odwied¼ stronê http://dfast.sourceforge.net by uzyskaæ wiêcej informacji."
+msgstr "Visitez http://dfast.sourceforge.net pour obtenir plus d'informations."
 
-#: src/MainFrame.cpp:2904
-msgid "List of files in Zip archive:"
-msgstr "Lista plików w archiwum zip:"
-
-#: src/MainFrame.cpp:2904
-msgid "Zip Preview"
-msgstr "Podgl±d zip"
-
-#: src/MainFrame.cpp:2908
 #: src/MainFrame.cpp:2911
+msgid "List of files in Zip archive:"
+msgstr "Liste des fichiers contenus dans le Zip :"
+
+#: src/MainFrame.cpp:2911
+msgid "Zip Preview"
+msgstr "Prévisualisation du Zip"
+
+#: src/MainFrame.cpp:2915
+#: src/MainFrame.cpp:2918
 msgid "Unable to extract zip file content!"
-msgstr "Nie powiod³o siê odczytanie zawarto¶ci archiwum zip!"
+msgstr "Impossible d'extraire le contenu du fichier Zip !"
 
 #: src/BoxFind.cpp:45
 msgid ""
 "Unable to search in this page.\n"
 "Change to another page and try again"
 msgstr ""
-"Wyszukiwanie nie jest mo¿liwe na tej stronie.\n"
-"Wpisz inny adres strony i spróbuj ponownie"
+"Impossible de chercher dans cette page.\n"
+"Allez sur une autre page et ressayez"
 
 #: src/BoxFind.cpp:107
 #: src/BoxNew.cpp:99
 msgid "Information..."
-msgstr "Informacje"
+msgstr "Information..."
+
+#: src/wxDFast.cpp:327
+msgid "Cannot set locale to"
+msgstr "Impossible de traduire en"
+
+#: src/wxDFast.cpp:329
+msgid "This language is not supported by your system."
+msgstr "Cette langue n'est pas supprtée par votre système."
 
 #: src/BoxNew.cpp:46
 #: src/BoxNew.cpp:79
 msgid "The following URL is invalid:\n"
-msgstr "Nastêpuj±cy adres jest b³êdny:\n"
+msgstr "L'URL suivante est invalide :\n"
 
 #: src/BoxNew.cpp:61
 #: src/BoxNew.cpp:163
 #: src/BoxNew.cpp:195
 msgid "The URL is invalid!"
-msgstr "Nieprawid³owy adres odno¶nika!"
+msgstr "L'URL est invalide !"
 
 #: src/BoxNew.cpp:91
 msgid "The following URL has a different filename:\n"
-msgstr "Nastêpuj±cy odno¶nik wskazuje inn± nazwê pliku:\n"
+msgstr "L'URL suivante a un nom de fichier différent :\n"
 
 #: src/BoxNew.cpp:99
 msgid "Select at least one item of the address list!\n"
-msgstr "Wybierz co najmniej jedn± pozycjê z listy adresów!\n"
+msgstr "Sélectionnez au moins un item dans la liste d'adresse !\n"
 
 #: src/BoxNew.cpp:108
 msgid ""
 "The destination directory does not exist!\n"
 "Do you want to create it?"
 msgstr ""
-"Podany katalog jest nie istnieje!\n"
-"Czy chcesz go utworzyæ?"
+"Le dossier ne destination n'existe pas !\n"
+"Souhaitez-vous le créer ?"
 
 #: src/BoxNew.cpp:113
 msgid "You don't have permission to create the directory!"
-msgstr "Nie masz uprawnieñ do utworzenia katalogu!"
+msgstr "Vous n'avez pas la permission de créer ce dossier !"
 
 #: src/BoxNew.cpp:126
 msgid "I can't split the file into so many pieces!"
-msgstr "Wybrano zbyt du¿± liczbê czê¶ci!"
+msgstr "Impossible de couper le fichier en autant de parties !"
 
 #: src/BoxNew.cpp:177
 msgid "Edit the URL"
-msgstr "Edycja adresu odno¶nika"
+msgstr "Editer l'URL"
 
 #: src/InProgressList.cpp:35
 msgid "Double-click on the item to Start/Stop the download"
-msgstr "Podwójne klikniêcie uruchamia/zatrzymuje pobieranie"
+msgstr "Double-cliquez sur l'item pour Démarrer/Arrêter le téléchargement"
 
 #: src/InProgressList.cpp:208
 msgid "   [ Yes ]"
-msgstr "   [ Tak ]"
+msgstr "   [ Oui ]"
 
 #: src/InProgressList.cpp:210
 msgid "   [ No  ]"
-msgstr "   [ Nie ]"
+msgstr "   [ Non ]"
 
 #: src/InProgressList.cpp:246
 msgid "Restart"
-msgstr "Wznawianie"
+msgstr "Reprise"
 
 #: src/InProgressList.cpp:249
 #: src/FinishedList.cpp:269
 msgid "Filename"
-msgstr "Nazwa pliku"
+msgstr "Nom du fichier"
 
 #: src/InProgressList.cpp:255
 msgid "Completed"
-msgstr "Pobrano"
+msgstr "Complété"
 
 #: src/InProgressList.cpp:258
 msgid "Percentage"
-msgstr "Procentowo"
+msgstr "Pourcentage"
 
 #: src/InProgressList.cpp:261
 msgid "Time Passed"
-msgstr "Czas pobierania"
+msgstr "Temps écoulé"
 
 #: src/InProgressList.cpp:264
 msgid "Remaining"
-msgstr "Pozosta³o"
+msgstr "Temps restant"
 
 #: src/InProgressList.cpp:267
 msgid "Speed"
-msgstr "Szybko¶æ"
+msgstr "Vitesse"
 
 #: src/InProgressList.cpp:270
 msgid "Attempts"
-msgstr "Ilo¶æ prób"
+msgstr "Tentatives"
 
 #: src/InProgressList.cpp:273
 msgid "URL"
-msgstr "Adres odno¶nika"
+msgstr "URL"
 
 #: src/FinishedList.cpp:39
 msgid "Double-click on the item to open the destination directory"
-msgstr "Podwójne klikniêcie na obiekcie otwiera katalog w którym siê znajduje"
+msgstr "Double-cliquez sur l'item pour ouvrir le dossier de destination"
 
 #: src/FinishedList.cpp:147
 #: /tmp/dummy:8
 msgid "Start"
-msgstr "Rozpocznij"
+msgstr "Démarrer"
 
 #: src/FinishedList.cpp:148
 #: src/FinishedList.cpp:273
 #: src/FinishedList.cpp:289
 msgid "Finished"
-msgstr "Ukoñczono"
+msgstr "Terminé"
 
 #: src/FinishedList.cpp:288
 msgid "Started"
-msgstr "Rozpoczêto"
+msgstr "Démarré"
 
 #: src/DownloadThread.cpp:67
 msgid ""
 "You have downloaded a HTML file.\n"
 "Opening this file in your browser.\n"
 msgstr ""
-"Pobrano plik HTML.\n"
-"Zostanie on otwarty w przegl±darce.\n"
+"Vous avez téléchargé un fichier HTML.\n"
+"Ouvrez ce fichier dans votre navigateur.\n"
 
 #: src/DownloadThread.cpp:193
 msgid "This protocol isn't supported.\n"
-msgstr "Ten protokó³ nie jest obs³ugiwany.\n"
+msgstr "Ce protocole n'est pas supporté.\n"
 
 #: src/DownloadThread.cpp:247
 #: src/DownloadThread.cpp:915
 msgid "Redirecting to "
-msgstr "Przekierowanie do"
+msgstr "Redirection vers"
 
 #: src/DownloadThread.cpp:265
 msgid "Metalink file detected\n"
-msgstr "Wykryto plik Metalink\n"
+msgstr "Fichier Metalink détecté\n"
 
 #: src/DownloadThread.cpp:266
 msgid "Getting Metalink data...\n"
-msgstr "Pobieranie informacje o Metalink...\n"
+msgstr "Réception des données Metalink...\n"
 
 #: src/DownloadThread.cpp:296
 #: src/DownloadThread.cpp:715
@@ -740,117 +746,117 @@ msgstr "Pobieranie informacje o Metalink...\n"
 #: src/DownloadThread.cpp:1138
 #: /tmp/dummy:176
 msgid "Not available"
-msgstr "Niedostêpne"
+msgstr "Non disponible"
 
 #: src/DownloadThread.cpp:317
 msgid "This Metalink file contains multiples files.\n"
-msgstr "Ten Metalink zawiera wiêcej ni¿ jeden plik.\n"
+msgstr "Ce fichier Metalink contient plusieurs archives.\n"
 
 #: src/DownloadThread.cpp:320
 msgid "Creating all downloads...\n"
-msgstr "Tworzenie wszystkich pobierañ...\n"
+msgstr "Création de tous les téléchargements...\n"
 
 #: src/DownloadThread.cpp:330
 msgid "Getting file number "
-msgstr "Pobieram plik numer "
+msgstr "Réception du nombre de fichiers"
 
 #: src/DownloadThread.cpp:336
 msgid "Error retrieving Metalink data\n"
-msgstr "B³±d pobierania danych o Metalink\n"
+msgstr "Erreur de réception des données Métalink\n"
 
 #: src/DownloadThread.cpp:355
 msgid "New attempt in "
-msgstr "Kolejna próba za "
+msgstr "Nouvelle tentative dans"
 
 #: src/DownloadThread.cpp:355
 msgid " seconds\n"
-msgstr " sekund...\n"
+msgstr " secondes\n"
 
 #: src/DownloadThread.cpp:369
 msgid "Attempt "
-msgstr "Próba "
+msgstr "Tentative"
 
 #: src/DownloadThread.cpp:369
 msgid " of "
-msgstr " z "
+msgstr " de "
 
 #: src/DownloadThread.cpp:390
 msgid "Canceled.\n"
-msgstr "Anulowano\n"
+msgstr "Annulé.\n"
 
 #: src/DownloadThread.cpp:412
 msgid "Critical error!! The start point is bigger that the end point!!\n"
-msgstr "B³±d krytyczny! Punkt pocz±tkowy jest wiêkszy ni¿ koñcowy!\n"
+msgstr "Erreur critique !! Le point de départ est plus grand que le point d'arrivée !\n"
 
 #: src/DownloadThread.cpp:434
 msgid "Error establishing input stream.\n"
-msgstr "B³±d przy tworzeniu strumienia.\n"
+msgstr "Erreur de création du flux d'entrée.\n"
 
 #: src/DownloadThread.cpp:449
 msgid "Copying file...\n"
-msgstr "Kopiowanie pliku...\n"
+msgstr "Copie de fichier en cours...\n"
 
 #: src/DownloadThread.cpp:454
 msgid "Error opening file "
-msgstr "B³±d otwierania pliku"
+msgstr "Erreur d'ouverture de fichier"
 
 #: src/DownloadThread.cpp:548
 msgid "Error copying file.\n"
-msgstr "B³±d kopiowania pliku.\n"
+msgstr "Erreur de copie de fichier.\n"
 
 #: src/DownloadThread.cpp:568
 msgid "Error writing file.\n"
-msgstr "B³±d zapisywania pliku.\n"
+msgstr "Erreur d'écriture de fichier.\n"
 
 #: src/DownloadThread.cpp:639
 msgid "Finished this piece\n"
-msgstr "Czê¶æ ukoñczona\n"
+msgstr "Cette partie est terminée\n"
 
 #: src/DownloadThread.cpp:657
 msgid "Waiting for the other pieces...\n"
-msgstr "Oczekiwanie na pozosta³e czê¶ci...\n"
+msgstr "Attente des autres pièces...\n"
 
 #: src/DownloadThread.cpp:665
 msgid "Putting all the pieces together...\n"
-msgstr "£±czenie pobranych czê¶ci...\n"
+msgstr "Rassembler toutes les pièces...\n"
 
 #: src/DownloadThread.cpp:669
 msgid ""
 "Error joining the pieces.\n"
 "Try to restart the download.\n"
 msgstr ""
-"B³±d ³±czenia czê¶ci.\n"
-"Spróbuj ponownie uruchomiæ pobieranie.\n"
+"Erreur d'assemblage des pièces.\n"
+"Essayez de relancer le téléchargement.\n"
 
 #: src/DownloadThread.cpp:675
 msgid "Checking MD5...\n"
-msgstr "Sprawdzanie sumy MD5...\n"
+msgstr "Vérification du MD5...\n"
 
 #: src/DownloadThread.cpp:676
 msgid "Checking MD5 ... ("
-msgstr "Sprawdzanie sumy MD5... ("
+msgstr "Vérification du MD5... ("
 
 #: src/DownloadThread.cpp:684
 msgid "Comparing expected and calculated MD5...\n"
-msgstr "Porównywanie spodziewanej i obliczonej sumy MD5...\n"
+msgstr "Comparaison du MD5 attendu et du MD5 calculé...\n"
 
 #: src/DownloadThread.cpp:687
 msgid "File verified successfully\n"
-msgstr "Plik pozytywnie zweryfikowany\n"
+msgstr "Fichier vérifié avec succès\n"
 
 #: src/DownloadThread.cpp:688
 #: src/DownloadThread.cpp:698
 msgid "Finished\n"
-msgstr "Ukoñczono pobieranie\n"
+msgstr "Terminé\n"
 
 #: src/DownloadThread.cpp:692
 msgid "Error comparing MD5.\n"
-msgstr "B³±d przy porównywaniu sumy MD5.\n"
+msgstr "Erreur lors de la comparaison des MD5.\n"
 
 #: src/DownloadThread.cpp:724
 #: src/DownloadThread.cpp:975
 msgid "Resolving host '"
-msgstr "Poszukiwanie serwera '"
+msgstr "Résolution de l'hôte '"
 
 #: src/DownloadThread.cpp:727
 #: src/DownloadThread.cpp:978
@@ -859,7 +865,7 @@ msgid ""
 "Host not found.\n"
 msgstr ""
 "\n"
-"Serwer nie zosta³ odnaleziony!\n"
+"Hôte non trouvé.\n"
 
 #: src/DownloadThread.cpp:733
 #: src/DownloadThread.cpp:984
@@ -871,18 +877,18 @@ msgstr " OK\n"
 #: src/DownloadThread.cpp:737
 #: src/DownloadThread.cpp:988
 msgid "Trying to connect in '"
-msgstr "Próba po³±czenia z '"
+msgstr "Tentative de connection '"
 
 #: src/DownloadThread.cpp:742
 msgid "Connection denied.\n"
-msgstr "Po³±czenie odrzucone.\n"
+msgstr "Connection refusée.\n"
 
 #: src/DownloadThread.cpp:753
 msgid ""
 "Accessing server...\n"
 "\n"
 msgstr ""
-"£±czê z serwerem...\n"
+"Accès au serveur...\n"
 "\n"
 
 #: src/DownloadThread.cpp:853
@@ -891,27 +897,27 @@ msgid ""
 "The file size has changed since the last time.\n"
 "Removing the partially downloaded files...\n"
 msgstr ""
-"Rozmiar pliku zmieni³ siê od ostatniego po³±czenia.\n"
-"Rozpoczynam pobieranie od pocz±tku...\n"
+"La taille du fichier a changé depuis la dernière fois.\n"
+"Suppression des parties du fichier déjà téléchargées...\n"
 
 #: src/DownloadThread.cpp:885
 msgid "This server does not support restart.\n"
-msgstr "Serwer nie obs³uguje wznawiania.\n"
+msgstr "Ce serveur ne supporte pas la reprise.\n"
 
 #: src/DownloadThread.cpp:898
 #: src/DownloadThread.cpp:905
 #: src/DownloadThread.cpp:1072
 #: src/DownloadThread.cpp:1160
 msgid "Unable to return the file size.\n"
-msgstr "Nie uda³o siê odczytaæ rozmiaru pliku.\n"
+msgstr "Impossible de récupérer la taille du fichier.\n"
 
 #: src/DownloadThread.cpp:929
 msgid "Error requesting file.\n"
-msgstr "B³±d przy ¿±daniu pliku.\n"
+msgstr "Erreur de demande de fichier.\n"
 
 #: src/DownloadThread.cpp:937
 msgid "The server timed out.\n"
-msgstr "Przekroczono czas po³±czenia.\n"
+msgstr "Ce serveur ne répond pas.\n"
 
 #: src/DownloadThread.cpp:993
 msgid ""
@@ -919,15 +925,15 @@ msgid ""
 "Connection denied.\n"
 msgstr ""
 "\n"
-"Po³±czenie odrzucone.\n"
+"Connection refusée.\n"
 
 #: src/DownloadThread.cpp:1003
 msgid "Waiting for welcome message.\n"
-msgstr "Oczekujê na wiadomo¶æ powitaln±.\n"
+msgstr "Attente du message de bienvenue.\n"
 
 #: src/DownloadThread.cpp:1008
 msgid "Verifying if the server supports restarting..."
-msgstr "Sprawdzam czy serwer wspiera wznawianie pobierañ..."
+msgstr "Vérification du support de la reprise sur le serveur..."
 
 #: src/DownloadThread.cpp:1011
 msgid ""
@@ -935,309 +941,309 @@ msgid ""
 "This server does not support restart.\n"
 msgstr ""
 "\n"
-"Serwer nie obs³uguje wznawiania.\n"
+"Ce serveur ne supporte pas la reprise.\n"
 
 #: src/DownloadThread.cpp:1030
 msgid "Changing to directory "
-msgstr "Zmiana katalogu"
+msgstr "Modifier le dossier"
 
 #: src/DownloadThread.cpp:1033
 msgid "Invalid directory.\n"
-msgstr "B³êdny katalog.\n"
+msgstr "Dossier invalide.\n"
 
 #: src/DownloadThread.cpp:1042
 msgid "Changing to binary mode...\n"
-msgstr "Przechodzê na tryb binarny...\n"
+msgstr "Passer en mode binaire...\n"
 
 #: src/DownloadThread.cpp:1045
 msgid "Unable to change to binary mode.\n"
-msgstr "Nie mo¿na przej¶æ w tryb binarny.\n"
+msgstr "Impossible de passer en mode binaire.\n"
 
 #: src/DownloadThread.cpp:1054
 #: src/DownloadThread.cpp:1157
 msgid "Verifying the size of the "
-msgstr "Sprawdzam rozmiar pliku "
+msgstr "Vérification de la taille de"
 
 #: src/DownloadThread.cpp:1080
 #: src/DownloadThread.cpp:1177
 msgid "File size: "
-msgstr "Rozmiar pliku: "
+msgstr "Taille du fichier : "
 
 #: src/DownloadThread.cpp:1125
 #: src/DownloadThread.cpp:1185
 msgid "Requesting file...\n"
-msgstr "Wysy³am ¿±danie pliku...\n"
+msgstr "Demande du fichier...\n"
 
 #: src/DownloadThread.cpp:1149
 msgid "Looking for file "
-msgstr "Szukam pliku "
+msgstr "Recherche du fichier"
 
 #: src/DownloadThread.cpp:1152
 msgid "File not found.\n"
-msgstr "Plik nie zosta³ odnaleziony.\n"
+msgstr "Fichier introuvable.\n"
 
 #: src/DownloadThread.cpp:1258
 msgid "There isn't enough disk space to join the file parts.\n"
-msgstr "Brak miejsca na dysku na po³±czenie pobranych czê¶ci pliku.\n"
+msgstr "Espace disque insuffisant pour réassembler les parties du fichier.\n"
 
 #: src/BoxOptions.cpp:62
 #: src/BoxOptions.cpp:69
 msgid "Choose a file..."
-msgstr "Wybierz plik..."
+msgstr "Choisir un fichier..."
 
 #: src/BoxOptions.cpp:135
 #: src/BoxOptions.cpp:142
 msgid "Select the date..."
-msgstr "Wybierz datê..."
+msgstr "Choisir la date..."
 
 #: src/BoxOptions.cpp:158
 msgid "Remove some items before adding a new one."
-msgstr "Usuñ jaki¶ element by dodaæ kolejny."
+msgstr "Enlevez des items avant d'en ajouter un nouveau."
 
 #: src/wxDFast.h:239
 msgid "Sundays"
-msgstr "Niedziela"
+msgstr "Dimanches"
 
 #: src/wxDFast.h:239
 msgid "Mondays"
-msgstr "Poniedzia³ek"
+msgstr "Lundis"
 
 #: src/wxDFast.h:239
 msgid "Tuesdays"
-msgstr "Wtorek"
+msgstr "Mardis"
 
 #: src/wxDFast.h:240
 msgid "Wednesdays"
-msgstr "¦roda"
+msgstr "Mercredis"
 
 #: src/wxDFast.h:240
 msgid "Thursdays"
-msgstr "Czwartek"
+msgstr "Jeudis"
 
 #: src/wxDFast.h:240
 msgid "Fridays"
-msgstr "Pi±tek"
+msgstr "Vendredis"
 
 #: src/wxDFast.h:241
 msgid "Saturdays"
-msgstr "Sobota"
+msgstr "Samedis"
 
 #: src/wxDFast.h:745
 msgid "OK"
-msgstr "OK"
+msgstr " OK"
 
 #: /tmp/dummy:1
 msgid "About..."
-msgstr "Informacje o..."
+msgstr "A propos..."
 
 #: /tmp/dummy:2
 msgid "New"
-msgstr "Dodaj"
+msgstr "Nouveau"
 
 #: /tmp/dummy:4
 #: /tmp/dummy:165
 msgid "Remove"
-msgstr "Usuñ"
+msgstr "Supprimer"
 
 #: /tmp/dummy:6
 #: /tmp/dummy:92
 msgid "Schedule"
-msgstr "Wed³ug planu"
+msgstr "Planificateur"
 
 #: /tmp/dummy:10
 msgid "Stop"
-msgstr "Zatrzymaj"
+msgstr "Arrêter"
 
 #: /tmp/dummy:12
 msgid "Start All"
-msgstr "Rozpocznij wszystkie"
+msgstr "Tout démarrer"
 
 #: /tmp/dummy:14
 msgid "Stop All"
-msgstr "Zatrzymaj wszystkie"
+msgstr "Tout arrêter"
 
 #: /tmp/dummy:16
 msgid "Up"
-msgstr "W górê"
+msgstr "Haut"
 
 #: /tmp/dummy:17
 msgid "Push download higher up the queue"
-msgstr "Przenie¶ pobieranie o jedno miejsce w górê"
+msgstr "Monter le téléchargement dans la file d'attente"
 
 #: /tmp/dummy:18
 msgid "Down"
-msgstr "W dó³"
+msgstr "Bas"
 
 #: /tmp/dummy:19
 msgid "Push download lower down the queue"
-msgstr "Przenie¶ pobieranie o jedno miejsce w dó³"
+msgstr "Descendre le téléchargement dans la file d'attente"
 
 #: /tmp/dummy:20
 msgid "Properties"
-msgstr "W³a¶ciwo¶ci"
+msgstr "Propriétés"
 
 #: /tmp/dummy:22
 msgid "&File"
-msgstr "&Plik"
+msgstr "&Fichier"
 
 #: /tmp/dummy:23
 msgid "New Download"
-msgstr "Dodaj nowe pobieranie"
+msgstr "Nouveau téléchargement"
 
 #: /tmp/dummy:30
 msgid "Exit"
-msgstr "Zakoñcz"
+msgstr "Quitter"
 
 #: /tmp/dummy:31
 #: /tmp/dummy:81
 msgid "&Edit"
-msgstr "&Edycja"
+msgstr "&Editer"
 
 #: /tmp/dummy:32
 msgid "Paste URL"
-msgstr "Wklej adres odno¶nika"
+msgstr "Coller l'URL"
 
 #: /tmp/dummy:35
 msgid "Select All"
-msgstr "Zaznacz wszystko"
+msgstr "Tout sélectionner"
 
 #: /tmp/dummy:36
 msgid "Invert Selection"
-msgstr "Odwróæ zaznaczenie"
+msgstr "Inverser la sélection"
 
 #: /tmp/dummy:37
 msgid "Find Download"
-msgstr "Znajd¼ pobranie"
+msgstr "Rechercher un téléchargement"
 
 #: /tmp/dummy:38
 msgid "&View"
-msgstr "&Widok"
+msgstr "&Affichage"
 
 #: /tmp/dummy:39
 msgid "Show/Hide Graph"
-msgstr "Poka¿/ukryj wykres"
+msgstr "Afficher/Cacher le graphique"
 
 #: /tmp/dummy:40
 msgid "Show/Hide Progress Bar"
-msgstr "Poka¿/ukryj pasek postêpu"
+msgstr "Afficher/Cacher la barre de progression"
 
 #: /tmp/dummy:41
 msgid "Show/Hide Details"
-msgstr "Poka¿/ukryj szczegó³y"
+msgstr "Afficher/Cacher les détails"
 
 #: /tmp/dummy:42
 msgid "Language"
-msgstr "Jêzyk"
+msgstr "Langue"
 
 #: /tmp/dummy:43
 msgid "(Default)"
-msgstr "(domy¶lny)"
+msgstr "(Défaut)"
 
 #: /tmp/dummy:44
 msgid "English"
-msgstr "angielski"
+msgstr "Anglais"
 
 #: /tmp/dummy:45
 msgid "Portuguese"
-msgstr "portugalski"
+msgstr "Portuguais"
 
 #: /tmp/dummy:46
 msgid "Portuguese(Brazil)"
-msgstr "portugalski (Brazylia)"
+msgstr "Portuguais(Brésil)"
 
 #: /tmp/dummy:47
 msgid "German"
-msgstr "niemiecki"
+msgstr "Allemand"
 
 #: /tmp/dummy:48
 msgid "Spanish"
-msgstr "hiszpañski"
+msgstr "Espagnol"
 
 #: /tmp/dummy:49
 msgid "Czech"
-msgstr "czeski"
+msgstr "Tchèque"
 
 #: /tmp/dummy:50
 msgid "Russian"
-msgstr "rosyjski"
+msgstr "Russe"
 
 #: /tmp/dummy:51
 msgid "Hungarian"
-msgstr "wêgierski"
+msgstr "Hongrois"
 
 #: /tmp/dummy:52
 msgid "Indonesian"
-msgstr "indonezyjski"
+msgstr "Indonésien"
 
 #: /tmp/dummy:53
 msgid "Armenian"
-msgstr "armeñski"
+msgstr "Arménien"
 
 #: /tmp/dummy:54
 msgid "Polish"
-msgstr "polski"
+msgstr "Polonais"
 
 #: /tmp/dummy:55
 msgid "&Tools"
-msgstr "&Narzêdzia"
+msgstr "&Outils"
 
 #: /tmp/dummy:61
 msgid "Export Configuration"
-msgstr "Eksportuj ustawienia"
+msgstr "Exporter la configuration"
 
 #: /tmp/dummy:62
 msgid "Import Configuration"
-msgstr "Importuj ustawienia"
+msgstr "Importer une configuration"
 
 #: /tmp/dummy:63
 msgid "Shutdown when finished"
-msgstr "Zamknij system po zakoñczeniu"
+msgstr "Eteindre à la fin"
 
 #: /tmp/dummy:64
 #: /tmp/dummy:66
 msgid "This option is only valid in this session of the program"
-msgstr "Ta opcja jest aktywna tylko podczas tej sesji programu"
+msgstr "Cette option n'est valable que dans cette session du programme"
 
 #: /tmp/dummy:65
 msgid "Disconnect when finished"
-msgstr "Roz³±cz po zakoñczeniu"
+msgstr "Déconnecter à la fin"
 
 #: /tmp/dummy:67
 #: /tmp/dummy:102
 msgid "Options"
-msgstr "Opcje"
+msgstr "Options"
 
 #: /tmp/dummy:68
 msgid "&Help"
-msgstr "P&omoc"
+msgstr "&Aide"
 
 #: /tmp/dummy:69
 msgid "wxDownload Fast Site"
-msgstr "Strona wxDownload Fast"
+msgstr "Site de wxDownload Fast"
 
 #: /tmp/dummy:70
 msgid "Report Bugs..."
-msgstr "Zg³o¶ b³±d..."
+msgstr "Signaler un Bug..."
 
 #: /tmp/dummy:71
 msgid "Donate..."
-msgstr "Wsparcie dla projektu..."
+msgstr "Faire un don..."
 
 #: /tmp/dummy:72
 msgid "About"
-msgstr "Informacje o..."
+msgstr "A Propos"
 
 #: /tmp/dummy:74
 msgid "Save to:"
-msgstr "Zapisz do:"
+msgstr "Sauvegarder dans :"
 
 #: /tmp/dummy:75
 msgid "Directory"
-msgstr "Przegl±daj"
+msgstr "Dossier"
 
 #: /tmp/dummy:76
 msgid "Address:"
-msgstr "Adres:"
+msgstr "Addresse :"
 
 #: /tmp/dummy:77
 msgid ""
@@ -1246,70 +1252,72 @@ msgid ""
 "Example: http://www.foo.com:80/foo.exe\n"
 "Example: ftp://ftp.foo.com:21/foo.exe"
 msgstr ""
-"Adres odno¶nika do pobrania, na przyk³ad:\n"
-"   http://www.witryna.pl/abc.exe\n"
-"   http://www.witryna.pl:80/abc.exe\n"
-"   ftp://ftp.serwer.pl:21/abc.exe"
+"URL de téléchargement\n"
+"Exemple : http://www.foo.com/foo.exe\n"
+"Exemple : http://www.foo.com:80/foo.exe\n"
+"Exemple : ftp://ftp.foo.com:21/foo.exe"
 
 #: /tmp/dummy:78
 #: /tmp/dummy:163
 msgid "Add"
-msgstr "Dodaj"
+msgstr "Ajouter"
 
 #: /tmp/dummy:79
 msgid "Address List:"
-msgstr "Lista adresów:"
+msgstr "Liste d'adresses :"
 
 #: /tmp/dummy:80
 msgid "Only the selected addresses will be downloaded"
-msgstr "Tylko zaznaczone adresy bêd± pobrane"
+msgstr "Seules les adresses sélectionnées seront téléchargées"
 
 #: /tmp/dummy:82
 msgid "Server Permission"
-msgstr "Ustawienia serwera"
+msgstr "Permission du Serveur"
 
 #: /tmp/dummy:83
 msgid "User:"
-msgstr "Nazwa u¿ytkownika:"
+msgstr "Utilisateur :"
 
 #: /tmp/dummy:84
 msgid "Password:"
-msgstr "Has³o:"
+msgstr "Mot de passe :"
 
 #: /tmp/dummy:85
 msgid "Segmented download"
-msgstr "Pobieranie wielu czê¶ci"
+msgstr "Téléchargement segmenté"
 
 #: /tmp/dummy:86
 msgid ""
 "Split download into how many\n"
 "pieces?"
-msgstr "Na ile czê¶ci podzieliæ plik?"
+msgstr ""
+"Couper le fichier en combien\n"
+"de parties?"
 
 #: /tmp/dummy:87
 msgid "Download bandwidth (in kB/s)"
-msgstr "Limit prêdko¶ci (w kB/s)"
+msgstr "Bande passante de téléchargement (en Kb/s)"
 
 #: /tmp/dummy:88
 msgid ""
 "Set band width limit for this download.\n"
 "Set \"0\" to unlimited."
 msgstr ""
-"Ustaw maksymaln± szybko¶æ pobierania plików dla tego pobierania.\n"
-"Ustaw \"0\" by wy³±czyæ limit prêdko¶ci."
+"Definir la bande passante pour ce téléchargement.\n"
+"Entrer \"0\" pour illimitée."
 
 #: /tmp/dummy:90
 msgid "Manual"
-msgstr "Rêcznie"
+msgstr "Manuel"
 
 #: /tmp/dummy:91
 msgid "Now"
-msgstr "Teraz"
+msgstr "Maintenant"
 
 #: /tmp/dummy:96
 #: /tmp/dummy:97
 msgid "Execute the following command after download completes"
-msgstr "Wykonaj to polecenie po zakoñczeniu pobierania"
+msgstr "Exécuter la commande suivante à la fin du téléchargement"
 
 #: /tmp/dummy:98
 msgid "&OK"
@@ -1318,71 +1326,71 @@ msgstr "&OK"
 #: /tmp/dummy:99
 #: /tmp/dummy:178
 msgid "&Cancel"
-msgstr "&Anuluj"
+msgstr "&Annuler"
 
 #: /tmp/dummy:103
 msgid "General"
-msgstr "Ogólne"
+msgstr "Général"
 
 #: /tmp/dummy:104
 msgid "Attempts:"
-msgstr "Ilo¶æ prób"
+msgstr "Tentatives :"
 
 #: /tmp/dummy:105
 msgid "Number of attempts"
-msgstr "Ilo¶æ prób"
+msgstr "Nombre de tentatives"
 
 #: /tmp/dummy:106
 msgid "Time between the attempts in seconds:"
-msgstr "Czas miêdzy próbami w sekundach:"
+msgstr "Durée entre les tentatives (secondes) :"
 
 #: /tmp/dummy:107
 msgid "Number of simultaneous downloads:"
-msgstr "Ilo¶æ jednoczesnych pobierañ:"
+msgstr "Nombre de téléchargements simultanés :"
 
 #: /tmp/dummy:108
 msgid "Remember the last settings on the New Download box"
-msgstr "Pamiêtaj ustawienia w oknie nowego pobierania"
+msgstr "Se souvenir des derniers paramètres pour la boite Nouveau Téléchargement"
 
 #: /tmp/dummy:109
 msgid "Shutdown when all downloads finish"
-msgstr "Zawsze wy³±czaj komputer po zakoñczeniu pobierania"
+msgstr "Eteindre à la fin de tous les téléchargements"
 
 #: /tmp/dummy:110
 msgid "Disconnect when all downloads finish"
-msgstr "Zawsze roz³±czaj po zakoñczeniu pobierania"
+msgstr "Se déconnecter à la fin de tous les téléchargements"
 
 #: /tmp/dummy:111
 msgid "Show dialog box when program closes"
-msgstr "Poka¿ okno dialogowe podczas wy³±czania programu"
+msgstr "Afficher une boite de dialogue à la fermeture du programme"
 
 #: /tmp/dummy:112
 msgid "Refresh rate of the download list (millisecs):"
-msgstr "Okres od¶wie¿ania listy pobierañ (ms):"
+msgstr "Taux de rafraîchissement de la liste de téléchargements (millisecs)"
 
 #: /tmp/dummy:113
 msgid "Download Read Buffer size(in Bytes):"
-msgstr "Wielko¶æ bufora odczytu pobierañ (bajtów):"
+msgstr "Mémoire tampon de lecture (en Bytes) :"
 
 #: /tmp/dummy:114
 msgid "Restore the main window when all downloads finish"
-msgstr "Przywróæ okno programu po zakoñczeniu pobierania"
+msgstr "Restaurer la fenêtre principale à la fin de tous les téléchargements"
 
 #: /tmp/dummy:115
 msgid "Hide the main window when you start a download"
-msgstr "Ukryj okno programu przy rozpoczynaniu pobierania"
+msgstr "Masquer la fenêtre principale au démarrage d'un téléchargement"
 
 #: /tmp/dummy:116
 msgid "Check for updates automatically"
-msgstr "Automatycznie sprawdzaj dostêpno¶æ aktualizacji"
+msgstr "Vérification automatique des mises à jour"
 
 #: /tmp/dummy:117
 msgid "Paths"
-msgstr "¦cie¿ki"
+msgstr "Chemins"
 
 #: /tmp/dummy:118
 msgid "Default destination:"
-msgstr "Domy¶lny katalog dla pobierañ:"
+msgstr "Destination par défaut :"
 
 #: /tmp/dummy:119
 #: /tmp/dummy:121
@@ -1399,121 +1407,121 @@ msgstr "..."
 
 #: /tmp/dummy:120
 msgid "Browser path:"
-msgstr "¦cie¿ka do przegl±darki internetowej:"
+msgstr "Navigateur internet :"
 
 #: /tmp/dummy:122
 msgid "File manager path:"
-msgstr "¦cie¿ka do mened¿era plików:"
+msgstr "Gestionnaire de téléchargements :"
 
 #: /tmp/dummy:124
 msgid "Shutdown command:"
-msgstr "Polecenie wy³±czenia komputera:"
+msgstr "Commande d'extinction :"
 
 #: /tmp/dummy:125
 msgid "Disconnect command:"
-msgstr "Polecenie roz³±czenia:"
+msgstr "Commande de déconnection :"
 
 #: /tmp/dummy:126
 msgid "Partial Temporary Files Path"
-msgstr "¦cie¿ka dla plików tymczasowych"
+msgstr "Emplacement des fichiers temporaires"
 
 #: /tmp/dummy:127
 msgid "Use the destination directory"
-msgstr "U¿yj katalogu docelowego"
+msgstr "Utiliser le répertoire de destination"
 
 #: /tmp/dummy:129
 msgid "Graph"
-msgstr "Wykres"
+msgstr "Graphique"
 
 #: /tmp/dummy:130
 msgid "Show Graph"
-msgstr "Poka¿ wykres"
+msgstr "Afficher le graphique"
 
 #: /tmp/dummy:131
 msgid "Save how many points to graph?"
-msgstr "Ile punktów wykresu zapisaæ?"
+msgstr "Nombre de points à sauver pour le graphique?"
 
 #: /tmp/dummy:132
 msgid "Graph refresh rate (millisecs):"
-msgstr "Okres od¶wie¿ania wykresu (ms)"
+msgstr "Taux de rafraîchissement du graphique (milisecs) :"
 
 #: /tmp/dummy:133
 msgid "Graph maximum value (kB/s):"
-msgstr "Maksymalna warto¶æ na wykresie (kB/s)"
+msgstr "Valeur maximale du graphique (kb/s) :"
 
 #: /tmp/dummy:134
 msgid "The text area Width (pixels):"
-msgstr "Szeroko¶æ pola wska¼nika prêdko¶ci (pikseli)"
+msgstr "Largeur de la zone de texte (pixels) :"
 
 #: /tmp/dummy:135
 msgid "Graph height:"
-msgstr "Wysoko¶æ wykresu (pikseli)"
+msgstr "Hauteur du graphique :"
 
 #: /tmp/dummy:136
 msgid "Text font size (points):"
-msgstr "Wielko¶æ czcionki wska¼nika prêdko¶ci (punktów)"
+msgstr "Taille de la police (points) :"
 
 #: /tmp/dummy:137
 msgid "Main line width:"
-msgstr "Grubo¶æ linii"
+msgstr "Largeur de la ligne principale :"
 
 #: /tmp/dummy:138
 msgid "Background colour:"
-msgstr "Kolor t³a wykresu"
+msgstr "Couleur du fond :"
 
 #: /tmp/dummy:140
 msgid "Graph grid colour:"
-msgstr "Kolor siatki wykresu"
+msgstr "Couleur de la grille du graphique :"
 
 #: /tmp/dummy:142
 msgid "Main line colour:"
-msgstr "Kolor linii"
+msgstr "Couleur de la ligne principale :"
 
 #: /tmp/dummy:144
 msgid "Speed font colour:"
-msgstr "Kolor czcionki wska¼nika prêdko¶ci"
+msgstr "Couleur de la police pour la vitesse :"
 
 #: /tmp/dummy:146
 msgid "Scheduling"
-msgstr "Planowanie pobierania"
+msgstr "Planification"
 
 #: /tmp/dummy:147
 msgid "Activate scheduling"
-msgstr "Aktywuj plan pobierania"
+msgstr "Activer la planification"
 
 #: /tmp/dummy:148
 msgid "Start Date:"
-msgstr "Data rozpoczêcia:"
+msgstr "Date de début :"
 
 #: /tmp/dummy:149
 msgid "Start Time:"
-msgstr "Godzina rozpoczêcia:"
+msgstr "Heure de début :"
 
 #: /tmp/dummy:151
 #: /tmp/dummy:156
 msgid "hours"
-msgstr ":"
+msgstr "heures"
 
 #: /tmp/dummy:152
 #: /tmp/dummy:157
 msgid "minutes"
-msgstr " "
+msgstr "minutes"
 
 #: /tmp/dummy:153
 msgid "Finish Date:"
-msgstr "Data zakoñczenia:"
+msgstr "Date de fin :"
 
 #: /tmp/dummy:154
 msgid "Finish Time:"
-msgstr "Godzina zakoñczenia:"
+msgstr "Heure de fin :"
 
 #: /tmp/dummy:158
 msgid "Deactivate downloads on:"
-msgstr "Nie ¶ci±gaj w:"
+msgstr "Désactiver les téléchargements tous les :"
 
 #: /tmp/dummy:159
 msgid "Between"
-msgstr "Miêdzy "
+msgstr "Entre "
 
 #: /tmp/dummy:160
 #: /tmp/dummy:162
@@ -1522,43 +1530,43 @@ msgstr ":"
 
 #: /tmp/dummy:161
 msgid "and"
-msgstr " a "
+msgstr " et "
 
 #: /tmp/dummy:164
 msgid "Exceptions List:"
-msgstr "Lista wyj±tków:"
+msgstr "Liste d'exceptions :"
 
 #: /tmp/dummy:166
 msgid "Bandwidth"
-msgstr "Po³±czenie"
+msgstr "Bande passante"
 
 #: /tmp/dummy:167
 msgid "Bandwidth Control"
-msgstr "Limit prêdko¶ci"
+msgstr "Contrôle de la bande passante"
 
 #: /tmp/dummy:168
 msgid "Unlimited bandwidth"
-msgstr "Bez limitu prêdko¶ci"
+msgstr "Bande passante illimitée"
 
 #: /tmp/dummy:169
 msgid "Limit band width independently for each download"
-msgstr "Limit prêdko¶ci oddzielny dla ka¿dego pliku"
+msgstr "Limiter la bande passante indépendamment pour chaque téléchargement"
 
 #: /tmp/dummy:170
 msgid "Limit band width for the program (in kB/s):"
-msgstr "Limit prêdko¶ci dla programu (kB/s):"
+msgstr "Limite de la bande passante pour le programme (en Kb/s) :"
 
 #: /tmp/dummy:171
 msgid "Band width limit in kB/s to be used by the program"
-msgstr "Ustaw maksymaln± prêdko¶æ transmisji dostêpn± dla programu w kB/s"
+msgstr "Taille de la bande passante en Kb/s qui sera utilisée par le programme"
 
 #: /tmp/dummy:172
 msgid "Browser Integration"
-msgstr "Integracja z przegl±dark±"
+msgstr "Intégration au navigateur"
 
 #: /tmp/dummy:173
 msgid "Firefox Integration"
-msgstr "Integracja z Firefox / SeaMonkey / Flock"
+msgstr "Intégration dans Firefox"
 
 #: /tmp/dummy:174
 msgid ""
@@ -1569,21 +1577,18 @@ msgid ""
 "     Tools -> FlashGot -> More Options\n"
 "3)Now select the wxDownload Fast on the Download Manager's List"
 msgstr ""
-"By zintegrowaæ z Firefox / SeaMonkey / Flock:\n"
+"Pour activer l'intégration dans Firefox, suivez les indications :\n"
 "\n"
-"1) Pobierz i zainstaluj rozszerzenie FlashGot dostêpne na\n"
-"     www.flashgot.org/getit\n"
-"2) Uruchom ponownie Firefox i wybierz:\n"
-"     Narzêdzia -> FlashGot -> Wiêcej opcji...\n"
-"3) W zak³adce Ogólne wybierz z listy Mened¿er pobierania wxDownload Fast\n"
-"4) Je¶li na li¶cie mened¿erów nie ma wxDownload Fast uaktualnij FlashGot do najnowszej wersji i powtórz powy¿sze czynno¶ci\n"
-"5) Gotowe!"
+"1) Installer l'extension FlashGot pour Firefox(www.flashgot.org/getit)\n"
+"2) Après avoir redémarré Firefox, allez dans :\n"
+"     Outils -> FlashGot -> Plus d'options\n"
+"3) Sélectionnez à présent wxDownload Fast dans la Liste des Gestionnaires de Téléchargement"
 
 #: /tmp/dummy:175
 msgid "Internet Explorer Integration"
-msgstr "Integracja z Internet Explorer"
+msgstr "Intégration dans Internet Explorer"
 
 #: /tmp/dummy:177
 msgid "&Save"
-msgstr "&Zapisz"
+msgstr "&Sauver"
 
