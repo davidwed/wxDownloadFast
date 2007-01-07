@@ -72,10 +72,12 @@ languages/Makefile
 languages/cs/Makefile
 languages/de/Makefile
 languages/es/Makefile
+languages/fr/Makefile
+languages/hu/Makefile
+languages/id/Makefile
 languages/pl/Makefile
 languages/pt_BR/Makefile
 languages/ru/Makefile
-languages/hu/Makefile
 man/Makefile
 man/man1/Makefile
 man/pt_BR/Makefile
