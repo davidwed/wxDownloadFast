@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=wxDownload Fast
-AppVerName=wxDownload Fast 0.5.4
+AppVerName=wxDownload Fast 0.5.5
 AppPublisher=Max Velasques
 AppPublisherURL=http://dfast.sourceforge.net
 AppSupportURL=http://dfast.sourceforge.net
@@ -51,6 +51,8 @@ Source: "..\languages\pt_BR\wxDFast.mo"; DestDir: "{app}\languages\pt_BR"; Flags
 Source: "..\languages\pt_BR\wxDFast.po"; DestDir: "{app}\languages\pt_BR"; Flags: ignoreversion
 Source: "..\languages\ru\wxDFast.mo"; DestDir: "{app}\languages\ru"; Flags: ignoreversion
 Source: "..\languages\ru\wxDFast.po"; DestDir: "{app}\languages\ru"; Flags: ignoreversion
+Source: "..\languages\tr\wxDFast.mo"; DestDir: "{app}\languages\tr"; Flags: ignoreversion
+Source: "..\languages\tr\wxDFast.po"; DestDir: "{app}\languages\tr"; Flags: ignoreversion
 Source: "..\resources\RipStop\icon\wxdfast.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\resources\RipStop\logo\about.png"; DestDir: "{app}\resources\RipStop\logo"; Flags: ignoreversion
 Source: "..\resources\RipStop\icon\wxdfast.png"; DestDir: "{app}\resources\RipStop\icon"; Flags: ignoreversion

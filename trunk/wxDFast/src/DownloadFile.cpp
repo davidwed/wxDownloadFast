@@ -23,6 +23,7 @@ void mDownloadList::RecreateIndex()
         if (current->index != i)
         {
             current->index = i;
+            current->changedsincelastsave = true;
             current->RegisterListItemOnDisk();
         }
         i++;
@@ -200,6 +201,7 @@ void mDownloadList::LoadDownloadListFromDisk()
         file->criticalerror = FALSE;
         file->split = FALSE;
         file->waitbeforesplit = FALSE;
+        file->changedsincelastsave = false;
         file->MarkWriteAsPending(FALSE);
         file->MarkRemoveAsPending(FALSE);
         if ((file->parts < 1) || (file->parts > MAX_NUM_PARTS))
@@ -230,7 +232,7 @@ void mDownloadList::LoadDownloadListFromDisk()
 
 void mDownloadList::RemoveDownloadRegister(mDownloadFile *currentfile)
 {
-    unsigned int item = currentfile->GetIndex();
+    /*unsigned int item = this->IndexOf(currentfile);
     if ((item + 1) < this->GetCount())
     {
         int count = item;
@@ -240,7 +242,7 @@ void mDownloadList::RemoveDownloadRegister(mDownloadFile *currentfile)
             node->GetData()->MarkWriteAsPending(TRUE);
             count++;
         }
-    }
+    }*/
     mDownloadList::Node *node = this->Find(currentfile);
     this->DeleteNode(node);
 }
@@ -261,12 +263,20 @@ int mDownloadList::ListCompareByIndex(const mDownloadFile** arg1, const mDownloa
        return -1;
 }
 
-mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password, wxString reference, wxString comments,wxString command,int scheduled,int bandwidth)
+mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password, wxString reference, wxString comments,wxString command,int scheduled,int bandwidth,int ontop)
 {
     mDownloadFile *file = new mDownloadFile();
     file->metalinkdata = NULL;
     file->needtoregetmetalink = FALSE;
-    file->index =  this->GetCount();
+    if (this->GetCount() > 0)
+    {
+        if (ontop)
+            file->index = this->GetFirst()->GetData()->index-1;
+        else
+            file->index = this->GetLast()->GetData()->index+1;
+    }
+    else
+        file->index = 0;
     file->scheduled = scheduled;
     file->status = STATUS_STOPED;
     file->restart = -1;
@@ -323,7 +333,10 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
 
     file->MarkWriteAsPending(TRUE);
     file->MarkRemoveAsPending(FALSE);
-    this->Append(file);
+    if (ontop)
+        this->Insert(file);
+    else
+        this->Append(file);
     return file;
 }
 
@@ -365,84 +378,83 @@ void mDownloadFile::RemoveListItemFromDisk()
 
 void mDownloadFile::RegisterListItemOnDisk()
 {
-    wxFileConfig *config = new wxFileConfig(DFAST_REG);
-    config->SetPath(FILES_REG);
-    if (this->status == STATUS_FINISHED)
+    if (changedsincelastsave)
     {
-        config->SetPath(BACK_DIR_REG);
-        config->SetPath(INPROGRESS_REG);
-        config->DeleteGroup(this->name);
-        config->SetPath(BACK_DIR_REG);
-        config->SetPath(BACK_DIR_REG);
-        config->SetPath(FINISHED_REG);
+        wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        config->SetPath(FILES_REG);
+        if (this->status == STATUS_FINISHED)
+        {
+            config->SetPath(BACK_DIR_REG);
+            config->SetPath(INPROGRESS_REG);
+            config->DeleteGroup(this->name);
+            config->SetPath(BACK_DIR_REG);
+            config->SetPath(BACK_DIR_REG);
+            config->SetPath(FINISHED_REG);
 
-    }
-    else
-    {
-        config->SetPath(BACK_DIR_REG);
-        config->SetPath(INPROGRESS_REG);
-    }
-    config->SetPath(this->name);
-    config->Write(NAME_REG,this->name);
-    config->Write(INDEX_REG,this->index);
-    config->Write(STATUS_REG,this->status);
-    config->Write(SCHEDULED_REG,this->scheduled);
-    config->Write(RESTART_REG,this->restart);
-    config->Write(PARTS_REG,this->parts);
-    config->Write(DESTINATION_REG,this->destination);
-    config->Write(TEMPDESTINATION_REG,this->tempdestination);
-    config->Write(SIZE_REG,this->totalsize.ToString());
-    config->Write(SIZECOMPLETED_REG,this->totalsizecompleted.ToString());
-
-    //EACH PART SIZE AND SIZECOMPLETED
-    for (int i = 0 ; i < this->parts ; i++)
-    {
-        config->Write(SIZEPART_REG + MyUtilFunctions::int2wxstr(i+1),this->size[i].ToString());
-        config->Write(SIZEPARTCOMPLETED_REG + MyUtilFunctions::int2wxstr(i+1),this->sizecompleted[i].ToString());
-    }
-
-    config->Write(TIMEPASSED_REG,this->timepassed.ToString());
-    config->Write(SPEED_REG,this->totalspeed);
-    config->Write(PERCENTUAL_REG,this->percentual);
-    config->Write(MD5_REG,this->MD5);
-    config->Write(START_REG,this->start.GetTicks());
-    config->Write(END_REG,this->end.GetTicks());
-    config->Write(COMMENTS_REG,this->comments);
-    config->Write(REFERENCE_REG,this->reference);
-    config->Write(COMMAND_REG,this->command);
-    config->Write(CONTENTTYPE_REG,this->contenttype);
-    config->Write(BANDWIDTH_REG,this->bandwidth);
-    config->Write(NEED_TO_REGET_METALINK_REG,this->needtoregetmetalink);
-    config->Write(METALINK_INDEX_REG,this->metalinkindex);
-
-    unsigned int count = 1;
-    bool deleteoldurls = TRUE;
-    wxString str;
-    for ( mUrlList::Node *node = urllist->GetFirst(); node; node = node->GetNext() )
-    {
-        config->Write(URL_REG + MyUtilFunctions::int2wxstr(count),node->GetData()->GetFullPath());
-        count++;
-    }
-    while (deleteoldurls) //THIS ERASE URLS THAT WAS WRITE BEFORE, BUT THAT DOESN'T WAS REWRITE NOW
-    {
-        str = wxEmptyString;
-        config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
-        if (str.IsEmpty())
-            break;
+        }
         else
-            config->DeleteEntry(URL_REG + MyUtilFunctions::int2wxstr(count));
+        {
+            config->SetPath(BACK_DIR_REG);
+            config->SetPath(INPROGRESS_REG);
+        }
+        config->SetPath(this->name);
+        config->Write(NAME_REG,this->name);
+        config->Write(INDEX_REG,this->index);
+        config->Write(STATUS_REG,this->status);
+        config->Write(SCHEDULED_REG,this->scheduled);
+        config->Write(RESTART_REG,this->restart);
+        config->Write(PARTS_REG,this->parts);
+        config->Write(DESTINATION_REG,this->destination);
+        config->Write(TEMPDESTINATION_REG,this->tempdestination);
+        config->Write(SIZE_REG,this->totalsize.ToString());
+        config->Write(SIZECOMPLETED_REG,this->totalsizecompleted.ToString());
+
+        //EACH PART SIZE AND SIZECOMPLETED
+        for (int i = 0 ; i < this->parts ; i++)
+        {
+            config->Write(SIZEPART_REG + MyUtilFunctions::int2wxstr(i+1),this->size[i].ToString());
+            config->Write(SIZEPARTCOMPLETED_REG + MyUtilFunctions::int2wxstr(i+1),this->sizecompleted[i].ToString());
+        }
+
+        config->Write(TIMEPASSED_REG,this->timepassed.ToString());
+        config->Write(SPEED_REG,this->totalspeed);
+        config->Write(PERCENTUAL_REG,this->percentual);
+        config->Write(MD5_REG,this->MD5);
+        config->Write(START_REG,this->start.GetTicks());
+        config->Write(END_REG,this->end.GetTicks());
+        config->Write(COMMENTS_REG,this->comments);
+        config->Write(REFERENCE_REG,this->reference);
+        config->Write(COMMAND_REG,this->command);
+        config->Write(CONTENTTYPE_REG,this->contenttype);
+        config->Write(BANDWIDTH_REG,this->bandwidth);
+        config->Write(NEED_TO_REGET_METALINK_REG,this->needtoregetmetalink);
+        config->Write(METALINK_INDEX_REG,this->metalinkindex);
+
+        unsigned int count = 1;
+        bool deleteoldurls = TRUE;
+        wxString str;
+        for ( mUrlList::Node *node = urllist->GetFirst(); node; node = node->GetNext() )
+        {
+            config->Write(URL_REG + MyUtilFunctions::int2wxstr(count),node->GetData()->GetFullPath());
+            count++;
+        }
+        while (deleteoldurls) //THIS ERASE URLS THAT WAS WRITE BEFORE, BUT THAT DOESN'T WAS REWRITE NOW
+        {
+            str = wxEmptyString;
+            config->Read(URL_REG + MyUtilFunctions::int2wxstr(count),&(str));
+            if (str.IsEmpty())
+                break;
+            else
+                config->DeleteEntry(URL_REG + MyUtilFunctions::int2wxstr(count));
+        }
+
+        config->Write(USER_REG,this->user);
+        config->Write(PASSWORD_REG,this->password);
+
+        delete config;
+        changedsincelastsave = false;
     }
-
-    config->Write(USER_REG,this->user);
-    config->Write(PASSWORD_REG,this->password);
-
-    delete config;
     this->MarkWriteAsPending(FALSE);
-}
-
-int mDownloadFile::GetIndex()
-{
-    return this->index;
 }
 
 wxString mDownloadFile::GetName()
@@ -475,11 +487,13 @@ int mDownloadFile::GetStatus()
 
 void mDownloadFile::SetAsActive()
 {
+    changedsincelastsave = true;
     this->status = STATUS_ACTIVE;
 }
 
 void mDownloadFile::SetAsStoped(bool stopschedule)
 {
+    changedsincelastsave = true;
     this->status = STATUS_STOPED;
     if (stopschedule)
         this->scheduled = FALSE;
@@ -487,22 +501,26 @@ void mDownloadFile::SetAsStoped(bool stopschedule)
 
 void mDownloadFile::SetAsFinished()
 {
+    changedsincelastsave = true;
     this->status = STATUS_FINISHED;
 }
 
 void mDownloadFile::ErrorOccurred()
 {
+    changedsincelastsave = true;
     this->status = STATUS_ERROR;
 }
 
 void mDownloadFile::PutOnScheduleQueue()
 {
+    changedsincelastsave = true;
     this->scheduled = TRUE;
     this->status = STATUS_SCHEDULE_QUEUE;
 }
 
 void mDownloadFile::PutOnQueue()
 {
+    changedsincelastsave = true;
     this->scheduled = FALSE;
     this->status = STATUS_QUEUE;
 }
@@ -547,6 +565,7 @@ int mDownloadFile::RestartSupport()
 
 void mDownloadFile::SetRestartSupport(bool support)
 {
+    changedsincelastsave = true;
     if (support)
         this->restart = YES;
     else
@@ -565,6 +584,7 @@ wxString mDownloadFile::GetContentType()
 
 void mDownloadFile::SetContentType(wxString contenttype)
 {
+    changedsincelastsave = true;
     this->contenttype = contenttype;
 }
 
@@ -600,11 +620,13 @@ int mDownloadFile::GetCurrentAttempt()
 
 void mDownloadFile::ResetAttempts()
 {
+    changedsincelastsave = true;
     this->currentattempt = 1;
 }
 
 void mDownloadFile::IncrementAttempt()
 {
+    changedsincelastsave = true;
     this->currentattempt++;
 }
 
@@ -723,6 +745,7 @@ wxArrayString mDownloadFile::GetUrlArray()
 
 void mDownloadFile::SetFinishedDateTime(wxDateTime time)
 {
+    changedsincelastsave = true;
     this->end = time;
 }
 
@@ -733,6 +756,7 @@ wxDateTime mDownloadFile::GetFinishedDateTime()
 
 void mDownloadFile::SetMD5(wxString md5)
 {
+    changedsincelastsave = true;
     this->MD5 = md5;
 }
 
@@ -743,6 +767,7 @@ int mDownloadFile::GetProgress()
 
 void mDownloadFile::SetProgress(int percentual)
 {
+    changedsincelastsave = true;
     this->percentual = percentual;
 }
 
@@ -753,6 +778,7 @@ bool mDownloadFile::IsSplitted()
 
 void mDownloadFile::Split(bool split)
 {
+    changedsincelastsave = true;
     this->split = split;
     this->waitbeforesplit = FALSE;
 }
@@ -775,6 +801,8 @@ bool mDownloadFile::WriteIsPending()
 
 void mDownloadFile::MarkWriteAsPending(bool pending)
 {
+    if (pending)
+        changedsincelastsave = true;
     this->writependig = pending;
 }
 
@@ -800,6 +828,7 @@ void mDownloadFile::MarkRemoveAsPending(bool pending)
 
 void mDownloadFile::SetBandWidth(int band)
 {
+    changedsincelastsave = true;
     bandwidth = band;
 }
 
@@ -815,6 +844,7 @@ bool mDownloadFile::NeedToReGetMetalink()
 
 void mDownloadFile::SetToReGetMetalinkWhenNeeded(bool reget)
 {
+    changedsincelastsave = true;
     needtoregetmetalink = reget;
 }
 
@@ -825,10 +855,16 @@ int mDownloadFile::GetMetalinkFileIndex()
 
 void mDownloadFile::SetMetalinkFileIndex(int index)
 {
+    changedsincelastsave = true;
     metalinkindex = index;
 }
 
 wxString mDownloadFile::GetCommand()
 {
     return command;
+}
+
+void mDownloadFile::SetChangedSinceLastSave()
+{
+    changedsincelastsave = true;
 }

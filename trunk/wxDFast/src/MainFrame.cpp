@@ -101,6 +101,8 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_id"), mMainFrame::OnIndonesian)
     EVT_MENU(XRCID("menulang_hy"), mMainFrame::OnArmenian)
     EVT_MENU(XRCID("menulang_pl"), mMainFrame::OnPolish)
+    EVT_MENU(XRCID("menulang_tr"), mMainFrame::OnTurkish)
+    EVT_MENU(XRCID("menulang_fr"), mMainFrame::OnFrench)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
@@ -284,6 +286,7 @@ mMainFrame::mMainFrame()
     programoptions.lastdestination = mApplication::Configurations(READ,OPT_LAST_DESTINATION_REG,programoptions.destination);
     programoptions.lastnumberofparts = mApplication::Configurations(READ,OPT_LAST_NUMBER_OF_PARTS_REG,DEFAULT_NUM_PARTS);
     programoptions.laststartoption = mApplication::Configurations(READ,OPT_LAST_START_OPTION_REG,DEFAULT_START_OPTION);
+    programoptions.lastontopoption = mApplication::Configurations(READ,OPT_LAST_ONTOP_OPTION_REG,DEFAULT_ONTOP_OPTION);
     programoptions.bandwidthoption = mApplication::Configurations(READ,OPT_BAND_WIDTH_OPTION_REG,0);
     programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,20l);
     programoptions.taskbariconsize = mApplication::Configurations(READ,OPT_TASKBAR_ICON_SIZE_REG,32);
@@ -550,7 +553,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 GetEventHandler()->AddPendingEvent(command);
             }
             int i = list02->GetItemCount();
-            int index = current->GetIndex();
+            int index = wxGetApp().downloadlist.IndexOf(current);
             mUrlName url(current->GetFirstUrl());
             list02->InsertItem(i, wxEmptyString);
             list02->SetItem(i, FINISHED_ICON01, wxEmptyString,current->GetStatus());
@@ -574,7 +577,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         {
             if (current->RemoveIsPending())
             {
-                int index = current->GetIndex();
+                int index = wxGetApp().downloadlist.IndexOf(current);
                 node = node->GetPrevious();
                 current->RemoveListItemFromDisk();
                 wxGetApp().downloadlist.RemoveDownloadRegister(current);
@@ -605,7 +608,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 numberofactivedownloads++;
             }
 
-            if (selection == current->GetIndex())
+            if (selection == wxGetApp().downloadlist.IndexOf(current))
             {
                 wxString contentstring = _("File type");
                 contentstring += wxT(":\n") + current->GetContentType();
@@ -614,6 +617,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                     XRCCTRL(*this, "btnpreview", wxButton )->Enable(TRUE);
 
                 long treeindex = 0;
+                wxString piecestring = _("Piece ");
                 if  (((int)XRCCTRL(*(this), "treemessages",wxTreeCtrl)->GetCount()) != parts)
                 {
                     wxTreeCtrl *tree = XRCCTRL(*(this), "treemessages",wxTreeCtrl);
@@ -621,7 +625,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                     tree->DeleteAllItems();
                     root = tree->AddRoot(wxEmptyString);
                     for (int i=0;i<parts;i++)
-                        tree->AppendItem(root,_("Piece ") + MyUtilFunctions::int2wxstr(i+1));
+                        tree->AppendItem(root,piecestring + MyUtilFunctions::int2wxstr(i+1,2));
                     treeindex = 0;
                     tree->Refresh();
                 }
@@ -629,7 +633,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 {
                     wxTreeCtrl *tree = XRCCTRL(*(this), "treemessages",wxTreeCtrl);
                     wxString text = tree->GetItemText(tree->GetSelection());
-                    text.Mid(text.Length()-1,1).ToLong(&treeindex);
+                    text.Mid(piecestring.Length()).ToLong(&treeindex);
                     treeindex--;
                     if ((treeindex < 0) || (treeindex >= parts))
                     {
@@ -748,7 +752,7 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 current = node->GetData();
                 if ((current->GetStatus() == STATUS_ACTIVE) && (current->IsScheduled()))
                 {
-                    list->SetCurrentSelection(current->GetIndex());
+                    list->SetCurrentSelection(wxGetApp().downloadlist.IndexOf(current));
                     StopDownload(current,FALSE); //STOP BUT DON'T CHANGE THE SCHEDULE
                     if (!exceptionhappened)
                         somedownloadfinishednow = TRUE;
@@ -838,13 +842,14 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
     mutex_programoptions->Unlock();
 }
 
-bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool show,bool permitdifferentnames)
+bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool ontop, bool show,bool permitdifferentnames)
 {
     mBoxNew dlg;
     wxTextCtrl *edturl, *edtdestination, *edtuser ,*edtpassword, *edtreferenceurl, *edtcomments, *edtcommand;
     wxCheckListBox *lstaddresslist;
     wxSpinCtrl *spinsplit, *spinbandwidth;
     wxRadioButton *optnow,*optschedule;
+    wxCheckBox *chkaddontop;
     int result;
     int i;
     wxXmlResource::Get()->LoadDialog(&dlg, this, wxT("boxnew"));
@@ -861,6 +866,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
     optschedule = XRCCTRL(dlg, "optschedule",wxRadioButton);
     spinsplit = XRCCTRL(dlg, "spinsplit",wxSpinCtrl);
     spinbandwidth = XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl);
+    chkaddontop = XRCCTRL(dlg, "chkaddontop",wxCheckBox);
 
     lstaddresslist->Clear();
     if ((url.GetCount() == 1) && (show))
@@ -895,6 +901,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         optnow->SetValue(TRUE);
     else
         optnow->SetValue(FALSE);
+    chkaddontop->SetValue(ontop);
     spinsplit->SetValue(parts);
     if (show)
     {
@@ -911,12 +918,13 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
     {
         wxFileName destinationvalue,tempdestinationvalue;
         mDownloadFile *currentfile = NULL;
-        int scheduled, now;
+        int scheduled, now,forindex;
         int nparams = lstaddresslist->GetCount();
         int bandwidth = spinbandwidth->GetValue();
         wxString name = wxEmptyString;
         scheduled = optschedule->GetValue();
         now = optnow->GetValue();
+        ontop = chkaddontop->GetValue();
 
         destinationvalue.Assign(edtdestination->GetValue());
         tempdestinationvalue.Assign(programoptions.downloadpartsdefaultdir);
@@ -925,10 +933,14 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
 
         for (i = 0; i < nparams; i++)
         {
-            if (!lstaddresslist->IsChecked(i))
+            if (ontop)
+                forindex = nparams-i-1;
+            else
+                forindex = i;
+            if (!lstaddresslist->IsChecked(forindex))
                 continue;
 
-            mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(i));
+            mUrlName *urltmp = new mUrlName(lstaddresslist->GetString(forindex));
 
             if (name.IsEmpty())
                 name = urltmp->GetFullName();
@@ -942,8 +954,8 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
                 mUrlList *urllist = new mUrlList();
                 urllist->Append(urltmp);
                 currentfile = wxGetApp().downloadlist.NewDownloadRegister(urllist,destinationvalue, tempdestinationvalue,metalinkindex,spinsplit->GetValue(),
-                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),edtcommand->GetValue(),scheduled,bandwidth);
-                XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1);
+                        edtuser->GetValue(), edtpassword->GetValue(), edtreferenceurl->GetValue(), edtcomments->GetValue(),edtcommand->GetValue(),scheduled,bandwidth,ontop);
+                XRCCTRL(*this, "inprogresslist",mInProgressList )->Insert(currentfile,-1,ontop);
             }
             else
             {
@@ -964,7 +976,6 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
             else if (scheduled)
                 currentfile->PutOnScheduleQueue();
         }
-
         //SET THE LAST BOXNEW OPTIONS LIKE THE DEFAULT ONE
         programoptions.lastnumberofparts = spinsplit->GetValue();
         if (scheduled)
@@ -975,6 +986,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
             programoptions.laststartoption = MANUAL;
         programoptions.lastdestination = edtdestination->GetValue();
         programoptions.lastcommand = edtcommand->GetValue();
+        programoptions.lastontopoption = chkaddontop->GetValue();
 
         //WRITE THE LAST BOXNEW OPTIONS ON DISK
         mApplication::Configurations(WRITE,OPT_LAST_BOXNEW_X_REG, programoptions.boxnew_x);
@@ -983,6 +995,7 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
         mApplication::Configurations(WRITE,OPT_LAST_DESTINATION_REG, programoptions.lastdestination);
         mApplication::Configurations(WRITE,OPT_LAST_NUMBER_OF_PARTS_REG, programoptions.lastnumberofparts);
         mApplication::Configurations(WRITE,OPT_LAST_START_OPTION_REG, programoptions.laststartoption);
+        mApplication::Configurations(WRITE,OPT_LAST_ONTOP_OPTION_REG, programoptions.lastontopoption);
     }
     return TRUE;
 }
@@ -1043,8 +1056,8 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
                         currentfile->MarkRemoveAsPending(TRUE);
                     }
                 }
-                dlg->Destroy();
             }
+            dlg->Destroy();
         }
         return ;
     }
@@ -1259,6 +1272,7 @@ void mMainFrame::OnStopAll(wxCommandEvent& event)
 void mMainFrame::OnPasteURL(wxCommandEvent& event)
 {
     int numberofparts, startoption;
+    bool ontop;
     wxString destinationtmp = wxEmptyString, command = wxEmptyString;
     wxArrayString urltmp;
     if (wxTheClipboard->Open())
@@ -1280,14 +1294,16 @@ void mMainFrame::OnPasteURL(wxCommandEvent& event)
         startoption = programoptions.laststartoption;
         destinationtmp = programoptions.lastdestination;
         command = programoptions.lastcommand;
+        ontop = programoptions.lastontopoption;
     }
     else
     {
         numberofparts = DEFAULT_NUM_PARTS;
         startoption = DEFAULT_START_OPTION;
+        ontop = DEFAULT_ONTOP_OPTION;
         destinationtmp = programoptions.destination;
     }
-    NewDownload(urltmp,destinationtmp,-1,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,command,startoption,TRUE,FALSE);
+    NewDownload(urltmp,destinationtmp,-1,numberofparts,wxEmptyString,wxEmptyString,wxEmptyString,wxEmptyString,command,startoption,ontop,TRUE,FALSE);
 }
 
 void mMainFrame::OnCopyURL(wxCommandEvent& event)
@@ -1692,6 +1708,15 @@ void mMainFrame::MarkCurrentLanguageMenu(int language)
     else
         menubar->GetMenu(2)->Check(XRCID("menulang_pl"),TRUE);
 
+    if (language != wxLANGUAGE_TURKISH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_tr"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_tr"),TRUE);
+
+    if (language != wxLANGUAGE_FRENCH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_fr"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_fr"),TRUE);
 }
 
 void mMainFrame::SetLanguage(int language)
@@ -1850,6 +1875,16 @@ void mMainFrame::OnPolish(wxCommandEvent& event)
     SetLanguage(wxLANGUAGE_POLISH);
 }
 
+void mMainFrame::OnTurkish(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_TURKISH);
+}
+
+void mMainFrame::OnFrench(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_FRENCH);
+}
+
 void mMainFrame::OnProperties(wxCommandEvent& event)
 {
     mInProgressList *list = XRCCTRL(*this, "inprogresslist",mInProgressList );
@@ -1905,6 +1940,7 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             XRCCTRL(dlg,"btndir",wxButton)->Enable(FALSE);
             XRCCTRL(dlg,"btnadd",wxButton)->Enable(FALSE);
             XRCCTRL(dlg, "spinbandwidth",wxSpinCtrl)->Enable(FALSE);
+            XRCCTRL(dlg, "chkaddontop",wxCheckBox)->Enable(FALSE);
         }
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->Enable(FALSE);
 
@@ -1941,9 +1977,9 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
             if (newname != oldname)
             {
                 wxGetApp().downloadlist.ChangeName(currentfile,newname);
-                XRCCTRL(*this, "inprogresslist",mInProgressList )->SetItem(currentfile->GetIndex(),INPROGRESS_NAME,currentfile->GetName());
+                XRCCTRL(*this, "inprogresslist",mInProgressList )->SetItem(wxGetApp().downloadlist.IndexOf(currentfile),INPROGRESS_NAME,currentfile->GetName());
             }
-            list->SetItem(currentfile->GetIndex(),INPROGRESS_URL,currentfile->GetFirstUrl().GetFullPath());
+            list->SetItem(wxGetApp().downloadlist.IndexOf(currentfile),INPROGRESS_URL,currentfile->GetFirstUrl().GetFullPath());
 
         }
         this->active = TRUE;
@@ -1964,7 +2000,7 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             currentselection = currentselectionlist.Item(i);
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
             wxListItem item;
-            int startoption;
+            int startoption,ontop;
             wxString url,destination,user,password,comments,reference,command;
             wxArrayString urlarray;
             int parts;
@@ -2012,11 +2048,17 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
             config->SetPath(BACK_DIR_REG);
 
             if (programoptions.rememberboxnewoptions)
+            {
                 startoption = programoptions.laststartoption;
+                ontop = programoptions.lastontopoption;
+            }
             else
+            {
                 startoption = DEFAULT_START_OPTION;
+                ontop = DEFAULT_ONTOP_OPTION;
+            }
 
-            if (NewDownload(urlarray, destination,-1, parts, user, password, reference, comments, command, startoption, FALSE,FALSE))
+            if (NewDownload(urlarray, destination,-1, parts, user, password, reference, comments, command, startoption,ontop, FALSE,FALSE))
             {
                 config->DeleteGroup(item.GetText());
                 list->DeleteItem(currentselection);
@@ -2840,7 +2882,7 @@ bool mMainFrame::UpdateListItemField(mDownloadFile *current)
             }
             result = TRUE;
         }
-        list01->Insert(current,current->GetIndex());
+        list01->Insert(current,wxGetApp().downloadlist.IndexOf(current));
     }
     return result;
 }
@@ -2926,5 +2968,5 @@ void mMainFrame::OnNewDownloadEvent(wxCommandEvent& event)
 {
     mDownloadFile *file = (mDownloadFile *)event.GetClientObject();
     NewDownload(file->GetUrlArray(),file->GetDestination(),event.GetInt(),file->GetNumberofParts(),file->GetUser(),
-                file->GetPassword(),file->GetReferenceURL(),file->GetComments(),file->GetCommand(),programoptions.laststartoption, false,false);
+                file->GetPassword(),file->GetReferenceURL(),file->GetComments(),file->GetCommand(),programoptions.laststartoption,programoptions.lastontopoption, false,false);
 }

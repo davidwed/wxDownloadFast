@@ -3,7 +3,7 @@ RESOURCE_DIR = resources/
 SOURCE_DIR = src/
 LANGUAGE_DIR = languages/
 MANPAGE_DIR = man/
-AWK=awk
+AWK = awk
 CPP  = $(CROSS_PREFIX)g++
 CC   = $(CROSS_PREFIX)gcc
 AR   = $(CROSS_PREFIX)ar
@@ -65,7 +65,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.4
+VERSION = 0.5.5
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)
@@ -211,6 +211,8 @@ endif
 	$(INSTALL_FILE) $(LANGUAGE_DIR)cs/wxDFast.mo $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)ru/wxDFast.mo $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES
+	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/tr/LC_MESSAGES
+	$(INSTALL_FILE) $(LANGUAGE_DIR)tr/wxDFast.mo $(DESTDIR)/usr/share/locale/tr/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
 	$(INSTALL_FILE) $(LANGUAGE_DIR)hu/wxDFast.mo $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES
 	$(INSTALL_DIR) $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES
@@ -270,6 +272,7 @@ endif
 	rm -f $(DESTDIR)/usr/share/locale/cs/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/de/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/ru/LC_MESSAGES/wxDFast.mo
+	rm -f $(DESTDIR)/usr/share/locale/tr/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/hu/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/pl/LC_MESSAGES/wxDFast.mo
 	rm -f $(DESTDIR)/usr/share/locale/id/LC_MESSAGES/wxDFast.mo
@@ -314,6 +317,9 @@ source:
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
 	cp $(LANGUAGE_DIR)ru/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
 	cp $(LANGUAGE_DIR)ru/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)ru
+	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)tr
+	cp $(LANGUAGE_DIR)tr/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)tr
+	cp $(LANGUAGE_DIR)tr/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)tr
 	mkdir $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
 	cp $(LANGUAGE_DIR)hu/wxDFast.* $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu
 	cp $(LANGUAGE_DIR)hu/Makefile.am $(BIN)-$(VERSION)/$(LANGUAGE_DIR)hu

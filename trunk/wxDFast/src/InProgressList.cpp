@@ -177,48 +177,147 @@ void mInProgressList::SelectUnselect(bool selected,int selection)
     }
 }
 
-int mInProgressList::Insert(mDownloadFile *current, int item)
+int mInProgressList::Insert(mDownloadFile *current, int item,bool ontop)
 {
     long tmp;
     int currentstatus;
+    bool newdownload = false;
+    wxString currentstring;
+    wxListItem listitem;
+
+    listitem.SetId(item);
+    listitem.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
     if (current != NULL)
     {
         currentstatus = current->GetStatus();
         if (item == -1)
         {
-           item = current->GetIndex();
-           tmp = this->InsertItem(item, wxEmptyString,currentstatus);
-           this->SetItemData(tmp, item);
-           this->SetItem(item, INPROGRESS_ICON01, wxEmptyString,currentstatus);
+            if (ontop)
+                item = 0;
+            else
+                item = this->GetItemCount();
+
+            tmp = this->InsertItem(item, wxEmptyString,currentstatus);
+            this->SetItemData(tmp, item);
+            this->SetItem(item, INPROGRESS_ICON01, wxEmptyString,currentstatus);
+            newdownload = true;
         }
         else
         {
-            wxListItem listitem;
-            listitem.SetId(item);
-            listitem.SetMask(wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE);
             listitem.SetColumn(INPROGRESS_ICON01);
             this->GetItem(listitem);
             if (currentstatus != listitem.GetImage())
             {
                 listitem.SetImage(currentstatus);
                 this->SetItem(listitem);
+                current->SetChangedSinceLastSave();
             }
         }
+        //UPDATE RESTART SUPPORT
         if (current->RestartSupport() == YES)
-            this->SetItem(item, INPROGRESS_ICON02, _("   [ Yes ]"));
+            currentstring = _("   [ Yes ]");
         else if (current->RestartSupport() == NO)
-            this->SetItem(item, INPROGRESS_ICON02, _("   [ No  ]"));
+            currentstring = _("   [ No  ]");
         else
-            this->SetItem(item, INPROGRESS_ICON02, wxT("   [     ]"));
-        this->SetItem(item, INPROGRESS_NAME, current->GetExposedName());
-        this->SetItem(item, INPROGRESS_SIZE, MyUtilFunctions::ByteString(current->totalsize));
-        this->SetItem(item, INPROGRESS_COMPLETED, MyUtilFunctions::ByteString(current->totalsizecompleted));
-        this->SetItem(item, INPROGRESS_PERCENTUAL, MyUtilFunctions::int2wxstr(current->GetProgress()) + wxT(" %"));
-        this->SetItem(item, INPROGRESS_TIMEPASSED, MyUtilFunctions::TimeString(current->timepassed));
-        this->SetItem(item, INPROGRESS_TIMEREMAINING, MyUtilFunctions::TimeString(current->timeremaining));
-        this->SetItem(item, INPROGRESS_SPEED, MyUtilFunctions::ByteString(current->totalspeed)+wxT("/s"));
-        this->SetItem(item, INPROGRESS_ATTEMPTS, MyUtilFunctions::int2wxstr(current->GetCurrentAttempt()));
-        this->SetItem(item, INPROGRESS_URL, current->GetFirstUrl().GetFullPath());
+            currentstring = wxT("   [     ]");
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_ICON02);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_ICON02, currentstring);
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+            this->SetItem(item, INPROGRESS_ICON02, currentstring);
+
+        //UPDATE NAME STRING
+        currentstring = current->GetExposedName();
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_NAME);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_NAME, currentstring);
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+            this->SetItem(item, INPROGRESS_NAME, currentstring);
+
+        //UPDATE TOTAL SIZE STRING
+        currentstring = MyUtilFunctions::ByteString(current->totalsize);
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_SIZE);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_SIZE, currentstring );
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+            this->SetItem(item, INPROGRESS_SIZE, currentstring );
+
+
+        //UPDATE TOTAL SIZE COMPLETED, PERCENTUAL, TIME PASSED, TIME REMAINING AND SPEED
+        currentstring = MyUtilFunctions::ByteString(current->totalsizecompleted);
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_COMPLETED);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_COMPLETED, MyUtilFunctions::ByteString(current->totalsizecompleted));
+                this->SetItem(item, INPROGRESS_PERCENTUAL, MyUtilFunctions::int2wxstr(current->GetProgress()) + wxT(" %"));
+                this->SetItem(item, INPROGRESS_TIMEPASSED, MyUtilFunctions::TimeString(current->timepassed));
+                this->SetItem(item, INPROGRESS_TIMEREMAINING, MyUtilFunctions::TimeString(current->timeremaining));
+                this->SetItem(item, INPROGRESS_SPEED, MyUtilFunctions::ByteString(current->totalspeed)+wxT("/s"));
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+        {
+            this->SetItem(item, INPROGRESS_COMPLETED, MyUtilFunctions::ByteString(current->totalsizecompleted));
+            this->SetItem(item, INPROGRESS_PERCENTUAL, MyUtilFunctions::int2wxstr(current->GetProgress()) + wxT(" %"));
+            this->SetItem(item, INPROGRESS_TIMEPASSED, MyUtilFunctions::TimeString(current->timepassed));
+            this->SetItem(item, INPROGRESS_TIMEREMAINING, MyUtilFunctions::TimeString(current->timeremaining));
+            this->SetItem(item, INPROGRESS_SPEED, MyUtilFunctions::ByteString(current->totalspeed)+wxT("/s"));
+        }
+
+        //UPDATE NUMBER OF ATTEMPTS
+        currentstring = MyUtilFunctions::int2wxstr(current->GetCurrentAttempt());
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_ATTEMPTS);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_ATTEMPTS, currentstring);
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+            this->SetItem(item, INPROGRESS_ATTEMPTS, currentstring);
+
+        //UPDATE URL
+        currentstring = current->GetFirstUrl().GetFullPath();
+        if (!newdownload)
+        {
+            listitem.SetColumn(INPROGRESS_URL);
+            this->GetItem(listitem);
+            if (listitem.GetText() != currentstring)
+            {
+                this->SetItem(item, INPROGRESS_URL, currentstring);
+                current->SetChangedSinceLastSave();
+            }
+        }
+        else
+            this->SetItem(item, INPROGRESS_URL, currentstring);
     }
     return item;
 }
@@ -287,7 +386,7 @@ void mInProgressList::GenerateList(wxImageList *imageslist)
         this->SetColumnWidth(INPROGRESS_ATTEMPTS,100);
         this->SetColumnWidth(INPROGRESS_URL,300);
     }
-    wxGetApp().downloadlist.RecreateIndex();
+    //wxGetApp().downloadlist.RecreateIndex();
     for ( mDownloadList::Node *node = wxGetApp().downloadlist.GetFirst(); node; node = node->GetNext() )
     {
         mDownloadFile *current = node->GetData();

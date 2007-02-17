@@ -81,7 +81,7 @@
                         <option>1</option>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
-                            <rows>2</rows>
+                            <rows>3</rows>
                             <cols>1</cols>
                             <vgap>5</vgap>
                             <object class="sizeritem">
@@ -90,6 +90,11 @@
                                     <tooltip>Only the selected addresses will be downloaded</tooltip>
                                     <style>wxLB_SINGLE</style>
                                     <size>420,100</size>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxCheckBox" name="chkaddontop">
+                                    <label>Add on top of download queue</label>
                                 </object>
                             </object>
                             <object class="sizeritem">
@@ -232,7 +237,7 @@
                                                                         <object class="wxSpinCtrl" name="spinsplit">
                                                                             <style>wxSP_ARROW_KEYS|wxSP_WRAP</style>
                                                                             <min>1</min>
-                                                                            <max> 9</max>
+                                                                            <max>30</max>
                                                                             <value>1</value>
                                                                             <size>40, 20</size>
                                                                         </object>

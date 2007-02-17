@@ -90,7 +90,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.4");
+    const wxString VERSION = wxT("0.5.5");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -98,13 +98,14 @@
        const wxString SEPARATOR_DIR = wxT("/");
     #endif
 
-    #define MANUAL                      0
-    #define NOW                         1
-    #define SCHEDULE                    2
+    #define MANUAL                     0
+    #define NOW                        1
+    #define SCHEDULE                   2
 
-    #define MAX_NUM_PARTS              9
+    #define MAX_NUM_PARTS              32
     #define DEFAULT_NUM_PARTS          5
     #define DEFAULT_START_OPTION       NOW
+    #define DEFAULT_ONTOP_OPTION       false
                                         //START THE DOWNLOAD IMMEDIATLY
     #define MIN_SIZE_TO_SPLIT          500000l
     #define USE_HTML_MESSAGES          1
@@ -206,6 +207,7 @@
     const wxString OPT_LAST_COMMAND_REG = wxT("lastcommand");
     const wxString OPT_LAST_NUMBER_OF_PARTS_REG = wxT("lastnumberofparts");
     const wxString OPT_LAST_START_OPTION_REG = wxT("laststartoption");
+    const wxString OPT_LAST_ONTOP_OPTION_REG = wxT("lastontopoption");
     const wxString OPT_LAST_BOXNEW_X_REG = wxT("lastboxnew_x");
     const wxString OPT_LAST_BOXNEW_Y_REG = wxT("lastboxnew_y");
     const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
@@ -325,7 +327,7 @@
         void PutOnQueue();
         bool IsScheduled();
         void PutOnScheduleQueue();
-        int GetIndex();
+        //int GetIndex();
         wxString GetName();
         wxString GetExposedName();
         void SetExposedName(wxString name);
@@ -375,6 +377,7 @@
         void SetMetalinkFileIndex(int index);
         int GetMetalinkFileIndex();
         wxString GetCommand();
+        void SetChangedSinceLastSave();
 
         //PUBLIC VARIABLES
         friend class mDownloadList;
@@ -428,6 +431,7 @@
         int bandwidth;
         int metalinkindex;
         wxString command;
+        bool changedsincelastsave;
     };
 
     WX_DECLARE_LIST(mDownloadFile, mDownloadListType);
@@ -436,7 +440,7 @@
     {
     public:
         void ChangePosition(mDownloadFile *file01, mDownloadFile *file02);
-        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password,wxString reference, wxString comments,wxString command,int scheduled,int bandwidth);
+        mDownloadFile *NewDownloadRegister(mUrlList *urllist,wxFileName destination,wxFileName tempdestination, int metalinkindex, int parts, wxString user, wxString password,wxString reference, wxString comments,wxString command,int scheduled,int bandwidth,int ontop);
         void RemoveDownloadRegister(mDownloadFile *currentfile);
         void ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFileName destination, wxString user, wxString password, wxString reference, wxString comments,wxString command,int bandwidth);
         void ChangeName(mDownloadFile *file, wxString name, int value = 0);
@@ -508,6 +512,7 @@
         wxString lastdestination;
         int lastnumberofparts;
         int laststartoption;
+        int lastontopoption;
         bool rememberboxnewoptions;
         int bandwidthoption;
         long bandwidth;
@@ -553,7 +558,7 @@
         mMainFrame();
         ~mMainFrame();
         void OnTimer(wxTimerEvent& event);
-        bool NewDownload(wxArrayString url, wxString destination,int metalinkindex, int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool show,bool permitdifferentnames);
+        bool NewDownload(wxArrayString url, wxString destination,int metalinkindex, int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool ontop, bool show,bool permitdifferentnames);
         bool StartDownload(mDownloadFile *downloadfile);
         void StopDownload(mDownloadFile *downloadfile,bool stopschedule = TRUE);
         void OnNew(wxCommandEvent& event);
@@ -587,6 +592,8 @@
         void OnIndonesian(wxCommandEvent& event);
         void OnArmenian(wxCommandEvent& event);
         void OnPolish(wxCommandEvent& event);
+        void OnTurkish(wxCommandEvent& event);
+        void OnFrench(wxCommandEvent& event);
 
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);
@@ -808,7 +815,7 @@
         void OnLeaveWindow(wxMouseEvent& event);
         void OnEnterWindow(wxMouseEvent& event);
         void SelectUnselect(bool selected,int selection);
-        int Insert(mDownloadFile *current, int item);
+        int Insert(mDownloadFile *current, int item,bool ontop = false);
         mListSelection GetCurrentSelection();
         int GetCurrentLastSelection();
         void SetCurrentSelection(int selection);
