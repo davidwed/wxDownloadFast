@@ -1,7 +1,16 @@
 0.5.5
 ===================================================
+- Adicionado idioma Turco(by E.B)
 - Adicionado idioma Indonésio(by Arif Rahman)
 - Adicionado idioma Francês(by lord_nogard)
+- Agora a lista de downloads é atualizada apenas
+  quando um download é alterado, fazendo com que o
+  programa fique mais rápido, e evitando que o pro-
+  grama fique bloqueado quando se está trabalhando
+  com muitos downloads
+- Adicionada uma opção para adicionar novos arquivos
+  no topo da lista de downloads
+- Adicionado suporte à mais segmentos(até 32)
 
 0.5.4
 ===================================================

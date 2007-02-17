@@ -1,7 +1,14 @@
 0.5.5
 ===================================================
+- Added Turkish language(by E.B)
 - Added Indonesian language(by Arif Rahman)
 - Added French language(by lord_nogard)
+- Now the download list is updated just when a
+  download is changed, making the program faster,
+  and preventing the program to be blocked when
+  working with several downloads
+- Added a option to add new files on top of the list
+- Added support to more segments(until 32)
 
 0.5.4
 ===================================================

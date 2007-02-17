@@ -106,6 +106,10 @@
                     <label>English</label>
                     <checkable>1</checkable>
                 </object>
+                <object class="wxMenuItem" name="menulang_fr">
+                    <label>French</label>
+                    <checkable>1</checkable>
+                </object>
                 <object class="wxMenuItem" name="menulang_pt">
                     <label>Portuguese</label>
                     <checkable>1</checkable>
@@ -144,6 +148,10 @@
                 </object>
                 <object class="wxMenuItem" name="menulang_pl">
                     <label>Polish</label>
+                    <checkable>1</checkable>
+                </object>
+                <object class="wxMenuItem" name="menulang_tr">
+                    <label>Turkish</label>
                     <checkable>1</checkable>
                 </object>
             </object>
