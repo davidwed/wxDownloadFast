@@ -137,7 +137,9 @@ mApplication::mApplication(): m_condAllDone(m_mutexAllDone)
 {
     // the mutex associated with a condition must be initially locked, it will
     // only be unlocked when we call Wait()
+    #ifndef DISABLE_MUTEX
     m_mutexAllDone.Lock();
+    #endif
     m_waitingUntilAllDone = FALSE;
     m_locale = NULL;
 }
@@ -278,7 +280,9 @@ bool mApplication::OnInit()
 int mApplication::OnExit()
 {
      // the mutex must be unlocked before being destroyed
-    m_mutexAllDone.Unlock();
+     #ifndef DISABLE_MUTEX
+     m_mutexAllDone.Unlock();
+     #endif
 //    delete m_checker;
     return 0;
 }

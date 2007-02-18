@@ -378,7 +378,9 @@ mMainFrame::mMainFrame()
     menupopup->Append(move);
     menupopup->Append(downloadagain);
 
+    #ifndef DISABLE_MUTEX
     mutex_programoptions = new wxMutex();
+    #endif
 
     //CREATE TASKBARICON
     this->active = TRUE;
@@ -513,8 +515,10 @@ mMainFrame::~mMainFrame()
 
 void mMainFrame::OnTimer(wxTimerEvent& event)
 {
+    #ifndef DISABLE_MUTEX
     if (mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
+    #endif
     mInProgressList* list01 = XRCCTRL(*this, "inprogresslist",mInProgressList );
     mFinishedList* list02 = XRCCTRL(*this, "finishedlist",mFinishedList );
     int selection = list01->GetCurrentLastSelection();
@@ -827,7 +831,9 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         timerinterval = 0;
         if (this->IsShown())
         {
+            #ifndef DISABLE_MUTEX
             mutex_programoptions->Unlock();
+            #endif
 
             //REFRESH THE GRAPH
             if (programoptions.graphshow)
@@ -839,7 +845,9 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
         }
     }
     timerinterval += mtimer->GetInterval();
+    #ifndef DISABLE_MUTEX
     mutex_programoptions->Unlock();
+    #endif
 }
 
 bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalinkindex,int parts,wxString user,wxString password,wxString reference,wxString comments,wxString command,int startoption, bool ontop, bool show,bool permitdifferentnames)
@@ -2376,7 +2384,9 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     {
         wxProgressDialog *waitbox = new wxProgressDialog(_("Updating the configuration..."),_("Updating and saving the configuration..."),100,NULL,wxPD_AUTO_HIDE | wxPD_APP_MODAL|wxPD_CAN_ABORT|wxPD_ELAPSED_TIME);
         waitbox->Update(0);
+        #ifndef DISABLE_MUTEX
         mutex_programoptions->Lock();
+        #endif
 
         programoptions.attempts = XRCCTRL(dlg, "spinattempts", wxSpinCtrl)->GetValue();
         programoptions.attemptstime = XRCCTRL(dlg, "spinattemptstime", wxSpinCtrl)->GetValue();
@@ -2559,7 +2569,9 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
 
         waitbox->Update(100);
         delete waitbox;
+        #ifndef DISABLE_MUTEX
         mutex_programoptions->Unlock();
+        #endif
     }
     this->active = TRUE;
 }

@@ -338,6 +338,7 @@ void mInProgressList::GenerateList(wxImageList *imageslist)
     itemCol.m_mask = wxLIST_MASK_DATA|wxLIST_MASK_STATE|wxLIST_MASK_TEXT|wxLIST_MASK_IMAGE;
     itemCol.m_text = wxEmptyString;
     itemCol.m_image = -1;
+    itemCol.SetAlign(wxLIST_FORMAT_LEFT);
 
     //CREATE THE COLUMNS
     this->InsertColumn(INPROGRESS_ICON01, itemCol);

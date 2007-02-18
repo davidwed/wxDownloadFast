@@ -22,7 +22,7 @@ END_EVENT_TABLE()
 void mGraph::OnPaint(wxPaintEvent &event)
 {
     wxBufferedPaintDC dc(this);
-    #ifndef __WXMAC__
+    #ifndef DISABLE_MUTEX
     if (mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
     #endif
@@ -136,7 +136,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
         programoptions->graphscale = newscale;
         mApplication::Configurations(WRITE,OPT_GRAPH_SCALE_REG, programoptions->graphscale);
     }
-    #ifndef __WXMAC__
+    #ifndef DISABLE_MUTEX
     wxGetApp().mainframe->mutex_programoptions->Unlock();
     #endif
 }

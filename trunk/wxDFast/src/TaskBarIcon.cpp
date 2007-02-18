@@ -159,9 +159,13 @@ void mTaskBarIcon::OnBandUnlimited(wxCommandEvent& event)
 {
     if (mainframe)
     {
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Lock();
+        #endif
         mainframe->programoptions.bandwidthoption = 0;
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Unlock();
+        #endif
         if (mainframe->statusbar)
         {
             wxString temp = _("Band control");
@@ -176,9 +180,13 @@ void mTaskBarIcon::OnBandControlOn(wxCommandEvent& event)
 {
     if (mainframe)
     {
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Lock();
+        #endif
         mainframe->programoptions.bandwidthoption = 2;
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Unlock();
+        #endif
         if (mainframe->statusbar)
         {
             wxString temp = _("Band control");
@@ -194,9 +202,13 @@ void mTaskBarIcon::OnBandControlPerDownload(wxCommandEvent& event)
 {
     if (mainframe)
     {
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Lock();
+        #endif
         mainframe->programoptions.bandwidthoption = 1;
+        #ifndef DISABLE_MUTEX
         mainframe->mutex_programoptions->Unlock();
+        #endif
         if (mainframe->statusbar)
         {
             wxString temp = _("Band control");

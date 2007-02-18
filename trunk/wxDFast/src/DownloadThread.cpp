@@ -104,8 +104,10 @@ void mDownloadThread::OnExit()
     downloadfile->finished[downloadpartindex] = TRUE;
     if (downloadpartindex == 0)
     {
+        #ifndef DISABLE_MUTEX
         delete downloadfile->mutex_speedcalc;
         downloadfile->mutex_speedcalc = NULL;
+        #endif
 
         if (downloadfile->GetStatus() == STATUS_STOPED)
         {
@@ -140,7 +142,9 @@ void *mDownloadThread::Entry()
     }
     if (downloadpartindex == 0)
     {
+        #ifndef DISABLE_MUTEX
         downloadfile->mutex_speedcalc = new wxMutex();
+        #endif
         downloadfile->criticalerror = FALSE;
         for (int i=0;i<downloadfile->GetNumberofParts();i++)
             downloadfile->startpoint[i] = 0;
@@ -158,10 +162,14 @@ void *mDownloadThread::Entry()
         if (!downloadfile->IsSplitted())
             return NULL;
     }
+    #ifndef DISABLE_MUTEX
     wxGetApp().mainframe->mutex_programoptions->Lock();
+    #endif
     maxattempts = programoptions->attempts;
     attemptstime = programoptions->attemptstime;
+    #ifndef DISABLE_MUTEX
     wxGetApp().mainframe->mutex_programoptions->Unlock();
+    #endif
     do
     {
         connection = NULL;
@@ -460,10 +468,13 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
         }
 
         long readbuffersize;
-
+        #ifndef DISABLE_MUTEX
         wxGetApp().mainframe->mutex_programoptions->Lock();
+        #endif
         readbuffersize = programoptions->readbuffersize;
+        #ifndef DISABLE_MUTEX
         wxGetApp().mainframe->mutex_programoptions->Unlock();
+        #endif
 
         char *data = new char[readbuffersize];
         long read_buffer;
@@ -494,7 +505,9 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             //CHECK EVERY 10 SECONDS IF THE USER CHANGED THE BANDWIDTH
             {
                 int oldbandwidth = bandwidth;
+                #ifndef DISABLE_MUTEX
                 wxGetApp().mainframe->mutex_programoptions->Lock();
+                #endif
                 bandwidthoption = programoptions->bandwidthoption;
                 if (bandwidthoption == 1)
                 {
@@ -507,8 +520,9 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
 
                 if (downloadfile->IsSplitted())
                     bandwidth = bandwidth/downloadfile->GetNumberofParts();
-
+                #ifndef DISABLE_MUTEX
                 wxGetApp().mainframe->mutex_programoptions->Unlock();
+                #endif
 
                 time_checkifbandcontrolchanged = time.Time();
                 if (oldbandwidth != bandwidth)
@@ -587,8 +601,9 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
             if (!downloadfile->speedpoint)
                 downloadfile->delta_size[downloadpartindex] = 0;
 
-            //if (downloadpartindex == 0)
+            #ifndef DISABLE_MUTEX
             if (downloadfile->mutex_speedcalc->TryLock() == wxMUTEX_NO_ERROR)
+            #endif
             {
                 if (downloadfile->speedpointowner == -1)
                     downloadfile->speedpointowner = downloadpartindex;
@@ -614,7 +629,9 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                         }
                     }
                 }
+                #ifndef DISABLE_MUTEX
                 downloadfile->mutex_speedcalc->Unlock();
+                #endif
             }
 
             if (downloadfile->GetStatus() == STATUS_STOPED){resp = 1; break;}
