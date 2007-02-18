@@ -116,6 +116,10 @@
     #define IPC_TOPIC                  wxT("IPC_WXDOWNLAD_FAST_")
     #define IPC_END_CONNECTION         wxT("IPC_WXDOWNLAD_FAST_END_CONECTION")
 
+    #ifdef __WXMAC__
+        #define DISABLE_MUTEX
+    #endif
+
     const wxString STOPWITHOUTSAVINGSTOPSTATUS = wxT("STOPWITHOUTSAVINGSTOPSTATUS");
 
     const wxString DFAST_REG = wxT("wxDownloadFast");
@@ -390,7 +394,9 @@
         bool criticalerror;
         bool speedpoint;
         int speedpointowner;
+        #ifndef DISABLE_MUTEX
         wxMutex *mutex_speedcalc;
+        #endif
 
         bool finished[MAX_NUM_PARTS];
         wxLongLong startpoint[MAX_NUM_PARTS];
@@ -636,7 +642,9 @@
         wxStatusBar *statusbar;
         wxMenu *menupopup;
         mOptions programoptions;
+        #ifndef DISABLE_MUTEX
         wxMutex *mutex_programoptions;
+        #endif
         mGraphPoints graphpoints;
         int timerinterval;
         int writetimerinterval;
