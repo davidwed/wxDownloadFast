@@ -34,16 +34,16 @@ int mMetalinkDocument::GetMetalinkData(mMetalinkData *data,int index)
                     while (subnode)
                     {
                         if (subnode->GetName().Lower() == wxT("name"))
-                            data->publishername = subnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                            data->publishername = this->GetContent(subnode->GetChildren());
                         else if (subnode->GetName().Lower() == wxT("url"))
-                            data->publisherurl = subnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                            data->publisherurl = this->GetContent(subnode->GetChildren());
                         subnode = subnode->GetNext();
                     }
                 }
                 else if (node->GetName().Lower() == wxT("description"))
                 {
                     wxLogDebug(wxT("description tag..."));
-                    data->description = node->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                    data->description = this->GetContent(node->GetChildren());
                 }
                 else if (node->GetName().Lower() == wxT("files"))
                 {
@@ -92,13 +92,13 @@ int mMetalinkDocument::GetFileData(mMetalinkData *data,wxXmlNode *subnode)
 	while (subsubnode)
 	{
         if (subsubnode->GetName().Lower() == wxT("version"))
-            data->version = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+            data->version = this->GetContent(subsubnode->GetChildren());
         else if (subsubnode->GetName().Lower() == wxT("size"))
-            data->size = MyUtilFunctions::wxstrtolonglong(subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
+            data->size = MyUtilFunctions::wxstrtolonglong(this->GetContent(subsubnode->GetChildren()));
         else if (subsubnode->GetName().Lower() == wxT("language"))
-            data->language = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+            data->language = this->GetContent(subsubnode->GetChildren());
         else if (subsubnode->GetName().Lower() == wxT("os"))
-            data->os = subsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+            data->os = this->GetContent(subsubnode->GetChildren());
         else if (subsubnode->GetName().Lower() == wxT("verification"))
         {
             wxXmlNode *subsubsubnode = subsubnode->GetChildren();
@@ -107,9 +107,9 @@ int mMetalinkDocument::GetFileData(mMetalinkData *data,wxXmlNode *subnode)
                 if (subsubsubnode->GetName().Lower() == wxT("hash"))
                 {
                     if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("md5"))
-                        data->md5 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                        data->md5 = this->GetContent(subsubsubnode->GetChildren());
                     else if (subsubsubnode->GetPropVal(wxT("type"),wxEmptyString).Lower() == wxT("sha1"))
-                        data->sha1 = subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE);
+                        data->sha1 = this->GetContent(subsubsubnode->GetChildren());
                 }
                 subsubsubnode = subsubsubnode->GetNext();
             }
@@ -121,7 +121,7 @@ int mMetalinkDocument::GetFileData(mMetalinkData *data,wxXmlNode *subnode)
             {
                 if (subsubsubnode->GetName().Lower() == wxT("url"))
                 {
-                    mUrlName *urltmp = new mUrlName(subsubsubnode->GetChildren()->GetContent().Trim(TRUE).Trim(FALSE));
+                    mUrlName *urltmp = new mUrlName(this->GetContent(subsubsubnode->GetChildren()));
                     if ((urltmp->IsComplete()) && (!urltmp->GetFullRealName().Contains(wxT(".torrent"))) && (urltmp->Type() != -1))
                     {
                         data->urllist.Append(urltmp);
@@ -135,6 +135,15 @@ int mMetalinkDocument::GetFileData(mMetalinkData *data,wxXmlNode *subnode)
 	}
 	return result;
 }
+
+wxString mMetalinkDocument::GetContent(wxXmlNode *children)
+{
+    if (children)
+        return children->GetContent().Trim(TRUE).Trim(FALSE);
+    else
+        return wxEmptyString;
+}
+
 
 void mMetalinkData::Clear()
 {
@@ -150,3 +159,4 @@ void mMetalinkData::Clear()
     sha1.Clear();
     urllist.Clear();
 }
+

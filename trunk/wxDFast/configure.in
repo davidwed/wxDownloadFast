@@ -21,10 +21,16 @@ AC_ARG_ENABLE(win32build,
 [  --enable-win32build     Use this option when building on Windows systems],
 [ win32build=yes])
 
+AC_ARG_ENABLE(portable,
+[  --enable-portable     Use this option to build in portable mode (Windows only)],
+[ portable=yes])
+
+
 AM_CONDITIONAL([DEBUG],     [test x$debug = xyes])
 AM_CONDITIONAL([XRCMODE],   [test x$xrcmode = xyes])
 AM_CONDITIONAL([NOXRCMODE], [test x$xrcmode = x])
 AM_CONDITIONAL([WIN32BUILD], [test x$win32build = xyes])
+AM_CONDITIONAL([PORTABLE], [test x$portable = xyes])
 
 AC_ISC_POSIX
 AC_PROG_CC

@@ -121,15 +121,18 @@ wxLongLong MyUtilFunctions::wxstrtolonglong(wxString string)
     char carac;
     wxLongLong result = 0;
     int sign=1;
-    if (tmp.GetChar(0) == '-')
-        sign = -1;
-    for (unsigned int i = 0; i < tmp.Length(); i++)
+    if (string.Length() > 0)
     {
-        carac = tmp.GetChar(i);
-        if ((carac >= '0') && (carac <= '9'))
-            result = result * 10LL + carac-'0';
-        else
-            continue;
+        if (tmp.GetChar(0) == '-')
+            sign = -1;
+        for (unsigned int i = 0; i < tmp.Length(); i++)
+        {
+            carac = tmp.GetChar(i);
+            if ((carac >= '0') && (carac <= '9'))
+                result = result * 10LL + carac-'0';
+            else
+                continue;
+        }
     }
     return result*sign;
 }

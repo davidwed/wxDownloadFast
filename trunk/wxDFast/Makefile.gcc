@@ -61,8 +61,14 @@ else
 	CPU_PARAM = -mtune=$(CPU)
 endif
 
+ifeq ($(PORTABLE), 1)
+	PORTABLE_PARAM = -D WXDFAST_PORTABLE
+else
+	PORTABLE_PARAM =
+endif
+
 WXMD5 = libwxmd5.a
-CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM)
+CXXFLAGS = $(INCS) -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM) $(PORTABLE_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
 VERSION = 0.5.5

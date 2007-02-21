@@ -161,6 +161,12 @@ bool mApplication::OnInit()
     if (NewInstance())
     return FALSE;
 
+    #ifdef __WXMSW__
+    //GET THE PROGRAM VOLUME
+    wxFileName tempprogramvolume(argv[0]);
+    programvolume = tempprogramvolume.GetVolume();
+    #endif
+
     wxString service = IPC_SERVICE; //REGISTER THIS INSTANCE
     m_server = new mServer;
     m_server->Create(service);
@@ -290,7 +296,14 @@ int mApplication::OnExit()
 wxString mApplication::Configurations(int operation, wxString option,wxString value)
 {
     wxString tmpvalue = value;
+
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
+
     config->SetPath(CONFIG_REG);
     if (operation == WRITE)
         config->Write(option,tmpvalue);
@@ -303,7 +316,13 @@ wxString mApplication::Configurations(int operation, wxString option,wxString va
 int mApplication::Configurations(int operation, wxString option,int value)
 {
     int tmpvalue = value;
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
+
     config->SetPath(CONFIG_REG);
     if (operation == WRITE)
         config->Write(option,tmpvalue);
@@ -318,7 +337,13 @@ long mApplication::Configurations(int operation, wxString option,long value)
     wxString tmpvalue;
     long returnvalue;
     tmpvalue << value;
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
+
     config->SetPath(CONFIG_REG);
     if (operation == WRITE)
         config->Write(option,tmpvalue);

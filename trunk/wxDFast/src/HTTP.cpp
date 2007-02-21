@@ -89,7 +89,7 @@ bool mHTTP::ParseHeaders()
     {//PUT IN THE QUEUE THE DATA THAT ISN'T PART OF THE MESSAGE
         unsigned int i,lastcount;
         lastcount = wxHTTP::LastCount();
-        char unreadbuf[4096];
+        char unreadbuf[lastcount];
         for (i = 0 ; i < (lastcount-count);i++)
             unreadbuf[i] = buf[i+count];
         wxHTTP::Unread(unreadbuf,i);

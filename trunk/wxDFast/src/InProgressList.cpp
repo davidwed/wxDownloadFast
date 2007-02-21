@@ -265,10 +265,10 @@ int mInProgressList::Insert(mDownloadFile *current, int item,bool ontop)
 
 
         //UPDATE TOTAL SIZE COMPLETED, PERCENTUAL, TIME PASSED, TIME REMAINING AND SPEED
-        currentstring = MyUtilFunctions::ByteString(current->totalsizecompleted);
+        currentstring = MyUtilFunctions::ByteString(current->timepassed);
         if (!newdownload)
         {
-            listitem.SetColumn(INPROGRESS_COMPLETED);
+            listitem.SetColumn(INPROGRESS_TIMEPASSED);
             this->GetItem(listitem);
             if (listitem.GetText() != currentstring)
             {

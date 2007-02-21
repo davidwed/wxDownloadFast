@@ -347,6 +347,13 @@ void *mDownloadThread::Entry()
                         break;
                     }
                 }
+                else
+                {
+                    PrintMessage( _("Error retrieving Metalink data\n"),HTMLERROR);
+                    downloadfile->criticalerror = TRUE;
+                    downloadfile->Split(FALSE);
+                    break;
+                }
             }
         }
         else
@@ -397,6 +404,7 @@ void *mDownloadThread::Entry()
             WaitUntilAllFinished(FALSE);
         PrintMessage( _("Canceled.\n"));
     }
+
 
     return NULL;
 }
@@ -616,7 +624,7 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                         downloadfile->speedpoint = TRUE;
                     }
                     downloadfile->timepassed = timepassed + time.Time();
-                    if (downloadfile->delta_size[downloadpartindex] > 20*readbuffersize)
+                    if (downloadfile->delta_size[downloadpartindex] > 5*readbuffersize)
                     {
                         if ((timepassed + time.Time() - lasttime).ToLong() > 2000)
                             SpeedCalculation((timepassed + time.Time() - lasttime).ToLong());
@@ -1287,13 +1295,13 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
     if ((downloadfile->IsSplitted()) && (result == TRUE))
     {
         outputfile = new wxFile(destination->GetFullPath(),wxFile::write_append);
+        partfilename = tempdestination.GetFullPath().Mid(0,tempdestination.GetFullPath().Length()-1); //GetNumberofParts()
         int i;
         for (i=1;i < downloadfile->GetNumberofParts();i++)
         {
-            partfilename = tempdestination.GetFullPath().Mid(0,tempdestination.GetFullPath().Length()-1) + MyUtilFunctions::int2wxstr(i);
-            if (::wxFileExists(partfilename))
+            if (::wxFileExists(partfilename + MyUtilFunctions::int2wxstr(i)))
             {
-                wxFile *piece = new wxFile(partfilename,wxFile::read);
+                wxFile *piece = new wxFile(partfilename + MyUtilFunctions::int2wxstr(i),wxFile::read);
                 while (!piece->Eof())
                 {
                     lastread = piece->Read(data,data_size);
@@ -1302,7 +1310,7 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
                 }
                 piece->Close();
                 delete piece;
-                wxRemoveFile(partfilename);
+                wxRemoveFile(partfilename + MyUtilFunctions::int2wxstr(i));
             }
             else
             {

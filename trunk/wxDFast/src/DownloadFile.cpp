@@ -46,7 +46,12 @@ void mDownloadList::ChangeName(mDownloadFile *file, wxString name, int value)
     wxString strname = name;
     if (file->name == strname)
         return ;
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
     config->SetPath(INPROGRESS_REG);
     config->DeleteGroup(file->name);
     delete config;
@@ -81,7 +86,12 @@ void mDownloadList::ChangeDownload(mDownloadFile *file, mUrlList *urllist,wxFile
 
 void mDownloadList::LoadDownloadListFromDisk()
 {
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
     wxString name;
     wxString tmp;
     int status;
@@ -124,7 +134,21 @@ void mDownloadList::LoadDownloadListFromDisk()
         config->Read(PARTS_REG,&(file->parts));
         if (file->parts > MAX_NUM_PARTS)
             file->parts = 1;
+
         config->Read(DESTINATION_REG,&(file->destination));
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(file->destination);
+            if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+            {
+                destinationtmp.SetVolume(wxGetApp().programvolume);
+                file->destination = destinationtmp.GetFullPath();
+            }
+            #endif
+        }
+        #endif
+
         config->Read(TEMPDESTINATION_REG,&(file->tempdestination));
 
         //TOTAL SIZE
@@ -354,7 +378,12 @@ void mDownloadList::SetNumberofActiveDownloads(int number)
 
 void mDownloadFile::RemoveListItemFromDisk()
 {
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
     config->SetPath(FILES_REG);
     if (this->status == STATUS_FINISHED)
     {
@@ -380,7 +409,12 @@ void mDownloadFile::RegisterListItemOnDisk()
 {
     if (changedsincelastsave)
     {
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                    wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         config->SetPath(FILES_REG);
         if (this->status == STATUS_FINISHED)
         {
@@ -404,7 +438,24 @@ void mDownloadFile::RegisterListItemOnDisk()
         config->Write(SCHEDULED_REG,this->scheduled);
         config->Write(RESTART_REG,this->restart);
         config->Write(PARTS_REG,this->parts);
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(this->destination);
+            if (destinationtmp.GetVolume().Lower() == wxGetApp().programvolume.Lower())
+            {
+                destinationtmp.SetVolume(wxEmptyString);
+                config->Write(DESTINATION_REG,wxT("PORTABLE:") + destinationtmp.GetFullPath());
+            }
+            else
+            	config->Write(DESTINATION_REG,this->destination);
+            #else
+            config->Write(DESTINATION_REG,this->destination);
+            #endif
+        }
+        #else
         config->Write(DESTINATION_REG,this->destination);
+        #endif
         config->Write(TEMPDESTINATION_REG,this->tempdestination);
         config->Write(SIZE_REG,this->totalsize.ToString());
         config->Write(SIZECOMPLETED_REG,this->totalsizecompleted.ToString());

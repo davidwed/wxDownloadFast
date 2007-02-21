@@ -221,9 +221,13 @@
 
     const wxString EXT = wxT(".dfast");
     #ifdef __WXMSW__
-    const wxString PREFIX = wxT("");
+        const wxString PREFIX = wxT("");
     #else
-    const wxString PREFIX = wxT(".");
+        #ifdef WXDFAST_PORTABLE
+        const wxString PREFIX = wxT("");
+        #else
+        const wxString PREFIX = wxT(".");
+        #endif
     #endif
     const wxString LINE = wxT("-");
     const wxString CRLF = wxT("\r\n");
@@ -552,6 +556,9 @@
         void SetLanguage(int language);
         wxString themepath;
         wxIcon appicon;
+        #ifdef __WXMSW__
+        wxString programvolume;
+        #endif
     private:
         wxLocale *m_locale;
     };
@@ -660,14 +667,16 @@
     class mGraph : public wxPanel
     {
     public:
+        mGraph();
         bool Hide();
         bool Show(bool show = TRUE);
         void OnPaint(wxPaintEvent &event);
-        mOptions *programoptions;
+        void SetMainFrame(mMainFrame *mainframe);
         mGraphPoints *graphpoints;
-        mMainFrame *mainframe;
         DECLARE_DYNAMIC_CLASS(mGraph)
     private:
+        mMainFrame *mainframe;
+        mOptions *programoptions;
         DECLARE_EVENT_TABLE()
     };
 
@@ -998,6 +1007,7 @@
         int GetMetalinkData(mMetalinkData *data,int index);
     private:
         int GetFileData(mMetalinkData *data,wxXmlNode *subnode);
+        wxString GetContent(wxXmlNode *children);
     };
 
     class MyUtilFunctions

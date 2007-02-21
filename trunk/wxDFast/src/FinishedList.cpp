@@ -153,7 +153,12 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
 
     if (selected)
     {
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         wxString str;
         long value;
         config->SetPath(FINISHED_REG);
@@ -180,6 +185,18 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
 
         str = wxEmptyString;
         config->Read(DESTINATION_REG,&str);
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(str);
+            if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+            {
+                destinationtmp.SetVolume(wxGetApp().programvolume);
+                str = destinationtmp.GetFullPath();
+            }
+            #endif
+        }
+        #endif
         infolist->SetItem(4,1,str);
 
         {
@@ -254,7 +271,12 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
     this->ClearAll();
     this->SetImageList(imageslist, wxIMAGE_LIST_SMALL);
     wxListItem itemCol;
+    #ifdef WXDFAST_PORTABLE
+    wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+    #else
     wxFileConfig *config = new wxFileConfig(DFAST_REG);
+    #endif
     wxListCtrl* infolist = XRCCTRL(*(mainframe), "infolist",wxListCtrl );
     wxString name;
     wxString size;

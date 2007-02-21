@@ -19,9 +19,28 @@ BEGIN_EVENT_TABLE(mGraph, wxPanel)
 END_EVENT_TABLE()
 
 
+mGraph::mGraph()
+{
+    mainframe = NULL;
+    programoptions = NULL;
+    graphpoints = NULL;
+}
+
+void mGraph::SetMainFrame(mMainFrame *mainframe)
+{
+    this->mainframe = mainframe;
+    if (mainframe)
+        this->programoptions = &(mainframe->programoptions);
+    else
+        this->programoptions = NULL;
+
+}
+
 void mGraph::OnPaint(wxPaintEvent &event)
 {
     wxBufferedPaintDC dc(this);
+    if (!mainframe)
+        return;
     #ifndef DISABLE_MUTEX
     if (mainframe->mutex_programoptions->TryLock() != wxMUTEX_NO_ERROR)
         return;
@@ -95,11 +114,14 @@ void mGraph::OnPaint(wxPaintEvent &event)
             {
                 if (((*current)*1.4) > ((double)scale))
                     newscale = (int)((*current)*1.4);
-
                 *current = last;
             }
             else
+            {
+                if (((*current) < (((double)scale)*0.1)) && ((*current) > 10))
+                    newscale = (int)((*current)*1.4);
                 last = *current;
+            }
             count++;
             if (startitem <= count)
                 //            X1    Y1        X2                 Y2
