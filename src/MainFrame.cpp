@@ -201,7 +201,13 @@ mMainFrame::mMainFrame()
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
     programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxT("/usr/bin/firefox"));
     #endif
+    #ifdef WXDFAST_PORTABLE
+    programoptions.downloadpartsdefaultdir = wxT("partial");
+    if (!wxFileName::DirExists(programoptions.downloadpartsdefaultdir))
+        wxFileName::Mkdir(programoptions.downloadpartsdefaultdir); //CREATE THE PARTIAL DIRECTORY
+    #else
     programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxEmptyString);
+    #endif
     programoptions.attempts = mApplication::Configurations(READ,OPT_ATTEMPTS_REG,999);
     programoptions.attemptstime = mApplication::Configurations(READ,OPT_ATTEMPTS_TIME_REG,5);
     programoptions.simultaneous = mApplication::Configurations(READ,OPT_SIMULTANEOUS_REG,5);
@@ -297,6 +303,18 @@ mMainFrame::mMainFrame()
 
     SetIcon(wxGetApp().appicon);
 
+    //SET THE PROGRESS BAR VARS
+    progressbar = XRCCTRL(*(this), "progressbar",mProgressBar );
+    progressbar->SetMainFrame(this);
+    progressbar->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
+    //SET THE GRAPH VARS
+    graphpoints.DeleteContents(TRUE);
+    graph = XRCCTRL(*(this), "graphpanel",mGraph );
+    graph->graphpoints = &graphpoints;
+    graph->SetMainFrame(this);
+    graph->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+
     //LOAD THE MENU BAR
     if ((menubar = wxXmlResource::Get()->LoadMenuBar(wxT("menubar"))))
         this->SetMenuBar(menubar);
@@ -321,18 +339,6 @@ mMainFrame::mMainFrame()
     }
     timerupdateinterval = programoptions.timerupdateinterval;
 
-    //SET THE PROGRESS BAR VARS
-    progressbar = XRCCTRL(*(this), "progressbar",mProgressBar );
-    progressbar->SetMainFrame(this);
-    progressbar->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-
-    //SET THE GRAPH VARS
-    graphpoints.DeleteContents(TRUE);
-    graph = XRCCTRL(*(this), "graphpanel",mGraph );
-    graph->graphpoints = &graphpoints;
-    graph->programoptions = &programoptions;
-    graph->mainframe = this;
-    graph->SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     //SET NOTEBOOK TAB LABELS
     XRCCTRL(*(this), "notebook01",mNotebook )->ReSetPagesLabel();
@@ -1083,7 +1089,12 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
             resp = dlg->ShowModal();
             this->active = TRUE;
             mListSelection currentselectionlist = finishedlist->GetCurrentSelection();
+            #ifdef WXDFAST_PORTABLE
+            wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                            wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+            #else
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
+            #endif
             config->SetPath(FINISHED_REG);
             int nselection = currentselectionlist.GetCount();
             for (int i = nselection-1 ; i >= 0 ;i--) //REMOVE THE ITEM BACKWARD
@@ -1105,6 +1116,18 @@ void mMainFrame::OnRemove(wxCommandEvent& event)
 
                     destination = wxEmptyString;
                     config->Read(DESTINATION_REG,&destination);
+                    #ifdef WXDFAST_PORTABLE
+                    {
+                        #ifdef __WXMSW__
+                        wxFileName destinationtmp(destination);
+                        if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+                        {
+                            destinationtmp.SetVolume(wxGetApp().programvolume);
+                            destination = destinationtmp.GetFullPath();
+                        }
+                        #endif
+                    }
+                    #endif
                     if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
                         destination = destination + SEPARATOR_DIR;
 
@@ -1319,7 +1342,12 @@ void mMainFrame::OnCopyURL(wxCommandEvent& event)
     wxString urltmp,destinationtmp;
     if (wxTheClipboard->Open())
     {
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         wxString str,name;
         wxTextDataObject data;
         int currentselection,column;
@@ -1373,7 +1401,12 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
     wxString urltmp,destinationtmp;
     if (wxTheClipboard->Open())
     {
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         wxString str = wxEmptyString, downloadinfo = wxEmptyString, name;
         wxTextDataObject data;
         int currentselection,column;
@@ -1433,6 +1466,18 @@ void mMainFrame::OnCopyDownloadData(wxCommandEvent& event)
 
         str = wxEmptyString;
         config->Read(DESTINATION_REG,&str);
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(str);
+            if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+            {
+                destinationtmp.SetVolume(wxGetApp().programvolume);
+                str = destinationtmp.GetFullPath();
+            }
+            #endif
+        }
+        #endif
         downloadinfo += _("Destination");
         downloadinfo += wxT(": ") + str + wxT("\n");
 
@@ -2006,7 +2051,12 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
         for (int i = nselection ; i >= 0 ;i--)
         {
             currentselection = currentselectionlist.Item(i);
+            #ifdef WXDFAST_PORTABLE
+            wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                    wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+            #else
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
+            #endif
             wxListItem item;
             int startoption,ontop;
             wxString url,destination,user,password,comments,reference,command;
@@ -2022,6 +2072,18 @@ void mMainFrame::OnDownloadAgain(wxCommandEvent& event)
 
             destination = wxEmptyString;
             config->Read(DESTINATION_REG,&destination);
+            #ifdef WXDFAST_PORTABLE
+            {
+                #ifdef __WXMSW__
+                wxFileName destinationtmp(destination);
+                if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+                {
+                    destinationtmp.SetVolume(wxGetApp().programvolume);
+                    destination = destinationtmp.GetFullPath();
+                }
+                #endif
+            }
+            #endif
 
             parts = 1;
             config->Read(PARTS_REG,&parts);
@@ -2090,7 +2152,12 @@ void mMainFrame::OnMove(wxCommandEvent& event)
             mListSelection currentselectionlist = list->GetCurrentSelection();
             if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
                 dir = dir + SEPARATOR_DIR;
+            #ifdef WXDFAST_PORTABLE
+            wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                    wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+            #else
             wxFileConfig *config = new wxFileConfig(DFAST_REG);
+            #endif
             wxListItem item;
             config->SetPath(FINISHED_REG);
 
@@ -2111,6 +2178,19 @@ void mMainFrame::OnMove(wxCommandEvent& event)
 
                 destination = wxEmptyString;
                 config->Read(DESTINATION_REG,&destination);
+                #ifdef WXDFAST_PORTABLE
+                {
+                    #ifdef __WXMSW__
+                    wxFileName destinationtmp(destination);
+                    if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+                    {
+                        destinationtmp.SetVolume(wxGetApp().programvolume);
+                        destination = destinationtmp.GetFullPath();
+                    }
+                    #endif
+                }
+                #endif
+
                 if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
                     destination = destination + SEPARATOR_DIR;
 
@@ -2124,7 +2204,24 @@ void mMainFrame::OnMove(wxCommandEvent& event)
                         if (::wxCopyFile(destination+name,dir+name,TRUE))
                         {
                             dlg->Update(50);
+                            #ifdef WXDFAST_PORTABLE
+                            {
+                                #ifdef __WXMSW__
+                                wxFileName destinationtmp(dir);
+                                if (destinationtmp.GetVolume().Lower() == wxGetApp().programvolume.Lower())
+                                {
+                                    destinationtmp.SetVolume(wxEmptyString);
+                                    config->Write(DESTINATION_REG,wxT("PORTABLE:") + destinationtmp.GetFullPath());
+                                }
+                                else
+                                    config->Write(DESTINATION_REG,dir);
+                                #else
+                                config->Write(DESTINATION_REG,dir);
+                                #endif
+                            }
+                            #else
                             config->Write(DESTINATION_REG,dir);
+                            #endif
                             ::wxRemoveFile(destination+name);
                         }
                         else
@@ -2138,7 +2235,26 @@ void mMainFrame::OnMove(wxCommandEvent& event)
                         message += wxT("\n\nFilename: ") + name;
                         if (wxMessageBox(message ,
                                 _("Continue..."),wxYES | wxNO | wxICON_QUESTION, this) == wxYES)
+                        {
+                            #ifdef WXDFAST_PORTABLE
+                            {
+                                #ifdef __WXMSW__
+                                wxFileName destinationtmp(dir);
+                                if (destinationtmp.GetVolume().Lower() == wxGetApp().programvolume.Lower())
+                                {
+                                    destinationtmp.SetVolume(wxEmptyString);
+                                    config->Write(DESTINATION_REG,wxT("PORTABLE:") + destinationtmp.GetFullPath());
+                                }
+                                else
+                                    config->Write(DESTINATION_REG,dir);
+                                #else
+                                config->Write(DESTINATION_REG,dir);
+                                #endif
+                            }
+                            #else
                             config->Write(DESTINATION_REG,dir);
+                            #endif
+                        }
                     }
                 }
                 config->SetPath(BACK_DIR_REG);
@@ -2156,7 +2272,12 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
     if ((currentselection = list->GetCurrentLastSelection()) >= 0)
     {
         list->SetCurrentSelection(currentselection);
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         wxListItem item;
         wxString name,destination,md5old, md5new;
         item.SetId(currentselection);
@@ -2172,6 +2293,18 @@ void mMainFrame::OnCheckMD5(wxCommandEvent& event)
 
         destination = wxEmptyString;
         config->Read(DESTINATION_REG,&destination);
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(destination);
+            if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+            {
+                destinationtmp.SetVolume(wxGetApp().programvolume);
+                destination = destinationtmp.GetFullPath();
+            }
+            #endif
+        }
+        #endif
         if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
             destination = destination + SEPARATOR_DIR;
 
@@ -2231,13 +2364,22 @@ bool mMainFrame::ExportConf(wxString dir)
     if (dir.Mid(dir.Length()-1,1) != SEPARATOR_DIR)
         dir = dir + SEPARATOR_DIR;
     wxString source, destination;
-    source = wxGetHomeDir();
-    if (source.Mid(source.Length()-1,1) != SEPARATOR_DIR)
-        source = source + SEPARATOR_DIR;
-    #ifdef __WXMSW__
-    source = source + DFAST_REG + wxT(".ini");
+    #ifdef WXDFAST_PORTABLE
+        source = wxEmptyString;
     #else
-    source = source + wxT(".") + DFAST_REG;
+        source = wxGetHomeDir();
+        if (source.Mid(source.Length()-1,1) != SEPARATOR_DIR)
+            source = source + SEPARATOR_DIR;
+    #endif
+
+    #ifdef __WXMSW__
+        source = source + DFAST_REG + wxT(".ini");
+    #else
+        #ifdef WXDFAST_PORTABLE
+            source = source + DFAST_REG + wxT(".ini");
+        #else
+            source = source + wxT(".") + DFAST_REG;
+        #endif
     #endif
     destination = dir + DFAST_REG + wxT(".conf");
     wxLogNull noLog;
@@ -2269,13 +2411,22 @@ bool mMainFrame::ImportConf(wxString path)
     wxString source, destination;
     bool result;
     source = path;
-    destination = wxGetHomeDir();
-    if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
-        destination = destination + SEPARATOR_DIR;
-    #ifdef __WXMSW__
-    destination = destination + DFAST_REG + wxT(".ini");
+    #ifdef WXDFAST_PORTABLE
+        destination = wxEmptyString;
     #else
-    destination = destination + wxT(".") + DFAST_REG;
+        destination = wxGetHomeDir();
+        if (destination.Mid(destination.Length()-1,1) != SEPARATOR_DIR)
+            destination = destination + SEPARATOR_DIR;
+    #endif
+
+    #ifdef __WXMSW__
+        destination = destination + DFAST_REG + wxT(".ini");
+    #else
+        #ifdef WXDFAST_PORTABLE
+        destination = destination + DFAST_REG + wxT(".ini");
+        #else
+        destination = destination + wxT(".") + DFAST_REG;
+        #endif
     #endif
     wxLogNull noLog;
     if (::wxFileExists(destination))
@@ -2327,6 +2478,11 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "edtbrowserpath",wxTextCtrl)->SetValue(programoptions.browserpath);
     XRCCTRL(dlg, "edtfilemanagerpath",wxTextCtrl)->SetValue(programoptions.filemanagerpath);
 
+    #ifdef WXDFAST_PORTABLE
+    XRCCTRL(dlg, "optdefaulttemp",wxRadioButton)->Enable(false);
+    XRCCTRL(dlg, "optusertemp",wxRadioButton)->Enable(false);
+    XRCCTRL(dlg, "edttemppath",wxTextCtrl)->Enable(false);
+    #endif
     if (programoptions.downloadpartsdefaultdir.IsEmpty())
         XRCCTRL(dlg, "optdefaulttemp",wxRadioButton)->SetValue(TRUE);
     else
@@ -2790,7 +2946,12 @@ void mMainFrame::BrowserFile()
     if ((selection = list->GetCurrentLastSelection()) >= 0)
     {
         list->SetCurrentSelection(selection);
+        #ifdef WXDFAST_PORTABLE
+        wxFileConfig *config = new wxFileConfig(DFAST_REG, wxEmptyString, DFAST_REG + wxT(".ini"), wxEmptyString,
+                                                wxCONFIG_USE_LOCAL_FILE | wxCONFIG_USE_RELATIVE_PATH);
+        #else
         wxFileConfig *config = new wxFileConfig(DFAST_REG);
+        #endif
         wxString filepath;
         config->SetPath(FINISHED_REG);
         wxListItem item;
@@ -2801,6 +2962,18 @@ void mMainFrame::BrowserFile()
         config->SetPath(item.GetText());
         filepath = wxEmptyString;
         config->Read(DESTINATION_REG,&filepath);
+        #ifdef WXDFAST_PORTABLE
+        {
+            #ifdef __WXMSW__
+            wxFileName destinationtmp(filepath);
+            if (destinationtmp.GetVolume().Upper() == wxT("PORTABLE"))
+            {
+                destinationtmp.SetVolume(wxGetApp().programvolume);
+                filepath = destinationtmp.GetFullPath();
+            }
+            #endif
+        }
+        #endif
         delete config;
         ::wxExecute(programoptions.filemanagerpath + wxT(" \"") + filepath + wxT("\""));
     }

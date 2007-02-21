@@ -9,6 +9,10 @@
   working with several downloads
 - Added a option to add new files on top of the list
 - Added support to more segments(until 32)
+- Added portable mode(Windows only), which allow the
+  program to run directly from pendrives
+- Fixed some memory leaks related to the metalink
+  class
 
 0.5.4
 ===================================================

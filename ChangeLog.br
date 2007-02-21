@@ -11,6 +11,9 @@
 - Adicionada uma opção para adicionar novos arquivos
   no topo da lista de downloads
 - Adicionado suporte à mais segmentos(até 32)
+- Adicionado modo portável(apenas para Windows), o
+  que permite que o programa seja executado direta-
+  mente de pendrives
 
 0.5.4
 ===================================================

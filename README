@@ -16,9 +16,10 @@ as possible.
 * View server messages (HTTP, FTP, file://). No HTTPS support.
 * Available in multiple languages and easily translated.  Now available in
   Portuguese [Brazil], Spanish, English, German, Russian, Hungarian, Polish,
-  French and Indonesian
+  French, Indonesian and Turkish
 * Connection to FTP servers which require a password
 * Calculates the MD5 checksum of downloaded files so they can be easily verified
+* Can be used as a portable download manager (Windows only)
 
 3) Command line Parameters
 --------------------------
@@ -82,6 +83,13 @@ code was unpacked and type:
 With this, the executable will be generated. After that, you can copy the executable to
 another place and run it from there.
 
+- Compiling source code (Portable mode)
+
+Follow the same instructions of the last section, but add the parameter PORTABLE=1 to
+the make command:
+# make -f Makefile.gcc BUILD=win32 PORTABLE=1
+
+
 5.2) Linux
 ----------
 
@@ -114,6 +122,11 @@ Then to build the wxDownload Fast do:
 # make
 
 Where "/home/user/wxWidgets-2.8.0" is the directoy where you built the wxWidgets.
+
+OBS: To build in the portable mode use the parameter: --enable-portable
+# ./configure --prefix=/usr/i586-mingw32msvc --host=i586-mingw32msvc  --with-wxdir=/home/user/wxWidgets-2.8.0 --enable-portable
+# make
+
 
 5.3) Mac OS X
 ----------
