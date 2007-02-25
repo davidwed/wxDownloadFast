@@ -14,6 +14,10 @@
 - Adicionado modo portável(apenas para Windows), o
   que permite que o programa seja executado direta-
   mente de pendrives
+- Corrigidos algums bugs relacionados a classe
+  metalink
+- Adicionado suporte a proxy(apenas para downloads
+  HTTP)
 
 0.5.4
 ===================================================

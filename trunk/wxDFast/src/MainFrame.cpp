@@ -296,6 +296,9 @@ mMainFrame::mMainFrame()
     programoptions.bandwidthoption = mApplication::Configurations(READ,OPT_BAND_WIDTH_OPTION_REG,0);
     programoptions.bandwidth = mApplication::Configurations(READ,OPT_BAND_WIDTH_GENERAL_REG,20l);
     programoptions.taskbariconsize = mApplication::Configurations(READ,OPT_TASKBAR_ICON_SIZE_REG,32);
+    programoptions.proxy = mApplication::Configurations(READ,OPT_PROXY_REG,0);
+    programoptions.proxy_server = mApplication::Configurations(READ,OPT_PROXY_SERVER_REG,wxEmptyString);
+    programoptions.proxy_port = mApplication::Configurations(READ,OPT_PROXY_PORT_REG,wxEmptyString);
 
    //LOAD THE PROGRAM ICON
     wxBitmap tmpicon = wxXmlResource::Get()->LoadBitmap(wxT("wxdfast_png"));
@@ -642,13 +645,17 @@ void mMainFrame::OnTimer(wxTimerEvent& event)
                 else
                 {
                     wxTreeCtrl *tree = XRCCTRL(*(this), "treemessages",wxTreeCtrl);
-                    wxString text = tree->GetItemText(tree->GetSelection());
-                    text.Mid(piecestring.Length()).ToLong(&treeindex);
-                    treeindex--;
-                    if ((treeindex < 0) || (treeindex >= parts))
+                    wxTreeItemId treeitemid = tree->GetSelection();
+                    if (treeitemid.IsOk())
                     {
-                        treeindex = 0;
+                        wxString text = tree->GetItemText(treeitemid);
+                        text.Mid(piecestring.Length()).ToLong(&treeindex);
+                        treeindex--;
+                        if ((treeindex < 0) || (treeindex >= parts))
+                            treeindex = 0;
                     }
+                    else
+                        treeindex = 0;
                 }
 
                 //SET PROGRESS BAR NEW PARAMETERS
@@ -898,16 +905,15 @@ bool mMainFrame::NewDownload(wxArrayString url, wxString destination,int metalin
     #endif
     dlg.SetDifferentNamesPermition(permitdifferentnames);
     edtdestination->SetValue(destination);
-    if (user == ANONYMOUS_USER)
+    /*if (user == ANONYMOUS_USER)
     {
         edtuser->SetValue(wxEmptyString);
         edtpassword->SetValue(wxEmptyString);
     }
     else
-    {
-        edtuser->SetValue(user);
-        edtpassword->SetValue(password);
-    }
+    {*/
+    edtuser->SetValue(user);
+    edtpassword->SetValue(password);
     edtreferenceurl->SetValue(reference);
     edtcommand->SetValue(command);
     edtcomments->SetValue(comments);
@@ -1960,16 +1966,15 @@ void mMainFrame::OnProperties(wxCommandEvent& event)
         for (unsigned int i = 0; i < lstaddresslist->GetCount() ;i++)
             lstaddresslist->Check(i);
 
-        if (currentfile->GetUser() == ANONYMOUS_USER)
+        /*if (currentfile->GetUser() == ANONYMOUS_USER)
         {
             XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetValue(wxEmptyString);
             XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetValue(wxEmptyString);
         }
         else
-        {
-            XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetValue(currentfile->GetUser());
-            XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetValue(currentfile->GetPassword());
-        }
+        {*/
+        XRCCTRL(dlg, "edtuser",wxTextCtrl)->SetValue(currentfile->GetUser());
+        XRCCTRL(dlg, "edtpassword",wxTextCtrl)->SetValue(currentfile->GetPassword());
         XRCCTRL(dlg, "spinsplit",wxSpinCtrl)->SetValue(currentfile->GetNumberofParts());
         XRCCTRL(dlg, "edtcomments",wxTextCtrl)->SetValue(currentfile->GetComments());
         XRCCTRL(dlg, "edtreferenceurl",wxTextCtrl)->SetValue(currentfile->GetReferenceURL());
@@ -2534,6 +2539,9 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     else
         XRCCTRL(dlg, "optbandwidthunlimited", wxRadioButton)->SetValue(TRUE);
     XRCCTRL(dlg, "spinbandwithcustom", wxSpinCtrl)->SetValue(programoptions.bandwidth);
+    XRCCTRL(dlg, "chkproxy",wxCheckBox)->SetValue(programoptions.proxy);
+    XRCCTRL(dlg, "edtproxyserver",wxTextCtrl)->SetValue(programoptions.proxy_server);
+    XRCCTRL(dlg, "edtproxyport",wxTextCtrl)->SetValue(programoptions.proxy_port);
 
     this->active = FALSE;
     if (dlg.ShowModal() == XRCID("btnoptionsave"))
@@ -2657,6 +2665,12 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
                 statusbar->SetStatusText(temp,2);
             }
         }
+        programoptions.proxy = XRCCTRL(dlg, "chkproxy",wxCheckBox)->GetValue();
+        if (programoptions.proxy)
+        {
+            programoptions.proxy_server = XRCCTRL(dlg, "edtproxyserver",wxTextCtrl)->GetValue();
+            programoptions.proxy_port= XRCCTRL(dlg, "edtproxyport",wxTextCtrl)->GetValue();
+        }
 
         waitbox->Update(50);
         mApplication::Configurations(WRITE,OPT_DIALOG_CLOSE_REG,programoptions.closedialog);
@@ -2720,6 +2734,9 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         mApplication::Configurations(WRITE,OPT_SCHED_FINISHDATETIME_REG, (long)programoptions.finishdatetime.GetTicks());
         mApplication::Configurations(WRITE,OPT_BAND_WIDTH_OPTION_REG, programoptions.bandwidthoption);
         mApplication::Configurations(WRITE,OPT_BAND_WIDTH_GENERAL_REG, programoptions.bandwidth);
+        mApplication::Configurations(WRITE,OPT_PROXY_REG,programoptions.proxy);
+        mApplication::Configurations(WRITE,OPT_PROXY_SERVER_REG,programoptions.proxy_server);
+        mApplication::Configurations(WRITE,OPT_PROXY_PORT_REG,programoptions.proxy_port);
 
         ShowHideResizeGraph(oldgraphheight); //VERIFY IF THE GRAPH SIZE AND STATUS CHANGED
 
@@ -3003,7 +3020,15 @@ void mMainFrame::OnShutdownEvent(wxCommandEvent& event)
         wxMilliSleep(200);
     delete waitbox;
     if (waittime.Time() >= 30000)
+    {
+        if (this->IsShown())
+        {
+            wxCommandEvent iconizeevent;
+            taskbaricon->OnHide(iconizeevent);
+        }
+        wxMilliSleep(200);
         ::wxExecute(programoptions.shutdowncmd);
+    }
 }
 
 void mMainFrame::OnDisconnectEvent(wxCommandEvent& event)

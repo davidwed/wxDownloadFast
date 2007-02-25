@@ -338,16 +338,15 @@ mDownloadFile *mDownloadList::NewDownloadRegister(mUrlList *urllist,wxFileName d
         file->size[i] = 0;
         file->finished[i] = FALSE;
     }
-    if (user.IsEmpty())
+    /*if (user.IsEmpty())
     {
         file->user = ANONYMOUS_USER;
         file->password = ANONYMOUS_PASS;
     }
     else
-    {
-        file->user = user;
-        file->password = password;
-    }
+    {*/
+    file->user = user;
+    file->password = password;
     file->bandwidth = bandwidth;
     file->free = TRUE;
     file->criticalerror = FALSE;

@@ -217,6 +217,9 @@
     const wxString OPT_BAND_WIDTH_OPTION_REG = wxT("bandwidthoption");
     const wxString OPT_BAND_WIDTH_GENERAL_REG = wxT("bandwidthgeneral");
     const wxString OPT_TASKBAR_ICON_SIZE_REG = wxT("taskbariconsize");
+    const wxString OPT_PROXY_REG = wxT("proxyuse");
+    const wxString OPT_PROXY_SERVER_REG = wxT("proxyserver");
+    const wxString OPT_PROXY_PORT_REG = wxT("proxyport");
 
 
     const wxString EXT = wxT(".dfast");
@@ -295,8 +298,8 @@
     #define YES                 0
     #define NO                  1
 
-    class mUrlName;
     class mMainFrame;
+    class mUrlName;
     class mBoxNew;
     class mBoxOptions;
     class mInProgressList;
@@ -528,6 +531,9 @@
         long bandwidth;
         int taskbariconsize;
         int boxnew_x, boxnew_y;
+        bool proxy;
+        wxString proxy_server;
+        wxString proxy_port;
     };
 
     class mApplication : public wxApp
@@ -914,13 +920,16 @@
         bool Connect(wxSockAddress& addr, bool wait);
         int GetResponse() { return m_http_response; }
         int GetCompleteResponse() { return m_http_complete_response; }
+        void UseProxy();
     private:
         bool ParseHeaders();
         char *wxstr2str(wxString wxstr);
         wxString m_headersmsg;
         wxString m_getcommand;
         wxString m_messagereceived;
+        wxString path;
         int m_http_complete_response;
+        bool m_use_proxy;
     };
 
     class mConnection: public wxConnection
@@ -970,6 +979,8 @@
         bool redirecting;
         mDownloadList *downloadlist;
         wxLongLong realtotalsize_copy;
+        mUrlName *proxy_address;
+        bool proxy;
     };
 
     class mCheckNewReleaseThread : public wxThread

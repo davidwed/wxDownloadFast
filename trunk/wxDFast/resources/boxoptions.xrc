@@ -429,8 +429,65 @@
                     </object>
                     </object>
                     <object class="notebookpage">
-                    <label>Graph</label>
+                    <label>Proxy</label>
                     <object class="wxPanel" name="paneloption03">
+                        <style>wxTAB_TRAVERSAL</style>
+                        <object class="wxFlexGridSizer">
+                            <hgap>10</hgap>
+                            <rows>3</rows>
+                            <cols>1</cols>
+                            <vgap>10</vgap>
+                            <object class="spacer">
+                                <size>1, 1</size>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxCheckBox" name="chkproxy">
+                                    <label>Use a Proxy Server</label>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Proxy Server</label>
+                                    <growablecols>1</growablecols>
+                                    <object class="sizeritem">
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>10</hgap>
+                                            <rows>1</rows>
+                                            <cols>4</cols>
+                                            <vgap>10</vgap>
+                                            <growablecols>1</growablecols>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="staticproxyserver">
+                                                    <label>Server:</label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtproxyserver">
+                                                    <size>250, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="staticproxyport">
+                                                    <label>Port:</label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtproxyport">
+                                                    <size>40, 20</size>
+                                                </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                    </object>
+                    <object class="notebookpage">
+                    <label>Graph</label>
+                    <object class="wxPanel" name="paneloption04">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
@@ -676,7 +733,7 @@
                     </object>
                     <object class="notebookpage">
                     <label>Scheduling</label>
-                    <object class="wxPanel" name="paneloption04">
+                    <object class="wxPanel" name="paneloption05">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
@@ -1007,7 +1064,7 @@
                     </object>
                     <object class="notebookpage">
                     <label>Bandwidth</label>
-                    <object class="wxPanel" name="paneloption05">
+                    <object class="wxPanel" name="paneloption06">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
@@ -1073,7 +1130,7 @@
                     </object>
                     <object class="notebookpage">
                     <label>Browser Integration</label>
-                    <object class="wxPanel" name="paneloption06">
+                    <object class="wxPanel" name="paneloption07">
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>0</hgap>
