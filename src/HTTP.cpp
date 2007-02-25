@@ -17,19 +17,36 @@ mHTTP::mHTTP():wxHTTP()
     m_getcommand = wxEmptyString;
     m_headersmsg = wxEmptyString;
     m_messagereceived = wxEmptyString;
+    m_use_proxy = false;
 }
 
 bool mHTTP::Connect(wxSockAddress& addr, bool wait)
 {
-    return (wxSocketClient::Connect(addr,wait));
+    return (wxProtocol::Connect(addr,wait));
+}
+
+void mHTTP::UseProxy()
+{
+    m_use_proxy = true;
 }
 
 wxString mHTTP::BuildGetRequest(mUrlName url,wxLongLong start)
 {
     m_getcommand = wxEmptyString;
-    m_getcommand << wxT("GET ") << url.GetDir() << url.GetFullRealName() << wxT(" HTTP/1.1\r\n");
+    if (m_use_proxy)
+        m_getcommand << wxT("GET ") << url.GetFullPath() << wxT(" HTTP/1.1\r\n");
+    else
+        m_getcommand << wxT("GET ") << url.GetDir() << url.GetFullRealName() << wxT(" HTTP/1.1\r\n");
 
     m_headersmsg = wxEmptyString;
+
+    #if wxCHECK_VERSION(2, 8, 0)
+    // Send authentication information
+    if (!m_username.IsEmpty() || !m_password.IsEmpty()) {
+        m_headersmsg << wxT("Authorization: ") << GenerateAuthString(m_username, m_password);
+    }
+    #endif
+
     m_headersmsg << wxT("HOST: ") << url.GetHost() << wxT("\r\n");
     m_headersmsg << wxT("ACCEPT: */*\r\n");
     m_headersmsg << wxT("User-Agent: wxDownload Fast\r\n");
@@ -57,21 +74,23 @@ void mHTTP::SendGetRequest()
 bool mHTTP::ParseHeaders()
 {
     wxString line;
-    char buf[4096];
+    char buf[8192];
     bool firstline = TRUE;
-    unsigned int count = 0;
-    wxHTTP::Read(buf,4096);
+    unsigned int lastcount = 0,count = 0;
+    unsigned int i;
+    wxHTTP::Read(buf,8192);
+    lastcount = wxHTTP::LastCount();
     do
     {
         line.Clear();
-        while ((buf[count] != '\n') && (count <4096))
+        while ((buf[count] != '\n') && (count <8192))
         {
             if ((buf[count] != '\n') && (buf[count] != '\r'))
                 line.Append(buf[count],1);
             count++;
         }
-        if (count < 4096)
-            count++;
+        if (count < 8192)
+            count += 1;
         m_messagereceived += line + wxT("\n");
         if (!firstline)
         {
@@ -87,9 +106,7 @@ bool mHTTP::ParseHeaders()
     }while (line != wxEmptyString);
 
     {//PUT IN THE QUEUE THE DATA THAT ISN'T PART OF THE MESSAGE
-        unsigned int i,lastcount;
-        lastcount = wxHTTP::LastCount();
-        char unreadbuf[lastcount];
+        char unreadbuf[8192];
         for (i = 0 ; i < (lastcount-count);i++)
             unreadbuf[i] = buf[i+count];
         wxHTTP::Unread(unreadbuf,i);

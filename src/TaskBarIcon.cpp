@@ -13,9 +13,9 @@
 #include "wxDFast.h"
 
 ////////////////////////XPM IMAGES////////////////////////////////
-#ifndef __WXMSW__
+/*#ifndef __WXMSW__
 #include "../resources/xpm/wxdfast.xpm"
-#endif
+#endif*/
 
 
 BEGIN_EVENT_TABLE(mTaskBarIcon, wxTaskBarIcon)

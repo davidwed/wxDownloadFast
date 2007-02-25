@@ -96,6 +96,7 @@ mDownloadThread::mDownloadThread(mDownloadFile *file, int index)
     downloadpartindex = index;
     programoptions = &(wxGetApp().mainframe->programoptions);
     downloadlist = &(wxGetApp().downloadlist);
+    proxy_address = NULL;
 }
 
 void mDownloadThread::OnExit()
@@ -118,6 +119,8 @@ void mDownloadThread::OnExit()
 
         downloadfile->SetFree();
     }
+    if (proxy_address)
+        delete proxy_address;
     //delete programoptions;
 }
 
@@ -167,6 +170,19 @@ void *mDownloadThread::Entry()
     #endif
     maxattempts = programoptions->attempts;
     attemptstime = programoptions->attemptstime;
+    proxy  = programoptions->proxy;
+    if (proxy)
+    {
+        proxy_address = new mUrlName(programoptions->proxy_server + wxT(":") + programoptions->proxy_port);
+        if (!proxy_address->HasScheme())
+        {
+            delete proxy_address;
+            proxy_address = new mUrlName(wxT("http://") + programoptions->proxy_server + wxT(":") + programoptions->proxy_port);
+        }
+
+    }
+    else
+        proxy_address = NULL;
     #ifndef DISABLE_MUTEX
     wxGetApp().mainframe->mutex_programoptions->Unlock();
     #endif
@@ -190,12 +206,20 @@ void *mDownloadThread::Entry()
         do
         {
             int type = currenturl.Type();
-            if (type == HTTP)
+            if (type == LOCAL_FILE)
+                filestream = ConnectLOCAL_FILE(start);
+            else if (type == HTTP)
                 connection = ConnectHTTP(&start);
             else if (type == FTP)
-                connection = ConnectFTP(&start);
-            else if (type == LOCAL_FILE)
-                filestream = ConnectLOCAL_FILE(start);
+            {
+                if (proxy)
+                {
+                    PrintMessage( _("FTP over a proxy isn't supported.\n"),HTMLERROR);
+                    break;
+                }
+                else
+                    connection = ConnectFTP(&start);
+            }
             else
             {
                 PrintMessage( _("This protocol isn't supported.\n"),HTMLERROR);
@@ -435,16 +459,17 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
     }
     else
     {
-        if (type == FTP)
+        if (type == LOCAL_FILE)
+            in = filestream;
+        else if ((type == HTTP) || (proxy))
+            in = new wxSocketInputStream(*connection);
+        else if (type == FTP)
         {
             mFTP *tempconnection = (mFTP*)connection;
             in = tempconnection->GetInputStream(currenturl.GetFullRealName());
             PrintMessage( tempconnection->GetLastResult() + wxT("\n"),HTMLSERVER);
         }
-        else if (type == HTTP)
-            in = new wxSocketInputStream(*connection);
-        else if (type == LOCAL_FILE)
-            in = filestream;
+
         if (!in)
         {
             PrintMessage( _("Error establishing input stream.\n"),HTMLERROR);
@@ -739,27 +764,57 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     if (downloadpartindex == 0)
         downloadfile->SetContentType(_("Not available"));
 
-    if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
+    if (downloadfile->GetStatus() == STATUS_STOPED){return NULL;}
 
     wxIPV4address address;
     address.Service(currenturl.GetPort());
     client = new mHTTP();
     client->Notify(FALSE);
     client ->SetFlags(wxSOCKET_NOWAIT);
-    PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
-    if (address.Hostname(currenturl.GetHost())==FALSE)
+    #if wxCHECK_VERSION(2, 8, 0)
+    if (downloadfile->GetPassword() != ANONYMOUS_PASS)
+    {
+        client->SetUser(downloadfile->GetUser());
+        client->SetPassword(downloadfile->GetPassword());
+    }
+    #endif
+
+    if (proxy) //A PROXY SERVER WAS SET
+    {
+        client->UseProxy();
+        PrintMessage( _("Resolving proxy host '") + proxy_address->GetHost() + wxT("' ..."));
+        if (address.Hostname(proxy_address->GetHost())==FALSE)
         {
-        PrintMessage( _("\nHost not found.\n"),HTMLERROR);
-        client->Close();
-        delete client;
-        return NULL;
+            PrintMessage( _("\nProxy not found.\n"),HTMLERROR);
+            client->Close();
+            delete client;
+            return NULL;
+        }
+        else
+            PrintMessage( _(" OK\n"),HTMLSERVER);
     }
     else
-        PrintMessage( _(" OK\n"),HTMLSERVER);
+    {
+        PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
+        if (address.Hostname(currenturl.GetHost())==FALSE)
+        {
+            PrintMessage( _("\nHost not found.\n"),HTMLERROR);
+            client->Close();
+            delete client;
+            return NULL;
+        }
+        else
+            PrintMessage( _(" OK\n"),HTMLSERVER);
+    }
+
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    PrintMessage( _("Trying to connect in '") + currenturl.GetHost() + wxT(" ") + currenturl.GetPort() + wxT("' ...\n"));
+    if (proxy) //A PROXY SERVER WAS SET
+        PrintMessage( _("Trying to connect in '") + proxy_address->GetHost() + wxT(" ") + proxy_address->GetPort() + wxT("' ...\n"));
+    else
+        PrintMessage( _("Trying to connect in '") + currenturl.GetHost() + wxT(" ") + currenturl.GetPort() + wxT("' ...\n"));
+
     this->Sleep(1);
     client->Connect(address,TRUE);
     if (client->IsConnected() == FALSE )
@@ -994,8 +1049,16 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    client->SetUser(downloadfile->GetUser());
-    client->SetPassword(downloadfile->GetPassword());
+    if (downloadfile->GetPassword().IsEmpty())
+    {
+        client->SetUser(ANONYMOUS_USER);
+        client->SetPassword(ANONYMOUS_PASS);
+    }
+    else
+    {
+        client->SetUser(downloadfile->GetUser());
+        client->SetPassword(downloadfile->GetPassword());
+    }
 
     PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
     if (address.Hostname(currenturl.GetHost())==FALSE)

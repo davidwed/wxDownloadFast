@@ -36,10 +36,10 @@
 					<Add option="-s" />
 				</Compiler>
 				<MakeCommands>
-					<Build command="$make -f $makefile $target=1" />
-					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean$target" />
-					<DistClean command="$make -f $makefile distclean$target" />
+					<Build command="$make -f $makefile $target=1  WXWIDGETS_DIR=/home/max/wxWidgets-2.8.0-linux/" />
+					<CompileFile command="$make -f $makefile $file  WXWIDGETS_DIR=/home/max/wxWidgets-2.8.0-linux/" />
+					<Clean command="$make -f $makefile clean$target  WXWIDGETS_DIR=/home/max/wxWidgets-2.8.0-linux/" />
+					<DistClean command="$make -f $makefile distclean$target  WXWIDGETS_DIR=/home/max/wxWidgets-2.8.0-linux/" />
 				</MakeCommands>
 			</Target>
 		</Build>
