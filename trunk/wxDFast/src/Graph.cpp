@@ -53,7 +53,8 @@ void mGraph::OnPaint(wxPaintEvent &event)
     float dx, dy;
 
     //DEFINE DE PARAMETERS
-    int newscale = 0, scale = programoptions->graphscale;
+    //int newscale = 0;
+    int scale = programoptions->graphscale;
     int textarea = programoptions->graphtextarea;
     wxFont smallfont,bigfont;
     bigfont.SetPointSize(programoptions->graphspeedfontsize);
@@ -90,7 +91,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     if (node)
     {
         float *current = node->GetData();
-        float last = 0.0;
+        //float last = 0.0;
         count = 0;
 
         //CALCULATE THE STARTPOINT
@@ -110,7 +111,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
         for (node = node->GetNext() ; node; node = node->GetNext() )
         {
             current = node->GetData();
-            if (*current > ((double)scale))
+            /*if (*current > ((double)scale))
             {
                 if (((*current)*1.4) > ((double)scale))
                     newscale = (int)((*current)*1.4);
@@ -121,7 +122,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
                 if (((*current) < (((double)scale)*0.1)) && ((*current) > 10))
                     newscale = (int)((*current)*1.4);
                 last = *current;
-            }
+            }*/
             count++;
             if (startitem <= count)
                 //            X1    Y1        X2                 Y2
@@ -153,11 +154,11 @@ void mGraph::OnPaint(wxPaintEvent &event)
         dc.SetFont(smallfont);
         dc.DrawText(wxT("kB/s"),5,programoptions->graphspeedfontsize + 10);
     }
-    if (newscale > 0)
+    /*if (newscale > 0)
     {
         programoptions->graphscale = newscale;
         mApplication::Configurations(WRITE,OPT_GRAPH_SCALE_REG, programoptions->graphscale);
-    }
+    }*/
     #ifndef DISABLE_MUTEX
     wxGetApp().mainframe->mutex_programoptions->Unlock();
     #endif

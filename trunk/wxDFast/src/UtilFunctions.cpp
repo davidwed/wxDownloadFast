@@ -172,4 +172,17 @@ wxString MyUtilFunctions::GetMyDocumentsDir()
     return result;
 }
 
+wxString MyUtilFunctions::GetDefaultBrowser()
+{
+    wxString result = wxEmptyString;
+    wxRegKey regKey;
+    wxString idName(wxT("HKEY_CLASSES_ROOT\\http\\shell\\open\\command"));
+
+    regKey.SetName(idName);
+    regKey.QueryValue(wxT("(Default)"),result);
+    regKey.Close();
+
+    return result;
+}
+
 #endif

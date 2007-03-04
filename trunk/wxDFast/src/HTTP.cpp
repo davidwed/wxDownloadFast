@@ -90,7 +90,16 @@ bool mHTTP::ParseHeaders()
             count++;
         }
         if (count < 8192)
-            count += 1;
+        {
+            count++;
+            if (buf[count] == '\r')
+                count++;
+        }
+        else
+        {
+            m_messagereceived += wxT("\nImcomplete message\n");
+            return false;
+        }
         m_messagereceived += line + wxT("\n");
         if (!firstline)
         {
@@ -111,7 +120,7 @@ bool mHTTP::ParseHeaders()
             unreadbuf[i] = buf[i+count];
         wxHTTP::Unread(unreadbuf,i);
     }
-    return TRUE;
+    return true;
 }
 
 wxString mHTTP::GetResponseMessage()

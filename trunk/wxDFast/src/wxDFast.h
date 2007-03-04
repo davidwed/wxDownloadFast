@@ -1037,6 +1037,7 @@
         #ifdef __WXMSW__
         static wxString GetProgramFilesDir();
         static wxString GetMyDocumentsDir();
+        static wxString GetDefaultBrowser();
         #endif
     };
 #endif

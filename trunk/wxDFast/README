@@ -17,9 +17,10 @@ as possible.
 * Available in multiple languages and easily translated.  Now available in
   Portuguese [Brazil], Spanish, English, German, Russian, Hungarian, Polish,
   French, Indonesian and Turkish
-* Connection to FTP servers which require a password
+* Connection to FTP/HTTP servers which require a password
 * Calculates the MD5 checksum of downloaded files so they can be easily verified
 * Can be used as a portable download manager (Windows only)
+* Can be used over proxy servers(HTTP proxy support)
 
 3) Command line Parameters
 --------------------------
