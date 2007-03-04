@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
 dnl Set of available languages.
-ALL_LINGUAS="de es pt_BR"
+ALL_LINGUAS="cs de es fr hu id pl pt_BR ru tr"
 
 AC_ARG_ENABLE(debug,
 [  --enable-debug          This option build the program in debug mode],
@@ -102,4 +102,3 @@ resources/RipStop/icon/Makefile
 resources/RipStop/logo/Makefile
 src/Makefile
 ])
-

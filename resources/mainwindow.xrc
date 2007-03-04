@@ -55,9 +55,10 @@
                                                         <flag>wxEXPAND</flag>
                                                         <object class="wxSplitterWindow" name="splitter02">
                                                             <sashpos>99</sashpos>
+                                                            <minsize>30</minsize>
                                                             <style>wxSP_3D</style>
                                                             <orientation>vertical</orientation>
-                                                            <object class="wxPanel" name="panelmessages01">
+                                                            <object class="wxPanel" name="panelmessages02">
                                                                 <style>wxTAB_TRAVERSAL</style>
                                                                 <object class="wxFlexGridSizer">
                                                                     <hgap>0</hgap>

@@ -17,7 +17,7 @@ fi
 
 # Deal with some gentoo-specific issues
 export WANT_AUTOMAKE='1.7'
-export WANT_AUTOCONF='2.6'
+export WANT_AUTOCONF='2.5'
 
 ## Using prereq in autoconf rather than here, mostly for the debian systems at
 ## this point
