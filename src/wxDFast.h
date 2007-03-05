@@ -613,6 +613,7 @@
         void OnPolish(wxCommandEvent& event);
         void OnTurkish(wxCommandEvent& event);
         void OnFrench(wxCommandEvent& event);
+        void OnDutch(wxCommandEvent& event);
 
         void OnProperties(wxCommandEvent& event);
         void OnMove(wxCommandEvent& event);

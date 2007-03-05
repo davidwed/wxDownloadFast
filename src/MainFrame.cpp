@@ -103,6 +103,7 @@ BEGIN_EVENT_TABLE(mMainFrame,wxFrame)
     EVT_MENU(XRCID("menulang_pl"), mMainFrame::OnPolish)
     EVT_MENU(XRCID("menulang_tr"), mMainFrame::OnTurkish)
     EVT_MENU(XRCID("menulang_fr"), mMainFrame::OnFrench)
+    EVT_MENU(XRCID("menulang_nl"), mMainFrame::OnDutch)
     EVT_MENU(XRCID("menushowgraph"), mMainFrame::OnShowGraph)
     EVT_MENU(XRCID("menushowprogressbar"), mMainFrame::OnShowProgressBar)
     EVT_MENU(XRCID("menudetails"), mMainFrame::OnDetails)
@@ -195,7 +196,10 @@ mMainFrame::mMainFrame()
     #ifdef __WXMSW__
     programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,MyUtilFunctions::GetMyDocumentsDir());
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxGetOSDirectory() + wxT("\\explorer.exe"));
-    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,MyUtilFunctions::GetProgramFilesDir() + wxT("\\Mozilla Firefox\\firefox.exe"));
+    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxEmptyString);
+    if (programoptions.browserpath.IsEmpty())
+        programoptions.browserpath = MyUtilFunctions::GetDefaultBrowser();
+    //defaultbrowserpath = MyUtilFunctions::GetProgramFilesDir() + wxT("\\Mozilla Firefox\\firefox.exe");
     #else
     programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
     programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
@@ -206,7 +210,7 @@ mMainFrame::mMainFrame()
     if (!wxFileName::DirExists(programoptions.downloadpartsdefaultdir))
         wxFileName::Mkdir(programoptions.downloadpartsdefaultdir); //CREATE THE PARTIAL DIRECTORY
     #else
-    programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxEmptyString);
+    programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxGetHomeDir());
     #endif
     programoptions.attempts = mApplication::Configurations(READ,OPT_ATTEMPTS_REG,999);
     programoptions.attemptstime = mApplication::Configurations(READ,OPT_ATTEMPTS_TIME_REG,5);
@@ -1776,6 +1780,11 @@ void mMainFrame::MarkCurrentLanguageMenu(int language)
         menubar->GetMenu(2)->Check(XRCID("menulang_fr"),FALSE);
     else
         menubar->GetMenu(2)->Check(XRCID("menulang_fr"),TRUE);
+
+    if (language != wxLANGUAGE_DUTCH)
+        menubar->GetMenu(2)->Check(XRCID("menulang_nl"),FALSE);
+    else
+        menubar->GetMenu(2)->Check(XRCID("menulang_nl"),TRUE);
 }
 
 void mMainFrame::SetLanguage(int language)
@@ -1942,6 +1951,11 @@ void mMainFrame::OnTurkish(wxCommandEvent& event)
 void mMainFrame::OnFrench(wxCommandEvent& event)
 {
     SetLanguage(wxLANGUAGE_FRENCH);
+}
+
+void mMainFrame::OnDutch(wxCommandEvent& event)
+{
+    SetLanguage(wxLANGUAGE_DUTCH);
 }
 
 void mMainFrame::OnProperties(wxCommandEvent& event)

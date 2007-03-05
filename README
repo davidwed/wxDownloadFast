@@ -16,7 +16,7 @@ as possible.
 * View server messages (HTTP, FTP, file://). No HTTPS support.
 * Available in multiple languages and easily translated.  Now available in
   Portuguese [Brazil], Spanish, English, German, Russian, Hungarian, Polish,
-  French, Indonesian and Turkish
+  French, Indonesian, Turkish and Dutch
 * Connection to FTP/HTTP servers which require a password
 * Calculates the MD5 checksum of downloaded files so they can be easily verified
 * Can be used as a portable download manager (Windows only)

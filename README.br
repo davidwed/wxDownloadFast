@@ -23,7 +23,7 @@ completo possível.
 * Visualização de mensagens do servidor (HTTP, FTP, file://). Sem suporte HTTPS.
 * Disponível em vários idiomas e facilmente traduzível. Disponível agora
   em Português [Brasil], Espanhol, Inglês, Alemão, Russo, Húngaro, Polonês,
-  Indonésio, Francês e Turco
+  Indonésio, Francês, Turco e Holandês
 * Conexão com servidores FTP/HTTP que necessitam de senhas
 * Calcula o código de verificação MD5 dos arquivos baixados, de modo que possam
   ser verificados facilmente

@@ -179,8 +179,13 @@ wxString MyUtilFunctions::GetDefaultBrowser()
     wxString idName(wxT("HKEY_CLASSES_ROOT\\http\\shell\\open\\command"));
 
     regKey.SetName(idName);
-    regKey.QueryValue(wxT("(Default)"),result);
+    regKey.QueryValue(wxEmptyString,result);
     regKey.Close();
+    if (!result.IsEmpty())
+    {
+        result.Replace(wxT("\"%1\""),wxEmptyString);
+        result.Replace(wxT("%1"),wxEmptyString);
+    }
 
     return result;
 }
