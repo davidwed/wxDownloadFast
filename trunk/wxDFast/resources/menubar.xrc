@@ -122,6 +122,10 @@
                     <label>German</label>
                     <checkable>1</checkable>
                 </object>
+                <object class="wxMenuItem" name="menulang_nl">
+                    <label>Dutch</label>
+                    <checkable>1</checkable>
+                </object>
                 <object class="wxMenuItem" name="menulang_es">
                     <label>Spanish</label>
                     <checkable>1</checkable>
