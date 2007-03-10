@@ -71,7 +71,7 @@ WXMD5 = libwxmd5.a
 CXXFLAGS = $(INCS) -fno-strict-aliasing -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM) $(PORTABLE_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
-VERSION = 0.5.5
+VERSION = 0.6.0
 DEBIANPACK = 1
 
 ifeq ($(BUILD), win32)

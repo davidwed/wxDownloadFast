@@ -145,6 +145,38 @@ double MyUtilFunctions::wxlonglongtodouble(wxLongLong value)
     return d;
 }
 
+wxString MyUtilFunctions::GenerateAuthString(wxString user, wxString pass)
+{
+    static const char *base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    wxString buf;
+    wxString toencode;
+
+    buf.Printf(wxT("Basic "));
+
+    toencode.Printf(wxT("%s:%s"),user.c_str(),pass.c_str());
+
+    size_t len = toencode.length();
+    const wxChar *from = toencode.c_str();
+    while (len >= 3) { // encode full blocks first
+        buf << wxString::Format(wxT("%c%c"), base64[(from[0] >> 2) & 0x3f], base64[((from[0] << 4) & 0x30) | ((from[1] >> 4) & 0xf)]);
+        buf << wxString::Format(wxT("%c%c"), base64[((from[1] << 2) & 0x3c) | ((from[2] >> 6) & 0x3)], base64[from[2] & 0x3f]);
+        from += 3;
+        len -= 3;
+    }
+    if (len > 0) { // pad the remaining characters
+        buf << wxString::Format(wxT("%c"), base64[(from[0] >> 2) & 0x3f]);
+        if (len == 1) {
+            buf << wxString::Format(wxT("%c="), base64[(from[0] << 4) & 0x30]);
+        } else {
+            buf << wxString::Format(wxT("%c%c"), base64[(from[0] << 4) & 0x30] + ((from[1] >> 4) & 0xf), base64[(from[1] << 2) & 0x3c]);
+        }
+        buf << wxString::Format(wxT("="));
+    }
+
+    return buf;
+}
+
 #ifdef __WXMSW__
 wxString MyUtilFunctions::GetProgramFilesDir()
 {

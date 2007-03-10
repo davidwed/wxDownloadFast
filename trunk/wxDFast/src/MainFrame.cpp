@@ -303,6 +303,8 @@ mMainFrame::mMainFrame()
     programoptions.proxy = mApplication::Configurations(READ,OPT_PROXY_REG,0);
     programoptions.proxy_server = mApplication::Configurations(READ,OPT_PROXY_SERVER_REG,wxEmptyString);
     programoptions.proxy_port = mApplication::Configurations(READ,OPT_PROXY_PORT_REG,wxEmptyString);
+    programoptions.proxy_username = mApplication::Configurations(READ,OPT_PROXY_USERNAME_REG,wxEmptyString);
+    programoptions.proxy_authstring = mApplication::Configurations(READ,OPT_PROXY_AUTHSTRING_REG,wxEmptyString);
 
    //LOAD THE PROGRAM ICON
     wxBitmap tmpicon = wxXmlResource::Get()->LoadBitmap(wxT("wxdfast_png"));
@@ -2556,6 +2558,12 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
     XRCCTRL(dlg, "chkproxy",wxCheckBox)->SetValue(programoptions.proxy);
     XRCCTRL(dlg, "edtproxyserver",wxTextCtrl)->SetValue(programoptions.proxy_server);
     XRCCTRL(dlg, "edtproxyport",wxTextCtrl)->SetValue(programoptions.proxy_port);
+    if (!programoptions.proxy_username.IsEmpty())
+    {
+        XRCCTRL(dlg, "edtproxyusername",wxTextCtrl)->SetValue(programoptions.proxy_username);
+        XRCCTRL(dlg, "edtproxypassword",wxTextCtrl)->SetValue(wxT("#NOPASSWORD#"));
+    }
+
 
     this->active = FALSE;
     if (dlg.ShowModal() == XRCID("btnoptionsave"))
@@ -2683,7 +2691,21 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         if (programoptions.proxy)
         {
             programoptions.proxy_server = XRCCTRL(dlg, "edtproxyserver",wxTextCtrl)->GetValue();
-            programoptions.proxy_port= XRCCTRL(dlg, "edtproxyport",wxTextCtrl)->GetValue();
+            programoptions.proxy_port = XRCCTRL(dlg, "edtproxyport",wxTextCtrl)->GetValue();
+            programoptions.proxy_username = XRCCTRL(dlg, "edtproxyusername",wxTextCtrl)->GetValue();
+            if (!programoptions.proxy_username.IsEmpty())
+            {
+                if (XRCCTRL(dlg, "edtproxypassword",wxTextCtrl)->GetValue() != wxT("#NOPASSWORD#"))
+                    programoptions.proxy_authstring = MyUtilFunctions::GenerateAuthString(programoptions.proxy_username,
+                                                                        XRCCTRL(dlg, "edtproxypassword",wxTextCtrl)->GetValue());
+            }
+            else
+                programoptions.proxy_authstring = wxEmptyString;
+        }
+        else
+        {
+            programoptions.proxy_username = wxEmptyString;
+            programoptions.proxy_authstring = wxEmptyString;
         }
 
         waitbox->Update(50);
@@ -2751,6 +2773,8 @@ void mMainFrame::OnOptions(wxCommandEvent& event)
         mApplication::Configurations(WRITE,OPT_PROXY_REG,programoptions.proxy);
         mApplication::Configurations(WRITE,OPT_PROXY_SERVER_REG,programoptions.proxy_server);
         mApplication::Configurations(WRITE,OPT_PROXY_PORT_REG,programoptions.proxy_port);
+        mApplication::Configurations(WRITE,OPT_PROXY_USERNAME_REG,programoptions.proxy_username);
+        mApplication::Configurations(WRITE,OPT_PROXY_AUTHSTRING_REG,programoptions.proxy_authstring);
 
         ShowHideResizeGraph(oldgraphheight); //VERIFY IF THE GRAPH SIZE AND STATUS CHANGED
 

@@ -1,4 +1,4 @@
-0.5.5
+0.6.0
 ===================================================
 - Adicionado idioma Turco(by E.B)
 - Adicionado idioma Indonésio(by Arif Rahman)
@@ -17,8 +17,7 @@
   mente de pendrives
 - Corrigidos algums bugs relacionados a classe
   metalink
-- Adicionado suporte a proxy(apenas para downloads
-  HTTP)
+- Adicionado suporte a proxy
 
 0.5.4
 ===================================================

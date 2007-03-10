@@ -31,6 +31,13 @@ mUrlName::mUrlName(wxString uri)
         m_uri = wxT("file://") + m_uri;
 
     wxURI::Create(m_uri);
+    if (wxURI::HasScheme())
+    {
+        wxString scheme = wxURI::GetScheme().Lower();
+        if ((scheme != wxT("http")) && (scheme != wxT("ftp")) && (scheme != wxT("file")))
+            wxURI::Create(wxT("http://") + m_uri);
+    }
+
     if (wxURI::HasFragment())
     {
         if (wxURI::GetFragment().Mid(0,11).Lower() == wxT("!metalink3!"))

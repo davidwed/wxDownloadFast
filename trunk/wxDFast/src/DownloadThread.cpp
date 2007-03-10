@@ -179,6 +179,12 @@ void *mDownloadThread::Entry()
             delete proxy_address;
             proxy_address = new mUrlName(wxT("http://") + programoptions->proxy_server + wxT(":") + programoptions->proxy_port);
         }
+        if (proxy_address->Type() != HTTP)
+        {
+            PrintMessage( _("\nProxy not found.\n"),HTMLERROR);
+            return NULL;
+        }
+        proxy_authstring = programoptions->proxy_authstring;
 
     }
     else
@@ -208,17 +214,11 @@ void *mDownloadThread::Entry()
             int type = currenturl.Type();
             if (type == LOCAL_FILE)
                 filestream = ConnectLOCAL_FILE(start);
-            else if (type == HTTP)
+            else if ((type == HTTP) || (proxy))
                 connection = ConnectHTTP(&start);
             else if (type == FTP)
             {
-                if (proxy)
-                {
-                    PrintMessage( _("FTP over a proxy isn't supported.\n"),HTMLERROR);
-                    break;
-                }
-                else
-                    connection = ConnectFTP(&start);
+                connection = ConnectFTP(&start);
             }
             else
             {
@@ -767,7 +767,6 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     if (downloadfile->GetStatus() == STATUS_STOPED){return NULL;}
 
     wxIPV4address address;
-    address.Service(currenturl.GetPort());
     client = new mHTTP();
     client->Notify(FALSE);
     client ->SetFlags(wxSOCKET_NOWAIT);
@@ -781,8 +780,9 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
 
     if (proxy) //A PROXY SERVER WAS SET
     {
-        client->UseProxy();
+        client->UseProxy(proxy_authstring);
         PrintMessage( _("Resolving proxy host '") + proxy_address->GetHost() + wxT("' ..."));
+        address.Service(proxy_address->GetPort());
         if (address.Hostname(proxy_address->GetHost())==FALSE)
         {
             PrintMessage( _("\nProxy not found.\n"),HTMLERROR);
@@ -796,6 +796,7 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     else
     {
         PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
+        address.Service(currenturl.GetPort());
         if (address.Hostname(currenturl.GetHost())==FALSE)
         {
             PrintMessage( _("\nHost not found.\n"),HTMLERROR);
@@ -1093,28 +1094,6 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    PrintMessage( _("Verifying if the server supports restarting..."));
-    if (client->SendCommand(wxT("REST ") + start->ToString())!= '3')
-    {
-        PrintMessage( _("\nThis server does not support restart.\n"),HTMLERROR);
-        if (downloadpartindex == 0)
-            downloadfile->SetRestartSupport(FALSE);
-        else
-        {
-            client->Close();
-            delete client;
-            return NULL;
-        }
-    }
-    else
-    {
-        PrintMessage( _(" OK\n"),HTMLSERVER);
-        if (downloadpartindex == 0)
-            downloadfile->SetRestartSupport();
-    }
-
-    if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
-
     PrintMessage( _("Changing to directory ") + currenturl.GetDir() + wxT(" ...\n"));
     if (!client->ChDir(currenturl.GetDir()))
     {
@@ -1136,6 +1115,28 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
         return NULL;
     }
     PrintMessage( client->GetLastResult() + wxT("\n"),HTMLSERVER);
+
+    if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
+
+    PrintMessage( _("Verifying if the server supports restarting..."));
+    if (client->SendCommand(wxT("REST ") + start->ToString())!= '3')
+    {
+        PrintMessage( _("\nThis server does not support restart.\n"),HTMLERROR);
+        if (downloadpartindex == 0)
+            downloadfile->SetRestartSupport(FALSE);
+        else
+        {
+            client->Close();
+            delete client;
+            return NULL;
+        }
+    }
+    else
+    {
+        PrintMessage( _(" OK\n"),HTMLSERVER);
+        if (downloadpartindex == 0)
+            downloadfile->SetRestartSupport();
+    }
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
