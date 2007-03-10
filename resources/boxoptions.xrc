@@ -434,7 +434,7 @@
                         <style>wxTAB_TRAVERSAL</style>
                         <object class="wxFlexGridSizer">
                             <hgap>10</hgap>
-                            <rows>3</rows>
+                            <rows>4</rows>
                             <cols>1</cols>
                             <vgap>10</vgap>
                             <object class="spacer">
@@ -465,7 +465,7 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxTextCtrl" name="edtproxyserver">
-                                                    <size>250, 20</size>
+                                                    <size>230, 20</size>
                                                 </object>
                                             </object>
                                             <object class="sizeritem">
@@ -475,8 +475,52 @@
                                             </object>
                                             <object class="sizeritem">
                                                 <object class="wxTextCtrl" name="edtproxyport">
-                                                    <size>40, 20</size>
+                                                    <size>60, 20</size>
                                                 </object>
+                                            </object>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                            <object class="sizeritem">
+                                <object class="wxStaticBoxSizer">
+                                    <orient>wxHORIZONTAL</orient>
+                                    <label>Proxy Server Authorization</label>
+                                    <growablecols>1</growablecols>
+                                    <object class="sizeritem">
+                                        <flag>wxFIXED_MINSIZE</flag>
+                                        <object class="wxFlexGridSizer">
+                                            <hgap>10</hgap>
+                                            <rows>2</rows>
+                                            <cols>3</cols>
+                                            <vgap>10</vgap>
+                                            <growablecols>1</growablecols>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="staticproxyusername">
+                                                    <label>User:</label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtproxyusername">
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>130, 1</size>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxStaticText" name="staticproxypassword">
+                                                    <label>Password:</label>
+                                                </object>
+                                            </object>
+                                            <object class="sizeritem">
+                                                <object class="wxTextCtrl" name="edtproxypassword">
+                                                    <style>wxTE_PASSWORD</style>
+                                                    <size>200, 20</size>
+                                                </object>
+                                            </object>
+                                            <object class="spacer">
+                                                <size>130, 1</size>
                                             </object>
                                         </object>
                                     </object>

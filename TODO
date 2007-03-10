@@ -4,8 +4,8 @@ Log program messages						| Normal
 Save independently the user/password for each file		| Low
 Add mirror automatic search					| Low
 Add HTTPS support						| Low
-Add Proxy support						| Low
 Add progress bar for each download on the List			| Low
+Add Proxy support						| Done
 Look for the config file on the program directory		| Done
 Add support to more segments					| Done
 Add a checkbox on the New Downloads to add a file on list's top | Done

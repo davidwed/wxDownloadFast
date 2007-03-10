@@ -25,9 +25,10 @@ bool mHTTP::Connect(wxSockAddress& addr, bool wait)
     return (wxProtocol::Connect(addr,wait));
 }
 
-void mHTTP::UseProxy()
+void mHTTP::UseProxy(wxString proxy_authstring)
 {
     m_use_proxy = true;
+    m_proxy_authstring = proxy_authstring;
 }
 
 wxString mHTTP::BuildGetRequest(mUrlName url,wxLongLong start)
@@ -40,12 +41,17 @@ wxString mHTTP::BuildGetRequest(mUrlName url,wxLongLong start)
 
     m_headersmsg = wxEmptyString;
 
-    #if wxCHECK_VERSION(2, 8, 0)
+
     // Send authentication information
-    if (!m_username.IsEmpty() || !m_password.IsEmpty()) {
-        m_headersmsg << wxT("Authorization: ") << GenerateAuthString(m_username, m_password);
+    #if wxCHECK_VERSION(2, 8, 0)
+    if (!m_username.IsEmpty() || !m_password.IsEmpty())
+    {
+        m_headersmsg << wxT("Authorization: ") << GenerateAuthString(m_username, m_password) << wxT("\r\n");
     }
     #endif
+
+    if (!m_proxy_authstring.IsEmpty())
+        m_headersmsg << wxT("Proxy-Authorization: ") << m_proxy_authstring << wxT("\r\n");
 
     m_headersmsg << wxT("HOST: ") << url.GetHost() << wxT("\r\n");
     m_headersmsg << wxT("ACCEPT: */*\r\n");

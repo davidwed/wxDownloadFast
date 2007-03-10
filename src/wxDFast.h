@@ -90,7 +90,7 @@
     #endif
 
     const wxString PROGRAM_NAME = wxT("wxDownload Fast");
-    const wxString VERSION = wxT("0.5.5");
+    const wxString VERSION = wxT("0.6.0");
     const wxString SEPARATOR_URL = wxT("/");
     #ifdef __WXMSW__
        const wxString SEPARATOR_DIR = wxT("\\");
@@ -220,6 +220,8 @@
     const wxString OPT_PROXY_REG = wxT("proxyuse");
     const wxString OPT_PROXY_SERVER_REG = wxT("proxyserver");
     const wxString OPT_PROXY_PORT_REG = wxT("proxyport");
+    const wxString OPT_PROXY_USERNAME_REG = wxT("proxyusername");
+    const wxString OPT_PROXY_AUTHSTRING_REG = wxT("proxyauthstring");
 
 
     const wxString EXT = wxT(".dfast");
@@ -534,6 +536,8 @@
         bool proxy;
         wxString proxy_server;
         wxString proxy_port;
+        wxString proxy_username;
+        wxString proxy_authstring;
     };
 
     class mApplication : public wxApp
@@ -921,7 +925,7 @@
         bool Connect(wxSockAddress& addr, bool wait);
         int GetResponse() { return m_http_response; }
         int GetCompleteResponse() { return m_http_complete_response; }
-        void UseProxy();
+        void UseProxy(wxString proxy_authstring);
     private:
         bool ParseHeaders();
         char *wxstr2str(wxString wxstr);
@@ -931,6 +935,7 @@
         wxString path;
         int m_http_complete_response;
         bool m_use_proxy;
+        wxString m_proxy_authstring;
     };
 
     class mConnection: public wxConnection
@@ -982,6 +987,7 @@
         wxLongLong realtotalsize_copy;
         mUrlName *proxy_address;
         bool proxy;
+        wxString proxy_authstring;
     };
 
     class mCheckNewReleaseThread : public wxThread
@@ -1035,6 +1041,7 @@
         static wxString ByteString(wxLongLong size);
         static wxLongLong wxstrtolonglong(wxString string);
         static double wxlonglongtodouble(wxLongLong value);
+        static wxString GenerateAuthString(wxString user, wxString pass);
         #ifdef __WXMSW__
         static wxString GetProgramFilesDir();
         static wxString GetMyDocumentsDir();

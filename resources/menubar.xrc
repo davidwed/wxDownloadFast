@@ -123,7 +123,7 @@
                     <checkable>1</checkable>
                 </object>
                 <object class="wxMenuItem" name="menulang_nl">
-                    <label>Dutch</label>
+                    <label>Nederlands</label>
                     <checkable>1</checkable>
                 </object>
                 <object class="wxMenuItem" name="menulang_es">
