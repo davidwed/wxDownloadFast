@@ -1,39 +1,34 @@
 //////////////////////////////////////////////////////////////////////
-//    Name:               wxMD5.h
-//    Purpose:            wxMD5 Class
-//    Author:             Casey O'Donnell
-//    Creator:            Derived from the RSA Data Security, Inc.
-//                        MD5 Message-Digest Algorithm
-//                        See Internet RFC 1321
-//                        Copyright (C) 1991 - 1992
-//                        RSA Data Security, Inc.  Created 1991
-//    Created:            07/02/2003
-//    Last modified:      07/02/2003
+//    Name:               wxSHA1.h
+//    Purpose:            wxSHA1 Class
+//    Author:             Max Velasques
+//    Created:            03/03/2007
+//    Last modified:      03/03/2007
 //    Licence:            wxWindows license
 //////////////////////////////////////////////////////////////////////
 
-// wxMD5.h: interface for the wxMD5 class.
+// wxSHA1.h: interface for the wxSHA1 class.
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _WXMD5_H__
-#define _WXMD5_H__
+#ifndef _WXSHA1_H__
+#define _WXSHA1_H__
 
 #ifdef __GNUG__
-    #pragma interface "wxMD5.h"
+    #pragma interface "wxSHA1.h"
 #endif
 
 #include "wx/filename.h"
 #include "wx/string.h"
 #include "wx/file.h"
 
-class wxMD5
+class wxSHA1
 {
 public:
-    wxMD5();
-    wxMD5(const wxString& szText);
-    wxMD5(const wxFileName& szfile);
-    virtual ~wxMD5();
+    wxSHA1();
+    wxSHA1(const wxString& szText);
+    wxSHA1(const wxFileName& szfile);
+    virtual ~wxSHA1();
 
     // Other Methods
     void SetText(const wxString& szText);
@@ -47,8 +42,8 @@ public:
 
 protected:
     bool        m_bCalculatedDigest;
-    wxUint8        m_arrDigest[16];
-    wxChar        m_pszDigestString[33];
+    wxUint8     m_arrDigest[20];
+    wxChar      m_pszDigestString[41];
     wxString    m_szText;
     bool        m_isfile;
     wxFileName  m_file;
@@ -56,5 +51,5 @@ protected:
 private:
 };
 
-#endif // _WXMD5_H__
+#endif // _WXSHA1_H__
 

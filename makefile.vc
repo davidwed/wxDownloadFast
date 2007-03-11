@@ -91,6 +91,8 @@ WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_wxDFast.obj \
 	build-vc\wxdfast_md5.obj \
 	build-vc\wxdfast_wxMD5.obj \
+	build-vc\wxdfast_sha1.obj \
+	build-vc\wxdfast_wxSHA1.obj \
 	build-vc\wxdfast_wxDFast.res
 !else
 WXDFAST_OBJECTS =  \
@@ -113,8 +115,8 @@ WXDFAST_OBJECTS =  \
 	build-vc\wxdfast_UrlName.obj \
 	build-vc\wxdfast_UtilFunctions.obj \
 	build-vc\wxdfast_wxDFast.obj \
-	build-vc\wxdfast_md5.obj \
-	build-vc\wxdfast_wxMD5.obj \
+	build-vc\wxdfast_sha1.obj \
+	build-vc\wxdfast_wxSHA1.obj \
 	build-vc\wxdfast_wxDFast.res
 !endif
 
@@ -282,6 +284,12 @@ build-vc\wxdfast_md5.obj: .\src\wxMD5\md5.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CFLAGS) $**
 
 build-vc\wxdfast_wxMD5.obj: .\src\wxMD5\wxMD5.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
+
+build-vc\wxdfast_sha1.obj: .\src\wxSHA1\sha1.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CFLAGS) $**
+
+build-vc\wxdfast_wxSHA1.obj: .\src\wxSHA1\wxSHA1.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(WXDFAST_CXXFLAGS) $**
 
 build-vc\wxdfast_wxDFast.res: .\src\wxDFast.rc

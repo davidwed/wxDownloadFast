@@ -15,6 +15,7 @@
 - Fixed some memory leaks related to the metalink
   class
 - Added proxy support
+- Added wxSHA1 class
 
 0.5.4
 ===================================================

@@ -24,7 +24,6 @@
     #include "wx/fileconf.h"
     #include "wx/splitter.h"
     #include "wx/notebook.h"
-    #include "wxMD5/wxMD5.h"
     #include "wx/imaglist.h"
     #include "wx/protocol/ftp.h"
     #include "wx/protocol/http.h"
@@ -57,6 +56,8 @@
     #include "wx/xml/xml.h"
     #include "wx/zipstrm.h"
     #include "wx/dcbuffer.h"
+    #include "wxMD5/wxMD5.h"
+    #include "wxSHA1/wxSHA1.h"
     #ifndef USE_EXTERNAL_XRC
     extern void InitXmlResource();
     #endif
