@@ -235,7 +235,7 @@ mMainFrame::mMainFrame()
     programoptions.graphshow = mApplication::Configurations(READ,OPT_GRAPH_SHOW_REG, 1);
     programoptions.graphhowmanyvalues = mApplication::Configurations(READ,OPT_GRAPH_HOWMANYVALUES_REG, 300);
     programoptions.graphrefreshtime = mApplication::Configurations(READ,OPT_GRAPH_REFRESHTIME_REG, 1000);
-    programoptions.graphscale = mApplication::Configurations(READ,OPT_GRAPH_SCALE_REG, 40);
+    programoptions.graphscale = mApplication::Configurations(READ,OPT_GRAPH_SCALE_REG, 200);
     programoptions.graphtextarea = mApplication::Configurations(READ,OPT_GRAPH_TEXTAREA_REG, 80);
     programoptions.graphspeedfontsize = mApplication::Configurations(READ,OPT_GRAPH_SPEEDFONTSIZE_REG, 18);
     programoptions.graphheight = mApplication::Configurations(READ,OPT_GRAPH_HEIGHT_REG, 48);
