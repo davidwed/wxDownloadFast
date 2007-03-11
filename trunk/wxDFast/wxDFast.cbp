@@ -81,6 +81,12 @@
 		<Unit filename="src/wxMD5/md5.h" />
 		<Unit filename="src/wxMD5/wxMD5.cpp" />
 		<Unit filename="src/wxMD5/wxMD5.h" />
+		<Unit filename="src/wxSHA1/sha1.cpp">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/wxSHA1/sha1.h" />
+		<Unit filename="src/wxSHA1/wxSHA1.cpp" />
+		<Unit filename="src/wxSHA1/wxSHA1.h" />
 		<Extensions>
 			<code_completion />
 		</Extensions>
