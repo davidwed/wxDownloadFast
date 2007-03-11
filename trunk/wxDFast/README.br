@@ -25,7 +25,7 @@ completo possível.
   em Português [Brasil], Espanhol, Inglês, Alemão, Russo, Húngaro, Polonês,
   Indonésio, Francês, Turco e Holandês
 * Conexão com servidores FTP/HTTP que necessitam de senhas
-* Calcula o código de verificação MD5 dos arquivos baixados, de modo que possam
+* Calcula o código de verificação MD5/SHA1 dos arquivos baixados, de modo que possam
   ser verificados facilmente
 * Pode ser utilizado como um gerenciador de downloads portável, podendo ser utilizado
   diretamente de um pendrive (apenas no sistema Windows)

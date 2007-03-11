@@ -43,7 +43,9 @@ wxdfast_SOURCES = \
 	HTTP.cpp\
 	UrlName.cpp\
 	wxMD5/md5.cpp\
-	wxMD5/wxMD5.cpp
+	wxMD5/wxMD5.cpp\
+	wxSHA1/sha1.cpp\
+	wxSHA1/wxSHA1.cpp
 
 ## Include the Resources.cpp file
 ## which is created using the XRC files

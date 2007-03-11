@@ -38,7 +38,7 @@ else
 endif
 
 LINKOBJ  = $(OBJ)
-LIBS =  -L$(BUILD_DIR) -lwxmd5  -Wl `$(WXCONFIG) --libs`
+LIBS =  -L$(BUILD_DIR) -lwxmd5 -lwxsha1 -Wl `$(WXCONFIG) --libs`
 INCS =  `$(WXCONFIG) --cxxflags`
 
 RESINCS = --include-dir=`$(WXCONFIG) --cflags | $(AWK) -F-I '{ print $$3 }'`
@@ -68,6 +68,7 @@ else
 endif
 
 WXMD5 = libwxmd5.a
+WXSHA1 = libwxsha1.a
 CXXFLAGS = $(INCS) -fno-strict-aliasing -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM) $(PORTABLE_PARAM)
 BIN = wxdfast
 RES = wxDFast.res
@@ -78,13 +79,13 @@ ifeq ($(BUILD), win32)
 
 all: criardir $(BIN).exe
 
-$(BIN).exe: $(LINKOBJ) $(WXMD5) $(RES)
+$(BIN).exe: $(LINKOBJ) $(WXMD5) $(WXSHA1) $(RES)
 	$(CPP) $(LINKOBJ) -o $(BIN).exe $(LIBS) $(BUILD_DIR)$(RES) $(CXXFLAGS)
 	$(STRIP) $(BIN).exe
 else
 all: criardir $(BIN)
 
-$(BIN): $(LINKOBJ) $(WXMD5)
+$(BIN): $(LINKOBJ) $(WXMD5) $(WXSHA1)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS) $(CXXFLAGS)
 #	$(STRIP) $(BIN)
 endif
@@ -167,6 +168,16 @@ $(BUILD_DIR)md5.o: src/wxMD5/md5.cpp
 
 $(BUILD_DIR)wxMD5.o: src/wxMD5/wxMD5.cpp
 	$(CPP) -c src/wxMD5/wxMD5.cpp -o $(BUILD_DIR)wxMD5.o $(CXXFLAGS)
+	
+$(WXSHA1): $(BUILD_DIR)sha1.o $(BUILD_DIR)wxSHA1.o
+	$(AR) cur $(BUILD_DIR)$(WXSHA1) $(BUILD_DIR)wxSHA1.o $(BUILD_DIR)sha1.o
+
+$(BUILD_DIR)sha1.o: src/wxSHA1/sha1.cpp
+	$(CPP) -c src/wxSHA1/sha1.cpp -o $(BUILD_DIR)sha1.o $(CXXFLAGS)
+
+$(BUILD_DIR)wxSHA1.o: src/wxSHA1/wxSHA1.cpp
+	$(CPP) -c src/wxSHA1/wxSHA1.cpp -o $(BUILD_DIR)wxSHA1.o $(CXXFLAGS)
+
 
 install: all
 	$(INSTALL_DIR) $(DESTDIR)/usr/lib/$(BIN)
@@ -396,13 +407,16 @@ source:
 	cp $(RESOURCE_DIR)RipStop/toolbar/*.png $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/toolbar
 	cp $(RESOURCE_DIR)RipStop/toolbar/Makefile.am $(BIN)-$(VERSION)/$(RESOURCE_DIR)RipStop/toolbar
 	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)
-	mkdir $(BIN)-$(VERSION)/src/wxMD5
+	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
+	mkdir $(BIN)-$(VERSION)/$(SOURCE_DIR)wxSHA1
 	cp $(SOURCE_DIR)Makefile.am $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)*.rc $(BIN)-$(VERSION)/$(SOURCE_DIR)
 	cp $(SOURCE_DIR)wxMD5/*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
 	cp $(SOURCE_DIR)wxMD5/*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)wxMD5
+	cp $(SOURCE_DIR)wxSHA1/*.cpp $(BIN)-$(VERSION)/$(SOURCE_DIR)wxSHA1
+	cp $(SOURCE_DIR)wxSHA1/*.h $(BIN)-$(VERSION)/$(SOURCE_DIR)wxSHA1
 	mkdir $(BIN)-$(VERSION)/debian
 	cp -f debian/* $(BIN)-$(VERSION)/debian
 	cp bootstrap $(BIN)-$(VERSION)
