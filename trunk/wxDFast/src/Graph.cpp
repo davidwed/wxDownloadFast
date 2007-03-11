@@ -91,7 +91,7 @@ void mGraph::OnPaint(wxPaintEvent &event)
     if (node)
     {
         float *current = node->GetData();
-        //float last = 0.0;
+        float last = 0.0;
         count = 0;
 
         //CALCULATE THE STARTPOINT
@@ -111,18 +111,18 @@ void mGraph::OnPaint(wxPaintEvent &event)
         for (node = node->GetNext() ; node; node = node->GetNext() )
         {
             current = node->GetData();
-            /*if (*current > ((double)scale))
+            if (*current > ((double)scale))
             {
-                if (((*current)*1.4) > ((double)scale))
-                    newscale = (int)((*current)*1.4);
+                /*if (((*current)*1.4) > ((double)scale))
+                    newscale = (int)((*current)*1.4);*/
                 *current = last;
             }
             else
             {
-                if (((*current) < (((double)scale)*0.1)) && ((*current) > 10))
-                    newscale = (int)((*current)*1.4);
+                /*if (((*current) < (((double)scale)*0.1)) && ((*current) > 10))
+                    newscale = (int)((*current)*1.4);*/
                 last = *current;
-            }*/
+            }
             count++;
             if (startitem <= count)
                 //            X1    Y1        X2                 Y2

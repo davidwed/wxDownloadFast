@@ -652,8 +652,10 @@ int mDownloadThread::DownloadPart(wxSocketClient *connection, wxInputStream *fil
                     if (downloadfile->delta_size[downloadpartindex] > 5*readbuffersize)
                     {
                         if ((timepassed + time.Time() - lasttime).ToLong() > 2000)
+                        {
                             SpeedCalculation((timepassed + time.Time() - lasttime).ToLong());
-                        downloadfile->speedpoint = FALSE;
+                            downloadfile->speedpoint = FALSE;
+                        }
                         if (time.Time() > 2000000000l) //I DID THIS BECAUSE Time() RETURN A LONG AND NOT LONGLONG;
                         {
                             timepassed += time.Time();

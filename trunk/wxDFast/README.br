@@ -27,6 +27,7 @@ completo possível.
 * Conexão com servidores FTP/HTTP que necessitam de senhas
 * Calcula o código de verificação MD5/SHA1 dos arquivos baixados, de modo que possam
   ser verificados facilmente
+* Integração com o Firefox usando FlashGot
 * Pode ser utilizado como um gerenciador de downloads portável, podendo ser utilizado
   diretamente de um pendrive (apenas no sistema Windows)
 * Pode ser utilizado sobre servidores de proxy(suporte à HTTP proxy)
