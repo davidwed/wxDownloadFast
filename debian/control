@@ -2,7 +2,7 @@ Source: wxdfast
 Section: net
 Priority: optional
 Maintainer: Max Magalhães Velasques <maxvelasques@gmail.com>
-Build-Depends: debhelper (>= 4.0.0)
+Build-Depends: debhelper (>= 4.0.0), libwxgtk2.6-dev, wx-common
 Standards-Version: 3.6.2
 
 Package: wxdfast
