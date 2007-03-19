@@ -16,7 +16,7 @@ as possible.
 * View server messages (HTTP, FTP, file://). No HTTPS support.
 * Available in multiple languages and easily translated.  Now available in
   Portuguese [Brazil], Spanish, English, German, Russian, Hungarian, Polish,
-  French, Indonesian, Turkish and Dutch
+  French, Indonesian, Turkish, Dutch, Italian and Japonese
 * Connection to FTP/HTTP servers which require a password
 * Calculates the MD5/SHA1 checksum of downloaded files so they can be easily verified
 * Firefox integration through FlashGot

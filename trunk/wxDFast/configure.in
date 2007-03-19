@@ -6,7 +6,7 @@ AM_CONFIG_HEADER(config.h)
 AM_MAINTAINER_MODE
 
 dnl Set of available languages.
-ALL_LINGUAS="cs de es fr hu id pl pt_BR nl ru tr"
+ALL_LINGUAS="cs de es fr hu id it ja pl pt_BR nl ru tr"
 
 AC_ARG_ENABLE(debug,
 [  --enable-debug          This option build the program in debug mode],
@@ -81,6 +81,8 @@ languages/es/Makefile
 languages/fr/Makefile
 languages/hu/Makefile
 languages/id/Makefile
+languages/it/Makefile
+languages/ja/Makefile
 languages/pl/Makefile
 languages/pt_BR/Makefile
 languages/nl/Makefile

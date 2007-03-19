@@ -194,23 +194,39 @@ mMainFrame::mMainFrame()
     programoptions.closedialog = mApplication::Configurations(READ,OPT_DIALOG_CLOSE_REG,1);
     programoptions.rememberboxnewoptions = mApplication::Configurations(READ,OPT_REMEMBER_BOXNEW_OPTIONS_REG,1);
     #ifdef __WXMSW__
-    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,MyUtilFunctions::GetMyDocumentsDir());
-    programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxGetOSDirectory() + wxT("\\explorer.exe"));
-    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxEmptyString);
-    if (programoptions.browserpath.IsEmpty())
-        programoptions.browserpath = MyUtilFunctions::GetDefaultBrowser();
-    //defaultbrowserpath = MyUtilFunctions::GetProgramFilesDir() + wxT("\\Mozilla Firefox\\firefox.exe");
+        #ifdef WXDFAST_PORTABLE
+            programoptions.destination = MyUtilFunctions::GetMyDocumentsDir();
+            programoptions.filemanagerpath = wxGetOSDirectory() + wxT("\\explorer.exe");
+            programoptions.browserpath = MyUtilFunctions::GetDefaultBrowser();
+            programoptions.shutdowncmd = wxGetOSDirectory() + wxT("\\system32\\shutdown.exe -s -t 0");
+            programoptions.disconnectcmd = wxGetOSDirectory() + wxT("\\system32\\rasdial.exe /disconnect");
+        #else
+            programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,MyUtilFunctions::GetMyDocumentsDir());
+            programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxGetOSDirectory() + wxT("\\explorer.exe"));
+            programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxEmptyString);
+            if (programoptions.browserpath.IsEmpty())
+                programoptions.browserpath = MyUtilFunctions::GetDefaultBrowser();
+            //defaultbrowserpath = MyUtilFunctions::GetProgramFilesDir() + wxT("\\Mozilla Firefox\\firefox.exe");
+            programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\shutdown.exe -s -t 0"));
+            programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\rasdial.exe /disconnect"));
+        #endif
     #else
-    programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
-    programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
-    programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxT("/usr/bin/firefox"));
+        #ifdef WXDFAST_PORTABLE
+            programoptions.destination = wxGetHomeDir();
+        #else
+            programoptions.destination = mApplication::Configurations(READ,OPT_DESTINATION_REG,wxGetHomeDir());
+        #endif
+        programoptions.filemanagerpath = mApplication::Configurations(READ,OPT_FILE_MANAGER_PATH_REG,wxT("/usr/bin/nautilus"));
+        programoptions.browserpath = mApplication::Configurations(READ,OPT_BROWSER_PATH_REG,wxT("/usr/bin/firefox"));
+        programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("sudo /sbin/shutdown -h now"));
+        programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("/usr/bin/poff"));
     #endif
     #ifdef WXDFAST_PORTABLE
-    programoptions.downloadpartsdefaultdir = wxT("partial");
-    if (!wxFileName::DirExists(programoptions.downloadpartsdefaultdir))
-        wxFileName::Mkdir(programoptions.downloadpartsdefaultdir); //CREATE THE PARTIAL DIRECTORY
+        programoptions.downloadpartsdefaultdir = wxT("partial");
+        if (!wxFileName::DirExists(programoptions.downloadpartsdefaultdir))
+            wxFileName::Mkdir(programoptions.downloadpartsdefaultdir); //CREATE THE PARTIAL DIRECTORY
     #else
-    programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxGetHomeDir());
+        programoptions.downloadpartsdefaultdir = mApplication::Configurations(READ,OPT_DOWNLOAD_PARTS_DEFAULT_DIR_REG,wxGetHomeDir());
     #endif
     programoptions.attempts = mApplication::Configurations(READ,OPT_ATTEMPTS_REG,999);
     programoptions.attemptstime = mApplication::Configurations(READ,OPT_ATTEMPTS_TIME_REG,5);
@@ -221,13 +237,6 @@ mMainFrame::mMainFrame()
     programoptions.timerupdateinterval = mApplication::Configurations(READ,OPT_TIMERINTERVAL_REG,500);
     programoptions.readbuffersize = mApplication::Configurations(READ,OPT_READBUFFERSIZE_REG,1024);
     programoptions.disconnect = programoptions.alwaysdisconnect;
-    #ifdef __WXMSW__
-    programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\shutdown.exe -s -t 0"));
-    programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxGetOSDirectory() + wxT("\\system32\\rasdial.exe /disconnect"));
-    #else
-    programoptions.shutdowncmd = mApplication::Configurations(READ,OPT_SHUTDOWN_CMD_REG,wxT("sudo /sbin/shutdown -h now"));
-    programoptions.disconnectcmd = mApplication::Configurations(READ,OPT_DISCONNECT_CMD_REG,wxT("/usr/bin/poff"));
-    #endif
     programoptions.restoremainframe = mApplication::Configurations(READ,OPT_RESTORE_MAINFRAME_REG, 1);
     programoptions.hidemainframe = mApplication::Configurations(READ,OPT_HIDE_MAINFRAME_REG, 0);
     programoptions.checkforupdates = mApplication::Configurations(READ,OPT_CHECK_FOR_UPDATES_REG, 1);
