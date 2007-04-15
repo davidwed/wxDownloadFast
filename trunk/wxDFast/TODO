@@ -1,5 +1,6 @@
 Features							| Priority
 ================================================================|==========
+Receive more than one URL from clipboard separated by comma	| Normal
 Play sound file after all downloads finish			| Normal
 Or show a small pop up (balloon\bubble) from the system tray	| Normal
 Automatically close the program after all dowloads finish	| Normal
