@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wxDFast\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2007-03-09 18:33-0300\n"
-"Last-Translator: Max Velasques <maxvelasques@mail.com>\n"
+"PO-Revision-Date: 2007-03-19 21:08+0200\n"
+"Last-Translator: Tequila <tequila_13@users.sourceforge.net>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -605,11 +605,11 @@ msgstr "Információ..."
 
 #: src/wxDFast.cpp:360
 msgid "Cannot set locale to"
-msgstr ""
+msgstr "A nyelvet nem sikerült átállítani a következőre:"
 
 #: src/wxDFast.cpp:362
 msgid "This language is not supported by your system."
-msgstr ""
+msgstr "Ezt a nyelvet nem támogatja a operációs rendeszered."
 
 #: src/BoxNew.cpp:46
 #: src/BoxNew.cpp:79
@@ -728,6 +728,8 @@ msgid ""
 "\n"
 "Proxy not found.\n"
 msgstr ""
+"\n"
+"Nem sikerült megtalálni a proxy szervert.\n"
 
 #: src/DownloadThread.cpp:225
 msgid "This protocol isn't supported.\n"
@@ -862,7 +864,7 @@ msgstr "Hibás az MD5 ellenőrzőösszeg.\n"
 
 #: src/DownloadThread.cpp:784
 msgid "Resolving proxy host '"
-msgstr ""
+msgstr "Proxy szerver keresése '"
 
 #: src/DownloadThread.cpp:794
 #: src/DownloadThread.cpp:808
@@ -1162,7 +1164,7 @@ msgstr "Angol"
 
 #: /tmp/dummy:45
 msgid "French"
-msgstr ""
+msgstr "Francia"
 
 #: /tmp/dummy:46
 msgid "Portuguese"
@@ -1178,7 +1180,7 @@ msgstr "Német"
 
 #: /tmp/dummy:49
 msgid "Nederlands"
-msgstr ""
+msgstr "Holland"
 
 #: /tmp/dummy:50
 msgid "Spanish"
@@ -1210,7 +1212,7 @@ msgstr "Lengyel"
 
 #: /tmp/dummy:57
 msgid "Turkish"
-msgstr ""
+msgstr "Török"
 
 #: /tmp/dummy:58
 msgid "&Tools"
@@ -1301,7 +1303,7 @@ msgstr "Csak a megjelölt címek lesznek figyelembe véve"
 
 #: /tmp/dummy:84
 msgid "Add on top of download queue"
-msgstr ""
+msgstr "Beszúr a letöltési lista elejére"
 
 #: /tmp/dummy:86
 msgid "Server Permission"
@@ -1417,7 +1419,7 @@ msgstr "Főablak elrejtése a letöltés megkezdése után"
 
 #: /tmp/dummy:120
 msgid "Check for updates automatically"
-msgstr ""
+msgstr "Frissítések automatikus  ellenőrzése"
 
 #: /tmp/dummy:121
 msgid "Paths"
@@ -1466,27 +1468,27 @@ msgstr "Használja a célkönyvtárat"
 
 #: /tmp/dummy:133
 msgid "Proxy"
-msgstr ""
+msgstr "Proxy"
 
 #: /tmp/dummy:134
 msgid "Use a Proxy Server"
-msgstr ""
+msgstr "Proxy szerver használtata"
 
 #: /tmp/dummy:135
 msgid "Proxy Server"
-msgstr ""
+msgstr "Proxy szerver"
 
 #: /tmp/dummy:136
 msgid "Server:"
-msgstr ""
+msgstr "Szerver:"
 
 #: /tmp/dummy:137
 msgid "Port:"
-msgstr ""
+msgstr "Port:"
 
 #: /tmp/dummy:138
 msgid "Proxy Server Authorization"
-msgstr ""
+msgstr "Belépés a proxy szerverre"
 
 #: /tmp/dummy:141
 msgid "Graph"
