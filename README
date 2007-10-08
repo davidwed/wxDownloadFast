@@ -98,7 +98,7 @@ the make command:
 - Compiling source code
 
 GCC and the program make are required to build the program in the Linux.
-Other requirements include the library wxWidgets [ www.wxwidgets.org ], built with
+Other requirements include the library wxWidgets[www.wxwigets.org], built with
 the options: --enable-xrc --enable-unicode.  Once you have the above requirements you can change to
 the directory where the source code was unpacked and type:
 # ./configure
@@ -133,10 +133,23 @@ OBS: To build in the portable mode use the parameter: --enable-portable
 5.3) Mac OS X
 ----------
 
+- Installing from binary
+
+Is available in the page of the program contends this program.  This is a zip file.
+To install the program, do a double-click over the downloaded file and them
+move the "wxDownload Fast" icon to the "Applications" folder.
+
 - Compiling source code
 
-This has not been tested but should work using the same steps as Linux. Please report
-your experiences.
+To build wxDownload Fast from sources it's necessary to download the XCode package from
+Apple's site. This package contains the gcc compiler and the other developer's tools.
+After that, download the wxWidgets[www.wxwigets.org] library and build it using the follow
+command:
+# ./configure --enable-monolithic --disable-shared --enable-xrc --enable-unicode
+# make
+
+Then to build the wxDownload Fast do:
+# make -f Makefile.gcc BUILD=osx WXWIDGETS_DIR=<DIRECTORY WHERE YOU BUILD THE WXWIDGETS>
 
 
 

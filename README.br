@@ -113,7 +113,7 @@ OBS: Não esqueça de carregar as varáveis de ambiente referentes ao VC.
 - Compilando código fonte
 
 Para compilar o programa no Linux é necessário o gcc e o programa make.
-Além disso é necessário a biblioteca wxWidgets[www.wxwindows.org], compilada
+Além disso é necessário a biblioteca wxWidgets[www.wxwigets.org], compilada
 com a opções: --enable-xrc --enable-unicode.
 De posse dos requisitos acima basta entrar na pasta onde o código fonte foi 
 descompactado e digitar:
@@ -145,8 +145,25 @@ Onde "/home/user/wxWidgets-2.8.0" é o diretório onde a biblioteca wxWidgets fo
 5.3) MacOS
 ----------
 
+5.3) Mac OS X
+----------
+
+- Instalando o binario
+
+Está disponível na página do programa um arquivo zip contendo este programa.
+Para instalá-lo dê um click-duplo sobre o arquivo baixado e em seguida mova
+o arquivo "wxDownload Fast" para a pasta "Aplicativos".
+
 - Compilando código fonte
 
-Como não tenho acesso a um sistema rodando o MacOS nunca compilei o programa neste
-sistema, porém acredito que os passos utilizados no Linux devem servir para o MacOS.
+Para compilar o wxDownload Fast é necessário primeiramente baixar o pacote XCode do site
+da Apple. Este pacote contém o compilador gcc e outras ferramentas necessárias.
+Em seguida, baixe a biblioteca wxWidgets[www.wxwigets.org] e compile-a com os seguintes
+comandos:
+# ./configure --enable-monolithic --disable-shared --enable-xrc --enable-unicode
+# make
+
+Para compilar o wxDownload Fast dê o comando:
+# make -f Makefile.gcc BUILD=osx WXWIDGETS_DIR=<DIRETORIO ONDE VOCE COMPILOU A WXWIDGETS>
+
 
