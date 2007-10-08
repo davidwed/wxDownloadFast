@@ -56,6 +56,7 @@
     #include "wx/xml/xml.h"
     #include "wx/zipstrm.h"
     #include "wx/dcbuffer.h"
+	#include "wx/stdpaths.h"
     #include "wxMD5/wxMD5.h"
     #include "wxSHA1/wxSHA1.h"
     #ifndef USE_EXTERNAL_XRC

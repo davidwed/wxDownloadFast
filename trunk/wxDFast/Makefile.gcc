@@ -24,7 +24,12 @@ else
 	WXCONFIG = $(WXWIDGETS_DIR)wx-config --debug=no
 endif
 
-WXRC = wxrc
+ifeq ($(WXWIDGETS_DIR)0,0)
+	WXRC = wxrc
+else
+	WXRC = $(WXWIDGETS_DIR)utils/wxrc/wxrc
+endif
+
 INSTALL = /usr/bin/install
 INSTALL_FILE = $(INSTALL) -m 644
 INSTALL_DIR = $(INSTALL) -d 
@@ -70,7 +75,13 @@ endif
 WXMD5 = libwxmd5.a
 WXSHA1 = libwxsha1.a
 CXXFLAGS = $(INCS) -fno-strict-aliasing -Wall -O2 -MMD $(CPU_PARAM) $(XRC_PARAM) $(DEBUG_PARAM) $(PORTABLE_PARAM)
-BIN = wxdfast
+
+ifeq ($(BUILD),osx)
+	BIN = "wxDownload Fast"
+else
+	BIN = wxdfast
+endif
+
 RES = wxDFast.res
 VERSION = 0.6.0
 DEBIANPACK = 1
@@ -88,6 +99,17 @@ all: criardir $(BIN)
 $(BIN): $(LINKOBJ) $(WXMD5) $(WXSHA1)
 	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS) $(CXXFLAGS)
 #	$(STRIP) $(BIN)
+ifeq ($(BUILD), osx)
+		`$(WXCONFIG) --rescomp` $(BIN)
+		/Developer/Tools/SetFile -a B $(BIN)
+		mkdir -p $(BIN).app/Contents
+		mkdir -p $(BIN).app/Contents/MacOS
+		mkdir -p $(BIN).app/Contents/Resources
+		cp -f $(RESOURCE_DIR)Info.plist $(BIN).app/Contents
+		cp -f $(RESOURCE_DIR)RipStop/icon/dfast48x48.icns $(BIN).app/Contents/Resources/wxdfast.icns
+		echo -n "APPL????" > $(BIN).app/Contents/PkgInfo
+		mv $(BIN) $(BIN).app/Contents/MacOS
+endif
 endif
 
 $(BUILD_DIR)Resources.cpp: $(RESOURCE_DIR)boxnew.xrc $(RESOURCE_DIR)boxoptions.xrc $(RESOURCE_DIR)mainwindow.xrc $(RESOURCE_DIR)menubar.xrc $(RESOURCE_DIR)toolbar.xrc $(RESOURCE_DIR)boxabout.xrc $(RESOURCE_DIR)images.xrc

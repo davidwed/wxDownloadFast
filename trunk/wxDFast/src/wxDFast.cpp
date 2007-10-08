@@ -376,5 +376,6 @@ void mApplication::SetLanguage(int language)
     m_locale->Init(language);
     #endif
     m_locale->AddCatalogLookupPathPrefix(wxT("languages"));
+	m_locale->AddCatalogLookupPathPrefix(wxStandardPaths::Get().GetResourcesDir() + wxT("/locale"));
     m_locale->AddCatalog(wxT("wxDFast"));
 }
