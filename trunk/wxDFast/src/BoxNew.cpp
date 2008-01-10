@@ -102,7 +102,8 @@ void mBoxNew::OnOk(wxCommandEvent& event)
 
     wxString destination;
     destination = XRCCTRL(*this, "edtdestination",wxTextCtrl)->GetValue();
-    wxFileName *desttmp = new wxFileName(destination);
+    wxFileName *desttmp = new wxFileName();
+    desttmp->AssignDir(destination);
     if (!desttmp->DirExists())
     {
         if (wxMessageBox(_("The destination directory does not exist!\nDo you want to create it?"),_("Continue..."),wxYES| wxNO | wxICON_QUESTION,this) == wxYES)
@@ -120,6 +121,12 @@ void mBoxNew::OnOk(wxCommandEvent& event)
             delete desttmp;
             return;
         }
+    }
+    if (!desttmp->IsDirWritable())
+    {
+        wxMessageBox(_("You don't have write permissions for this directory!"),_("Error..."),wxOK | wxICON_ERROR,this);
+        delete desttmp;
+        return;
     }
     if (XRCCTRL(*this, "spinsplit",wxSpinCtrl)->GetValue() > MAX_NUM_PARTS)
     {

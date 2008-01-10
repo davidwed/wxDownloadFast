@@ -2,6 +2,16 @@
 ===================================================
 - Adicionado idioma Italiano(by Angelo Contardi)
 - Adicionado idioma Japonês(by Tilt)
+- Mudanças no arquivo configure.in para usar `wx-config 
+  --utility=wxrc` para obter a localização do wxrc
+  automaticamente, sem defini-lo diretamente no
+  código (Patch por dirtyepic)
+- Mudanças para permitir compilar usando o MS VC2005
+  (Patch by stephans)
+- Adicionado suporte a urls como esta:
+  ftp://user:password@www.server.com/file_or_folder.bin
+  Estas URLs tornam possíveis o uso de diferentes
+  usuários/senhas para cada URL
 
 0.6.0
 ===================================================

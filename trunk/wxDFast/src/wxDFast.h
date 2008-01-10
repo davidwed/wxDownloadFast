@@ -906,6 +906,8 @@
         wxString GetFullName();
         wxString GetFullRealName();
         wxString GetFullPath();
+        wxString GetUrlUser();
+        wxString GetUrlPassword();
         int Type();
         bool IsComplete();
     };
