@@ -6,10 +6,10 @@ Or show a small pop up (balloon\bubble) from the system tray	| Normal
 Automatically close the program after all dowloads finish	| Normal
 Automatically clear the "Finished Downloads" list when closes	| Normal
 Log program messages						| Normal
-Save independently the user/password for each file		| Low
 Add mirror automatic search					| Low
 Add HTTPS support						| Low
 Add progress bar for each download on the List			| Low
+Save independently the user/password for each url		| Done
 Add Proxy support						| Done
 Look for the config file on the program directory		| Done
 Add support to more segments					| Done
@@ -28,7 +28,7 @@ Add option to show/hide the progress bar			| Done
 Add multi segmented progress bar				| Done
 Add option to change the default temporary dir			| Done
 Redesign of the "About..." box					| Done
-Add new parameter "--reference"				| Done
+Add new parameter "--reference"					| Done
 Update the program icons					| Done
 Add option to show/hide the graph				| Done
 Allow to add multiples URL to download				| Done

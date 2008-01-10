@@ -773,10 +773,18 @@ wxSocketClient *mDownloadThread::ConnectHTTP(wxLongLong *start)
     client->Notify(FALSE);
     client ->SetFlags(wxSOCKET_NOWAIT);
     #if wxCHECK_VERSION(2, 8, 0)
-    if (downloadfile->GetPassword() != ANONYMOUS_PASS)
+    if (currenturl.GetPassword().IsEmpty())
     {
-        client->SetUser(downloadfile->GetUser());
-        client->SetPassword(downloadfile->GetPassword());
+        if (!downloadfile->GetPassword().IsEmpty())
+        {
+            client->SetUser(downloadfile->GetUser());
+            client->SetPassword(downloadfile->GetPassword());
+        }
+    }
+    else
+    {
+        client->SetUser(currenturl.GetUser());
+        client->SetPassword(currenturl.GetPassword());
     }
     #endif
 
@@ -1052,15 +1060,23 @@ wxSocketClient *mDownloadThread::ConnectFTP(wxLongLong *start)
 
     if (downloadfile->GetStatus() == STATUS_STOPED){client->Close(); delete client; return NULL;}
 
-    if (downloadfile->GetPassword().IsEmpty())
+    if (currenturl.GetPassword().IsEmpty())
     {
-        client->SetUser(ANONYMOUS_USER);
-        client->SetPassword(ANONYMOUS_PASS);
+        if (downloadfile->GetPassword().IsEmpty())
+        {
+            client->SetUser(ANONYMOUS_USER);
+            client->SetPassword(ANONYMOUS_PASS);
+        }
+        else
+        {
+            client->SetUser(downloadfile->GetUser());
+            client->SetPassword(downloadfile->GetPassword());
+        }
     }
     else
     {
-        client->SetUser(downloadfile->GetUser());
-        client->SetPassword(downloadfile->GetPassword());
+        client->SetUser(currenturl.GetUser());
+        client->SetPassword(currenturl.GetPassword());
     }
 
     PrintMessage( _("Resolving host '") + currenturl.GetHost() + wxT("' ..."));
@@ -1343,11 +1359,18 @@ bool mDownloadThread::JoinFiles(wxFileName *destination,wxFileName tempdestinati
 	//CHECK IF HAS ENOUGH DISK SPACE
 	if (downloadfile->IsSplitted())
 	{
-		wxGetDiskSpace(destination->GetPath(),NULL,&freespace);
-		if (freespace < downloadfile->size[downloadfile->GetNumberofParts()-1])
+		if (wxGetDiskSpace(destination->GetPath(),NULL,&freespace))
 		{
-			PrintMessage(_("There isn't enough disk space to join the file parts.\n"),HTMLERROR);
-			return FALSE;
+            if (freespace < (downloadfile->totalsize))
+            {
+                PrintMessage(_("There isn't enough disk space to join the file parts.\n"),HTMLERROR);
+                return FALSE;
+            }
+		}
+		else
+		{
+            PrintMessage(_("Error retrieving disk space. Check if the destination directory exists.\n"),HTMLERROR);
+            return FALSE;
 		}
 	}
 

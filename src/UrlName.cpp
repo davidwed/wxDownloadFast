@@ -114,4 +114,12 @@ wxString mUrlName::GetFullPath()
     return wxURI::BuildURI();
 }
 
+wxString mUrlName::GetUrlUser()
+{
+    return wxURI::GetUser();
+}
 
+wxString mUrlName::GetUrlPassword()
+{
+    return wxURI::GetPassword();
+}

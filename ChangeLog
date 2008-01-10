@@ -7,6 +7,10 @@
   than having it hardcoded (Patch by dirtyepic)
 - Changes to make possible to build using MS VC2005
   (Patch by stephans)
+- Added support for urls like this:
+  ftp://user:password@www.server.com/file_or_folder.bin
+  This URLs make possible to use different user/pass
+  for each URL
 
 0.6.0
 ===================================================
