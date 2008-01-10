@@ -2,6 +2,11 @@
 ===================================================
 - Added Italian language(by Angelo Contardi)
 - Added Japanese language(by Tilt)
+- Changes in configure.in to use `wx-config 
+  --utility=wxrc` to get the location of wxrc rather
+  than having it hardcoded (Patch by dirtyepic)
+- Changes to make possible to build using MS VC2005
+  (Patch by stephans)
 
 0.6.0
 ===================================================

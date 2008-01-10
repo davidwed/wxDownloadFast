@@ -203,7 +203,7 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
             wxDateTime date;
             value = 0;
             config->Read(START_REG,&value);
-            date.Set(value);
+            date.Set((time_t)value);
             infolist->SetItem(5,1,date.Format());
         }
 
@@ -211,7 +211,7 @@ void mFinishedList::SelectUnselect(bool selected,int selection)
             wxDateTime date;
             value = 0;
             config->Read(END_REG,&value);
-            date.Set(value);
+            date.Set((time_t)value);
             infolist->SetItem(6,1,date.Format());
         }
 
@@ -336,7 +336,7 @@ void mFinishedList::GenerateList(wxImageList *imageslist)
         config->SetPath(name);
         config->Read(STATUS_REG,&status);
         config->Read(SIZE_REG,&size);
-        config->Read(END_REG,&enddate);
+        config->Read(END_REG,(long*)&enddate);
         date.Set(enddate);
         this->SetItem(i, FINISHED_ICON01, wxEmptyString,status);
         this->SetItem(i, FINISHED_NAME, name);
