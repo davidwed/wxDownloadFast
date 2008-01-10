@@ -184,10 +184,10 @@ void mDownloadList::LoadDownloadListFromDisk()
         config->Read(CONTENTTYPE_REG,&(file->contenttype));
         {
             time_t value = 0;
-            config->Read(START_REG,&(value));
+            config->Read(START_REG,(long*)&(value));
             file->start.Set(value);
             value = 0;
-            config->Read(END_REG,&(value));
+            config->Read(END_REG,(long*)&(value));
             file->end.Set(value);
         }
         file->bandwidth = 0;
@@ -470,8 +470,8 @@ void mDownloadFile::RegisterListItemOnDisk()
         config->Write(SPEED_REG,this->totalspeed);
         config->Write(PERCENTUAL_REG,this->percentual);
         config->Write(MD5_REG,this->MD5);
-        config->Write(START_REG,this->start.GetTicks());
-        config->Write(END_REG,this->end.GetTicks());
+        config->Write(START_REG,(long)this->start.GetTicks());
+        config->Write(END_REG,(long)this->end.GetTicks());
         config->Write(COMMENTS_REG,this->comments);
         config->Write(REFERENCE_REG,this->reference);
         config->Write(COMMAND_REG,this->command);

@@ -286,8 +286,8 @@ mMainFrame::mMainFrame()
         programoptions.graphfontcolor.Set(red,green,blue);
     }
     programoptions.activatescheduling = mApplication::Configurations(READ,OPT_SCHED_ACTIVATESCHEDULING_REG,0);
-    programoptions.startdatetime.Set((time_t)mApplication::Configurations(READ,OPT_SCHED_STARTDATETIME_REG,wxDateTime::Now().GetTicks()));
-    programoptions.finishdatetime.Set((time_t)mApplication::Configurations(READ,OPT_SCHED_FINISHDATETIME_REG,wxDateTime::Now().GetTicks()));
+    programoptions.startdatetime.Set((time_t)mApplication::Configurations(READ,OPT_SCHED_STARTDATETIME_REG,(long)wxDateTime::Now().GetTicks()));
+    programoptions.finishdatetime.Set((time_t)mApplication::Configurations(READ,OPT_SCHED_FINISHDATETIME_REG,(long)wxDateTime::Now().GetTicks()));
     programoptions.scheduleexceptionschanged = FALSE;
     for (i=0;i<MAX_SCHEDULE_EXCEPTIONS;i++)
     {
@@ -1222,7 +1222,7 @@ bool mMainFrame::StartDownload(mDownloadFile *downloadfile)
         if ((programoptions.checkforupdates) && ((wxDateTime::Now()-programoptions.lastnewreleasecheck).GetDays() >= 10))
         {
             programoptions.lastnewreleasecheck = wxDateTime::Now();
-            mApplication::Configurations(WRITE,OPT_LAST_NEW_RELEASE_CHECK,programoptions.lastnewreleasecheck.GetTicks());
+            mApplication::Configurations(WRITE,OPT_LAST_NEW_RELEASE_CHECK,(long)programoptions.lastnewreleasecheck.GetTicks());
             CheckNewRelease();
         }
         downloadfile->SetFree(FALSE);
